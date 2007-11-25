@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #564d85}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #564d85; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85; min-height: 13.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
+span.s1 {text-decoration: underline}
+span.s2 {color: #0000bf}
+span.s3 {font: 10.0px Monaco}
+span.s4 {color: #606060}
+span.s5 {color: #000000}
+span.s6 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>SwingOSC – Java-based cross-platform GUI classes</b></p>
+<p class="p2"><br></p>
+<p class="p3">This class allows you to add any JComponent or JPanel subclass to an JSCWindow or one of its</p>
+<p class="p3">containers. last mod: 03-oct-06 sciss.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>known issues / todo</b></p>
+<p class="p5"><b></b><br></p>
+<p class="p3">superclass: [<span class="s1">JSCView</span>], [<span class="s1">JSCContainerView</span>]</p>
+<p class="p3">see also: [<span class="s1">JavaObject</span>]</p>
+<p class="p4"><br></p>
+<p class="p6"><b>JSCPlugView, JSCPlugContainerView</b></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Warning</b>: as of v0.42, the constructor signature changed. old:</p>
+<p class="p9"><br></p>
+<p class="p10"><span class="Apple-tab-span">	</span>*new( (<span class="s2">JSCView</span>) parent, (<span class="s2">Rect</span>) bounds, (<span class="s2">SwingOSC</span>) argServer, (<span class="s2">Integer</span>) id, (<span class="s2">Symbol</span>) javaClass );</p>
+<p class="p9"><br></p>
+<p class="p8">new:</p>
+<p class="p9"><br></p>
+<p class="p10"><span class="Apple-tab-span">	</span>*new( (<span class="s2">JSCView</span>) parent, (<span class="s2">Rect</span>) bounds, (<span class="s2">JavaObject</span>) javaObject );</p>
+<p class="p9"><br></p>
+<p class="p8">the server is taken from <span class="s3">javaObject</span>.</p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p8">Note: There is no getter methods implementation right now</p>
+<p class="p7"><br></p>
+<p class="p10">(</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">var</span> win, progBar, tab, flow, lb1, lb2, check, rout;</p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="Apple-tab-span">	</span>win = <span class="s2">JSCWindow</span>( <span class="s4">"Schoko"</span>, <span class="s2">Rect</span>.new( 128, 64, 400, 470 ));</p>
+<p class="p10"><span class="Apple-tab-span">	</span>flow = <span class="s2">FlowLayout</span>( win.view.bounds );</p>
+<p class="p10"><span class="Apple-tab-span">	</span>win.view.decorator = flow;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s5"><span class="Apple-tab-span">	</span></span>// we can create gadgets ...</p>
+<p class="p10"><span class="Apple-tab-span">	</span>progBar = <span class="s2">JSCPlugView</span>( win, <span class="s2">Rect</span>( 0, 0, 390, 24 ), JavaObject( <span class="s6">'javax.swing.JProgressBar'</span> ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s5"><span class="Apple-tab-span">	</span></span>// ... and containers</p>
+<p class="p10"><span class="Apple-tab-span">	</span>tab = <span class="s2">JSCPlugContainerView</span>( win, <span class="s2">Rect</span>( 0, 0, 400, 400 ), JavaObject( <span class="s6">'javax.swing.JTabbedPane'</span> ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s5"><span class="Apple-tab-span">	</span></span>// ... and gadgets inside containers</p>
+<p class="p10"><span class="Apple-tab-span">	</span>lb1 = <span class="s2">JSCPlugView</span>( tab, <span class="s2">Rect</span>( 10, 20, 360, 360 ), JavaObject( <span class="s6">'javax.swing.JLabel'</span> ));</p>
+<p class="p11"><br></p>
+<p class="p12"><span class="s5"><span class="Apple-tab-span">	</span></span>// we can talk to these through their java methods</p>
+<p class="p13"><span class="s5"><span class="Apple-tab-span">	</span>lb1.setIcon( </span><span class="s2">JavaObject</span><span class="s5">( </span>'javax.swing.ImageIcon'<span class="s5">, </span><span class="s2">nil</span><span class="s5">, </span>'/Library/Desktop Pictures/Ripples Moss.jpg'<span class="s5"> ));</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="Apple-tab-span">	</span>lb2 = <span class="s2">JSCPlugView</span>( tab, <span class="s2">Rect</span>( 10, 20, 360, 360 ), JavaObject( <span class="s6">'javax.swing.JLabel'</span> ));</p>
+<p class="p13"><span class="s5"><span class="Apple-tab-span">	</span>lb2.setIcon( </span><span class="s2">JavaObject</span><span class="s5">( </span>'javax.swing.ImageIcon'<span class="s5">, </span><span class="s2">nil</span><span class="s5">, </span>'/Library/Desktop Pictures/Nature/Faux Fur.jpg'<span class="s5"> ));</span></p>
+<p class="p11"><br></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">JSCPlugView</span>( tab, <span class="s2">Rect</span>( 10, 20, 360, 360 ), JavaObject( <span class="s6">'javax.swing.JColorChooser'</span> ));</p>
+<p class="p11"><br></p>
+<p class="p12"><span class="s5"><span class="Apple-tab-span">	</span></span>// ... and containers</p>
+<p class="p10"><span class="Apple-tab-span">	</span>tab.setTitleAt( 0, <span class="s4">"Image 1"</span> );</p>
+<p class="p10"><span class="Apple-tab-span">	</span>tab.setTitleAt( 1, <span class="s4">"Image 2"</span> );</p>
+<p class="p10"><span class="Apple-tab-span">	</span>tab.setTitleAt( 2, <span class="s4">"Color"</span> );</p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s5"><span class="Apple-tab-span">	</span></span>// we can mix with regular gadget types</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">JSCButton</span>( win, <span class="s2">Rect</span>( 0, 0, 80, 24 ))</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.states_([[ <span class="s4">"Aha"</span> ]]);</p>
+<p class="p11"><br></p>
+<p class="p10"><span class="Apple-tab-span">	</span>rout = <span class="s2">Routine</span>({</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> value;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">inf</span>.do({ <span class="s2">arg</span> i;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>value = i % 101;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>progBar.setValue( value );</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if( value == 100, 2, 0.1 ).wait;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p10"><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><br></p>
+<p class="p10"><span class="Apple-tab-span">	</span>win.onClose = {</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rout.stop;</p>
+<p class="p12"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// should we dispose the images? not sure at the moment</p>
+<p class="p10"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="Apple-tab-span">	</span>win.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="Apple-tab-span">	</span>rout.play;</p>
+<p class="p10">)</p>
+</body>
+</html>

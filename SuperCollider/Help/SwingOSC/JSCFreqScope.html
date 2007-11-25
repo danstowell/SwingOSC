@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #564d85}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #564d85; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85; min-height: 13.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
+span.s1 {text-decoration: underline}
+span.s2 {font: 12.0px Helvetica; color: #000000}
+span.s3 {color: #0000bf}
+span.s4 {color: #606060}
+span.s5 {color: #bf0000}
+span.s6 {color: #000000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>SwingOSC – Java-based cross-platform replacements for Cocoa GUI classes</b></p>
+<p class="p2"><br></p>
+<p class="p3">This class is meant as an emulation of SCFreqScope by Lance Putnam, which is an additional class</p>
+<p class="p3">available from here: [<span class="s1">http://www.uweb.ucsb.edu/~ljputnam/sc3.html]</span><span class="s2"> . </span>last mod: 03-oct-06 sciss</p>
+<p class="p3">; for bugs and different behaviour, see also the [<span class="s1">JStethoscope</span>] help file.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>no-op / not working</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><b>different behaviour</b></p>
+<p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p3"><b>extended functionality</b></p>
+<p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p3"><b>known issues / todo</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>tcp transport<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>doesn't work with scsynth in TCP transport</p>
+<p class="p5"><b></b><br></p>
+<p class="p6"><b>JSCFreqScope<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>frequency analysis view</b></p>
+<p class="p5"><b></b><br></p>
+<p class="p7"><b>Note: please use the abstraction layer GUI.freqScopeView if possible! (see [</b><b><span class="s1">GUI</span></b><b>])</b></p>
+<p class="p8"><b></b><br></p>
+<p class="p7"><b>JSCFreqScope.new(parent, bounds)</b></p>
+<p class="p8"><br></p>
+<p class="p7">JSCFreqScope shows the frequency spectrum of a specified audio bus.<span class="Apple-converted-space">  </span>The scope will</p>
+<p class="p7">remain active after a command-period.<span class="Apple-converted-space">  </span>To turn it off you must use the 'active' method.</p>
+<p class="p8"><br></p>
+<p class="p7">Public methods:</p>
+<p class="p8"><br></p>
+<p class="p7"><b>kill()</b></p>
+<p class="p7"><b>Very important.</b><span class="Apple-converted-space">  </span>This must be run when the parent window is closed to avoid problems.</p>
+<p class="p7">It also frees the buffers that the scope allocated and stops the FFT analysis synth.</p>
+<p class="p8"><br></p>
+<p class="p7"><b>active_(Boolean)</b></p>
+<p class="p7">Turns the scope on if true or off if false.<span class="Apple-converted-space">  </span>When the scope is turned on for the first time,</p>
+<p class="p7">it will send SynthDefs to the internal server, allocate the FFT and scope buffers, and</p>
+<p class="p7">start the FFT analysis synth.<span class="Apple-converted-space">  </span>After that, only the FFT synth will be turned on and off.</p>
+<p class="p8"><br></p>
+<p class="p7"><b>dbRange_(Integer)</b></p>
+<p class="p7">Determines the amplitude range.<span class="Apple-converted-space">  </span>This sets the lowest negative decibel reading.</p>
+<p class="p8"><br></p>
+<p class="p7"><b>freqMode_(Integer)</b></p>
+<p class="p7">Can be either 0 or 1.<span class="Apple-converted-space">  </span>0 displays frequencies on a linear scale and 1 displays frequencies</p>
+<p class="p7">on a logarithmic or equally spaced octave scale.</p>
+<p class="p8"><br></p>
+<p class="p7"><b>inBus_(Integer)</b></p>
+<p class="p7">Change the bus number to analyze.</p>
+<p class="p8"><br></p>
+<p class="p8"><br></p>
+<p class="p9">//// Start internal server</p>
+<p class="p9">//s = Server.internal.boot;</p>
+<p class="p9">// Start local server for SwingOSC!</p>
+<p class="p10">s = <span class="s3">Server</span>.local.boot;</p>
+<p class="p11"><br></p>
+<p class="p9">// Create analyzer in a window</p>
+<p class="p10">(</p>
+<p class="p10">w = <span class="s3">JSCWindow</span>(<span class="s4">"My Analyzer"</span>, <span class="s3">Rect</span>(0, 0, 511, 300)); <span class="s5">// width should be 511</span></p>
+<p class="p10">f = <span class="s3">JSCFreqScope</span>(w, w.view.bounds);</p>
+<p class="p9"><span class="s6">f.active_(</span><span class="s3">true</span><span class="s6">); <span class="Apple-tab-span">	</span></span>// turn it on the first time;</p>
+<p class="p11"><br></p>
+<p class="p10">w.onClose_({ f.kill });<span class="Apple-converted-space">  </span><span class="s5">// you must have this</span></p>
+<p class="p10">w.front;</p>
+<p class="p10">)</p>
+<p class="p11"><br></p>
+<p class="p10">{ <span class="s3">SinOsc</span>.ar([500, 1000], 0, 0.25) }.play(s);<span class="Apple-converted-space">  </span><span class="s5">// start two sine waves</span></p>
+<p class="p11"><br></p>
+<p class="p9"><span class="s6">f.freqMode_(1);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// change to log scale so we can see them</p>
+<p class="p9"><span class="s6">f.inBus_(1);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// look at bus 1</p>
+<p class="p9"><span class="s6">f.dbRange_(200);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// expand amplitude range</p>
+<p class="p9"><span class="s6">f.active_(</span><span class="s3">false</span><span class="s6">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// turn scope off (watch CPU)</p>
+<p class="p9"><span class="s6">f.active_(</span><span class="s3">true</span><span class="s6">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// turn it back on<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span></p>
+<p class="p12"><br></p>
+<p class="p13">Now press command-period.<span class="Apple-converted-space">  </span>The scope is still running.</p>
+<p class="p12"><br></p>
+<p class="p10">{ <span class="s3">SinOsc</span>.ar([500, 1000], 0, 0.25) }.play(s);<span class="Apple-converted-space">  </span><span class="s5">// start sines again</span></p>
+<p class="p12"><br></p>
+<p class="p13">Close window and scope is killed.</p>
+</body>
+</html>

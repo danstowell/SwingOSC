@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #52537f}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #52537f; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #52537f}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #52537f; min-height: 13.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; color: #902f20}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; color: #902f20; min-height: 15.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20; min-height: 12.0px}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #8f4a8a}
+span.s1 {text-decoration: underline}
+span.s2 {color: #062cb0}
+span.s3 {color: #606060}
+span.s4 {color: #45691f}
+span.s5 {color: #0024b5}
+span.s6 {color: #3b6c19}
+span.s7 {color: #000000}
+span.s8 {color: #902f20}
+span.s9 {color: #0019ba}
+span.s10 {color: #ad1d13}
+span.s11 {font: 10.0px Monaco; color: #606060}
+span.s12 {font: 10.0px Monaco; color: #0019ba}
+span.s13 {font: 10.0px Monaco; color: #062cb0}
+span.s14 {font: 9.0px Monaco; color: #000000}
+span.s15 {font: 12.0px Helvetica; color: #000000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>SwingOSC – Java-based cross-platform replacements for Cocoa GUI classes</b></p>
+<p class="p2"><br></p>
+<p class="p3">This class is meant as an emulation of SCSoundFileView. last mod: 02-jul-07 sciss</p>
+<p class="p4"><br></p>
+<p class="p3"><b>no-op / not working</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>block size<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>block sizes for decimation are ignored</p>
+<p class="p3"><span class="Apple-tab-span">	</span>path names<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(in the SoundFile object) cannot be relative. use .absolutePath instead.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>files must be locally accessible</p>
+<p class="p3"><span class="Apple-tab-span">	</span>lissajou<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lissajou style (style == 2) is not supported</p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><b>different behaviour</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>memory<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>waveform cache is read / written from harddisk (tmp folder) and not kept completely in RAM</p>
+<p class="p3"><span class="Apple-tab-span">	</span>resolution<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>waveform can be displayed at full sample resolution. when zoomed out, peak + RMS are shown</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p3"><b>extended functionality</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>action<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>additional arguments for type of action and parameters</p>
+<p class="p3"><span class="Apple-tab-span">	</span>cache<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>management of waveform cache</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p3"><b>known issues / todo</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>elasticResizeMode<span class="Apple-tab-span">	</span>not yet implemented (this is always _1_ now)</p>
+<p class="p3"><span class="Apple-tab-span">	</span>read<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>can only be asynchronous. put in a Routine to wait for completion</p>
+<p class="p3"><span class="Apple-tab-span">	</span>setData<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>can only be asynchronous. put in a Routine.</p>
+<p class="p3"><span class="Apple-tab-span">	</span>data<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(getter) not yet implemented</p>
+<p class="p3"><span class="Apple-tab-span">	</span>performance<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>graphics update could be more efficiently buffering during scrolling</p>
+<p class="p3"><span class="Apple-tab-span">	</span>metaAction<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>does not get evaluated on ctrl+mouseclick/drag</p>
+<p class="p3"><span class="Apple-tab-span">	</span>background<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>offscreen image paints transparent pixels black on Linux / Sun Java SE 1.6</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(therefore background_ has no effect, and selections are not visible ;-( )</p>
+<p class="p5"><br></p>
+<p class="p6"><b>JSCSoundFileView</b></p>
+<p class="p7"><br></p>
+<p class="p8"><b>superclass: JSCView</b></p>
+<p class="p9"><br></p>
+<p class="p8"><b>Note: please use the abstraction layer GUI.soundFileView if possible! (see [</b><b><span class="s1">GUI</span></b><b>])</b></p>
+<p class="p7"><br></p>
+<p class="p10">// NOTE : SLIGHTLY INCOMPLETE</p>
+<p class="p11"><br></p>
+<p class="p8">This gadget is a waveform display for sound files. It has facilities for zooming in time and amplitude, handles a timeline cursor and multiple selections.</p>
+<p class="p7"><br></p>
+<p class="p12">// in this example, click on the "..." button to select a soundfile from a dialog. use the slider on the right to zoom vertically and the range slider on the bottom to move and zoom horizontally.</p>
+<p class="p13">(</p>
+<p class="p13"><span class="Apple-tab-span">	</span>f = <span class="s2">nil</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>w = <span class="s2">JSCWindow</span>( <span class="s3">"Soundfile View"</span>, <span class="s2">Rect</span>( 300, 300, 770, 270 ));</p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="s2">JSCStaticText</span>( w, <span class="s2">Rect</span>( 20, 10, 40, 20 ))</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.align_( <span class="s4">\right</span> )</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_( <span class="s3">"Path:"</span> );</p>
+<p class="p13"><span class="Apple-tab-span">	</span>x = <span class="s2">JSCDragSink</span>( w, <span class="s2">Rect</span>( 70, 10, 650, 20 ))</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.resize_( 2 )</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({ <span class="s2">arg</span> b;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if( f.notNil, { f.close; f = <span class="s2">nil</span>; });</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>f = <span class="s2">SoundFile</span>.new;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>f.openRead( b.object );</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.useID( <span class="s6">\swing</span>, { f.inspect });</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.soundfile <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= f;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.gridOn<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s2">false</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y.lo<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= 0;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y.hi<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= 1;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.readWithTask( 0, f.numFrames, doneAction: { <span class="s2">arg</span> b;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.gridResolution = (b.soundfile.numFrames / (b.soundfile.sampleRate * 16)).max( 0.1 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.gridOn<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s2">true</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//<span class="Apple-tab-span">	</span>a.read( 0, f.numFrames );<span class="Apple-tab-span">	</span>// warning...</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="s2">JSCButton</span>( w, <span class="s2">Rect</span>( 730, 10, 20, 20 ))</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.resize_( 3 )</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.states_([[ <span class="s3">"..."</span> ]])</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({ <span class="s2">arg</span> b;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SwingDialog</span>.getPaths({ <span class="s2">arg</span> paths;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x.object = paths.first;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x.doAction;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, maxSize: 1 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span>a = <span class="s2">JSCSoundFileView</span>( w, <span class="s2">Rect</span>( 20, 40, 700, 180 ))</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.resize_( 5 );</p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.elasticMode <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= 1;</p>
+<p class="p7"><br></p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.timeCursorOn<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s2">true</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.timeCursorColor<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s2">Color</span>.red;</p>
+<p class="p12">//<span class="Apple-tab-span">	</span>a.timeCursorPosition<span class="Apple-tab-span">	</span>= 2500;</p>
+<p class="p7"><br></p>
+<p class="p13"><span class="Apple-tab-span">	</span>y = <span class="s2">JSCRangeSlider</span>( w, <span class="s2">Rect</span>( 20, 230, 700, 20 ))</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.resize_( 8 )</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({ <span class="s2">arg</span> b;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.zoomToFrac( b.range.max( a.bounds.width / a.numFrames.max( 1 )));</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if( b.range &lt; 1, { a.scrollTo( b.lo / (1 - b.range) )}); <span class="s8">// stupid scrollTo definition</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="s2">JSCSlider</span>( w, <span class="s2">Rect</span>( 730, 40, 20, 180 ))</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.resize_( 6 )</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.value_( 0.5 )</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({ <span class="s2">arg</span> b;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.yZoom = b.value.linexp( 0, 1, 0.02, 50.0 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7"><br></p>
+<p class="p13"><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p13">)</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Setting Waveform Data</b></p>
+<p class="p9"><br></p>
+<p class="p12">//<span class="Apple-tab-span">	</span>x.object = "sounds/a11wlk01.wav".absolutePath; <span class="Apple-converted-space">  </span>// ! absolutePath</p>
+<p class="p12">//<span class="Apple-tab-span">	</span>x.doAction;</p>
+<p class="p14"><br></p>
+<p class="p12">// spills out a warning as SwingOSC necessarily reads asynchronous</p>
+<p class="p13">z = <span class="s2">SoundFile</span>.openRead( <span class="s3">"sounds/a11wlk01.wav"</span>.absolutePath );</p>
+<p class="p12"><span class="s7">a.readFile( z, 0, z.numFrames );<span class="Apple-converted-space">  </span></span>// &lt;soundFile&gt;, &lt;startFrame&gt;, &lt;numFrames&gt;, &lt;block&gt;, &lt;close&gt;</p>
+<p class="p12"><span class="s7">z.isOpen;<span class="Apple-tab-span">	</span></span>// --&gt; readFile closes the sound file by default</p>
+<p class="p14"><br></p>
+<p class="p12">// reading again from the previously used sound file</p>
+<p class="p12"><span class="s7">a.read( 11025, 22050 );<span class="Apple-tab-span">	</span></span>// &lt;startFrame&gt;, &lt;numFrames&gt;, &lt;block&gt;, &lt;close&gt;</p>
+<p class="p7"><br></p>
+<p class="p12">// asynchronous read</p>
+<p class="p13">z = <span class="s2">SoundFile</span>.openRead( <span class="s3">"sounds/SinedPink.aiff"</span>.absolutePath );</p>
+<p class="p12">// &lt;soundFile&gt;, &lt;startFrame&gt;, &lt;numFrames&gt;, &lt;block&gt;, &lt;doneAction&gt;</p>
+<p class="p13">a.readFileWithTask( z, 0, -1, doneAction: { <span class="s3">"Yippie!"</span>.postln }); <span class="s8">// -1 is short for "all frames"</span></p>
+<p class="p9"><br></p>
+<p class="p12">// reading again asynchronously from the previously used sound file</p>
+<p class="p13">a.readWithTask( 500, -1, doneAction: { <span class="s3">"Once more!"</span>.postln }); <span class="s8">// &lt;startFrame&gt;, &lt;numFrames&gt;, &lt;block&gt;, &lt;doneAction&gt;</span></p>
+<p class="p9"><br></p>
+<p class="p12">// passing in custom data (this doesn't work with SCSoundFileView - why?)</p>
+<p class="p13">a.setData( <span class="s2">Signal</span>.chebyFill( 44100, [ 0.3, -0.8, 1.1, -0.95, -0.4 ]));</p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p8"><b>Style Customization</b></p>
+<p class="p7"><br></p>
+<p class="p12">// waveform style: 0 = normal, 1 = all channels overlayed</p>
+<p class="p12">// (you have to load a stereo or multichannel file to see the difference!)</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.style = 1;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.style = 0;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.drawsWaveForm = <span class="s2">false</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.drawsWaveForm = <span class="s2">true</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.waveColors = [ <span class="s2">Color</span>.white ]; <span class="s8">// for channel 1 (mono)</span></p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span>a.waveColors = [ </span><span class="s2">Color</span><span class="s7">.red, </span><span class="s2">Color</span><span class="s7">.green ];<span class="Apple-tab-span">	</span></span>// for channels 1 and 2 (stereo) etc.</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.background = <span class="s2">Color</span>.white;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.background = <span class="s2">Color</span>.black;</p>
+<p class="p7"><br></p>
+<p class="p12">// turn on/off time grid and set its resolution</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.gridOn = <span class="s2">false</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.gridOn = <span class="s2">true</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.gridResolution = 0.2;<span class="Apple-tab-span">	</span><span class="s8">// every 200 milliseconds</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.gridColor = <span class="s2">Color</span>.green( 0.5 );</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Cursor</b></p>
+<p class="p9"><br></p>
+<p class="p7"><br></p>
+<p class="p12">// place timeline cursor</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.timeCursorPosition = 66666;<span class="Apple-tab-span">	</span><span class="s8">// in sample frames</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.timeCursorOn = <span class="s2">false</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.timeCursorOn = <span class="s2">true</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.timeCursorColor = <span class="s2">Color</span>( 0.5, 0.0, 1.0 );</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Selections</b></p>
+<p class="p7"><br></p>
+<p class="p12">// make selections</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelectionStart( 0, 0 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelectionSize( 0, 44100 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelectionStart( 1, 88200 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelectionSize( 1, 44100 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelectionStart( 63, 66150 );<span class="Apple-tab-span">	</span><span class="s8">// max. selection index is 64</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelectionSize( 63, 11025 );</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelectionColor( 0, Color.red( alpha: 0.5 ));</p>
+<p class="p7"><br></p>
+<p class="p12">// selections from the user</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span>a.currentSelection = 1;<span class="Apple-tab-span">	</span></span>// index of the selection which the user edits with the mouse; index is 0 ... 63</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span>a.setEditableSelectionStart( 1, </span><span class="s2">false )</span><span class="s7">;<span class="Apple-tab-span">	</span></span>// now only the selection #1 stop point may be edited</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setEditableSelectionStart( 1, <span class="s2">true</span> );</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span>a.setEditableSelectionSize( 1, </span><span class="s2">false )</span><span class="s7">;<span class="Apple-tab-span">	</span></span>// now the selection #1 size may not be altered</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setEditableSelectionSize( 1, <span class="s2">true )</span>;</p>
+<p class="p7"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span>Note: mouse modifiers for making selections:</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>- Ctrl+Drag <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>: move cursor (but don't touch selection)</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>- Shift+Drag<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>: extend selection (but don't touch cursor)</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>- Meta+Click<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>: select all</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>- Ctrl+Shift+Drag<span class="Apple-tab-span">	</span>: move selection (but don't touch cursor) <span class="s8">// XXX this modifiers should be changed?</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8">To track user activity, you can assign a Function to 'action':</p>
+<p class="p7"><br></p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span></span>// what == \cursor or \selection</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span></span>// for what == \cursor -&gt; params = [ &lt;newPosition&gt; ]</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span></span>// for what == \selection -&gt; params = [ &lt;index&gt;, &lt;newStart&gt;, &lt;newSize&gt; ]</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.action = { <span class="s2">arg</span> butt, what ... params; ([ what ] ++ params).postln };</p>
+<p class="p9"><br></p>
+<p class="p8">(note that the cocoa variant SCSoundFileView does not provide the additional arguments!!)</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Zooming</b></p>
+<p class="p7"><br></p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.zoomAllOut;</p>
+<p class="p13"><span class="Apple-tab-span">	</span>fork { 200.do({ <span class="s2">arg</span> i; a.zoomToFrac( ((i+1)/200).pow( 4 )); 0.05.wait; }); };</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span>a.zoom( 0.5 );<span class="Apple-tab-span">	</span></span>// relative (zoom in factor 2)</p>
+<p class="p12"><span class="s7"><span class="Apple-tab-span">	</span>a.zoom( 2.0 );<span class="Apple-tab-span">	</span></span>// relative (zoom out factor 2)</p>
+<p class="p13"><span class="Apple-tab-span">	</span>a.setSelection( 4, [ 20000, 40000 ]); a.zoomSelection( 4 );<span class="Apple-converted-space">  </span><span class="s8">// zoom to one selection</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span>fork { 200.do({ <span class="s2">arg</span> i; a.yZoom = ((i+1)/100); 0.05.wait; }); };<span class="Apple-converted-space">  </span><span class="s8">// y-zoom</span></p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p12">// zooming</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Managing Waveform Caching (SwingOSC only)</b></p>
+<p class="p9"><br></p>
+<p class="p8">In order to speed up waveform calculation, cache management can be globally enabled and configured:</p>
+<p class="p9"><br></p>
+<p class="p15"><span class="s9">JSCSoundFileView</span><span class="s7">.cacheFolder = </span><span class="s3">"/tmp/swingOSC"</span><span class="s7">;<span class="Apple-converted-space">  </span></span>// where waveform cache is to be stored</p>
+<p class="p15"><span class="s9">JSCSoundFileView</span><span class="s7">.cacheCapacity = 30; </span>// maximum total size of cache files in megabytes</p>
+<p class="p16">JSCSoundFileView<span class="s7">.cacheActive = </span>true<span class="s7">; </span><span class="s10">// to activate cache</span></p>
+<p class="p9"><br></p>
+<p class="p8">Note: unless you set your folder to a system temporary folder (like <span class="s11">"/tmp"</span>), the cache will not be purged after rebooting the computer. If you wish to erase your cache, set the capacity to <span class="s12">0</span> after setting the folder.</p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p8"><b>Change Log</b></p>
+<p class="p9"><br></p>
+<p class="p8">v0.45</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s13">setSelectionSpan</span> is removed. Instead use <span class="s13">setSelection</span> which is compatible with cocoa:</p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p17"><span class="s14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s15">old:</span><span class="s14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>&lt;myView&gt;<span class="s7">.setSelectionSpan( </span>&lt;(Integer) index&gt;<span class="s7">, </span>&lt;(Integer) startFrame&gt;<span class="s7">, </span>&lt;(Integer) numFrames&gt;<span class="s7"> )</span></p>
+<p class="p17"><span class="s14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s15">new:</span><span class="s14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>&lt;myView&gt;<span class="s7">.setSelection( </span>&lt;(Integer) index&gt;<span class="s7">, [ </span>&lt;(Integer) startFrame&gt;<span class="s7">, </span>&lt;(Integer) numFrames&gt;<span class="s7"> ])</span></p>
+</body>
+</html>

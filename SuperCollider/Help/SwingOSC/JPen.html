@@ -1,0 +1,1379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #564d85}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #564d85; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85; min-height: 13.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 56.0px; text-indent: -56.0px; font: 12.0px Helvetica}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p16 {margin: 0.0px 0.0px 0.0px 56.0px; text-indent: -56.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ff37b1}
+p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000; min-height: 14.0px}
+p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Trebuchet MS}
+p.p20 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Trebuchet MS; min-height: 14.0px}
+p.p21 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Trebuchet MS; color: #bf0000}
+p.p22 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Trebuchet MS; color: #0000bf}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {text-decoration: underline}
+span.s3 {color: #0000bf}
+span.s4 {color: #000000}
+span.s5 {color: #bf0000}
+span.s6 {color: #007300}
+span.s7 {font: 9.0px Monaco}
+span.s8 {color: #606060}
+span.s9 {font: 10.0px Monaco; color: #0000bf}
+span.s10 {font: 22.0px Monaco; color: #bf0000}
+span.s11 {font: 12.0px Helvetica; color: #000000}
+span.s12 {font: 12.0px Helvetica}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>SwingOSC – Java-based cross-platform replacements for Cocoa GUI classes</b></p>
+<p class="p2"><br></p>
+<p class="p3">This class is meant as an emulation of Pen. last mod: 04-feb-07 sciss</p>
+<p class="p4"><br></p>
+<p class="p3"><b>no-op / not working</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>String -&gt; *bounds<span class="Apple-tab-span">	</span>calls a cocoa primitive. there is no replacement in SwingOSC due to the</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fact that this would need to be implemented asynchronously</p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><b>different behaviour</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span></b>strokeOval<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>uses stroke width (as expected); this is a bug in cocoa</p>
+<p class="p3"><span class="Apple-tab-span">	</span>stroke<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>swing's stroke is a tiny bit thicker than cocoa's ; with antialiasing off the stroke is about 1px thicker</p>
+<p class="p3"><span class="Apple-tab-span">	</span>color<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.set does NOT work (it calls a cocoa primitive); instead we use JPen.color_ to</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set the color (similiarily JPen.strokeColor_ and JPen.fillColor_).</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Compatibility methods (Pen.strokeColor_ etc.) are provided.</p>
+<p class="p3"><span class="Apple-tab-span">	</span>strings<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>• String.drawAtPoint does NOT work ; instead we use JPen.stringAtPoint to draw a string</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(similiarily JPen.stringInRect, JPen.stringCenteredIn etc.). JPen.font_ to set font.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Compatibility methods (Pen.stringAtPoint, Pen.font_ etc.) are provided.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>• stringCenteredIn, stringLeftJustIn, stringRightJustIn break lines according to the bounding</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>box instead of actually calling stringAtPoint, which is obviously more logic (otherwise you</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wouldn't need a rect argument. they are still compatible with cocoa Pen if the rect width</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>is greater than the text bounds width)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>• the string drawing commands do not overwrite the strokeColor setting (bug in cocoa)</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p3"><b>extended functionality</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>curveTo, quadCurveTo, addRect have been implemented</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p3"><b>known issues / todo</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span></b>speed<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>especially for large bodies of drawing functions this can be</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>significantly slower than the cocoa class</p>
+<p class="p3"><span class="Apple-tab-span">	</span>string location<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the calculation in stringAtPoint is a bit unclear; adding ascent</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plus descent results in y-position similiar to cocoa, albeit a bit illogic</p>
+<p class="p3"><span class="Apple-tab-span">	</span>font size<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>font sizes and line heights (when using stringInRect) are a little</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>bit smaller than in cocoa</p>
+<p class="p5"><b></b><br></p>
+<p class="p6"><span class="s1"><b>JPen<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>draw on an JSCWindow or JSCUserView</b></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Note: please use the abstraction layer GUI.pen if possible! (see [</b><b><span class="s2">GUI</span></b><b>])</b></p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b>superclass: Object</b></p>
+<p class="p7"><br></p>
+<p class="p8">A class which allows you to draw on a <b>[</b><b><span class="s2">JSCWindow</span></b><b>]</b> or a <b>[</b><b><span class="s2">JSCUserView</span></b><b>]</b>. It has no instance methods.</p>
+<p class="p7"><br></p>
+<p class="p8">The following methods must be called within an JSCWindow-drawHook or a JSCUserView-drawFunc function, and will only be visible once the window or the view is refreshed. Each call to JSCWindow-refresh or JSCUserView-refresh will 'overwrite' all previous drawing by executing the currently defined function.</p>
+<p class="p7"><br></p>
+<p class="p8">See also: <b>[</b><b><span class="s2">JSCWindow</span></b><b>]</b>, <b>[</b><b><span class="s2">JSCUserView</span></b><b>]</b>, <b>[</b><b><span class="s2">Color</span></b><b>]</b>, and <b>[</b><b><span class="s2">String</span></b><b>]</b></p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b>Note: </b>as of v0.42, the string painting methods do note use font and colour arguments any more. Instead you set the font using JPen.font_ and the colour using JPen.fillColor_ !</p>
+<p class="p7"><b></b><br></p>
+<p class="p6"><b>Drawing Methods</b></p>
+<p class="p7"><b></b><br></p>
+<p class="p8">The following methods define paths. You will need to call <b>*stroke</b> or <b>*fill</b> to actually draw them.</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*moveTo (point)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Move the Pen to <b>point</b>. <b>point</b> is an instance of <b>[</b><b><span class="s2">Point</span></b><b>]</b>. See <b>*stroke</b> for an example.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*lineTo (point)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Draw a line (define a path) from the current position to <b>point</b>. <b>point</b> is an instance of <b>[</b><b><span class="s2">Point</span></b><b>]</b>.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>See <b>*stroke</b> for an example.</p>
+<p class="p7"><span class="Apple-converted-space"> </span></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*line (p1, p2)</b></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Draw a line (define a path) from p1 to p2. Current position will be p2. <b>p1</b> and <b>p2</b> are instances of <b>[</b><b><span class="s2">Point</span></b><b>]</b>.</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_( <span class="s3">Color</span>.white );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> x1, y1, x2, y2, x1a, y1a, x2a, y2a, txr, tyr, rr;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( 200, 200 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale( 0.5, 0.5 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.5;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1a = 15.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2a = 15.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1a = 15.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2a = 15.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>txr = 2.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>tyr = 2.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rr<span class="Apple-converted-space">  </span>= 0.05pi.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo( 175 @ 0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>200.do { <span class="s3">arg</span> i;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( txr, tyr );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate( rr );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.line( x1 @ y1, x2 @ y2 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1 = x1 + x1a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2 = x2 + x2a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1 = y1 + y1a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2 = y2 + y2a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.75.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*curveTo(point, cpoint1, cpoint2)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>draws an interpolated curve from the current position to <b>point</b>.<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>cpoint1, cpoint2 </b>are help-points determining the curves curvature.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(Cubic Spline)</p>
+<p class="p7"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_( <span class="s3">Color</span>.white );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>var x1, y1, x2, y2, x1a, y1a, x2a, y2a, txr, tyr, rr;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( 200, 200 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale( 0.5, 0.5 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.5;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1a = 25.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2a = 25.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1a = 25.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2a = 25.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>txr = 4.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>tyr = 4.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rr<span class="Apple-converted-space">  </span>= 0.05pi.bilinrand;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.moveTo( 175 @ 0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>100.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( txr, tyr );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate( rr );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.curveTo( 175 @ 0, x1 @ y1, x2 @ y2 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1 = x1 + x1a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2 = x2 + x2a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1 = y1 + y1a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2 = y2 + y2a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.75.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*quadCurveTo(point, cpoint1)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>draws an interpolated curve from the current position to <b>point</b>.<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>cpoint1 </b>is a help-point determining the curves curvature.</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>var ang1a, ang2a, ang1s, ang2s, rad1a, rad2a, trans;</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang1a<span class="Apple-tab-span">	</span>= <span class="s3">Array</span>.fill( 4, 0.0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang2a<span class="Apple-tab-span">	</span>= <span class="s3">Array</span>.fill( 4, 0.0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang1s<span class="Apple-tab-span">	</span>= <span class="s3">Array</span>.fill( 4, 0.0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang2s<span class="Apple-tab-span">	</span>= <span class="s3">Array</span>.fill( 4, 0.0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad1a<span class="Apple-tab-span">	</span>= <span class="s3">Array</span>.fill( 4, 0.0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad2a<span class="Apple-tab-span">	</span>= <span class="s3">Array</span>.fill( 4, 0.0 );</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>trans<span class="Apple-tab-span">	</span>= [ 225 @ 225, 350 @ 0, 0 @ 350, -350 @ 0 ];</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_( <span class="s3">Color</span>.white );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> ang1, ang2, rad1, rad2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> di = 1.0 - d;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.5;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale( 0.5, 0.5 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>4.do({ <span class="s3">arg</span> i;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( trans[ i ].x, trans[ i ].y );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang1s[ i ]<span class="Apple-tab-span">	</span>= ang1s[ i ] * d + (pi.bilinrand * di);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang2s[ i ]<span class="Apple-tab-span">	</span>= ang2s[ i ] * d + (pi.bilinrand * di);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang1<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= ang1s[ i ];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= ang2s[ i ];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad1<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= 150;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= 75;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang1a[ i ]<span class="Apple-tab-span">	</span>= ang1a[ i ] * d + ((pi/16).bilinrand * di);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang2a[ i ]<span class="Apple-tab-span">	</span>= ang2a[ i ] * d + ((pi/16).bilinrand * di);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad1a[ i ]<span class="Apple-tab-span">	</span>= (rad1a[ i ] * d + (20.0.bilinrand * di)).clip( -20.0, 20.0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad2a[ i ]<span class="Apple-tab-span">	</span>= (rad2a[ i ] * d + (10.0.bilinrand * di)).clip( -10.0, 10.0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>100.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo( 0 @ 0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.quadCurveTo( (ang1.cos * rad1) @ (ang1.sin * rad1),</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    </span>(ang2.cos * rad2) @ (ang2.sin * rad2) );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang1<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= ang1 + ang1a[ i ];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ang2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= ang2 + ang2a[ i ];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad1<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= (rad1 + rad1a[ i ]).clip( 0, 150 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rad2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= (rad2 + rad2a[ i ]).clip( 0, 150 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>d = 0.0;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>d = 0.97; </span>// animation decay</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.1.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>d = 0.8;<span class="Apple-converted-space">  <span class="Apple-tab-span">	</span></span><span class="s5">// faster</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>d = 0.99;<span class="Apple-converted-space">  <span class="Apple-tab-span">	</span></span><span class="s5">// really slow</span></p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*addArc(center, radius, startAngle, arcAngle)</b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Draw an arc around the <b>[Point]</b> <b>center</b>, at <b>radius</b> number of pixels. <b>startAngle</b> and <b>arcAngle</b> refer to the starting angle and the extent of the arc, and are in radians [0..2pi].</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(100, 100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>10.do{</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.red(rrand(0.0, 1), rrand(0.0, 0.5)).set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.red( rrand( 0.0, 1 ), rrand( 0.0, 0.5 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addArc((100.rand)@(100.rand), rrand(10, 100), 2pi.rand, pi);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.perform([<span class="s6">\stroke</span>, <span class="s6">\fill</span>].choose);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.1.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*addWedge(center, radius, startAngle, arcAngle)</b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Draw a wedge around the <b>[Point]</b> <b>center</b>, at <b>radius</b> number of pixels. <b>startAngle</b> and <b>arcAngle</b> refer to the starting angle and the extent of the arc, and are in radians [0..2pi].</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(100, 100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>10.do{</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.blue(rrand(0.0, 1), rrand(0.0, 0.5)).set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.blue( rrand( 0.0, 1 ), rrand( 0.0, 0.5 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addWedge((100.rand)@(100.rand), rrand(10, 100), 2pi.rand, 2pi.rand);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.perform([<span class="s6">\stroke</span>, <span class="s6">\fill</span>].choose);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.1.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*addAnnularWedge (center, innerRadius, outerRadius, startAngle, arcAngle)</b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Draw an annular wedge around the <b>[Point]</b> <b>center</b>, from <b>innerRadius</b> to <b>outerRadius</b> in pixels. <b>startAngle</b> and <b>arcAngle</b> refer to the starting angle and the extent of the arc, and are in radians [0..2pi].</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(100, 100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>1000.do{</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.green(rrand(0.0, 1), rrand(0.0, 0.5)).set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.green( rrand( 0.0, 1 ), rrand( 0.0, 0.5 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addAnnularWedge(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(100.rand)@(100.rand),<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rrand(10, 50),<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rrand(51, 100),<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>2pi.rand,<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>2pi.rand</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.perform([<span class="s6">\stroke</span>, <span class="s6">\fill</span>].choose);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 1.0.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*addRect(rect)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>adds a rectangle to the drawing;<span class="Apple-converted-space"> </span></p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_( <span class="s3">Color</span>.white );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> x1, y1, x2, y2, x1a, y1a, x2a, y2a, txr, tyr, x1o, y1o, x2o, y2o, size;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( 200, 200 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale( 0.25, 0.25 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.5;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2 = 175.0.bilinrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1a = 15.0.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2a = 15.0.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1a = 15.0.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2a = 15.0.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>txr = -15.0.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>tyr = -15.0.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo( 175 @ 0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>200.do { <span class="s3">arg</span> i;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( txr, tyr );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1o<span class="Apple-tab-span">	</span>= x1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1o<span class="Apple-tab-span">	</span>= y1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2o<span class="Apple-tab-span">	</span>= x2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2o<span class="Apple-tab-span">	</span>= y2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x1<span class="Apple-tab-span">	</span>= x1 + x1a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x2 <span class="Apple-tab-span">	</span>= x2 + x2a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y1 <span class="Apple-tab-span">	</span>= y1 + y1a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y2 <span class="Apple-tab-span">	</span>= y2 + y2a;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>size<span class="Apple-tab-span">	</span>= max( (x2 - x1).abs, (y2 - y1).abs );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addRect( Rect( x1, y1, size, size ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.1.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p8"><span class="s7"><span class="Apple-tab-span">	</span></span><b>*stroke</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>outline the previous defined path.<span class="Apple-converted-space"> </span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.red;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(200@100);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(250@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(300@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(200@250);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(150@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(200@100);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="s7"><span class="Apple-tab-span">	</span></span><b>*fill</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fill the previous defined path.<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.red;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(200@100);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(250@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(300@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(200@250);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(150@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(200@100);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fill</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8">The following methods do NOT require separate calls to <b>*stroke</b> or <b>*fill</b>.</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*strokeRect(rect)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Strokes a rectangle into the window. <b>rect</b> is an instance of <b>[</b><b><span class="s2">Rect</span></b><b>]</b>.</p>
+<p class="p7"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">(</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>( <span class="s8">"strokeRect"</span>, <span class="s3">Rect</span>( 128, 64, 360, 360 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>r = <span class="s3">Rect</span>( 100, 100, 160, 80 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.black.alpha_( 0.8 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect( r );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>Notice how the coordinates appear to lie <i>between</i> two pixels not in a pixel's center, so</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the stroke appears blurred. You can avoid this behaviour by shifting the coordinates by 0.5, 0.5:</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">(</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>( <span class="s8">"strokeRect"</span>, <span class="s3">Rect</span>( 128, 64, 360, 360 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate( 0.5, 0.5 );<span class="Apple-converted-space">  </span><span class="s5">// !</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>r = <span class="s3">Rect</span>( 100, 100, 160, 80 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.black.alpha_( 0.8 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect( r );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*fillRect(rect)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Draws a filled rectangle into the window. <b>rect</b> is an instance of <b>[</b><b><span class="s2">Rect</span></b><b>]</b>.</p>
+<p class="p7"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">(</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>( <span class="s8">"fillRect"</span>, resizable: <span class="s3">false</span> );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background = Color.white;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>200.do({</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.black.alpha_( 1.0.rand.pow( 6 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillRect( <span class="s3">Rect</span>( 200.0.rand, 200.0.rand, 200.0.rand, 200.0.rand ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.2.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*strokeOval(rect)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Strokes an oval into the window. <b>rect</b> is an instance of <b>[</b><b><span class="s2">Rect</span></b><b>]</b>.</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">(</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>(<span class="s8">"strokeOval"</span>, <span class="s3">Rect</span>(128, 64, 360, 360));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> h, v, r;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v = h = 300.0;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>r = <span class="s3">Rect</span>(100, 100, 160, 80);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.black.alpha_( 0.8 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeOval(r);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*fillOval(rect)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Draws a filled oval into the window. <b>rect</b> is an instance of <b>[</b><b><span class="s2">Rect</span></b><b>]</b>.</p>
+<p class="p9"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">(</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>( <span class="s8">"fillOval"</span>, resizable: <span class="s3">false</span> );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background = <span class="s3">Color</span>.black;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>200.do({</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.white.alpha_( 1.0.rand.pow( 6 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillOval( <span class="s3">Rect</span>( 200.0.rand, 200.0.rand, 200.0.rand, 200.0.rand ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.2.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p9"><br></p>
+<p class="p6"><b>String Drawing Methods</b></p>
+<p class="p13"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*stringAtPoint<span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Draws a string left aligned from a given point. There are no line breaks,</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>and the text is vertically aligned such that the given y position referes to</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the top of the text.</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">(</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span> (<span class="s8">"stringAtPoint"</span>, <span class="s3">Rect</span>( 128, 64, 360, 360 ), <span class="s3">false</span> );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> pt;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.font = <span class="s3">JFont</span>( <span class="s8">"Monospaced"</span>, 16 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeColor = <span class="s3">Color</span>.red;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>12.do({</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>pt = <span class="s3">Point</span>( rrand( 10, 280 ), rrand( 10, 340 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stringAtPoint( <span class="s8">"Evidence"</span>, pt );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo( pt.translate( -8 @<span class="Apple-converted-space">  </span>0 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo( pt.translate( -2 @<span class="Apple-converted-space">  </span>0 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo( pt.translate(<span class="Apple-converted-space">  </span>0 @ (-8) ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo( pt.translate(<span class="Apple-converted-space">  </span>0 @ (-2) ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo( pt.translate(<span class="Apple-converted-space">  </span>2 @ 0 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo( pt.translate(<span class="Apple-converted-space">  </span>8 @ 0 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo( pt.translate(<span class="Apple-converted-space">  </span>0 @ 2 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo( pt.translate(<span class="Apple-converted-space">  </span>0 @ 8 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p14"><span class="s4"><b><span class="Apple-tab-span">	</span>*stringInRect<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>// draw string as paragraph in a box with left/top aligment</p>
+<p class="p14"><span class="s4"><b><span class="Apple-tab-span">	</span>*stringCenteredIn<span class="Apple-tab-span">	</span></b></span>// draw string as paragraph in a box with x-centered/y-centered aligment</p>
+<p class="p14"><span class="s4"><b><span class="Apple-tab-span">	</span>*stringLeftJustIn<span class="Apple-tab-span">	</span></b></span>// draw string as paragraph in a box with left/y-centered aligment</p>
+<p class="p14"><span class="s4"><b><span class="Apple-tab-span">	</span>*stringRightJustIn<span class="Apple-tab-span">	</span></b></span>// draw string as paragraph in a box with right/y-centered aligment</p>
+<p class="p7"><b></b><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>( <span class="s8">"String in Rect"</span>, <span class="s3">Rect</span>( 128, 64, 300, 560 ), <span class="s3">false</span> ).front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> rect, txt;</p>
+<p class="p9"><br></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// umlaute and accents don't work at the moment!</p>
+<p class="p15"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>txt<span class="Apple-tab-span">	</span>= </span>"Il arrive que la realite soit trop complexe pour la transmission orale."<span class="s4">;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.font = <span class="s3">JFont</span>( <span class="s8">"SansSerif"</span>, 14 );</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeColor = <span class="s3">Color</span>.blue;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rect<span class="Apple-tab-span">	</span>= <span class="s3">Rect</span>( 50, 50, 200, 100 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stringInRect( txt, rect );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect( rect );</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rect = rect.moveBy( 0, rect.height + 20 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stringLeftJustIn( txt, rect );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect( rect );</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rect = rect.moveBy( 0, rect.height + 20 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stringCenteredIn( txt, rect );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect( rect );</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rect = rect.moveBy( 0, rect.height + 20 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stringRightJustIn( txt, rect );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect( rect );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p13"><b></b><br></p>
+<p class="p6"><b>Graphics State Methods</b></p>
+<p class="p9"><br></p>
+<p class="p8">The following commands transform the graphics state, i.e. they effect all subsequent drawing commands. These transformations are cumulative, i.e. each command applies to the previous graphics state, <i>not</i> the original one.</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*translate(x=0, y=0)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>translate the coordinate system to have its origin moved by <b>x</b>,<b>y</b></p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.blue;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(200,100);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// 0@0 is now 200@100</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@150);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// cumulative translations<span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(Color.clear); // note: not a good idea with swing</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.black;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// draw 35 lines</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>35.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(0@0);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(50@350);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// shift 10 to the right every time</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(10, 0);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*scale (x=0, y=0)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Scales subsequent drawing. <b>x</b> and <b>y</b> are scaling factors (i.e. 1 is normal, 2 is double size, etc.).</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.green;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(200,100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale(0.5, 2);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// you have to set a starting point...</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@150);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*skew (x=0, y=0)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Skews subsequent drawing. <b>x</b> and <b>y</b> are skewing factors (i.e. 1 is normal).</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.green( 0.5, 0.8 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(200,100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.skew(0.5, 0.2);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// you have to set a starting point...</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@150);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fill</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*rotate (angle=0, x=0, y=0)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Rotates subsequent drawing around the <b>Point</b> x@y by the amount <b>angle </b>in radians [0..2pi].</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>c = 0;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(220, 200);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>10.do({</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(0,10);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color for all "real" drawing</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.hsv( c.fold( 0, 1 ), 1, 1, 0.5 );</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// you have to set a starting point...</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(0@0);</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@150);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@0);</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fill;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate(0.2pi);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>c = c + 0.1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>c = c - 0.95; </span>// for subsequent animation</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> run = <span class="s3">true</span>;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// closing window stops animation</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.05.wait; }}.fork( AppClock );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*matrix_ (array)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>transforms <i>(re-sets)</i> coordinate system, using the coefficients of an affine-transform matrix.</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array = [a, b, c, d, x, y]</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a<span class="Apple-tab-span">	</span>zoomX (1.0 = no zooming, 0.5 = zoom out, 2.0 = zoom in)</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b<span class="Apple-tab-span">	</span>shearingY (0.0 = no shearing)</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>c<span class="Apple-tab-span">	</span>shearingX</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>d<span class="Apple-tab-span">	</span>zoomY</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x<span class="Apple-tab-span">	</span>translateX (0.0 = no translation. positive values = move right, negative values = move left)</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y<span class="Apple-tab-span">	</span>translateY (0.0 = no translation. positive values = move down, negative values = move up)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Successive calls of <span class="s9">*matrix</span> concatenate with the previous matrix. Thus, if you</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>need to undo the transforms, you should make use of the <span class="s9">*use</span> method (see above).</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> controlWindow, w;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r, a, b, c, d, matrix = [1, 0, 0, 1, 10, 10];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> sliders, spex, name;</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// create a controller-window<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>controlWindow = <span class="s3">JSCWindow</span>(<span class="s8">"matrix controls"</span>, <span class="s3">Rect</span>(400,200,330,160), resizable: <span class="s3">false</span> );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>controlWindow.front;</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// determine the rectangle to be drawn</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>r = <span class="s3">Rect</span>.fromPoints(a = 0 @ 0, c = 180 @ 180);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b = r.leftBottom;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>d = r.rightTop;</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// the drawHook</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.red.set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.red;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.matrix = matrix;<span class="Apple-tab-span">	</span><span class="s5">// </span><span class="s10">!</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.width = 5;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.strokeRect(r);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.strokeOval(r);</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.blue.set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.blue;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.width = 0.1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.line(a, c);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.line(b, d);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.stroke;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">   </span></p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>"A".drawAtPoint(a - 6, Font("Helvetica-Bold", 12));</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>"B".drawAtPoint(b - 6, Font("Helvetica-Bold", 12));</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>"C".drawAtPoint(c - (0@6), Font("Helvetica-Bold", 12));</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>"D".drawAtPoint(d - (0@6), Font("Helvetica-Bold", 12));</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">   </span></p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>"a matrix test".drawInRect(r.moveBy(50,50), Font("Helvetica", 10));</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.font = <span class="s3">JFont</span>( <span class="s8">"Helvetica-Bold"</span>, 12 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillColor = <span class="s3">Color</span>.black;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.stringAtPoint( <span class="s8">"A"</span>, a - 6 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.stringAtPoint( <span class="s8">"B"</span>, b - 6 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.stringAtPoint( <span class="s8">"C"</span>, c - (0 @ 6) );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.stringAtPoint( <span class="s8">"D"</span>, d - (0 @ 6) );</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">   </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.font = <span class="s3">JFont</span>( <span class="s8">"Helvetica-Bold"</span>, 10 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.stringInRect( <span class="s8">"a matrix test"</span>, r.moveBy( 50, 50 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>controlWindow.view.decorator = sliders = <span class="s3">FlowLayout</span>(controlWindow.view.bounds);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>spex = [</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0, 2.0].asSpec,</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0, 2.0].asSpec,</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0, 2.0].asSpec,</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0, 2.0].asSpec,</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0, 200.0].asSpec,</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0, 200.0].asSpec</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>name = #[zoomX, shearingY, shearingX, zoomY, translateX, translateY];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>6.do { <span class="s3">|i|</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    </span><span class="s3">JEZSlider</span>(controlWindow, 300 @ 22, name[i], spex[i], { <span class="s3">|ez|</span> <span class="s3">var</span> val;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">            </span>val = ez.value;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">            </span>[i, val.round(10e-4)].postln;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">            </span>matrix.put(i, val);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">            </span>w.refresh; </span>// reevaluate drawHook function</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span></span>}, matrix[i]);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span></span>sliders.nextLine;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*width_(width=1)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sets the width of the Pen for the whole stroke</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.blue(0.5, 0.5).set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.blue( 0.5, 0.5 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(200,100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 10;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// you have to set a starting point...</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@150);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*use (function)</b></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Draw <b>function</b>, and then revert to the previous graphics state. This allows you to make complex transformations of the graphics state without having to explicitly revert to get back to 'normal'.</p>
+<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// modified by an example of Stefan Wittwer</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//paint origin</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.gray( 0, 0.5 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addArc(0@0, 20, 0, 2pi);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fill;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 10;</p>
+<p class="p9"><br></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">JPen</span><span class="s4">.use { </span>// draw something complex...</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.5;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(100,100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.blue;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addArc(0@0, 10, 0, 2pi);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fill;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>20.do{</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(0@0);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@0);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.red( 0.8, rrand( 0.7, 1 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.skew(0, 0.1);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// now go on with all params as before</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// translation, skewing, width, and color modifications do not apply</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.line(10@120, 300@120);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p9"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*path(function)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>make a path, consisting of the drawing made in <b>function.</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>Unfortunately not working for now...<span class="Apple-converted-space"> </span></b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(there's no Meta_Pen-endPath which currently is used in this method)</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*beginPath</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Discard any previous path.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
+<p class="p12"><span class="s11"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>// incomplete arrow</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the Color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.blue;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(200,100);</p>
+<p class="p9"><br></p>
+<p class="p17"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.moveTo(0@0);</p>
+<p class="p17"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.lineTo(50@100);</p>
+<p class="p17"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.lineTo(100@100);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// forget what we just drew (the pink lines)</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@150);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-100@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(-50@100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(0@0);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p18"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*clip</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Use the previously defined path as a clipping path. Successive calls of <span class="s9">*clip</span> intersect<span class="Apple-converted-space">  </span>with the</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>previous clipping. Thus, if you need to undo clippings, you must make use of the <span class="s9">*use</span> method (see above).</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">      <span class="Apple-tab-span">	</span></span></span>// outline the clipping path</p>
+<p class="p11"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">      <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.addRect( <span class="s3">Rect</span>( 110, 110, 180, 30 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">      <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.addRect( <span class="s3">Rect</span>( 110, 145, 180, 30 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">      <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.addRect( <span class="s3">Rect</span>( 110, 180, 180, 30 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">      <span class="Apple-tab-span">	</span></span><span class="s3">JPen</span>.addRect( <span class="s3">Rect</span>( 110, 215, 180, 30 ));</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// now clip</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.clip;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// everything else we draw is now clipped</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.yellow;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillRect(<span class="s3">Rect</span>(0,0,400,400));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.red;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(200@100);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(250@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(300@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(200@250);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(100@200);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(150@200);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fill;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p7"><b></b><br></p>
+<p class="p18"><b></b><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*setSmoothing</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Turn on/off anti-aliasing.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>WARNING:</b> non-antialiased string drawing currently looks</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>very different in cocoa and swing (much thicker in swing).</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>.new.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background_(<span class="s3">Color</span>.white);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.width = 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>2.do({ arg i;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.setSmoothing( i == 1 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.strokeOval( Rect( 100, 100, 50, 50 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.moveTo( 100 @ 200 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.quadCurveTo( 200 @ 300, 100 @ 300 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.translate( 100, 0 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p13"><b></b><br></p>
+<p class="p6"><b>Examples</b></p>
+<p class="p18"><b></b><br></p>
+<p class="p11">(</p>
+<p class="p12">// simple rotating and scaling</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>(<span class="s8">"Pen Rotation and Scaling"</span>, <span class="s3">Rect</span>(128, 64, 360, 360));</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> h, v;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v = h = 300.0;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.use {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// use the same rect for everything, just scale and rotate</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r = <span class="s3">Rect</span>(0,0,200,80);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.black;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// offset all subsequent co-ordinates</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(80,20);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillRect(r);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.red;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// scale all subsequent co-ordinates</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale(0.8, 0.8);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(8,10);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// rotate all subsequent co-ordinates</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate(0.1pi);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillRect(r);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.blue;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// lather, rinse, repeat</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale(0.8, 0.8);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate(0.1pi);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 3;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect(r);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.yellow( 1, 0.5 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale(0.8, 0.8);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate(0.1pi);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(20,-20);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillOval(r);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11">)</p>
+<p class="p9"><br></p>
+<p class="p12">// redraw at random interval</p>
+<p class="p12">// different every time</p>
+<p class="p11">(</p>
+<p class="p11"><span class="s3">var</span> w, run = <span class="s3">true</span>;</p>
+<p class="p11">w = <span class="s3">JSCWindow</span>(<span class="s8">"my name is... panel"</span>, <span class="s3">Rect</span>(128, 64, 800, 800));</p>
+<p class="p11">w.view.background = <span class="s3">Color</span>.white;</p>
+<p class="p11">w.onClose = { run = <span class="s3">false</span>; };</p>
+<p class="p11">w.front;</p>
+<p class="p11">w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.use {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>400.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(<span class="s3">Point</span>(10.rand * 80 + 40, 10.rand * 80 + 40));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(<span class="s3">Point</span>(10.rand * 80 + 40, 10.rand * 80 + 40));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11">};</p>
+<p class="p9"><br></p>
+<p class="p11">{ while { run } { w.refresh; 1.0.rand.wait } }.fork(<span class="s3">AppClock</span>)</p>
+<p class="p9"><br></p>
+<p class="p11">)</p>
+<p class="p9"><br></p>
+<p class="p11">(</p>
+<p class="p11"><span class="s3">var</span> w, run = <span class="s3">true</span>;</p>
+<p class="p11">w = <span class="s3">JSCWindow</span>(<span class="s8">"my name is... panel"</span>, <span class="s3">Rect</span>(128, 64, 800, 500));</p>
+<p class="p11">w.view.background = <span class="s3">Color</span>.white;</p>
+<p class="p11">w.onClose = { run = <span class="s3">false</span>; };</p>
+<p class="p11">w.front;</p>
+<p class="p11">w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.use {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>80.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = rrand(0,4) + 0.5;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(<span class="s3">Point</span>(800.rand, 500.rand));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(<span class="s3">Point</span>(800.rand, 500.rand));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11">};</p>
+<p class="p9"><br></p>
+<p class="p11">{ while { run } { w.refresh; 1.0.rand.wait } }.fork(<span class="s3">AppClock</span>)</p>
+<p class="p9"><br></p>
+<p class="p11">)</p>
+<p class="p9"><br></p>
+<p class="p12">// Animation</p>
+<p class="p9"><br></p>
+<p class="p12">// Uses random seed to 'store' data</p>
+<p class="p12">// By reseting the seed each time the same random values and shapes are generated for each 'frame'</p>
+<p class="p12">// These can then be subjected to cumulative rotation, etc., by simply incrementing the phase var.</p>
+<p class="p11">(</p>
+<p class="p12">// By James McCartney (slightly modified)</p>
+<p class="p11"><span class="s3">var</span> w, h = 700, v = 700, seed, run = <span class="s3">true</span>, phase = 0, bg;</p>
+<p class="p11">w = <span class="s3">JSCWindow</span>(<span class="s8">"wedge"</span>, <span class="s3">Rect</span>(40, 40, h, v), <span class="s3">false</span>);</p>
+<p class="p11">bg = <span class="s3">Color</span>.rand(0,0.3);</p>
+<p class="p12"><span class="s4">w.onClose = { run = </span><span class="s3">false</span><span class="s4"> }; </span>// stop the thread on close</p>
+<p class="p11">w.front;</p>
+<p class="p12">// store an initial seed value for the random generator</p>
+<p class="p11">seed = <span class="s3">Date</span>.seed;</p>
+<p class="p11">w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.use {</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// reset this thread's seed for a moment</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">thisThread</span>.randSeed = <span class="s3">Date</span>.seed;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// now a slight chance of a new seed or background color</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if (0.006.coin) { seed = <span class="s3">Date</span>.seed; };</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if (0.02.coin) { bg = <span class="s3">Color</span>.rand(0,0.3); };</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>JPen.fillColor = bg;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">JPen</span><span class="s4">.fillRect( </span><span class="s3">Rect</span><span class="s4">( 0, 0, h, v ));<span class="Apple-converted-space">  </span></span>// preferably do this rather than switching w.view.background</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// either revert to the stored seed or set the new one</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">thisThread</span>.randSeed = seed;</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// the random values below will be the same each time if the seed has not changed</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// only the phase value has advanced</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(h/2, v/2);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// rotate the whole image</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// negative random values rotate one direction, positive the other</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate(phase * 1.0.rand2);</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// scale the rotated y axis in a sine pattern</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale(1, 0.3 * sin(phase * 1.0.rand2 + 2pi.rand) + 0.5 );</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// create a random number of annular wedges</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rrand(6,24).do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.rand( 0.0, 1.0 ).alpha_( rrand( 0.1, 0.7 ));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addAnnularWedge(<span class="s3">Point</span>(0,0), a = rrand(60,300), a + 50.rand2, 2pi.rand<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+ (phase * 2.0.rand2), 2pi.rand);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if (0.5.coin) {<span class="s3">JPen</span>.stroke}{<span class="s3">JPen</span>.fill};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11">};</p>
+<p class="p9"><br></p>
+<p class="p12">// fork a thread to update 20 times a second, and advance the phase each time</p>
+<p class="p11">{ while { run } { w.refresh; 0.05.wait; phase = phase + 0.01pi;} }.fork(<span class="s3">AppClock</span>)</p>
+<p class="p9"><br></p>
+<p class="p11">)</p>
+<p class="p9"><br></p>
+<p class="p11">(</p>
+<p class="p11"><span class="s3">var</span> w, phase = 0, seed = <span class="s3">Date</span>.seed, run = <span class="s3">true</span>;</p>
+<p class="p11">w = <span class="s3">JSCWindow</span>(<span class="s8">"my name is... panel"</span>, <span class="s3">Rect</span>(128, 64, 800, 800));</p>
+<p class="p11">w.view.background = <span class="s3">Color</span>.blue(0.4);</p>
+<p class="p11">w.onClose = { run = <span class="s3">false</span>; };</p>
+<p class="p11">w.front;</p>
+<p class="p11">w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.use {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if (0.02.coin) { seed = <span class="s3">Date</span>.seed; };</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">thisThread</span>.randSeed = seed;</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.white.set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.white;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>200.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> a = 4.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> b = 24.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r1 = 230 + (50 * a);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> a1 = 2pi / 24 * b + phase;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r2 = 230 + (50 * (a + 1.rand2).fold(0,3));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> a2 = 2pi / 24 * (b + (3.rand2)).wrap(0,23) + phase;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.2 + 1.0.linrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(<span class="s3">Polar</span>(r1, a1).asPoint + <span class="s3">Point</span>(400,400));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(<span class="s3">Polar</span>(r2, a2).asPoint + <span class="s3">Point</span>(400,400));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">thisThread</span>.randSeed = <span class="s3">Date</span>.seed;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>40.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> a = 4.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> b = 24.rand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r1 = 230 + (50 * a);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> a1 = 2pi / 24 * b + phase;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> r2 = 230 + (50 * (a + 1.rand2).fold(0,3));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> a2 = 2pi / 24 * (b + (3.rand2)).wrap(0,23) + phase;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 0.2 + 1.5.linrand;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(<span class="s3">Polar</span>(r1, a1).asPoint + <span class="s3">Point</span>(400,400));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(<span class="s3">Polar</span>(r2, a2).asPoint + <span class="s3">Point</span>(400,400));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11">};</p>
+<p class="p9"><br></p>
+<p class="p11">{ while { run } { w.refresh; 0.1.wait; phase = phase + (2pi/(20*24)) } }.fork(<span class="s3">AppClock</span>)</p>
+<p class="p9"><br></p>
+<p class="p11">)</p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p12">// note: on a fast machine try</p>
+<p class="p12">// ... and replace the loop by 600.do</p>
+<p class="p12">// hmmmmm!</p>
+<p class="p11">(</p>
+<p class="p11"><span class="s3">var</span> w, h = 800, v = 600, seed = <span class="s3">Date</span>.seed, phase = 0, zoom = 0.7, zoomf = 1, run = <span class="s3">true</span>;</p>
+<p class="p11">w = <span class="s3">JSCWindow</span>(<span class="s8">"affines"</span>, <span class="s3">Rect</span>(40, 40, h, v), resizable: <span class="s3">false</span> );</p>
+<p class="p11">w.view.background = <span class="s3">Color</span>.blue(0.4);</p>
+<p class="p11">w.onClose = { run = <span class="s3">false</span> };</p>
+<p class="p11">w.front;</p>
+<p class="p11">w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">thisThread</span>.randSeed = <span class="s3">Date</span>.seed;</p>
+<p class="p11"><span class="Apple-tab-span">	</span>if (0.0125.coin) { seed = <span class="s3">Date</span>.seed; phase = 0; zoom = 0.7; zoomf = exprand(1/1.01, 1.01); }</p>
+<p class="p11"><span class="Apple-tab-span">	</span>{ phase = phase + (2pi/80); zoom = zoom * zoomf; };</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">thisThread</span>.randSeed = seed;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.use {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> p1 = <span class="s3">Point</span>(20.rand2 + (h/2), 20.rand2 + (v/2));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> p2 = <span class="s3">Point</span>(20.rand2 + (h/2), 20.rand2 + (v/2));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> xscales = { exprand(2** -0.1, 2**0.1) } ! 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> yscales = { exprand(2** -0.1, 2**0.1) } ! 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> xlates = { 8.rand2 } ! 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> ylates = { 8.rand2 } ! 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> rots = { 2pi.rand + phase } ! 2;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> xform;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>xscales = (xscales ++ (1/xscales)) * 1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>yscales = (yscales ++ (1/yscales)) * 1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>xlates = xlates ++ xlates.neg;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ylates = ylates ++ xlates.neg;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rots = rots ++ rots.neg;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>xform = {<span class="s3">|i|</span> [xlates[i], ylates[i], rots[i], xscales[i], yscales[i]] } ! 4;</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Color.grey(1,0.5).set;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.grey( 1, 0.5 );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 8.linrand + 1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(400, 400);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale(zoom, zoom);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(-400, -400);</p>
+<p class="p12">// JJJ OK this is too heavy</p>
+<p class="p12">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>1200.do</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>200.do {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> p, rot, xlate, ylate, xscale, yscale;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width = 8.linrand + 1;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>#rot, xlate, ylate, xscale, yscale = xform.choose;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(xlate, ylate);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate(rot, h/2, v/2);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale(xscale, yscale);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo(p1);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo(p2);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11">};</p>
+<p class="p9"><br></p>
+<p class="p11">{ while { run } { w.refresh; 0.05.wait; } }.fork(<span class="s3">AppClock</span>)</p>
+<p class="p9"><br></p>
+<p class="p11">)</p>
+<p class="p18"><b></b><br></p>
+<p class="p6"><b>More Examples</b></p>
+<p class="p18"><b></b><br></p>
+<p class="p14"><b>// gimmick by nick collins (from some sc-users list posting):</b></p>
+<p class="p11">(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">var</span> linetext, drawletter;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">var</span> w, h = 800, v = 60, seed = <span class="s3">Date</span>.seed, run = <span class="s3">true</span>;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">var</span> time, name, sourcestring;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">var</span> yellowness, penwidth;</p>
+<p class="p9"><br></p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span></span>//name=[\s,\u,\p,\e,\r,\c,\o,\l,\l,\i,\d,\e,\r];</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span></span>//sourcestring= "any lower case text";</p>
+<p class="p9"><br></p>
+<p class="p15"><span class="s4"><span class="Apple-tab-span">	</span>sourcestring= </span>"welcome to supercollider"<span class="s4">;</span></p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>name=<span class="s3">Array</span>.fill(sourcestring.size,{<span class="s3">arg</span> i; sourcestring[i].asSymbol});</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>time=0;</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>linetext=(<span class="s6">'a'</span>:[[[0,1],[0.5,0]],[[0.5,0],[1,1]],[[0.25,0.5],[0.75,0.5]]],<span class="s6">'b'</span>:[[[0,1],[0,0]],[[0,1],[1,1]],[[0,0],[1,0]],[[0,0.5],[0.75,0.5]],[[0.75,0.5],[1,0.75]],[[0.75,0.5],[1,0.25]],[[1,0.75],[1,1]],[[1,0.25],[1,0]]],<span class="s6">'c'</span>:[[[0,1],[0,0]],[[0,0],[1,0]],[[0,1],[1,1]]],<span class="s6">'d'</span>:[[[0,1],[0,0]],[[0,0],[0.75,0]],[[0,1],[0.75,1]],[[0.75,1],[1,0.75]],[[0.75,0],[1,0.25]],[[1,0.25],[1,0.75]]],<span class="s6">'e'</span>:[[[0,0],[0,1]],[[0,0],[1,0]],[[0,1],[1,1]],[[0,0.5],[1,0.5]]],<span class="s6">'f'</span>:[[[0,0],[0,1]],[[0,0],[1,0]],[[0,0.5],[1,0.5]]],<span class="s6">'g'</span>:[[[0,1],[0,0]],[[0,0],[1,0]],[[0,1],[1,1]],[[1,1],[1,0.5]],[[0.5,0.5],[1,0.5]]],<span class="s6">'h'</span>:[[[0,1],[0,0]],[[0,0.5],[1,0.5]],[[1,1],[1,0]]],<span class="s6">'i'</span>:[[[0,0],[1,0]],[[0.5,0],[0.5,1]],[[0,1],[1,1]]],<span class="s6">'j'</span>:[[[0,0],[1,0]],[[0.5,0],[0.5,1]],[[0,1],[0.5,1]]],<span class="s6">'k'</span>:[[[0,1],[0,0]],[[0,0.5],[1,1]],[[0,0.5],[1,0]]],<span class="s6">'l'</span>:[[[0,1],[0,0]],[[0,1],[1,1]]],<span class="s6">'m'</span>:[[[0,1],[0,0]],[[0,0],[0.5,0.5]],[[0.5,0.5],[1,0]],[[1,0],[1,1]]],<span class="s6">'n'</span>:[[[0,1],[0,0]],[[0,0],[1,1]],[[1,1],[1,0]]],<span class="s6">'o'</span>:[[[0,1],[0,0]],[[0,0],[1,0]],[[0,1],[1,1]],[[1,0],[1,1]]],<span class="s6">'p'</span>:[[[0,0],[0,1]],[[0,0],[1,0]],[[0,0.5],[1,0.5]],[[1,0],[1,0.5]]],<span class="s6">'q'</span>:[[[0,0],[0,0.75]],[[0,0],[0.75,0]],[[0,0.75],[0.75,0.75]],[[0.75,0],[0.75,0.75]],[[0.5,0.5],[1,1]]],<span class="s6">'r'</span>:[[[0,0],[0,1]],[[0,0],[1,0]],[[0,0.5],[1,0.5]],[[1,0],[1,0.5]],[[0,0.5],[1,1]]],<span class="s6">'s'</span>:[[[0,0],[0,0.5]],[[0,0],[1,0]],[[0,1],[1,1]],[[0,0.5],[1,0.5]],[[1,0.5],[1,1]]],<span class="s6">'t'</span>:[[[0,0],[1,0]],[[0.5,0],[0.5,1]]],<span class="s6">'u'</span>:[[[0,1],[0,0]],[[0,1],[1,1]],[[1,0],[1,1]]],<span class="s6">'v'</span>:[[[0,0],[0.5,1]],[[0.5,1],[1,0]]],<span class="s6">'w'</span>:[[[0,0],[0.25,1]],[[0.25,1],[0.5,0.5]],[[0.5,0.5],[0.75,1]],[[0.75,1],[1,0]]],<span class="s6">'x'</span>:[[[0,0],[1,1]],[[0,1],[1,0]]],<span class="s6">'y'</span>:[[[0,0],[0.5,0.5]],[[0.5,0.5],[1,0]],[[0.5,0.5],[0.5,1]]],<span class="s6">'z'</span>:[[[0,1],[1,0]],[[0,0],[1,0]],[[0,1],[1,1]]],(<span class="s8">" "</span>.asSymbol):[[[0,1],[1,1]],[[0,0.8],[0,1]],[[1,0.8],[1,1]]]);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>(<span class="s8">"welcome"</span>, <span class="s3">Rect</span>(40, 500, h, v), resizable: <span class="s3">false</span> );</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.view.background = <span class="s3">Color</span>.blue(0.5);</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.onClose = { run = <span class="s3">false</span> };</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>drawletter= { <span class="s3">arg</span> which, startx, starty, xscale=100, yscale,prop=1.0;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> data;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>yscale= yscale ? xscale;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>data= linetext[which];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>prop=(round((data.size)*prop).asInteger).max(1);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>prop.do({ <span class="s3">arg</span> i;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> val=data[i];</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.line( <span class="s3">Point</span>( startx + ( xscale * val[ 0 ][ 0 ]), starty + (yscale * val[ 0 ][ 1 ])),</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  </span><span class="s3">Point</span>( startx + (xscale * val[ 1 ][ 0 ]), starty + (yscale * val[ 1 ][ 1 ])));</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>yellowness=rrand(0.7,0.9);</p>
+<p class="p11"><span class="Apple-tab-span">	</span>penwidth=rrand(2,3);</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.drawHook = {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.use {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">var</span> xoscil, xsizoscil,yoscil, todraw, usedtime;</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width= penwidth;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.color = <span class="s3">Color</span>.yellow( yellowness );</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>usedtime=time.min(1.0);<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>todraw=(round((name.size)*usedtime).asInteger).max(1);<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>todraw.do({ <span class="s3">arg</span> j;<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>xoscil= sin(2*pi*time+(j*pi*0.13))*140/(1+(10*time));<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>yoscil= sin(2*pi*time+(j*pi*0.03))*200/(1+(200*time));<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>xsizoscil= time*5+5;<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>drawletter.value( name[ j ], 50 + (25 * j) + xoscil, 10 + yoscil, xsizoscil, xsizoscil, usedtime);<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><br></p>
+<p class="p11"><span class="Apple-tab-span">	</span>{</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>while { time&lt;2.0 } {</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.refresh;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>time=(time+0.025); <span class="s5">//%2.0;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p12"><span class="s4"><span class="Apple-tab-span">	</span> }.fork; </span>// (AppClock);</p>
+<p class="p11">)</p>
+<p class="p18"><b></b><br></p>
+<p class="p12"><span class="s12"><b>// funcadelics from Swiki </b></span>(uses addField method from PenExtensions)</p>
+<p class="p12">// not very smooth on slower computers ;-(</p>
+<p class="p11">(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="s3">var</span> a, w, i=0, run=<span class="s3">true</span>, cfunc, lfunc;</p>
+<p class="p11"><span class="Apple-tab-span">	</span>a = <span class="s3">Array</span>.fill2D(10, 20, { <span class="s3">arg</span> i, j; (i &amp; j + i) % j<span class="Apple-converted-space">  </span>/ 10 });</p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span>w = <span class="s3">JSCWindow</span>(<span class="s8">"si"</span>, <span class="s3">Rect</span>(128, 164, 460, 460), resizable: <span class="s3">false</span> );</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.view.background = <span class="s3">Color</span>.black;</p>
+<p class="p11"><span class="Apple-tab-span">	</span>cfunc = { <span class="s3">|val|</span> <span class="s3">Color</span>(</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.2*i.fold(0, 0.4),<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>val*i.fold(0, val.wrap(0, 0.4)),<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>val*i.fold(0, 1.1),<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.5</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>lfunc = {<span class="s3">|val|</span><span class="Apple-converted-space">  </span>1/ val ** i.fold(0, 1.1) * i.fold(val,2) * 0.5 };</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.drawHook = {<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>i = i + 0.01;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate(i, 240, 240);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate(100,100);</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.addField(a, <span class="s3">Rect</span>(0, 0, 200, 200), <span class="s6">\fillOval</span>, cfunc, lfunc)<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p11"><span class="Apple-tab-span">	</span>w.onClose = { run = <span class="s3">false</span> };</p>
+<p class="p11"><span class="Apple-tab-span">	</span>{ while { run } { w.refresh; 0.05.wait; } }.fork; <span class="s5">// (AppClock);</span></p>
+<p class="p11">)</p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p14"><b>// redFrik drawings</b></p>
+<p class="p9"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s2">http://swiki.hfbk-hamburg.de:8888/MusicTechnology/833</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>you'll have to replace <span class="s9">dup( 20000 )</span> with <span class="s9">dup( 2000 )</span>, after all there's way too much</p>
+<p class="p8"><span class="Apple-tab-span">	</span>OSC traffic and probably Java2D being slower than native cocoa painting ...</p>
+<p class="p9"><br></p>
+<p class="p18"><b></b><br></p>
+<p class="p8"><b>-------------------------------------------------------------------------------------------------------</b></p>
+<p class="p8"><b>NodeBox<span class="Apple-tab-span">	</span>vs.<span class="Apple-tab-span">	</span>SC3 </b>(modified from a mailinglist-post of James McCartney)</p>
+<p class="p8"><b>-------------------------------------------------------------------------------------------------------</b></p>
+<p class="p19">rect()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeRect, <span class="s3">JPen</span>.fillRect</p>
+<p class="p19">oval()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeOval, <span class="s3">JPen</span>.fillOval</p>
+<p class="p19">line()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.line -- or use <span class="s3">JPen</span>.moveTo, <span class="s3">JPen</span>.lineTo</p>
+<p class="p19">arrow()</p>
+<p class="p19">star()</p>
+<p class="p20"><br></p>
+<p class="p19">beginpath()<span class="Apple-tab-span">	</span><span class="s3">JPen</span>.beginPath</p>
+<p class="p19">moveto()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.moveTo</p>
+<p class="p19">lineto()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.lineTo</p>
+<p class="p19">curveto()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>not now</p>
+<p class="p19">endpath()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke, <span class="s3">JPen</span>.fill<span class="Apple-converted-space"> </span></p>
+<p class="p21"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// (paths don't need to be stored as data because you can compose them functionally).</p>
+<p class="p19">drawpath()<span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stroke, <span class="s3">JPen</span>.fill</p>
+<p class="p19">beginclip()</p>
+<p class="p19">endclip()</p>
+<p class="p20"><br></p>
+<p class="p21"><span class="s4">transform()<span class="Apple-tab-span">	</span></span>// -- not needed since rotate lets you specify the center point.</p>
+<p class="p19">translate()<span class="Apple-tab-span">	</span><span class="s3">JPen</span>.translate</p>
+<p class="p19">rotate()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.rotate</p>
+<p class="p19">scale()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.scale</p>
+<p class="p19">skew()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.skew</p>
+<p class="p21"><span class="s4">push()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">JPen</span><span class="s4">.push<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// private method ; see JPen.use instead</p>
+<p class="p21"><span class="s4">pop()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">JPen</span><span class="s4">.pop<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// private method ; see JPen.use instead</p>
+<p class="p19">reset()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.matrix = [ 1, 0, 0, 1, 0, 0 ]</p>
+<p class="p20"><br></p>
+<p class="p19">colormode()<span class="Apple-tab-span">	</span>not necessary use hsv or rgb as needed. missing <span class="s3">CMYK</span> though. easy to add.</p>
+<p class="p19">color()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Color</span>.hsv(h,s,v) or <span class="s3">Color</span>(r,g,b)</p>
+<p class="p21">//fill()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>color.setFill</p>
+<p class="p19">fill()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.fillColor_</p>
+<p class="p19">nofill()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>use <span class="s3">JPen</span>.stroke or <span class="s3">JPen</span>.fill as needed.</p>
+<p class="p21">//stroke()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>color.setStroke</p>
+<p class="p19">stroke()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.strokeColor_</p>
+<p class="p19">nostroke()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>use <span class="s3">JPen</span>.stroke or <span class="s3">JPen</span>.fill as needed.</p>
+<p class="p19">strokewidth()<span class="Apple-tab-span">	</span><span class="s3">JPen</span>.width_</p>
+<p class="p20"><br></p>
+<p class="p19">font()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.font = <span class="s3">JFont</span>(name, size)</p>
+<p class="p19">fontsize()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.font =<span class="s3"> JFon</span>t(name, size)</p>
+<p class="p21">//text()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>string.drawAtPoint</p>
+<p class="p19">text()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">JPen</span>.stringAtPoint</p>
+<p class="p19">textpath()<span class="Apple-tab-span">	</span></p>
+<p class="p19">textwidth()<span class="Apple-tab-span">	</span>string.bounds -- currently commented out but should work once reenabled.</p>
+<p class="p21"><span class="s4">textheight()<span class="Apple-tab-span">	</span>string.bounds<span class="Apple-tab-span">	</span></span>// XXX NOT WORKING FOR SWINGOSC</p>
+<p class="p19">textmetrics()</p>
+<p class="p19">lineheight()</p>
+<p class="p21">//align()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>use string.drawCenteredIn, string.drawLeftJustIn, string.drawRightJustIn</p>
+<p class="p19">align()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>use <span class="s3">JPen</span>.stringCenteredIn, <span class="s3">JPen</span>.stringLeftJustIn, <span class="s3">JPen</span>.stringRightJustIn</p>
+<p class="p20"><br></p>
+<p class="p19">image()<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>not yet</p>
+<p class="p19">imagesize()<span class="Apple-tab-span">	</span>not yet</p>
+<p class="p20"><br></p>
+<p class="p21">//-- all of these are covered by other mechanisms in SC:</p>
+<p class="p19">size()</p>
+<p class="p22">var<span class="s4">()</span></p>
+<p class="p19">random()</p>
+<p class="p19">choice()</p>
+<p class="p19">grid()</p>
+<p class="p19">open()</p>
+<p class="p19">files()</p>
+<p class="p19">autotext()</p>
+</body>
+</html>

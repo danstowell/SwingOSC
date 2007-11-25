@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #544f83}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #544f83; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #544f83}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #544f83; min-height: 13.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #544f83}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; min-height: 16.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13; min-height: 14.0px}
+span.s1 {text-decoration: underline}
+span.s2 {font: 15.0px Helvetica}
+span.s3 {font: 9.0px Monaco; color: #000000}
+span.s4 {color: #000000}
+span.s5 {color: #544f83}
+span.s6 {font: 9.0px Monaco}
+span.s7 {color: #0019ba}
+span.s8 {color: #ad1d13}
+span.s9 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>SwingOSC – Java-based cross-platform replacements for Cocoa GUI classes</b></p>
+<p class="p2"><br></p>
+<p class="p3">This class is meant as an emulation of SCTextView. last mod: 09-oct-07 sciss</p>
+<p class="p3">Also refer to [<span class="s1">JSCView</span>] for different behaviour affecting all widgets</p>
+<p class="p4"><br></p>
+<p class="p3"><b>no-op / not working</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><b>different behaviour</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>string_<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>effective even when the view is made non-editable (in CocoaGUI, string_ doesn't work in this case)</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
+<p class="p3"><b>extended functionality</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>caretColor_<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>colour of the cursor (useful for dark backgrounds)</p>
+<p class="p3"><span class="Apple-tab-span">	</span>openURL<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>loads a text file</p>
+<p class="p3"><span class="Apple-tab-span">	</span>action_<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>action function is called whenever text is entered, removed or caret moved</p>
+<p class="p4"><br></p>
+<p class="p3"><b>known issues / todo</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>textBounds<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>not yet implemented</p>
+<p class="p3"><span class="Apple-tab-span">	</span>usesTabToFocusNextView<span class="Apple-tab-span">	</span>not yet implemented</p>
+<p class="p3"><span class="Apple-tab-span">	</span>enterInterpretsSelection<span class="Apple-tab-span">	</span>not yet implemented</p>
+<p class="p3"><span class="Apple-tab-span">	</span>hyperlinks<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>should add some action function to react to clicks on hyperlinks</p>
+<p class="p3"><span class="Apple-tab-span">	</span>mouseDownAction<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>called with the regular arguments, not special cocoa clickPos</p>
+<p class="p3"><span class="Apple-tab-span">	</span>string_<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>doesn't clear previously used style, there should be a way to clear it</p>
+<p class="p3"><span class="Apple-tab-span">	</span>text transmission<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>some ascii characters are sucked on Linux when sending back from the server</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(have seen this with HTML files). you'll get "Yukk" messages, indicating that</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the text representation on the client (SuperCollider) might be wrong</p>
+<p class="p5"><br></p>
+<p class="p6"><b>JSCTextView<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b><span class="s2"><b>a text editor</b></span></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Note: please use the abstraction layer GUI.textView if possible! (see [</b><b><span class="s1">GUI</span></b><b>])</b></p>
+<p class="p7"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>superclass: JSCView</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>see also: [</b><b><span class="s1">Document</span></b><b>]</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*new(window, bounds);</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>string_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set the text</p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>string</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get the text</p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>setString(string, rangestart, rangesize)</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set text into a range<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span></p>
+<p class="p9"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>selectedString</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get the selected text only</p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>selectionStart</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get the current position in the text</p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>selectionSize</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get the current size of selection in the text</p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>stringColor_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set the color of the whole text<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>setStringColor(color, start, size)</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set the color of a selection of text<span class="Apple-converted-space"> </span></p>
+<p class="p9"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>autoHideScrollers_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>hasVerticalScroller_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>hasHorizontalScroller_</b></p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s4"><b>textBounds_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><b>NOT YET WORKING</b></p>
+<p class="p8"><span class="s5"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>don't know what this is for ...</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>font_<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>set the font of the whole text<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><b>setFont( font, start, size )</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>set the font of a selection of text</p>
+<p class="p9"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>usesTabToFocusNextView_</b></p>
+<p class="p10"><span class="s4"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>NOT YET WORKING</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span><b>enterInterpretsSelection_</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>whether pressing enter should interprete the</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>selected text. default is 'on'. note that on SwingOSC,</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>since we cannot detect a difference between return and enter,</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>you will have to press Ctrl+Return!</p>
+<p class="p9"><br></p>
+<p class="p7"><br></p>
+<p class="p11">//examples</p>
+<p class="p12"><br></p>
+<p class="p13">(</p>
+<p class="p13"><span class="s7">var</span> win;</p>
+<p class="p14"><br></p>
+<p class="p13">win = <span class="s7">JSCWindow</span>.new;</p>
+<p class="p13">t = <span class="s7">JSCTextView</span>( win, win.view.bounds.insetBy( 4, 4 ))</p>
+<p class="p13"><span class="Apple-tab-span">	</span>.resize_( 5 )</p>
+<p class="p13"><span class="Apple-tab-span">	</span>.hasVerticalScroller_( <span class="s7">true</span> )</p>
+<p class="p13"><span class="Apple-tab-span">	</span>.autohidesScrollers_( <span class="s7">true</span> )</p>
+<p class="p13"><span class="Apple-tab-span">	</span>.focus( <span class="s7">true</span> );</p>
+<p class="p13">win.front;</p>
+<p class="p13">)</p>
+<p class="p14"><br></p>
+<p class="p11"><span class="s4">t.editable = </span><span class="s7">false</span><span class="s4">;<span class="Apple-tab-span">	</span></span>// make it read-only</p>
+<p class="p13">t.editable = <span class="s7">true</span>;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">// allow editing</span></p>
+<p class="p14"><br></p>
+<p class="p11"><span class="s4">t.autohidesScrollers = </span><span class="s7">false</span><span class="s4">;<span class="Apple-tab-span">	</span></span>// always show the scrollbars</p>
+<p class="p14"><br></p>
+<p class="p13">t.string = <span class="s9">"Schoko"</span>;</p>
+<p class="p11">// copy this help document into the view (style elements are not copied)</p>
+<p class="p13">t.string = <span class="s7">Document</span>.current.string;</p>
+<p class="p14"><br></p>
+<p class="p11">// well, we can style it afterwards...</p>
+<p class="p13">t.setFont( <span class="s7">JFont</span>( <span class="s9">"Times"</span>, 24, 1 ), 0, 8 );</p>
+<p class="p13">t.setStringColor( <span class="s7">Color</span>.blue, 0, 8 );</p>
+<p class="p13">t.setStringColor( <span class="s7">Color</span>( 0.5, 0.0, 0.7 ), 8, 68 );</p>
+<p class="p14"><br></p>
+<p class="p11">// apply style to the whole document</p>
+<p class="p13">t.font = <span class="s7">JFont</span>( <span class="s9">"Times"</span>, 14 );</p>
+<p class="p13">t.stringColor = <span class="s7">Color</span>.green( 0.4 );</p>
+<p class="p14"><br></p>
+<p class="p13">t.background = <span class="s7">Color</span>.black;</p>
+<p class="p11"><span class="s4">t.caretColor = </span><span class="s7">Color</span><span class="s4">.white;<span class="Apple-tab-span">	</span></span>// cursor colour (SwingOSC only)</p>
+<p class="p14"><br></p>
+<p class="p14"><br></p>
+<p class="p11">// loading a text file (SwingOSC only). plain text, html and rtf should work</p>
+<p class="p13">t.openURL( <span class="s9">"file://"</span> ++ <span class="s9">"~/*/*.html"</span>.standardizePath.pathMatch.choose.absolutePath );</p>
+<p class="p15"><span class="s4">t.openURL( </span>"http://swiki.hfbk-hamburg.de:8888/MusicTechnology/6"<span class="s4"> );</span></p>
+<p class="p11"><span class="s4">t.openURL( </span><span class="s9">"file://"</span><span class="s4"> ++ </span><span class="s7">Document</span><span class="s4">.current.path ); </span>// RTF is not properly loaded - why?</p>
+<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// TODO : clicking on links has no effect!</p>
+<p class="p16"><br></p>
+<p class="p11">// listen for document changes</p>
+<p class="p11">//<span class="Apple-tab-span">	</span>possible states and parameters:</p>
+<p class="p11">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>\insert, &lt;(Integer) pos&gt;, &lt;(Integer) length&gt;, &lt;(String) insertedText&gt;</p>
+<p class="p11">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>\remove, &lt;(Integer) pos&gt;, &lt;(Integer) length&gt;</p>
+<p class="p11">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>\caret, &lt;(Integer) pos1&gt;, &lt;(Integer) pos2&gt;</p>
+<p class="p11">// ; caret means the cursor was moved or the selection changed. with no text</p>
+<p class="p11">// selected (cursor displayed) pos1 equals pos2, otherwise pos1 and pos2</p>
+<p class="p11">// correspond to the selected range (pos1 may be both greater or less than pos2)!</p>
+<p class="p13">t.action = { <span class="s7">arg</span> view, state ... params; ([ state ] ++ params).postcs };</p>
+<p class="p14"><br></p>
+<p class="p11">// let's see what's been typed in</p>
+<p class="p13">t.string;</p>
+<p class="p11"><span class="s4">t.selectedString;<span class="Apple-tab-span">	</span></span>// just the part that's currently selected</p>
+<p class="p11"><span class="s4">t.selectionStart;<span class="Apple-tab-span">	</span></span>// position of selection begins. starts at 0</p>
+<p class="p11"><span class="s4">t.selectionSize;<span class="Apple-tab-span">	</span></span>// 0 means no text selected</p>
+</body>
+</html>

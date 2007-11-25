@@ -1,0 +1,24 @@
+proper default font for windows
+
+
+nachrangig
+==========
+
+JStethoscope gridColor
+
+HiliteGradient
+
+JSCScrollPane
+
+id  should be a field instead of a property, should be read-only
+
+should get rid of jinsets, and manage all this trickery on the server side
+
+drag : file list --> pathname
+
+composite and h/vlayoutviews inside scrollpane and tabbed pane should _not_ have 3,3,3,3 insets
+; also maybe not on topview (more efficient?)
+
+movie view, soundfile view etc. : remove pseudo setProperty calls
+
+doMetaAction --> on ctrl click  ---> check this

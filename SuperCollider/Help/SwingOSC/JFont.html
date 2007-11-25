@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>SwingOSC Help : JFont</title>
+<link type="text/css" href="swing.css" rel="stylesheet">
+</head>
+<body>
+<div class="osc">
+<h2>SwingOSC &ndash; Java-based GUI classes</h2>
+<p>This class is meant as an emulation of Font. last mod: 11-apr-07 sciss
+</p>
+<table>
+<tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
+<tr><td class="oscTabKey">antiAliasing_</td><td class="oscTabValue">has no effect</td></tr>
+<tr><td class="oscTabKey">smoothing_</td><td class="oscTabValue">has no effect</td></tr>
+<tr><td colspan="2" class="oscTabSection">different behaviour</td></tr>
+<tr><td class="oscTabKey">availableFonts</td><td class="oscTabValue">needs to be called asynchronously the first time</tr>
+<tr><td colspan="2" class="oscTabSection">extended functionality</td></tr>
+<tr><td class="oscTabKey">style</td><td class="oscTabValue">extra field for plain / bold / italic</td></tr>
+<!-- <tr><td colspan="2" class="oscTabSection">known issues / todo</td></tr> -->
+</table>
+</div>
+<br>
+<h1>JFont</h1>
+<p><strong>
+Note: please use the abstraction layer GUI.font if possible! (see <A HREF="SC://GUI">GUI</A>)
+</strong></p>
+<P>
+<code><span class="cl">JFont</span></code> is a typeface description that can used with some <A HREF="JSCView.html">JSCView</A> objects to define the type of font used for text rendering. <A HREF="JSCStaticText.html">JSCStaticText</A>, <A HREF="JSCButton.html">JSCButton</A>, <A HREF="JSCView.html">JSCNumberBox</A>, <A HREF="JSCDragView.html">JSCDragView</A>, <A HREF="JSCView.html">JSCDragSink</A>, <A HREF="JSCDragBoth.html">JSCDragBoth</A>, <A HREF="JSCCheckBox.html">JSCCheckBox</A> can set their fonts.
+</P><P>
+Besides, fonts can be used in user generated views : see <A HREF="JSCUserView.html">JSCUserView</A> and <A HREF="JPen.html">JPen</A> for details.
+</P>
+<h2>Instantiation</h2>
+<PRE>
+	<span class="cl">JFont</span>.new( <var>&lt;name&gt;</var>, <var>&lt;size&gt;</var>, <span class="op">[ </span><var>&lt;style&gt;</var><span class="op"> ]</span> )
+	
+</PRE>
+<UL>
+<LI><code>name</code> &ndash; a <A HREF="SC://FlowLayout">String</A> of the font face name</LI>
+<LI><code>size</code> &ndash; the <A HREF="SC://Integer">Integer</A> font size in points</LI>
+<LI><code>style</code> &ndash; an <A HREF="SC://Integer">Integer</A> of <code>0</code> (plain = default), <code>1</code> (bold), <code>2</code> (italic) or a combination of these.<BR><strong>Note:</strong> <code>style</code> is not supported for cocoa fonts (you use special font names instead), so it is advised to not use it if possible.</LI>
+</UL>
+<P>&nbsp;</P>
+<P>Example:</P>
+<pre>(
+<span class="kw">var</span> w,f;
+
+w = <span class="cl">JSCWindow</span>( <span class="st">&quot;Fonts&quot;</span>, <span class="cl">Rect</span>( 128, 64, 340, 360 ));
+w.view.decorator = f = <span class="cl">FlowLayout</span>( w.view.bounds, 4 @ 4, 4 @ 2 );
+
+[
+<span class="st">&quot;<span style="font-family: 'Helvetica'; font-size: 200%">Helvetica</span>&quot;</span>,
+<span class="st">&quot;<span style="font-family: 'Futura'; font-size: 200%">Futura</span>&quot;</span>,
+<span class="st">&quot;<span style="font-family: 'Courier'; font-size: 200%">Courier</span>&quot;</span>,
+<span class="st">&quot;<span style="font-family: 'Times'; font-size: 200%">Times</span>&quot;</span>,
+<span class="st">&quot;<span style="font-family: 'Lucida Grande'; font-size: 200%">Lucida Grande</span>&quot;</span>,
+<span class="st">&quot;<span style="font-family: 'Monotype Corsiva'; font-size: 200%">Monotype Corsiva</span>&quot;</span>
+
+].do({ <span class="kw">arg</span> name;
+    <span class="kw">var</span> v, s, n, spec, p, height = 16;
+
+    v = <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 0, 0, 56, height + 2 ));
+    v.font = <span class="cl">JFont</span>( name, 13 );
+    v.string = name;
+
+    s = <span class="cl">JSCButton</span>( w, <span class="cl">Rect</span>( 0, 0, 140, height + 2 ));
+    s.font = <span class="cl">JFont</span>( name, 13 );
+    s.states = [[ name ]];
+    
+    n = <span class="cl">JSCNumberBox</span>( w, <span class="cl">Rect</span>( 0, 0, 56, height + 2 ));
+    n.font = <span class="cl">JFont</span>( name, 13 );
+    n.object = pi;
+
+    f.nextLine;
+});
+
+w.front;
+)
+
+</pre>
+<h2>Retrieving All Available Fonts</h2>
+<PRE>
+    <span class="cl">JFont</span>.availableFonts
+	
+</PRE>
+<P><strong>Note:</strong> on SwingOSC this call is <strong>asynchronous</strong> the first time, because the names must be fetched from the server. this requires that the call is placed inside a <A HREF="SC://Routine">Routine</A>. Successive calls can be carried out normally. You can avoid the extra hassle by calling <code>*availableFonts</code> once in your startup procedure like this:
+</P>
+<pre>    { <span class="cl">JFont</span>.availableFonts }.fork( <span class="cl">AppClock</span> );
+
+</pre>
+<P>Example:</P>
+<PRE>
+(
+<span class="cm">// start server</span>
+s.boot;
+)
+
+(
+<span class="cm">// define a synth</span>
+<span class="cl">SynthDef</span>(<span class="st">&quot;window-test&quot;</span>, { <span class="kw">arg</span> note = 36, fc = 1000, rq = 0.25, bal=0, amp=0.4, gate = 1;
+        <span class="kw">var</span> x;
+        x = <span class="cl">Mix</span>.fill(4, { 
+            <span class="cl">LFSaw</span>.ar((note + {0.1.rand2}.dup).midicps, 0, 0.02) 
+        });
+        x = <span class="cl">RLPF</span>.ar(x, fc, rq).softclip;
+        x = <span class="cl">RLPF</span>.ar(x, fc, rq, amp).softclip;
+        x = <span class="cl">Balance2</span>.ar(x[0], x[1], bal);
+        x = x * <span class="cl">EnvGen</span>.kr(<span class="cl">Env</span>.cutoff, gate, doneAction: 2);
+        <span class="cl">Out</span>.ar(0, x);
+    }, [0.1, 0.1, 0.1, 0.1, 0.1, 0]
+).send(s);
+)
+
+(
+<span class="kw">var</span> w, startButton, noteControl, cutoffControl, resonControl;
+<span class="kw">var</span> balanceControl, ampControl;
+<span class="kw">var</span> synth, cmdPeriodFunc;
+
+<span class="cm">// make the window</span>
+w = <span class="cl">JSCWindow</span>( <span class="st">&quot;another control panel&quot;</span>, <span class="cl">Rect</span>( 20, 400, 240, 180 ), resizable: <span class="kw">false</span> );
+w.front; <span class="cm">// make window visible and front window.</span>
+w.view.decorator = <span class="cl">FlowLayout</span>(w.view.bounds);
+
+<span class="cm">//w.view.background = Gradient( Color.rand( 0.0, 1.0 ), Color.rand( 0.0, 1.0 ), [ \h, \v ].choose );</span>
+
+<span class="cm">// add a button to start and stop the sound.</span>
+startButton = <span class="cl">JSCButton</span>( w, 75 @ 24 )
+    .states_([
+        [ <span class="st">&quot;Start&quot;</span>, <span class="cl">Color</span>.black, <span class="cl">Color</span>.green ],
+        [ <span class="st">&quot;Stop&quot;</span>, <span class="cl">Color</span>.white, <span class="cl">Color</span>.red ]
+    ])
+    .action_({ <span class="kw">arg</span> view;
+        if( view.value == 1, {
+            <span class="cm">// start sound</span>
+            synth = <span class="cl">Synth</span>( <span class="st">&quot;window-test&quot;</span>, [
+                <span class="sy">\note</span>, noteControl.value,
+                <span class="sy">\fc</span>, cutoffControl.value,
+                <span class="sy">\rq</span>, resonControl.value,
+                <span class="sy">\bal</span>, balanceControl.value,
+                <span class="sy">\amp</span>, ampControl.value.dbamp ]);
+        }, {
+            <span class="cm">// set gate to zero to cause envelope to release</span>
+            synth.release; synth = <span class="kw">nil</span>;
+        });
+    });
+
+<span class="cm">// create controls for all parameters</span>
+w.view.decorator.nextLine;
+noteControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Note&quot;</span>, <span class="cl">ControlSpec</span>( 24, 60, <span class="sy">\lin</span>, 1 ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\note</span>, ez.value )}, 36 );
+    
+w.view.decorator.nextLine;
+cutoffControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Cutoff&quot;</span>, <span class="cl">ControlSpec</span>( 200, 5000, <span class="sy">\exp</span> ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\fc</span>, ez.value )}, 1000 );
+    
+w.view.decorator.nextLine;
+resonControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Resonance&quot;</span>, <span class="cl">ControlSpec</span>( 0.1, 0.7 ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\rq</span>, ez.value )}, 0.2 );
+    
+w.view.decorator.nextLine;
+balanceControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Balance&quot;</span>, <span class="sy">\bipolar</span>, 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\bal</span>, ez.value )}, 0 );
+    
+w.view.decorator.nextLine;
+ampControl = <span class="cl">JEZNumber</span>(w, 400 @ 24, <span class="st">&quot;Amp&quot;</span>, <span class="cl">ControlSpec</span>( 0.ampdb, 1.ampdb, <span class="sy">\db</span> ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\amp</span>, ez.value.dbamp )}, -6 );
+
+
+<span class="cm">// set start button to zero upon a cmd-period</span>
+cmdPeriodFunc = { startButton.value = 0; synth = <span class="kw">nil</span> };
+<span class="cl">CmdPeriod</span>.add( cmdPeriodFunc );
+
+<span class="cm">// stop the sound when window closes and remove cmdPeriodFunc.</span>
+w.onClose = {
+    synth.free;
+    <span class="cl">CmdPeriod</span>.remove( cmdPeriodFunc );
+};
+)
+
+</pre>
+<h2>Logical Names and Variants</h2>
+<P>Since it typically depends on your platform which fonts are available, convenient methods are provided to access some standard types of fonts and to get variants of fonts:</P>
+<pre>
+    <span class="cl">JFont</span>.defaultSansFace
+    <span class="cl">JFont</span>.defaultSerifFace
+    <span class="cl">JFont</span>.defaultMonoFace
+    <var>&lt;aFont&gt;</var>.boldVariant
+
+</pre>
+<P>Example:</P>
+<pre>(
+<span class="kw">var</span> w, f, font;
+
+w = <span class="cl">JSCWindow</span>( <span class="st">&quot;Fonts&quot;</span>, <span class="cl">Rect</span>( 256, 256, 240, 120 ), resizable: <span class="kw">false</span> );
+w.view.decorator = f = <span class="cl">FlowLayout</span>( w.view.bounds, 4 @ 4, 4 @ 2 );
+
+[
+<span class="st">&quot;sans&quot;</span>,  <span class="cl">JFont</span>.defaultSansFace,
+<span class="st">&quot;serif&quot;</span>, <span class="cl">JFont</span>.defaultSerifFace,
+<span class="st">&quot;mono&quot;</span>,  <span class="cl">JFont</span>.defaultMonoFace
+].pairsDo({ <span class="kw">arg</span> label, name;
+    font = <span class="cl">JFont</span>( name, 14 );
+    <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 0, 0, 100, 22 ))
+        .font_( font )
+        .string_( label );
+    font = font.boldVariant;
+    <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 0, 0, 100, 22 ))
+        .font_( font )
+        .string_( label ++ <span class="st">&quot;-bold&quot;</span> );
+    f.nextLine;
+});
+
+w.front;
+
+)
+</pre>
+</body>
+</html>

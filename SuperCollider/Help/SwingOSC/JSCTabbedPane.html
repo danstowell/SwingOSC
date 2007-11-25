@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #564d85}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #564d85; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000; min-height: 12.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #b92e8d}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; min-height: 16.0px}
+span.s1 {text-decoration: underline}
+span.s2 {color: #0000bf}
+span.s3 {color: #000000}
+span.s4 {color: #606060}
+span.s5 {font: 9.0px Monaco}
+span.s6 {font: 10.0px Monaco}
+span.s7 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>SwingOSC – Java-based cross-platform GUI classes</b></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p3">last mod: 12-dec-06 sciss</p>
+<p class="p4"><b></b><br></p>
+<p class="p5"><b>JSCTabbedPane</b></p>
+<p class="p4"><b></b><br></p>
+<p class="p6"><b>Note: please use the abstraction layer GUI.tabbedPane if possible! (see [</b><b><span class="s1">GUI</span></b><b>])</b></p>
+<p class="p7"><br></p>
+<p class="p6">see also: [<span class="s1">JSCView</span>]</p>
+<p class="p7"><br></p>
+<p class="p6">A tabbed pane is a container whose children are again containers. The child containers can be switched through labelled tabs at the top border of the tabbed pane. Every child container created automatically creates the next tab. Typically you will use [<span class="s1">JSCCompositeView</span>] for each child.</p>
+<p class="p8"><br></p>
+<p class="p9">(</p>
+<p class="p9"><span class="Apple-tab-span">	</span>w = <span class="s2">JSCWindow</span>.new;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t = <span class="s2">JSCTabbedPane</span>( w, w.view.bounds );</p>
+<p class="p9"><span class="Apple-tab-span">	</span>4.do({ <span class="s2">arg</span> i;</p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// since c is a<span class="Apple-converted-space">  </span>child of t, creating c automatically places</p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// it in a new tab of t</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>c = <span class="s2">JSCCompositeView</span>( t, t.bounds );</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>6.do({ <span class="s2">arg</span> j;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">JSCButton</span>( c, <span class="s2">Rect</span>( rrand( 20, 300 ), rrand( 20, 300 ), 75, 24 ))</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.states_([[ <span class="s4">"Start "</span>++i++<span class="s4">"/"</span>++j, <span class="s2">Color</span>.black, <span class="s2">Color</span>.rand ],</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> [ <span class="s4">"Stop "</span>++i++<span class="s4">"/"</span>++j, <span class="s2">Color</span>.white, <span class="s2">Color</span>.red ]]);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p9"><span class="Apple-tab-span">	</span>});</p>
+<p class="p9"><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p9">)</p>
+<p class="p11"><br></p>
+<p class="p6"><b>Customizing the tabs</b></p>
+<p class="p12"><br></p>
+<p class="p6">The properties of each tab-button are modified using the scheme</p>
+<p class="p7"><br></p>
+<p class="p13"><span class="s3"><span class="Apple-tab-span">	</span></span>&lt;myTabPane&gt;<span class="s2">.set</span>&lt;PropertyName&gt;<span class="s2">At( </span>&lt;(Integer) tabIndex&gt;<span class="s2">, </span>&lt;propertyValue&gt;<span class="s2"> );</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p6">where <span class="s5">&lt;tabIndex&gt; </span>goes from <span class="s5">0</span> to <span class="s5">&lt;myTabPane&gt;.numTabs-1</span>. Properties are:</p>
+<p class="p7"><br></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s1">name</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">value-class</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">description</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">title</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">String</span> or <span class="s6">Symbol</span><span class="Apple-tab-span">	</span>text label for the tab button</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">enabled</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Boolean</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>whether the tab is selectable or not</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">background</span><span class="Apple-tab-span">	</span><span class="s6">Color</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>background colour of the tab button</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">foreground</span><span class="Apple-tab-span">	</span><span class="s6">Color</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>foreground (text label) colour of the tab button</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">toolTip</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">String</span> or <span class="s6">Symbol</span><span class="Apple-tab-span">	</span>helper text which is shown when mouse rests over tab button</p>
+<p class="p11"><br></p>
+<p class="p6">Examples for modifying the tab buttons:</p>
+<p class="p11"><br></p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span>t.setTitleAt( 0, </span><span class="s4">"First"</span><span class="s3"> );<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// set the title of tab #0 (i.e. the leftmost tab)</p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span>t.setTitleAt( 1, </span><span class="s4">"Second"</span><span class="s3"> );<span class="Apple-tab-span">	</span></span>// set the title of tab #1 (i.e. the second from the left)</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.setTitleAt( 2, <span class="s4">"Third"</span> );</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.setTitleAt( 3, <span class="s4">"Forth"</span> );</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.numTabs.do({ <span class="s2">arg</span> i; t.setBackgroundAt( i, <span class="s2">Color</span>.rand( 0.5, 1 ))});</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.numTabs.do({ <span class="s2">arg</span> i; t.setForegroundAt( i, <span class="s2">Color</span>.rand( 0, 0.5 ))});</p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span>t.setEnabledAt( 2, </span><span class="s2">false</span><span class="s3"> );<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// now tab #2 cannot be selected any more</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s3">t.setToolTipAt( 0, </span><span class="s4">"Dem first tab"</span><span class="s3"> );<span class="Apple-tab-span">	</span></span>// set info text shown when mouse rests over tab-button</p>
+<p class="p14"><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span></span>// tab index -1 is a shortcut for changing all tabs at once</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.setBackgroundAt( -1, <span class="s2">Color</span>.green( 0.5 ));</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.setForegroundAt( -1, <span class="s2">Color</span>.white );</p>
+<p class="p11"><br></p>
+<p class="p6"><b>Customizing the tab pane</b></p>
+<p class="p7"><b></b><br></p>
+<p class="p6">Change the location of the button bar:</p>
+<p class="p15"><br></p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.tabPlacement = <span class="s7">\left</span>;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.tabPlacement = <span class="s7">\bottom</span>;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.tabPlacement = <span class="s7">\right</span>;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.tabPlacement = <span class="s7">\top</span>;</p>
+<p class="p11"><br></p>
+<p class="p6">Changing the font of the button labels:</p>
+<p class="p11"><br></p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.font = <span class="s2">JFont</span>( <span class="s4">"Monospaced"</span>, 14 );</p>
+<p class="p11"><br></p>
+<p class="p12"><br></p>
+<p class="p6"><b>Invoking and recognizing tab switches</b></p>
+<p class="p7"><b></b><br></p>
+<p class="p6">To detect when the user switches the tabs, register with the <span class="s5">action_ </span>method:</p>
+<p class="p7"><br></p>
+<p class="p9"><span class="Apple-tab-span">	</span>t.action = { <span class="s2">arg</span> b; (<span class="s4">"Selected tab now: "</span> ++ b.value).postln; };</p>
+<p class="p7"><br></p>
+<p class="p6">Programmatically setting the currently visible tab:</p>
+<p class="p7"><br></p>
+<p class="p9"><span class="Apple-tab-span">	</span>fork { t.numTabs.do({ <span class="s2">arg</span> i; t.value = i; 1.wait; })};</p>
+<p class="p7"><br></p>
+<p class="p6">Same but also calling action function:</p>
+<p class="p7"><br></p>
+<p class="p9"><span class="Apple-tab-span">	</span>fork { t.numTabs.do({ <span class="s2">arg</span> i; t.valueAction = i; 1.wait; })};</p>
+</body>
+</html>

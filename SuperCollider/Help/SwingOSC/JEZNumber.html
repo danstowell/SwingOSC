@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>SwingOSC Help : JEZNumber</title>
+<link type="text/css" href="swing.css" rel="stylesheet">
+</head>
+<body>
+<div class="osc">
+<h2>SwingOSC &ndash; Java-based GUI classes</h2>
+<p>This class is meant as an emulation of EZNumber. last mod: 11-apr-07 sciss
+<br>For known issues and different behaviour, consult the help files of <A HREF="JSCStaticText.html">JSCStaticText</A>, and <A HREF="JSCNumberBox.html">JSCNumberBox</A>.
+</p>
+</div>
+<h1>JEZNumber</h1>
+<p><strong>
+Note: please use the abstraction layer GUI.ezNumber if possible! (see <A HREF="SC://GUI">GUI</A>)
+</strong></p>
+<P><code><span class="cl">JEZNumber</span></code> is a wrapper class for managing a label and number box.</P>
+<P>Instantiation:</P>
+<PRE>
+	<span class="cl">JEZNumber</span>.new( <var>&lt;window&gt;</var>, <var>&lt;dimensions&gt;</var>, <var>&lt;label&gt;</var>, <var>&lt;controlSpec&gt;</var>, <var>&lt;action&gt;</var>, <var>&lt;initVal&gt;</var>, <var>&lt;initAction = <span class="kw">false</span>&gt;</var>, <var>&lt;labelWidth = 80&gt;</var>, <var>&lt;numberWidth = 80&gt;</var> )
+	
+</PRE>
+<UL>
+<LI><code>window</code> &ndash; the <A HREF="JSCWindow.html">JSCWindow</A> or <code><span class="cl">JSCContainerView</span></code> containing the views. <br><strong>Note:</strong> it is assumed that this parent view has a <A HREF="SC://FlowLayout">FlowLayout</A> decorator!</LI>
+<LI><code>dimensions</code> &ndash; a <A HREF="SC://Point">Point</A> giving the width and height of the bounding box of the views.</LI>
+<LI><code>label</code> &ndash; a <A HREF="SC://String">String</A></LI>
+<LI><code>controlSpec</code> &ndash; the <A HREF="SC://ControlSpec">ControlSpec</A> for the value.</LI>
+<LI><code>action</code> &ndash; a <A HREF="SC://Function">Function</A> called when the value changes. The function is passed the <code><span class="cl">JEZNumber</span></code> instance as its argument.</LI>
+<LI><code>initVal</code> &ndash; the value to initialize the number box with. If <code><span class="kw">nil</span></code>, then it uses the <code>controlSpec</code>'s default value.</LI>
+<LI><code>initAction</code> &ndash; a <A HREF="SC://Boolean">Boolean</A> indicating whether the <code>action</code> function should be called when setting the initial value.</LI>
+<LI><code>labelWidth</code> &ndash; number of pixels width for the <code>label</code>.</LI>
+<LI><code>numberWidth</code> &ndash; number of pixels width for the number box.</LI>
+</UL>
+<P>&nbsp;</P>
+<P>
+The contained views can be accessed via the <code><span class="cl">JEZNumber</span></code> instance variables <code>labelView</code> and <code>numberView</code>.
+</P>
+<P>
+Another useful instance variable is <code>round</code>, the rounding precision for the number box display. The default value for <code>round</code> is <code>0.001</code> (i.e. maximally three decimal digits).
+</P>
+<P>Example:</P>
+<pre>(
+<span class="cm">// start server</span>
+s.boot;
+)
+
+(
+<span class="cm">// define a synth</span>
+<span class="cl">SynthDef</span>(<span class="st">&quot;window-test&quot;</span>, { <span class="kw">arg</span> note = 36, fc = 1000, rq = 0.25, bal=0, amp=0.4, gate = 1;
+        <span class="kw">var</span> x;
+        x = <span class="cl">Mix</span>.fill(4, { 
+            <span class="cl">LFSaw</span>.ar((note + {0.1.rand2}.dup).midicps, 0, 0.02) 
+        });
+        x = <span class="cl">RLPF</span>.ar(x, fc, rq).softclip;
+        x = <span class="cl">RLPF</span>.ar(x, fc, rq, amp).softclip;
+        x = <span class="cl">Balance2</span>.ar(x[0], x[1], bal);
+        x = x * <span class="cl">EnvGen</span>.kr(<span class="cl">Env</span>.cutoff, gate, doneAction: 2);
+        <span class="cl">Out</span>.ar(0, x);
+    }, [0.1, 0.1, 0.1, 0.1, 0.1, 0]
+).send(s);
+)
+
+(
+<span class="kw">var</span> w, startButton, noteControl, cutoffControl, resonControl;
+<span class="kw">var</span> balanceControl, ampControl;
+<span class="kw">var</span> synth, cmdPeriodFunc;
+
+<span class="cm">// make the window</span>
+w = <span class="cl">JSCWindow</span>( <span class="st">&quot;another control panel&quot;</span>, <span class="cl">Rect</span>( 20, 400, 240, 180 ), resizable: <span class="kw">false</span> );
+w.front; <span class="cm">// make window visible and front window.</span>
+w.view.decorator = <span class="cl">FlowLayout</span>(w.view.bounds);
+
+<span class="cm">//w.view.background = Gradient( Color.rand( 0.0, 1.0 ), Color.rand( 0.0, 1.0 ), [ \h, \v ].choose );</span>
+
+<span class="cm">// add a button to start and stop the sound.</span>
+startButton = <span class="cl">JSCButton</span>( w, 75 @ 24 )
+    .states_([
+        [ <span class="st">&quot;Start&quot;</span>, <span class="cl">Color</span>.black, <span class="cl">Color</span>.green ],
+        [ <span class="st">&quot;Stop&quot;</span>, <span class="cl">Color</span>.white, <span class="cl">Color</span>.red ]
+    ])
+    .action_({ <span class="kw">arg</span> view;
+        if( view.value == 1, {
+            <span class="cm">// start sound</span>
+            synth = <span class="cl">Synth</span>( <span class="st">&quot;window-test&quot;</span>, [
+                <span class="sy">\note</span>, noteControl.value,
+                <span class="sy">\fc</span>, cutoffControl.value,
+                <span class="sy">\rq</span>, resonControl.value,
+                <span class="sy">\bal</span>, balanceControl.value,
+                <span class="sy">\amp</span>, ampControl.value.dbamp ]);
+        }, {
+            <span class="cm">// set gate to zero to cause envelope to release</span>
+            synth.release; synth = <span class="kw">nil</span>;
+        });
+    });
+
+<span class="cm">// create controls for all parameters</span>
+w.view.decorator.nextLine;
+noteControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Note&quot;</span>, <span class="cl">ControlSpec</span>( 24, 60, <span class="sy">\lin</span>, 1 ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\note</span>, ez.value )}, 36 );
+    
+w.view.decorator.nextLine;
+cutoffControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Cutoff&quot;</span>, <span class="cl">ControlSpec</span>( 200, 5000, <span class="sy">\exp</span> ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\fc</span>, ez.value )}, 1000 );
+    
+w.view.decorator.nextLine;
+resonControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Resonance&quot;</span>, <span class="cl">ControlSpec</span>( 0.1, 0.7 ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\rq</span>, ez.value )}, 0.2 );
+    
+w.view.decorator.nextLine;
+balanceControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Balance&quot;</span>, <span class="sy">\bipolar</span>, 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\bal</span>, ez.value )}, 0 );
+    
+w.view.decorator.nextLine;
+ampControl = <span class="cl">JEZNumber</span>(w, 400 @ 24, <span class="st">&quot;Amp&quot;</span>, <span class="cl">ControlSpec</span>( 0.ampdb, 1.ampdb, <span class="sy">\db</span> ), 
+    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\amp</span>, ez.value.dbamp )}, -6 );
+
+
+<span class="cm">// set start button to zero upon a cmd-period</span>
+cmdPeriodFunc = { startButton.value = 0; synth = <span class="kw">nil</span> };
+<span class="cl">CmdPeriod</span>.add( cmdPeriodFunc );
+
+<span class="cm">// stop the sound when window closes and remove cmdPeriodFunc.</span>
+w.onClose = {
+    synth.free;
+    <span class="cl">CmdPeriod</span>.remove( cmdPeriodFunc );
+};
+)
+</pre>
+</body>
+</html>
