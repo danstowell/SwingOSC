@@ -62,7 +62,7 @@ SwingOSC : Model
 
 	// note this is the SC class lib version, not necessarily the
 	// server version (reflected by the instance variable serverVersion)
-	classvar <version = 0.56;
+	classvar <version = 0.57;
 
 	var <name, <addr, <clientID = 0;
 	var <isLocal;

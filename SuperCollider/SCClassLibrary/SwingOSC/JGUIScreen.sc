@@ -16,7 +16,7 @@
  *
  *	@author		SuperCollider Developers
  *	@author		Hanns Holger Rutz
- *	@version		0.55, 13-Aug-07
+ *	@version		0.57, 25-Nov-07
  */
 JSCWindow : Object
 {
@@ -42,8 +42,8 @@ JSCWindow : Object
 	
 	// ----------------- constructor -----------------
 
-	*new { arg name = "panel", bounds, resizable = true, border = true, server;
-		^super.new.initSCWindow( name, bounds, resizable, border, server );
+	*new { arg name = "panel", bounds, resizable = true, border = true, server, scroll = false;
+		^super.new.initSCWindow( name, bounds, resizable, border, scroll, server );
 	}
 	
 	// ----------------- public class methods -----------------
@@ -268,7 +268,7 @@ JSCWindow : Object
 	 *	@param	border		(Boolean) is mapped to property 'undecorated'
 	 *	@todo	argBounds 	(Rect) is translated to java's coordinate system
 	 */
-	initSCWindow { arg argName, argBounds, resizable, argBorder, argServer;
+	initSCWindow { arg argName, argBounds, resizable, argBorder, scroll, argServer;
 		name			= argName.asString;
 		border		= argBorder;
 		argBounds		= argBounds ?? { Rect.new( 128, 64, 400, 400 )};
@@ -279,7 +279,7 @@ JSCWindow : Object
 								// parent, bounds
 //		view			= JSCTopView( nil, argBounds.moveTo( 0, 0 ), server );
 //		id			= view.id;
-		this.prInit( name, argBounds, resizable, border ); // , view );
+		this.prInit( name, argBounds, resizable, border, scroll ); // , view );
 	}
 
 	prBoundsToJava { arg cocoa;
@@ -306,7 +306,7 @@ JSCWindow : Object
 		^Rect.new( java.left, screenBounds.height - java.top - 22 - cocoaHeight, java.width, cocoaHeight );
 	}
 		
-	prInit { arg argName, argBounds, resizable, border; // , view;
+	prInit { arg argName, argBounds, resizable, border, scroll; // , view;
 		var viewID;
 
 		bounds 	= argBounds;
@@ -338,15 +338,19 @@ JSCWindow : Object
 		}).add;
 
 		server.sendBundle( nil,
-			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ [ ']', ']',
+			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ [ scroll, ']', ']',
 				\bounds ] ++ this.prBoundsToJava( argBounds ).asSwingArg ++ [ \resizable, resizable,
 				\undecorated, border.not ],
 			[ '/local', "ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.WindowResponder", this.id, ']',
-				viewID, '[', '/method', this.id, "getContentPane", ']' ]
+				viewID, '[', '/method', this.id, "getTopView", ']' ]
 		);
 
-		view = JSCTopView( this, argBounds.moveTo( 0, 0 ), viewID );
+		view = if( scroll, {
+			JSCScrollTopView( this, argBounds.moveTo( 0, 0 ), viewID );
+		}, {
+			JSCTopView( this, argBounds.moveTo( 0, 0 ), viewID );
+		});
 	}
 	
 	prClose {

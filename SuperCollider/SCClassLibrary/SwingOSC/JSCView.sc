@@ -14,7 +14,7 @@
  *
  *	For details, see JSCView.help.rtf and DeveloperInfo.rtf
  *
- *	@version		0.56, 09-Oct-07
+ *	@version		0.57, 24-Nov-07
  *	@author		Hanns Holger Rutz
  *	@author		SuperCollider Developers
  *
@@ -127,7 +127,7 @@ JSCView {  // abstract class
 
 	id { ^this.getProperty( \id )}
 
-	id_ { arg id; this.setProperty( \id, id )}
+//	id_ { arg id; this.setProperty( \id, id )}
 
 	opaque { ^this.getProperty( \opaque )}
 	
@@ -164,6 +164,14 @@ JSCView {  // abstract class
 	background_ { arg color;
 		background = color;
 		this.setProperty( \background, color );
+	}
+
+	addAction { arg func, selector = \action;
+		this.perform( selector.asSetter, this.perform( selector ).addFunc( func ));
+	}
+
+	removeAction { arg func, selector=\action;
+		this.perform( selector.asSetter, this.perform( selector ).removeFunc( func ));
 	}
 
 	mouseDownAction_ { arg func;
@@ -257,7 +265,8 @@ JSCView {  // abstract class
 		properties.put( \enabled, true );
 		properties.put( \canFocus, true );
 		properties.put( \resize, 1 );
-		this.id		= argID ?? { server.nextNodeID; };
+//		this.id		= argID ?? { server.nextNodeID; };
+		properties.put( \id, argID ?? { server.nextNodeID });
 		dataptr		= this.id;
 
 		^this.prSCViewNew;
@@ -958,6 +967,66 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 
 	prBoundsFromJava { arg rect;
 		^rect;
+	}
+}
+
+JSCScrollTopView : JSCTopView {
+	var <autohidesScrollers = true, <hasHorizontalScroller = true, <hasVerticalScroller = true;
+	var <autoScrolls = true;
+	
+	autohidesScrollers_ { arg bool;
+		var hPolicy, vPolicy;
+		autohidesScrollers = bool;
+		hPolicy = this.prCalcPolicy( bool, hasHorizontalScroller ) + 30;
+		vPolicy = this.prCalcPolicy( bool, hasVerticalScroller ) + 20;
+
+		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, hPolicy, \verticalScrollBarPolicy, vPolicy );
+	}
+	
+	prCalcPolicy { arg auto, has;
+//		autohidesScrollers			1	0	1	0
+//		hasHorizontalScroller		1	1	0	0
+//		--------------------------------------------
+//		horizontalScrollBarPolicy	0	2	1	1	+ 30
+		^(has.not.binaryValue | ((auto.not && has).binaryValue << 1));
+	}
+	
+	hasHorizontalScroller_ { arg bool;
+		var policy;
+		hasHorizontalScroller = bool;
+		policy = this.prCalcPolicy( autohidesScrollers, bool ) + 30;
+		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
+	}
+	
+	hasVerticalScroller_ { arg bool;
+		var policy;
+		hasVerticalScroller = bool;
+		policy = this.prCalcPolicy( autohidesScrollers, bool ) + 20;
+		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
+	}
+	
+	visibleOrigin_ { arg point;
+//		"JSCScrollTopView.visibleOrigin_ : not yet implemented".warn;
+		properties.put( \clipViewOrigin, point );
+		server.sendMsg( '/method', this.id, \setViewportOrigin, point.x, point.y );
+//		this.setProperty( \clipViewOrigin, point );
+		this.doAction;
+	}
+	
+	visibleOrigin {
+		"JSCScrollTopView.visibleOrigin : not yet implemented".warn;
+		^this.getProperty( \clipViewOrigin, Point.new );
+	}
+	
+	autoScrolls_ { arg bool;
+		"JSCScrollTopView.autoScrolls_ : not yet implemented".warn;
+		autoScrolls = bool;
+//		server.sendMsg( '/set', this.id, \autoScrolls, bool );
+	}
+	
+	innerBounds {
+		"JSCScrollTopView.innerBounds : not yet implemented".warn;
+		^this.getProperty( \innerBounds, Rect.new )
 	}
 }
 
@@ -1689,6 +1758,9 @@ JSCPopUpMenu : JSCControlView {
 		items = array;
 		this.setProperty(\items, items);
 	}
+	
+	item { ^items[ this.value ]}
+
 	stringColor {
 		^this.getProperty(\stringColor, Color.new)
 	}
@@ -2208,6 +2280,7 @@ JSCDragBoth : JSCDragView {		// JJJ not subclass of JSCDragSink
 
 JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
 	var <mouseBeginTrackFunc, <mouseTrackFunc, <mouseEndTrackFunc;
+	var <clearOnRefresh = true, <relativeOrigin = false;
 	
 	var <>refreshOnFocus = true;
 	
@@ -2310,6 +2383,16 @@ JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
 		^super.keyDown( key, modifiers, unicode, keycode );
 	}
 
+	clearOnRefresh_{ arg bool;
+		clearOnRefresh = bool;
+		this.setProperty( \clearOnRefresh, bool );
+	}
+
+	relativeOrigin_ { arg bool;
+		relativeOrigin = bool;
+		this.setProperty( \relativeOrigin, bool );
+	}
+
 	prSCViewNew {
 		jinsets = Insets( 3, 3, 3, 3 );
 		^super.prSCViewNew([
@@ -2322,8 +2405,8 @@ JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
 			if( func.notNil, {
 				penID	= server.nextNodeID;
 				server.sendBundle( nil,
-					[ '/local', penID, '[', '/new', "de.sciss.swingosc.Pen", '[', '/ref', this.id, ']', true, ']' ],
-					[ '/method', this.id, \setIcon, '[', '/ref', penID, ']' ]
+					[ '/local', penID, '[', '/new', "de.sciss.swingosc.Pen", '[', '/ref', this.id, ']', relativeOrigin.not, ']' ],
+					[ '/method', this.id, \setPen, '[', '/ref', penID, ']' ]
 				);
 				drawFunc = func;
 				this.refresh;
@@ -2331,7 +2414,7 @@ JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
 		}, {
 			if( func.isNil, {
 				server.sendBundle( nil,
-					[ '/method', this.id, \setIcon, '[', '/ref', \null, ']' ],
+					[ '/method', this.id, \setPen, '[', '/ref', \null, ']' ],
 					[ '/method', penID, \dispose ],
 					[ '/free', penID ]
 				);
@@ -2359,6 +2442,19 @@ JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
 			// would slow down refresh unnecessarily
 			JPen.protRefresh( drawFunc, this, server, penID, nil );
 		});
+	}
+
+	prSendProperty { arg key, value;
+
+		key	= key.asSymbol;
+
+		// fix keys
+		case { key === \relativeOrigin }
+		{
+			if( penID.notNil, { server.sendMsg( '/set', penID, \absCoords, value.not )});
+			^nil;
+		};
+		^super.prSendProperty( key, value );
 	}
 }
 
