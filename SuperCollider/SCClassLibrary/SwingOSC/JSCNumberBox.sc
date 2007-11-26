@@ -83,7 +83,7 @@ JSCNumberBox : JSCTextEditBase {
 	// ----------------- public class methods -----------------
 
 	*paletteExample { arg parent, bounds;
-		^this.new( parent, bounds ).value_( 123.456 ).maxDecimals_( 4 );
+		^this.new( parent, bounds ).value_( 123.456 ); // .maxDecimals_( 4 );
 	}
 
 	// ----------------- public instance methods -----------------

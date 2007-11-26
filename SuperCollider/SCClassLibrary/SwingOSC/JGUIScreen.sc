@@ -36,6 +36,8 @@ JSCWindow : Object
 	var <visible	= false;
 	var border;
 	
+	var pendingAlpha;
+	
 	*initClass {
 		UI.registerForShutdown({ this.closeAll });
 	}
@@ -154,7 +156,12 @@ JSCWindow : Object
 		server.sendBundle( nil,
 			[ '/set', this.id, \visible, true ],
 			[ '/method', this.id, \toFront ]);
-		visible = true;
+		if( visible.not, {
+			visible = true;
+			if( pendingAlpha.notNil, {
+				this.alpha_( pendingAlpha );
+			});
+		});
 	}
 	 
 	alwaysOnTop_{ arg boolean = true;
@@ -193,7 +200,12 @@ JSCWindow : Object
 	
 //		server.sendMsg( '/set', this.id, \background, *(Color( 1, 1, 1, alpha ).asSwingArg) );
 //		server.sendMsg( '/set', this.id, \background, *(Color( 0.8, 0.8, 0.8, alpha ).asSwingArg) );
-		server.sendMsg( '/set', this.id, \alpha, alpha );
+		if( visible, {
+			server.sendMsg( '/set', this.id, \alpha, alpha );
+			pendingAlpha = nil;
+		}, {
+			pendingAlpha = alpha;
+		});
 	}
 	
 	name_ { arg argName;

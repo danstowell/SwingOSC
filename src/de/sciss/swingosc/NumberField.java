@@ -36,7 +36,7 @@ import javax.swing.event.DocumentListener;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.56, 09-Oct-07
+ *	@version	0.57, 25-Nov-07
  */
 public class NumberField
 extends de.sciss.gui.NumberField
@@ -44,6 +44,11 @@ extends de.sciss.gui.NumberField
 	public NumberField()
 	{
 		super();
+	}
+	
+	public void setNumber( String s )
+	{
+		setNumber( Double.valueOf( s ));
 	}
 	
 	// this is here to make DocumentResponder less complex

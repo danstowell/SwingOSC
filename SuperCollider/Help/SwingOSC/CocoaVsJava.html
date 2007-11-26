@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based cross-platform replacements for Cocoa GUI classes</h2>
-<p>This document lists most of the available classes. last mod: 16-jul-07 sciss
+<p>This document lists most of the available classes. last mod: 25-nov-07 sciss
 </p>
 </div>
 <h1>Cocoa vs. Java GUI classes</h1>
@@ -82,45 +82,17 @@ Click above to open the help files and compare the output; a good starting point
 <tr><td><A HREF="SC://KeyState">KeyState</A></td><td><A HREF="JKeyState.html">JKeyState</A></td><td>track keyboard typing</td></tr>
 </table>
 <P>&nbsp;</P>
+<h2>Other Platform Specific Classes</h2>
+<table>
+<tr><td><b>Cocoa</b></td><td><b>Java (SwingOSC)</b></td></tr>
+<tr><td><A HREF="SC://Speech">Speech</A></td><td><A HREF="JSpeech.html">JSpeech</A></td><td><SPAN CLASS="red">text-to-speech synthesizer</SPAN></td></tr>
+</table>
+<P>&nbsp;</P>
 <h2>Missing Classes</h2>
 <P>
-&ndash; These are only available in Cocoa at the moment, but should some day be available in SwingOSC: <A HREF="SC://Speech">Speech</A>.
+&ndash; These are only available in Cocoa at the moment, but should some day be available in SwingOSC: <A HREF="SC://SCTabletView">SC2DTabletSlider</A>, <A HREF="SC://Speech">SC2DTabletSlider</A>.
 </P><P>
-&ndash; These are likely to never make it into SwingOSC: <A HREF="SC://SC2DTabletSlider">SC2DTabletSlider</A>, <A HREF="SC://SCTabletView">SCTabletView</A>, <A HREF="SC://HiliteGradient">HiliteGradient</A> (as background colour)
+&ndash; These are likely to never make it into SwingOSC: <A HREF="SC://HiliteGradient">HiliteGradient</A> (as background colour)
 </P>
-<!--
-<h2>GUI-invoking Methods</h2>
-<P>(<strong>Warning: </strong> all the following stuff will be obsolete once the <A HREF="SC://GUI">GUI</A> abstraction class is in charge.)</P>
-<P>&ndash; Some &quot;PlusGUI&quot; stuff has been converted:</P>
-<pre><span class="cl">JClassBrowser</span>( <span class="cl">UGen</span> );
-
-<span class="cl">JObjectInspector</span>( <span class="cl">Server</span>.default );
-
-<span class="cm">// see how the alternative server window looks like</span>
-(
-    <span class="kw">var</span> s, oldFunc;
-
-    s = <span class="cl">Server</span>.local;
-    if( s.window.isNil, {
-        s.jmakeWindow;
-    }, {
-        oldFunc = s.window.onClose;
-        s.window.onClose = {
-            oldFunc.value;
-            s.jmakeWindow;
-        };
-        s.window.close;
-    });
-)
-
-<span class="cm">// scope</span>
-{ <span class="cl">SinOsc</span>.ar( mul: 0.5 )}.jscope( zoom: 0.25 );
-<span class="cm">// faster (needs only one OSC message per buffer)</span>
-{ <span class="cl">SinOsc</span>.ar( mul: 0.5 )}.jscope( bufsize: 1024 );
-
-<span class="cl">Env</span>.new([ 0.001, 1, 0.3, 0.8, 0.5, 0.8, 0 ], [ 2, 3, 1, 2, 2, 1 ] * 0.2, 2, 2).test.jplot;
-
-</pre>
--->
 </body>
 </html>
