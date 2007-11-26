@@ -129,9 +129,9 @@
 
 	jinspectorClass { ^JStringInspector }
 
-	jspeak { arg voice = 0;
+	jspeak { arg channel = 0, force = false;
 		"String.jspeak : deprecated!".warn;
-		JSpeech.speak( this, voice );
+		GUI.useID( \swing, { this.speak( channel, force )});
 	}
 }
 
