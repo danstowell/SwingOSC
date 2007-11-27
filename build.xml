@@ -12,8 +12,8 @@
 	<property name="resources.dir"	value="resources"/>
     <property name="main-class"		value="de.sciss.swingosc.SwingOSC"/>
 	<property name="lib.dir"		value="libraries"/>
-	<property name="libraries"		value="${lib.dir}/NetUtil.jar"/>
-    <property name="version"		value="0.56"/>
+	<property name="libraries"		value="${lib.dir}/NetUtil.jar:${lib.dir}/JNIWrapper.jar"/>
+    <property name="version"		value="0.57"/>
     <property name="debug"			value="false"/>
 	
 	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
@@ -49,7 +49,8 @@
 		</jar>
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${resources.dir}" update="true"/>
 		<if><not><equals arg1="${plain}" arg2="true" /></not><then>
-			<unjar src="${libraries}" dest="${lib.dir}" />
+			<unjar src="${lib.dir}/NetUtil.jar" dest="${lib.dir}" />
+			<unjar src="${lib.dir}/JNIWrapper.jar" dest="${lib.dir}" />
 			<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${lib.dir}" excludes="*.jar" update="true"/>
 			<delete includeemptydirs="true">
 				<fileset dir="${lib.dir}" excludes="*.jar"/>

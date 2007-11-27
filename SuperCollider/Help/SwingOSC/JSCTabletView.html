@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+span.s1 {text-decoration: underline}
+span.s2 {color: #0000bf}
+span.s3 {color: #606060}
+span.s4 {color: #000000}
+span.s5 {color: #0c31a9}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>!! INCOMPLETE</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>JSCTabletView</b></p>
+<p class="p3"><br></p>
+<p class="p4"><b>superclass: JSCView</b></p>
+<p class="p3"><br></p>
+<p class="p5">An otherwise featureless view that receives extended wacom tablet data.<span class="Apple-converted-space">  </span>It can also be used with a normal mouse but with less resolution.</p>
+<p class="p3"><br></p>
+<p class="p6"><b>NOTE</b> : Currently Mac OS X only</p>
+<p class="p6">to use, install the jni library:</p>
+<p class="p3"><br></p>
+<p class="p5">$ cp build/libJNITablet.jnilib /Library/Java/Extensions/</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4"><b>action - </b>dragging the mouse inside the view</p>
+<p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
+<p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p7"><b></b><br></p>
+<p class="p4"><b>mouseDownAction</b></p>
+<p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
+<p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p3"><span class="Apple-converted-space">                 </span></p>
+<p class="p4"><b>mouseUpAction</b></p>
+<p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
+<p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p7"><br></p>
+<p class="p4">Each of the three actions are passed the following wacom tablet values:</p>
+<p class="p7"><br></p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>view - </b>the view</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>x - </b>subpixel location in view</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>y - </b>subpixel location in view</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>pressure - </b>0..1</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>tiltX : </b>-1 (max. left) ... +1 (max. right)</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>tiltY : </b>-1 (max. down) ... +1 (max. up)</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>deviceID - </b>will be used to look up if the tip or the eraser is used</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>buttonNumber - </b>0 left, 1 right, 2 middle wheel click</p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>clickCount - </b>double click, triple click ...</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>most relevant for the mouseDown, but still valid for the dragged and mouseUp</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>absoluteZ</b> - the wheel on the side of some mice</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>rotation</b> - in degrees, only on the 4d mice<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">If using a mouse (even a wacom) rather than a pen, the x and y will be integer pixel values, rather than subpixel floats.<span class="Apple-converted-space">  </span>Wacom stylus devices have higher resolution than the screen.<span class="Apple-converted-space">  </span>Pressure will be 1 for mouse down, 0 for mouse up.</p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="s1">Properties</span></b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>clipToBounds</b> - by default the x y values are clipped to the bounds of the view.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>it set to 0, it is possible to drag from inside to outside the view, and the x y values will<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>exceed the bounds accordingly.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><br></p>
+<p class="p5">(</p>
+<p class="p9">w = <span class="s2">JSCWindow</span>.new;</p>
+<p class="p9">t = <span class="s2">JSCTabletView</span>(w,<span class="s2">Rect</span>(40,40,300,300));</p>
+<p class="p9">t.background = <span class="s2">Color</span>.white;</p>
+<p class="p9">w.front;</p>
+<p class="p10"><br></p>
+<p class="p9">f = { <span class="s2">arg</span> what, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation, absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>(<span class="s3">"%: x %<span class="Apple-converted-space">  </span>y %<span class="Apple-converted-space">  </span>press %<span class="Apple-converted-space">  </span>tiltx %<span class="Apple-converted-space">  </span>tilty %<span class="Apple-converted-space">  </span>clicks %<span class="Apple-converted-space">  </span>absX %<span class="Apple-converted-space">  </span>absY %<span class="Apple-converted-space">  </span>absZ %<span class="Apple-converted-space">  </span>rota %<span class="Apple-converted-space">  </span>mask %\n"</span>).postf( what, x.round( 0.01 ), y<span class="s4">.round( 0.01 )</span>, pressure<span class="s4">.round( 0.01 )</span>, tiltx<span class="s4">.round( 0.01 )</span>, tilty<span class="s4">.round( 0.01 )</span>, clickCount, absoluteX, absoluteY, absoluteZ, rotation<span class="s4">.round( 0.01 )</span>, buttonMask );</p>
+<p class="p9">};</p>
+<p class="p10"><br></p>
+<p class="p9">t.mouseDownAction = { <span class="s2">arg</span> view ... params;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"down"</span>, *params );</p>
+<p class="p9">};</p>
+<p class="p10"><br></p>
+<p class="p9">t.action = { <span class="s2">arg</span> view ... params;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"drag"</span>, *params );</p>
+<p class="p9">};</p>
+<p class="p10"><br></p>
+<p class="p9">t.mouseUpAction = { <span class="s2">arg</span> view ... params;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"up<span class="Apple-converted-space">  </span>"</span>, *params );</p>
+<p class="p9">};</p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p4"><b>Assign the same function to each action</b></p>
+<p class="p5">(</p>
+<p class="p5">w = <span class="s5">JSCWindow</span>.new;</p>
+<p class="p5">t = <span class="s5">JSCTabletView</span>(w,<span class="s5">Rect</span>(40,40,300,300));</p>
+<p class="p5">t.background = <span class="s5">Color</span>.white;</p>
+<p class="p5">w.front;</p>
+<p class="p3"><br></p>
+<p class="p5">f = { <span class="s5">arg</span><span class="Apple-converted-space">  </span>view,x,y,pressure,tiltx,tilty,deviceID, buttonNumber,clickCount;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>[x,y,pressure,tiltx,tilty,deviceID, buttonNumber,clickCount].postln;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>t.background = <span class="s5">Color</span>(x / 300,y / 300,tiltx,pressure);</p>
+<p class="p5">};</p>
+<p class="p3"><br></p>
+<p class="p5">t.mouseDownAction = f;</p>
+<p class="p5">t.action = f;</p>
+<p class="p5">t.mouseUpAction = f;</p>
+<p class="p3"><br></p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8"><b>move the box</b></p>
+<p class="p4">( buggy )</p>
+<p class="p5">(</p>
+<p class="p5">w = <span class="s5">JSCWindow</span>.new;</p>
+<p class="p5">t = <span class="s5">JSCTabletView</span>(w,<span class="s5">Rect</span>(40,40,30,30));</p>
+<p class="p5">t.background = <span class="s5">Color</span>.white;</p>
+<p class="p5">w.front;</p>
+<p class="p3"><br></p>
+<p class="p5">t.action = { <span class="s5">arg</span> view,x,y;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s5">var</span> b;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>b = t.bounds;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>b.left = b.left + x;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>//b.top = y - b.top;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>t.bounds = b;</p>
+<p class="p5">};</p>
+<p class="p3"><br></p>
+<p class="p5">)</p>
+<p class="p7"><br></p>
+</body>
+</html>
