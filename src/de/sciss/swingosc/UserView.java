@@ -34,8 +34,8 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
 
@@ -46,11 +46,11 @@ import de.sciss.gui.AquaFocusBorder;
  *	added support for focus border
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 25-Nov-07
+ *	@version	0.57, 27-Nov-07
  */
 public class UserView
 extends JComponent
-implements FocusListener, MouseListener
+implements FocusListener
 {
 	private boolean			focusBorderVisible	= true;
 	private AquaFocusBorder	border;
@@ -82,7 +82,12 @@ implements FocusListener, MouseListener
 		putClientProperty( "insets", getInsets() );
 		setFocusable( true );
 		addFocusListener( this );
-		addMouseListener( this );
+		addMouseListener( new MouseAdapter() {
+			public void mousePressed( MouseEvent e )
+			{
+				if( isFocusable() && isEnabled() ) requestFocus();
+			}
+		});
 		setBackground( new Color( 0, 0, 0, 0 ));
 		setOpaque( !clear );
 	}
@@ -132,23 +137,11 @@ implements FocusListener, MouseListener
 
 	public void focusGained( FocusEvent e )
 	{
-		repaint();
+		if( focusBorderVisible ) repaint();
 	}
 
 	public void focusLost( FocusEvent e )
 	{
-		repaint();
+		if( focusBorderVisible ) repaint();
 	}
-
-	//	 ---------------- MouseListener interface ----------------
-	
-	public void mousePressed( MouseEvent e )
-	{
-		if( isFocusable() && isEnabled() ) requestFocus();
-	}
-	
-	public void mouseReleased( MouseEvent e ) {}
-	public void mouseClicked( MouseEvent e ) {}
-	public void mouseEntered( MouseEvent e ) {}
-	public void mouseExited( MouseEvent e ) {}
 }

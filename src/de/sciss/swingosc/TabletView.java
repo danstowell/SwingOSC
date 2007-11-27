@@ -28,21 +28,14 @@
  */
 package de.sciss.swingosc;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JComponent;
 
 import de.sciss.app.DynamicAncestorAdapter;
 import de.sciss.app.DynamicListening;
-import de.sciss.gui.AquaFocusBorder;
 
 import com.jhlabs.jnitablet.TabletEvent;
 import com.jhlabs.jnitablet.TabletProximityEvent;
@@ -51,28 +44,75 @@ import com.jhlabs.jnitablet.TabletWrapper;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 26-Nov-07
+ *	@version	0.57, 27-Nov-07
  */
 public class TabletView
-extends JComponent
-implements DynamicListening, TabletListener, FocusListener, MouseListener
+extends UserView
+implements DynamicListening, TabletListener
 {
-	private boolean			focusBorderVisible	= true;
-	private AquaFocusBorder	border;
 	private boolean 		added				= false;
-	
+	private boolean 		inside				= false;
+	private boolean 		pressed				= false;
 	private final List		listeners			= new ArrayList();
 	
 	public TabletView()
 	{
 		super();
-		border = new AquaFocusBorder();
-		setBorder( border );
-		putClientProperty( "insets", getInsets() );
-		setFocusable( true );
-		addFocusListener( this );
+		
 		new DynamicAncestorAdapter( this ).addTo( this );
-		addMouseListener( this );
+		addMouseListener( new MouseAdapter() {
+			public void mousePressed( MouseEvent e )
+			{
+System.out.println( "mousePressed " + isEnabled() );
+				if( isEnabled() ) {
+					pressed = true;
+				}
+			}
+			
+			public void mouseReleased( MouseEvent e )
+			{
+				pressed = false;
+				if( !inside ) remove();
+			}
+			
+			public void mouseEntered( MouseEvent e ) {
+System.out.println( "mouseEntered " + isEnabled() );
+				if( isEnabled() ) {
+					inside	= true;
+					add();
+				}
+			}
+
+			public void mouseExited( MouseEvent e ) {
+				inside = false;
+				if( !pressed ) remove();
+			}
+		});
+		
+		// XXX don't ask me why this...
+		add(); remove();
+		
+//		final TabletWrapper tabletWrapper = TabletWrapper.getInstance();
+//		tabletWrapper.addTabletListener( this );
+//		tabletWrapper.removeTabletListener( this );
+	}
+	
+	private void remove()
+	{
+		if( added ) {
+//			System.out.println( "removing" );
+			TabletWrapper.getInstance().removeTabletListener( this );
+			added = false;
+		}
+	}
+	
+	private void add()
+	{
+		if( !added ) {
+//			System.out.println( "adding" );
+			TabletWrapper.getInstance().addTabletListener( this );
+			added = true;
+		}
 	}
 	
 	public void addTabletListener( TabletListener l )
@@ -85,26 +125,6 @@ implements DynamicListening, TabletListener, FocusListener, MouseListener
 		listeners.remove( l );
 	}
 
-	public void setFocusVisible( boolean b )
-	{
-		if( b != focusBorderVisible ) {
-			focusBorderVisible = b;
-			border.setVisible( b );
-		}
-	}
-
-	public void paintComponent( Graphics g )
-	{
-		final Color		bg 		= getBackground();
-		final Insets	insets	= getInsets();
-		if( (bg != null) && (bg.getAlpha() > 0) ) {
-			g.setColor( bg );
-			g.fillRect( insets.left, insets.top,
-					getWidth() - (insets.left + insets.right),
-					getHeight() - (insets.top + insets.bottom ));
-		}
-	}
-
 //	 ---------------- DynamicListening interface ----------------
 
 	public void startListening()
@@ -114,52 +134,15 @@ implements DynamicListening, TabletListener, FocusListener, MouseListener
 
 	public void stopListening()
 	{
-		if( added ) {
-//			System.out.println( "removing" );
-			TabletWrapper.getInstance().removeTabletListener( this );
-			added = false;
-		}
+		remove();
 	}
 	
-//	 ---------------- FocusListener interface ----------------
-
-	public void focusGained( FocusEvent e )
-	{
-		repaint();
-	}
-
-	public void focusLost( FocusEvent e )
-	{
-		repaint();
-	}
-
-//	 ---------------- MouseListener interface ----------------
-
-	public void mouseEntered( MouseEvent e ) {
-		if( !added ) {
-//			System.out.println( "adding" );
-			TabletWrapper.getInstance().addTabletListener( this );
-			added = true;
-		}
-	}
-
-	public void mouseExited( MouseEvent e ) {
-		if( added ) {
-//			System.out.println( "removing" );
-			TabletWrapper.getInstance().removeTabletListener( this );
-			added = false;
-		}
-	}
-	
-	public void mouseClicked( MouseEvent e ) {}
-	public void mousePressed( MouseEvent e ) {}
-	public void mouseReleased( MouseEvent e ) {}
-
 //	 ---------------- TabletListener interface ----------------
 
 	public void tabletEvent( TabletEvent e )
 	{
-//System.out.println( "event " + listeners.size() );
+		// ignore messages that originate from drags that started outside the view
+		if( (e.getID() == MouseEvent.MOUSE_DRAGGED) && !pressed ) return;
 		for( Iterator iter = listeners.iterator(); iter.hasNext(); ) {
 			((TabletListener) iter.next()).tabletEvent( e );
 		}

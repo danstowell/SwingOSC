@@ -5,7 +5,7 @@
  *	@version		0.57, 27-Nov-07
  *	@author		Hanns Holger Rutz
  */
-JSCTabletView : JSCView {
+JSCTabletView : JSCAbstractUserView {
 
 //	var <>mouseDownAction,<>mouseUpAction;
 
@@ -40,11 +40,12 @@ JSCTabletView : JSCView {
 	prSCViewNew {
 		var bndl;
 		
-		bndl	= List.new;
+		relativeOrigin	= true;
+		jinsets			= Insets( 3, 3, 3, 3 );
+		bndl				= List.new;
+		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.TabletView", ']' ]);
 		this.prCreateTabletResponder( bndl );
-		^super.prSCViewNew([
-			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.TabletView", ']' ]
-		], bndl );
+		^super.prSCViewNew( bndl );
 	}
 
 	prCreateMouseResponder {} // overridden to not create one
@@ -73,7 +74,7 @@ JSCTabletView : JSCView {
 				bounds		= this.bounds;
 				deviceID		= msg[3];
 				x			= msg[4] - bounds.left;
-				y			= msg[5] - bounds.top;
+				y			= bounds.bottom - msg[5] + 20; // sucky cocoa
 				pressure		= msg[6];
 				tiltx		= msg[7];
 				tilty		= msg[8];

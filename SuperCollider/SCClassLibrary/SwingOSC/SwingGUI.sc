@@ -3,7 +3,7 @@
  *	It can be accessed from the GUI
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
- *	@version	0.56, 09-Oct-07
+ *	@version	0.57, 27-Nov-07
  */
 SwingGUI {
 	classvar extraClasses;
@@ -48,7 +48,7 @@ SwingGUI {
 	*userView { ^JSCUserView }
 	*multiSliderView { ^JSCMultiSliderView }
 	*envelopeView { ^JSCEnvelopeView }
-//	*tabletView { ^JSCTabletView }
+	*tabletView { ^JSCTabletView }
 	*soundFileView { ^JSCSoundFileView }
 	*movieView { ^JSCMovieView }
 	*textView { ^JSCTextView }

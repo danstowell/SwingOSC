@@ -17,11 +17,12 @@ p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
 span.s1 {text-decoration: underline}
-span.s2 {color: #0000bf}
+span.s2 {color: #0d32ac}
 span.s3 {color: #606060}
-span.s4 {color: #000000}
-span.s5 {color: #0c31a9}
+span.s4 {color: #0000bf}
+span.s5 {color: #234099}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -30,7 +31,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>JSCTabletView</b></p>
 <p class="p3"><br></p>
-<p class="p4"><b>superclass: JSCView</b></p>
+<p class="p4"><b>superclass: JSCAbstractUserView (!!)</b></p>
 <p class="p3"><br></p>
 <p class="p5">An otherwise featureless view that receives extended wacom tablet data.<span class="Apple-converted-space">  </span>It can also be used with a normal mouse but with less resolution.</p>
 <p class="p3"><br></p>
@@ -43,7 +44,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><b>action - </b>dragging the mouse inside the view</p>
 <p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
 <p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
-<p class="p7"><b></b><br></p>
+<p class="p7"><br></p>
 <p class="p4"><b>mouseDownAction</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
 <p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
@@ -75,52 +76,61 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span><b>clipToBounds</b> - by default the x y values are clipped to the bounds of the view.</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>it set to 0, it is possible to drag from inside to outside the view, and the x y values will<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>exceed the bounds accordingly.</p>
-<p class="p7"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>XXX NOT YET WORKING</b></p>
 <p class="p7"><br></p>
 <p class="p7"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><br></p>
 <p class="p5">(</p>
-<p class="p9">w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p9">t = <span class="s2">JSCTabletView</span>(w,<span class="s2">Rect</span>(40,40,300,300));</p>
-<p class="p9">t.background = <span class="s2">Color</span>.white;</p>
-<p class="p9">w.front;</p>
-<p class="p10"><br></p>
-<p class="p9">f = { <span class="s2">arg</span> what, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation, absoluteX, absoluteY, buttonMask, tanPressure;</p>
-<p class="p9"><span class="Apple-tab-span">	</span>(<span class="s3">"%: x %<span class="Apple-converted-space">  </span>y %<span class="Apple-converted-space">  </span>press %<span class="Apple-converted-space">  </span>tiltx %<span class="Apple-converted-space">  </span>tilty %<span class="Apple-converted-space">  </span>clicks %<span class="Apple-converted-space">  </span>absX %<span class="Apple-converted-space">  </span>absY %<span class="Apple-converted-space">  </span>absZ %<span class="Apple-converted-space">  </span>rota %<span class="Apple-converted-space">  </span>mask %\n"</span>).postf( what, x.round( 0.01 ), y<span class="s4">.round( 0.01 )</span>, pressure<span class="s4">.round( 0.01 )</span>, tiltx<span class="s4">.round( 0.01 )</span>, tilty<span class="s4">.round( 0.01 )</span>, clickCount, absoluteX, absoluteY, absoluteZ, rotation<span class="s4">.round( 0.01 )</span>, buttonMask );</p>
-<p class="p9">};</p>
-<p class="p10"><br></p>
-<p class="p9">t.mouseDownAction = { <span class="s2">arg</span> view ... params;</p>
-<p class="p9"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"down"</span>, *params );</p>
-<p class="p9">};</p>
-<p class="p10"><br></p>
-<p class="p9">t.action = { <span class="s2">arg</span> view ... params;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"drag"</span>, *params );</p>
-<p class="p9">};</p>
-<p class="p10"><br></p>
-<p class="p9">t.mouseUpAction = { <span class="s2">arg</span> view ... params;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"up<span class="Apple-converted-space">  </span>"</span>, *params );</p>
-<p class="p9">};</p>
-<p class="p5">)</p>
-<p class="p3"><br></p>
-<p class="p4"><b>Assign the same function to each action</b></p>
-<p class="p5">(</p>
-<p class="p5">w = <span class="s5">JSCWindow</span>.new;</p>
-<p class="p5">t = <span class="s5">JSCTabletView</span>(w,<span class="s5">Rect</span>(40,40,300,300));</p>
-<p class="p5">t.background = <span class="s5">Color</span>.white;</p>
+<p class="p5">w = <span class="s2">JSCWindow</span>.new;</p>
+<p class="p5">t = <span class="s2">JSCTabletView</span>(w,<span class="s2">Rect</span>(40,40,300,300));</p>
+<p class="p5">t.background = <span class="s2">Color</span>.white;</p>
 <p class="p5">w.front;</p>
 <p class="p3"><br></p>
-<p class="p5">f = { <span class="s5">arg</span><span class="Apple-converted-space">  </span>view,x,y,pressure,tiltx,tilty,deviceID, buttonNumber,clickCount;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>[x,y,pressure,tiltx,tilty,deviceID, buttonNumber,clickCount].postln;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>t.background = <span class="s5">Color</span>(x / 300,y / 300,tiltx,pressure);</p>
+<p class="p5">f = { <span class="s2">arg</span> what, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation, absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s3">"%: x %<span class="Apple-converted-space">  </span>y %<span class="Apple-converted-space">  </span>press %<span class="Apple-converted-space">  </span>tiltx %<span class="Apple-converted-space">  </span>tilty %<span class="Apple-converted-space">  </span>clicks %<span class="Apple-converted-space">  </span>absX %<span class="Apple-converted-space">  </span>absY %<span class="Apple-converted-space">  </span>absZ %<span class="Apple-converted-space">  </span>rota %<span class="Apple-converted-space">  </span>mask %\n"</span>).postf( what, x.round( 0.01 ), y.round( 0.01 ), pressure.round( 0.01 ), tiltx.round( 0.01 ), tilty.round( 0.01 ), clickCount, absoluteX, absoluteY, absoluteZ, rotation.round( 0.01 ), buttonMask );</p>
 <p class="p5">};</p>
 <p class="p3"><br></p>
-<p class="p5">t.mouseDownAction = f;</p>
-<p class="p5">t.action = f;</p>
-<p class="p5">t.mouseUpAction = f;</p>
+<p class="p5">t.mouseDownAction = { <span class="s2">arg</span> view ... params;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"down"</span>, *params );</p>
+<p class="p5">};</p>
 <p class="p3"><br></p>
+<p class="p5">t.action = { <span class="s2">arg</span> view ... params;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"drag"</span>, *params );</p>
+<p class="p5">};</p>
+<p class="p3"><br></p>
+<p class="p5">t.mouseUpAction = { <span class="s2">arg</span> view ... params;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>f.value( <span class="s3">"up<span class="Apple-converted-space">  </span>"</span>, *params );</p>
+<p class="p5">};</p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p4"><b>JSCTabletView is a also a user view...</b></p>
+<p class="p7"><br></p>
+<p class="p5">(</p>
+<p class="p9"><span class="s4">var</span> x = 150, y = 150, pressure = 0, tiltx = 0, tilty = 0;</p>
+<p class="p10"><br></p>
+<p class="p9">w = <span class="s4">JSCWindow</span>.new;</p>
+<p class="p9">t = <span class="s4">JSCTabletView</span>( w,<span class="s4">Rect</span>( 40, 40, 300, 300 ));</p>
+<p class="p9">t.background = <span class="s4">Color</span>.white;</p>
+<p class="p9">w.front;</p>
+<p class="p10"><br></p>
+<p class="p9">f = { <span class="s4">arg</span> view, argX, argY, argPressure, argTiltX, argTiltY, deviceID, buttonNumber, clickCount;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>x = argX; y = argY; pressure = argPressure; tiltx = argTiltX; tilty = argTiltY; view.refresh;</p>
+<p class="p9">};</p>
+<p class="p9">t.drawFunc = { <span class="s4">arg</span> view;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s4">JPen</span>.translate( x, y );</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s4">JPen</span>.width = pressure * 10 + 0.5;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s4">JPen</span>.skew( tiltx, tilty );</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s4">JPen</span>.strokeOval( <span class="s4">Rect</span>( -100, -100, 200, 200 ));</p>
+<p class="p9">};</p>
+<p class="p10"><br></p>
+<p class="p9">t.mouseDownAction = f;</p>
+<p class="p9">t.action = f;</p>
+<p class="p9">t.mouseUpAction = f;</p>
+<p class="p10"><br></p>
 <p class="p5">)</p>
 <p class="p3"><br></p>
 <p class="p3"><br></p>
+<p class="p11"><br></p>
 <p class="p8"><b>move the box</b></p>
 <p class="p4">( buggy )</p>
 <p class="p5">(</p>

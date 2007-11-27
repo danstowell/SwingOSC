@@ -2278,30 +2278,13 @@ JSCDragBoth : JSCDragView {		// JJJ not subclass of JSCDragSink
 }
 
 
-JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
-	var <mouseBeginTrackFunc, <mouseTrackFunc, <mouseEndTrackFunc;
-	var <clearOnRefresh = true, <relativeOrigin = false;
-	
+JSCAbstractUserView : JSCView {
+	var <drawFunc;
+	var <clearOnRefresh = true;
 	var <>refreshOnFocus = true;
-	
-	var penID			= nil;
+	var <relativeOrigin;
 
-	*paletteExample { arg parent, bounds;
-		^this.new( parent, bounds ).refreshOnFocus_( false ).drawFunc_({ arg view;
-			var b = view.bounds, min = min( b.width, b.height ), max = max( b.width, b.height ),
-			    num = (max / min).asInteger;
-			JPen.addRect( b );
-			JPen.clip;
-			JPen.translate( b.left, b.top );
-			JPen.scale( min, min );
-			num.do({ 	arg i;
-				var rel = i / num;
-				JPen.fillColor = Color.hsv( rel, 0.4, 0.6 );
-				JPen.addWedge( (0.5 + i) @ 0.5, 0.4, rel * pi + 0.2, 1.5pi );
-				JPen.fill;
-			});
-		});
-	}
+	var penID			= nil;
 
 	draw {
 		this.refresh;
@@ -2324,6 +2307,76 @@ JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
 
 	prBoundsUpdated {
 		if( drawFunc.notNil, { this.refresh });
+	}
+
+	clearOnRefresh_{ arg bool;
+		clearOnRefresh = bool;
+		this.setProperty( \clearOnRefresh, bool );
+	}
+
+	drawFunc_ { arg func;
+		if( drawFunc.isNil, {
+			if( func.notNil, {
+				penID	= server.nextNodeID;
+				server.sendBundle( nil,
+					[ '/local', penID, '[', '/new', "de.sciss.swingosc.Pen", '[', '/ref', this.id, ']', relativeOrigin.not, ']' ],
+					[ '/method', this.id, \setPen, '[', '/ref', penID, ']' ]
+				);
+				drawFunc = func;
+				this.refresh;
+			});
+		}, {
+			if( func.isNil, {
+				server.sendBundle( nil,
+					[ '/method', this.id, \setPen, '[', '/ref', \null, ']' ],
+					[ '/method', penID, \dispose ],
+					[ '/free', penID ]
+				);
+				penID = nil;
+				drawFunc = nil;
+			}, {
+				drawFunc = func;
+				this.refresh;
+			});
+		});
+	}
+	
+	focusVisible { ^this.getProperty( \focusVisible, true )}
+	focusVisible_ { arg visible; this.setProperty( \focusVisible, visible )}
+
+	prClose {
+		this.drawFunc_( nil );
+		^super.prClose;
+	}
+
+	protDraw {
+		if( drawFunc.notNil, {
+			// cmpID == nil --> don't repaint, because this
+			// will be done already by JSCWindow, and hence
+			// would slow down refresh unnecessarily
+			JPen.protRefresh( drawFunc, this, server, penID, nil );
+		});
+	}
+}
+
+JSCUserView : JSCAbstractUserView {	var <keyDownFunc;
+	var <mouseBeginTrackFunc, <mouseTrackFunc, <mouseEndTrackFunc;
+	
+	*paletteExample { arg parent, bounds;
+		^this.new( parent, bounds ).refreshOnFocus_( false ).drawFunc_({ arg view;
+			var b = view.bounds, min = min( b.width, b.height ), max = max( b.width, b.height ),
+			    num = (max / min).asInteger;
+			JPen.addRect( b );
+			JPen.clip;
+			JPen.translate( b.left, b.top );
+			JPen.scale( min, min );
+			num.do({ 	arg i;
+				var rel = i / num;
+				JPen.fillColor = Color.hsv( rel, 0.4, 0.6 );
+				JPen.addWedge( (0.5 + i) @ 0.5, 0.4, rel * pi + 0.2, 1.5pi );
+				JPen.fill;
+			});
+		});
 	}
 
 	// it's unclear why mouseDown and mouseBeginTrack exist in parallel
@@ -2383,65 +2436,17 @@ JSCUserView : JSCView {	var <keyDownFunc, <drawFunc;
 		^super.keyDown( key, modifiers, unicode, keycode );
 	}
 
-	clearOnRefresh_{ arg bool;
-		clearOnRefresh = bool;
-		this.setProperty( \clearOnRefresh, bool );
-	}
-
 	relativeOrigin_ { arg bool;
 		relativeOrigin = bool;
 		this.setProperty( \relativeOrigin, bool );
 	}
 
 	prSCViewNew {
-		jinsets = Insets( 3, 3, 3, 3 );
+		relativeOrigin	= false;
+		jinsets			= Insets( 3, 3, 3, 3 );
 		^super.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.UserView", ']' ]
 		]);
-	}
-
-	drawFunc_ { arg func;
-		if( drawFunc.isNil, {
-			if( func.notNil, {
-				penID	= server.nextNodeID;
-				server.sendBundle( nil,
-					[ '/local', penID, '[', '/new', "de.sciss.swingosc.Pen", '[', '/ref', this.id, ']', relativeOrigin.not, ']' ],
-					[ '/method', this.id, \setPen, '[', '/ref', penID, ']' ]
-				);
-				drawFunc = func;
-				this.refresh;
-			});
-		}, {
-			if( func.isNil, {
-				server.sendBundle( nil,
-					[ '/method', this.id, \setPen, '[', '/ref', \null, ']' ],
-					[ '/method', penID, \dispose ],
-					[ '/free', penID ]
-				);
-				penID = nil;
-				drawFunc = nil;
-			}, {
-				drawFunc = func;
-				this.refresh;
-			});
-		});
-	}
-	
-	focusVisible { ^this.getProperty( \focusVisible, true )}
-	focusVisible_ { arg visible; this.setProperty( \focusVisible, visible )}
-
-	prClose {
-		this.drawFunc_( nil );
-		^super.prClose;
-	}
-
-	protDraw {
-		if( drawFunc.notNil, {
-			// cmpID == nil --> don't repaint, because this
-			// will be done already by JSCWindow, and hence
-			// would slow down refresh unnecessarily
-			JPen.protRefresh( drawFunc, this, server, penID, nil );
-		});
 	}
 
 	prSendProperty { arg key, value;
