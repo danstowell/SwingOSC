@@ -14,7 +14,7 @@
  *
  *	For details, see JSCView.help.rtf and DeveloperInfo.rtf
  *
- *	@version		0.57, 24-Nov-07
+ *	@version		0.57, 03-Dec-07
  *	@author		Hanns Holger Rutz
  *	@author		SuperCollider Developers
  *
@@ -759,7 +759,7 @@ JSCView {  // abstract class
 
 	setPropertyWithAction { arg symbol, obj;
 		// setting some properties may need to have the action called.
-		if (this.setProperty(symbol, obj), {
+		if( this.setProperty( symbol, obj ), {
 			// setProperty returns true if action needs to be called.
 			this.doAction;
 		});
@@ -1989,13 +1989,13 @@ JSCListView : JSCControlView {
 		^items[this.value]
 	}
 	value {
-		^this.getProperty(\value)
+		^this.getProperty( \value );
 	}
 	value_ { arg val;
-		this.setProperty(\value, this.prFixValue( val ));
+		this.setProperty( \value, this.prFixValue( val ));
 	}	
 	valueAction_ { arg val;
-		this.setPropertyWithAction(\value, this.prFixValue( val ));
+		this.setPropertyWithAction( \value, this.prFixValue( val ));
 	}
 	
 	allowsDeselection_ {Êarg bool;
@@ -2015,7 +2015,7 @@ JSCListView : JSCControlView {
 
 	prFixValue { arg val;
 		if( allowsDeselection and: { val.isNil }, { ^nil });
-		val = val.asInteger;
+		val = (val ? 0).asInteger;
 		if( (val < 0) || (val >= items.size), {
 			val = 0;
 		});
