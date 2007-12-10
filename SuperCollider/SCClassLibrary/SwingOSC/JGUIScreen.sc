@@ -355,7 +355,7 @@ JSCWindow : Object
 				\undecorated, border.not ],
 			[ '/local', "ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.WindowResponder", this.id, ']',
-				viewID, '[', '/method', this.id, "getTopView", ']' ]
+				viewID, '[', '/method', this.id, "getContentPane", ']' ]
 		);
 
 		view = if( scroll, {

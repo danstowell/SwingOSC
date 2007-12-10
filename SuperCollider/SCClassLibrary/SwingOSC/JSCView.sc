@@ -14,7 +14,7 @@
  *
  *	For details, see JSCView.help.rtf and DeveloperInfo.rtf
  *
- *	@version		0.57, 03-Dec-07
+ *	@version		0.57, 10-Dec-07
  *	@author		Hanns Holger Rutz
  *	@author		SuperCollider Developers
  *
@@ -802,7 +802,7 @@ JSCContainerView : JSCView { // abstract class
 	// ----------------- public instance methods -----------------
 
 	removeAll {
-		children.copy.do {|child| child.remove };
+		children.copy.do { arg child; child.remove };
 	}
 	
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
@@ -820,18 +820,21 @@ JSCContainerView : JSCView { // abstract class
 		f.resizeToFit;
 		^f;
 	}
+	
 	horz { arg func, bounds;
 		var comp;
 		comp = JSCHLayoutView.new( this, bounds ?? { this.bounds });
 		func.value( comp );
 		^comp;
 	}
+	
 	vert { arg func, bounds;
 		var comp;
 		comp = JSCVLayoutView.new( this, bounds ?? { this.bounds });
 		func.value( comp );
 		^comp;
 	}
+	
 	comp { arg func, bounds;
 		var comp;
 		comp = JSCCompositeView.new( this, bounds ?? { this.bounds });
@@ -853,6 +856,7 @@ JSCContainerView : JSCView { // abstract class
 					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
 			if( this.prGetWindow.visible, {
 				bndl.add([ '/method', this.id, \revalidate ]);
+				bndl.add([ '/method', this.id, \repaint ]);
 			});
 			server.listSendBundle( nil, bndl );
 		});
@@ -973,7 +977,15 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 JSCScrollTopView : JSCTopView {
 	var <autohidesScrollers = true, <hasHorizontalScroller = true, <hasVerticalScroller = true;
 	var <autoScrolls = true;
+	var vpID;
 	
+	prInit { arg ... args;
+		var result;
+		result = super.prInit( *args );
+		vpID = "vp" ++ this.id;
+		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']' );
+	}
+
 	autohidesScrollers_ { arg bool;
 		var hPolicy, vPolicy;
 		autohidesScrollers = bool;
@@ -1008,7 +1020,7 @@ JSCScrollTopView : JSCTopView {
 	visibleOrigin_ { arg point;
 //		"JSCScrollTopView.visibleOrigin_ : not yet implemented".warn;
 		properties.put( \clipViewOrigin, point );
-		server.sendMsg( '/method', this.id, \setViewportOrigin, point.x, point.y );
+		server.sendMsg( '/method', this.id, \setViewPosition, point.x, point.y );
 //		this.setProperty( \clipViewOrigin, point );
 		this.doAction;
 	}
@@ -1027,6 +1039,45 @@ JSCScrollTopView : JSCTopView {
 	innerBounds {
 		"JSCScrollTopView.innerBounds : not yet implemented".warn;
 		^this.getProperty( \innerBounds, Rect.new )
+	}
+
+	// ----------------- private instance methods -----------------
+
+	add { arg child;	// overriden to redirect to viewport
+		var bndl;
+		
+		children = children.add( child );
+		if (decorator.notNil, { decorator.place(child); });
+
+		if( child.id.notNil, { 
+			bndl = List.new;
+			bndl.add([ '/method', vpID, \add,
+					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
+			if( this.prGetWindow.visible, {
+				bndl.add([ '/method', vpID, \revalidate ]);
+				bndl.add([ '/method', vpID, \repaint ]);
+			});
+			server.listSendBundle( nil, bndl );
+		});
+	}
+	
+	prRemoveChild { arg child;	// overriden to redirect to viewport
+		children.remove(child);
+		if( child.prIsInsideContainer, {
+			server.sendMsg( '/method', vpID, \remove, '[', '/ref', "cn" ++ child.id, ']' );
+		}, {
+			server.sendMsg( '/method', vpID, \remove, '[', '/ref', child.id, ']' );
+		});
+		// ... decorator replace all
+	}
+	
+	prSendProperty { arg key, value;
+		switch( key,
+		\background, {	// overriden to redirect to viewport
+			server.listSendMsg([ '/set', vpID, key ] ++ value.asSwingArg );
+			^nil;
+		});
+		^super.prSendProperty( key, value );
 	}
 }
 

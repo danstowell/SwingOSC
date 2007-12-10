@@ -44,7 +44,6 @@ package de.sciss.swingosc;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -76,8 +75,10 @@ import java.util.Stack;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
+import de.sciss.gui.GUIUtil;
+
 /**
- *	@version	0.57, 24-Nov-07
+ *	@version	0.57, 10-Dec-07
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -246,8 +247,8 @@ implements Icon
 		
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 		if( absCoords ) {
-			final Container cp = SwingUtilities.getRootPane( c ).getContentPane();
-			final Point ptCorr = SwingUtilities.convertPoint( cp, x, y, c );
+			final Component ref		= SwingUtilities.getRootPane( c ).getContentPane();
+			final Point		ptCorr	= GUIUtil.convertPoint( ref, new Point( x, y ), c );
 			if( (ptCorr.x != 0 ) || (ptCorr.y != 0) ) g2.translate( ptCorr.x, ptCorr.y );
 		} else {
 			if( (x != 0 ) || (y != 0) ) g2.translate( x, y );
@@ -261,7 +262,7 @@ implements Icon
 		g2.setClip( clipOrig );
 	}
 	
-	public int getIconWidth()
+    public int getIconWidth()
 	{
 		return c == null ? 0 : c.getWidth();
 	}

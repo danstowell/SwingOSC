@@ -34,6 +34,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.Point;
+// import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -52,7 +53,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JRootPane;
-import javax.swing.JViewport;
+// import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 
 /**
@@ -126,12 +127,13 @@ extends JFrame
 	private void init( boolean hasScroll )
 	{
 		if( hasScroll ) {
-			topView	= new ContentPane( false );
-			scrollPane	= new JScrollPane( topView ); // ...SCROLLBAR_AS_NEEDED
-			scrollPane.setViewportBorder( null );
+			topView		= new ContentPane( false );
+			scrollPane	= new ScrollPane( topView ); // ...SCROLLBAR_AS_NEEDED
+//			scrollPane.setViewportBorder( null );
+			scrollPane.setBorder(  null );
 			setContentPane( scrollPane );
 		} else {
-			topView	= new ContentPane( true );
+			topView		= new ContentPane( true );
 			setContentPane( topView );
 		}
 		final JRootPane	rp		= getRootPane();
@@ -204,7 +206,7 @@ extends JFrame
      private static boolean isWindows() {
     	 return System.getProperty( "os.name" ).contains( "Windows" );
      }
- 
+     
     /**
      *	A slightly modified version of what was published here
      *	http://www.beatniksoftware.com/jujitsu/svn/trunk/src/e/util/GuiUtilities.java
@@ -247,6 +249,20 @@ extends JFrame
         }
     }
 
+    private static class ScrollPane
+    extends JScrollPane
+    {
+    	private ScrollPane( Component view )
+    	{
+    		super( view );
+    	}
+    	
+    	public void setViewPosition( int x, int y )
+    	{
+    		getViewport().setViewPosition( new Point( x, y ));
+    	}
+    }
+
     private class ContentPane
 	extends JPanel // JComponent
 	{
@@ -258,26 +274,36 @@ extends JFrame
 			setOpaque( true );
 		}
 		
-		public void setHorizontalScrollBarPolicy( int policy )
-		{
-			scrollPane.setHorizontalScrollBarPolicy( policy );
-		}
-
-		public void setVerticalScrollBarPolicy( int policy )
-		{
-			scrollPane.setVerticalScrollBarPolicy( policy );
-		}
-		
-		public void setViewportOrigin( int x, int y )
-		{
-			final JViewport vp = scrollPane.getViewport();
-			vp.setViewPosition( new Point( x, y ));
-		}
+//		public void setHorizontalScrollBarPolicy( int policy )
+//		{
+//			scrollPane.setHorizontalScrollBarPolicy( policy );
+//		}
+//
+//		public void setVerticalScrollBarPolicy( int policy )
+//		{
+//			scrollPane.setVerticalScrollBarPolicy( policy );
+//		}
+//		
+//		public void setViewportOrigin( int x, int y )
+//		{
+//			final JViewport vp = scrollPane.getViewport();
+//			vp.setViewPosition( new Point( x, y ));
+//		}
 		
 //		public void setAutoScrolls( boolean auto )
 //		{
 //			final JViewport vp = scrollPane.getViewport();
 //			vp.setAutoscrolls( auto );
+//		}
+		
+//		public void revalidate()
+//		{
+//			if( scrollPane != null ) {
+//				final JViewport vp = scrollPane.getViewport();
+//				vp.revalidate();
+//			} else {
+//				super.revalidate();
+//			}
 //		}
 
 		public void paintComponent( Graphics g )

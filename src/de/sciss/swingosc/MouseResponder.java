@@ -31,6 +31,7 @@
 package de.sciss.swingosc;
 
 import java.awt.Container;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -39,6 +40,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
+import de.sciss.gui.GUIUtil;
 import de.sciss.net.OSCMessage;
 
 
@@ -59,7 +61,7 @@ import de.sciss.net.OSCMessage;
  *	successive clicks.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.53, 02-Jul-07
+ *	@version	0.57, 10-Dec-07
  */
 public class MouseResponder
 extends AbstractResponder
@@ -137,6 +139,8 @@ implements MouseListener, MouseMotionListener
 	private void reply( String stateName, MouseEvent e )
 	{
 		try {
+			final Point p;
+			
 			// note: extract these first because due to a bug
 			// in SwingUtilities.convertMouseEvent, some
 			// modifiers may be swallowed
@@ -145,12 +149,15 @@ implements MouseListener, MouseMotionListener
 			replyArgs[ 6 ] = new Integer( e.getClickCount() );
 			if( absCoords ) {
 				final Container cp = SwingUtilities.getRootPane( e.getComponent() ).getContentPane();
-				e = SwingUtilities.convertMouseEvent( e.getComponent(), e, cp );
+//				e = SwingUtilities.convertMouseEvent( e.getComponent(), e, cp );
+				p = GUIUtil.convertPoint( e.getComponent(), new Point( e.getX(), e.getY() ), cp );
+			} else {
+				p = new Point( e.getX(), e.getY() );
 			}
 			// [ "/key", <componentID>, <state>, <keyCode>, <keyChar>, <modifiers> ]
 			replyArgs[ 1 ] = stateName;
-			replyArgs[ 2 ] = new Integer( e.getX() );
-			replyArgs[ 3 ] = new Integer( e.getY() );
+			replyArgs[ 2 ] = new Integer( p.x );
+			replyArgs[ 3 ] = new Integer( p.y );
 			client.reply( new OSCMessage( getOSCCommand(), replyArgs ));
 		}
 		catch( IOException ex ) {

@@ -33,7 +33,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.Point;
+//import java.awt.Point;
+import java.awt.Rectangle;
 //import java.awt.Rectangle;
 import javax.swing.JComponent;
 
@@ -42,7 +43,7 @@ import javax.swing.JComponent;
  *	SuperCollider cocoa GUI's SCCompositeView (resize property).
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.57, 25-Nov-07
+ *  @version	0.57, 10-Dec-07
  *  
  *  @todo		calcSizes : should rather read minWidth / minHeight etc. client properties
  */
@@ -74,10 +75,10 @@ implements LayoutManager
     private void calcSizes( Container parent )
     {
         final int	nComps = parent.getComponentCount();
-        Dimension	d;
+//      Dimension	d;
         Component	c;
-        Point		p;
-//    	Rectangle	r;
+//      Point		p;
+        Rectangle	r;
 
         preferredWidth	= 0;
         preferredHeight	= 0;
@@ -87,17 +88,24 @@ implements LayoutManager
         for( int i = 0; i < nComps; i++ ) {
             c = parent.getComponent( i );
             if( c.isVisible() ) {
-                d	= c.getPreferredSize();
-//                r	= c.getBounds();
-                p	= c.getLocation();
+//              d	= c.getPreferredSize();
+                r	= c.getBounds();
+// 	            p	= c.getLocation();
                 
-                preferredWidth	= Math.max( preferredWidth, p.x + d.width );
-                preferredHeight	= Math.max( preferredHeight, p.y + d.height );
-                minWidth		= Math.max( minWidth, p.x + c.getMinimumSize().width );
-                minHeight		= Math.max( minHeight, p.y + c.getMinimumSize().width );
+                // note: we don't really deal with preferred sizes yet.
+                // we assume the sc client has explicitly set bounds,
+                // so in order to determine "preferred" container dimensions,
+                // we use the current gadgets' bounds
+                preferredWidth	= Math.max( preferredWidth, r.x + r.width );
+                preferredHeight	= Math.max( preferredHeight, r.y + r.height );
+                minWidth		= Math.max( minWidth, r.x + c.getMinimumSize().width );
+                minHeight		= Math.max( minHeight, r.y + c.getMinimumSize().width );
             }
         }
 //       sizeUnknown = false;
+        
+//        System.out.println( "preferredWidth  " + preferredWidth );
+//        System.out.println( "preferredHeight " + preferredHeight );
     }
 
     public Dimension preferredLayoutSize( Container parent )

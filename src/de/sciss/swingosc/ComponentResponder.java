@@ -42,6 +42,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
+import de.sciss.gui.GUIUtil;
 import de.sciss.net.OSCMessage;
 
 /**
@@ -59,7 +60,7 @@ import de.sciss.net.OSCMessage;
  *	and for state = resized|moved the new bounds.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.53, 02-Jul-07
+ *	@version	0.57, 10-Dec-07
  */
 public class ComponentResponder
 extends AbstractResponder
@@ -119,7 +120,7 @@ implements ComponentListener, FocusListener
 		try {
 			if( absCoords ) {
 				final Container cp = SwingUtilities.getRootPane( e.getComponent() ).getContentPane();
-				b = SwingUtilities.convertRectangle( e.getComponent(), b, cp );
+				b = GUIUtil.convertRectangle( e.getComponent(), b, cp );
 			}
 			// [ "/component", <componentID>, <state>, <x>, <y>, <w>, <h> ]
 			replyArgs[ 1 ] = stateName;

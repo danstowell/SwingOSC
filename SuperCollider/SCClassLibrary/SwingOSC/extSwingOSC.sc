@@ -1,7 +1,7 @@
 /**
  *	@author	SuperCollider Developers
  *	@author	Hanns Holger Rutz
- *	@version	0.56, 09-Oct-07
+ *	@version	0.57, 10-Dec-07
  */
 + Object {
 	asSwingArg {
@@ -150,6 +150,12 @@
 + JFont {
 	asSwingArg {
 		^([ '[', '/new', 'java.awt.Font', this.name, this.style, this.size, ']' ]);
+	}
+}
+
++ Point {
+	asSwingArg {
+		^([ '[', '/new', 'java.awt.Point', this.x, this.y, ']' ]);
 	}
 }
 
