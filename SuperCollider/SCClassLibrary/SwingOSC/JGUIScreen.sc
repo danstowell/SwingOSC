@@ -16,7 +16,7 @@
  *
  *	@author		SuperCollider Developers
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 25-Nov-07
+ *	@version		0.57, 12-Dec-07
  */
 JSCWindow : Object
 {
@@ -34,7 +34,7 @@ JSCWindow : Object
 	var acResp;	// OSCpathResponder for window listening
 	var penID		= nil;
 	var <visible	= false;
-	var border;
+	var <border;
 	
 	var pendingAlpha;
 	

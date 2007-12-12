@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.44">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #475ea9}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #475ea9; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #843424}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #723b2a}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13; min-height: 14.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {text-decoration: underline ; color: #41579c}
+span.s4 {color: #475da5}
+span.s5 {color: #475ea9}
+span.s6 {font: 10.0px Monaco; color: #193ba4}
+span.s7 {color: #445dae}
+span.s8 {color: #415fb7}
+span.s9 {color: #3b5fc8}
+span.s10 {color: #0d32ac}
+span.s11 {color: #193ba4}
+span.s12 {color: #723b2a}
+span.s13 {color: #0019ba}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>JSCScrollTopView<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>an JSCTopView with scrollers</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><br></p>
+<p class="p1">A top level container view which allows the user to scroll across content which exceeds a window's visible bounds. An JSCScrollTopView is created for you automatically if you pass true for the scroll argument in JSCWindow:new. You do not need to create instances of this class directly.</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s2"><b>See also:</b> <a href="JSCWindow.html"><span class="s3">JSCWindow</span></a> <a href="GUI.html"><span class="s3">GUI</span></a></span><span class="s4"> <a href="JSCScrollView.html"><span class="s5">JSCScrollView</span></a></span></p>
+<p class="p5"><br></p>
+<p class="p6"><b>Setting the Internal Bounds</b></p>
+<p class="p2"><br></p>
+<p class="p1">The size of the contained 'canvas' is determined by the bounds of the views which it encloses. <span class="s6">resize</span> settings are thus ignored for contained views. To set it to a particular size, you can add a <a href="JSCCompositeView.html"><span class="s7">JSCCompositeView</span></a> or other container view, but there is no direct setter.</p>
+<p class="p2"><br></p>
+<p class="p6"><b>Action Functions with Scrolling JSCViews</b></p>
+<p class="p2"><br></p>
+<p class="p1">A <span class="s6">JSCScrollTopView</span> or <span class="s6">JSCScrollView</span>'s <span class="s6">action</span> function is evaluated when a user scrolls the view or sets the <span class="s6">visibleOrigin</span>. See the example in the <a href="JSCScrollView.html"><span class="s8">JSCScrollView</span></a> help file.</p>
+<p class="p2"><br></p>
+<p class="p7"><b>Instance Methods</b></p>
+<p class="p8"><br></p>
+<p class="p1">A window's <span class="s6">JSCScrollTopView</span> can be accessed using the <span class="s6">JSCWindow:view</span> method. See the examples below.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>autohidesScrollers_(bool)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>autohidesScrollers</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or return a <a href="../Core/Boolean.html"><span class="s5">Boolean</span></a> value indicating whether this view only shows its scrollers when the bounds of the enclosed content exceed the the bounds of this view. Autohiding is done independently for each axis. The default is <span class="s6">true</span>.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><b>autoScrolls_(bool)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>autoScrolls</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or return a <a href="../Core/Boolean.html"><span class="s5">Boolean</span></a> value indicating whether this view scrolls automatically when you drag on a contained control view past the edge of visible bounds. The default is <span class="s6">true</span>.<span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>hasHorizontalScroller_(bool)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>hasHorizontalScroller</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or return a <a href="../Core/Boolean.html"><span class="s5">Boolean</span></a> value indicating whether this view has a horizontal scroller. The default is <span class="s6">true</span>.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>hasVerticalScroller_(bool)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>hasVerticalScroller</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or return a <a href="../Core/Boolean.html"><span class="s5">Boolean</span></a> value indicating whether this view has a vertical scroller. The default is <span class="s6">true</span>.</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><b>innerBounds</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns a <a href="../Geometry/Rect.html"><span class="s9">Rect</span></a> corresponding to the size of the enclosed canvas. Note that you cannot set this directly. The size of the <span class="s6">innerBounds</span> will be either the visible bounds or the smallest <span class="s6">Rect</span> which contains all enclosed subviews, whichever is larger. See discussion above.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>visibleOrigin_(point)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>visibleOrigin</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or return the coordinates of the current visible origin (the upper lefthand corner) of the enclosed 'canvas'. <span class="s6">point</span> is an instance of <a href="../Geometry/Point.html"><span class="s5">Point</span></a>.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p2"><br></p>
+<p class="p7"><b>Examples</b></p>
+<p class="p3"><br></p>
+<p class="p10">(</p>
+<p class="p11"><span class="s2">w = </span><span class="s10">JSCWindow</span><span class="s2">( scroll: </span><span class="s10">true</span><span class="s2"> ); </span>// you must set this when the window is created</p>
+<p class="p11">//c = JSCSlider( w, Rect( 0, 0, 100, 30 ));</p>
+<p class="p10">w.front;</p>
+<p class="p10">)</p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s2">c.resize = 2; </span>// resize settings are ignored if scrolling is enabled.</p>
+<p class="p12"><br></p>
+<p class="p10">d = <span class="s11">JSCSlider</span>( w, <span class="s11">Rect</span>( 1500, 40, 100, 30 )); <span class="s12">// a horizontal scroller appears</span></p>
+<p class="p10">e = <span class="s11">JSCRangeSlider</span>( w, <span class="s11">Rect</span>( 1500, 80, 100, 30 )); <span class="s12">// a horizontal scroller appears</span></p>
+<p class="p13">e.bounds</p>
+<p class="p10">d.bounds</p>
+<p class="p13"><span class="s2">e = </span><span class="s11">JSCRangeSlider</span><span class="s2">( w, </span><span class="s11">Rect</span><span class="s2">( 0, 0, 100, 30 )); </span>// a horizontal scroller appears</p>
+<p class="p10">e.bounds</p>
+<p class="p10">e.opaque=true</p>
+<p class="p13"><span class="s2">f = </span><span class="s11">JSCRangeSlider</span><span class="s2">( w, </span><span class="s11">Rect</span><span class="s2">( 4, 40, 100, 30 )); </span>// a horizontal scroller appears</p>
+<p class="p10">f.bounds</p>
+<p class="p10">f.refresh</p>
+<p class="p10">w.view.resize=5</p>
+<p class="p10">e.resize=5</p>
+<p class="p10">w.view.refresh</p>
+<p class="p12"><br></p>
+<p class="p14">// doesn't work</p>
+<p class="p14">// w.drawHook = { JPen.fillRect( Rect( 10, 10, 100, 100 ))};</p>
+<p class="p15"><br></p>
+<p class="p14">// w.view.background = Color.clear;</p>
+<p class="p12"><br></p>
+<p class="p10">i = <span class="s11">JSCUserView</span>( w, <span class="s11">Rect</span>( 120, 160, 200, 30 )); <span class="s12">// a horizontal scroller appears</span></p>
+<p class="p10">i.drawFunc = { <span class="s13">arg</span> v; <span class="s13">JPen</span>.fillRect( v.bounds )};</p>
+<p class="p10">i.mouseDownAction_({ arg ... args; args.postln });</p>
+<p class="p10">i.resize = 5;</p>
+<p class="p12"><br></p>
+<p class="p10">d = <span class="s11">JSCStaticText</span>( w, <span class="s11">Rect</span>( 4, 4, 100, 30 )).string_( "Schoko" );</p>
+<p class="p13"><span class="s2">e = </span><span class="s11">JSCRangeSlider</span><span class="s2">( w, </span><span class="s11">Rect</span><span class="s2">( 4, 40, 100, 30 )); </span>// a horizontal scroller appears</p>
+<p class="p13">e.resize = 5;</p>
+<p class="p10">e.background_( Color.green );</p>
+<p class="p10">e.background_( Color.clear );</p>
+<p class="p14">//w.view.opaque=false;</p>
+<p class="p14">//w.view.opaque=true;</p>
+<p class="p10">e.bounds;</p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s2">f = </span><span class="s11">JSCRangeSlider</span><span class="s2">( w, </span><span class="s11">Rect</span><span class="s2">( 40, 80, 100, 30 )); </span>// a horizontal scroller appears</p>
+<p class="p10">f.background_( Color.clear );</p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s2">h = </span><span class="s11">JSCRangeSlider</span><span class="s2">( w, </span><span class="s11">Rect</span><span class="s2">( 80, 120, 200, 30 )); </span>// a horizontal scroller appears</p>
+<p class="p10">h.background_( Color.clear );</p>
+<p class="p12"><br></p>
+<p class="p10">g.dumpOSC</p>
+<p class="p12"><br></p>
+<p class="p10">i = <span class="s11">JSCRangeSlider</span>( w, <span class="s11">Rect</span>( 120, 160, 200, 30 )); <span class="s12">// a horizontal scroller appears</span></p>
+<p class="p10">i.background_( Color.clear );</p>
+<p class="p12"><br></p>
+<p class="p10">j = <span class="s11">JSCRangeSlider</span>( w, <span class="s11">Rect</span>( 160, 200, 200, 30 )); <span class="s12">// a horizontal scroller appears</span></p>
+<p class="p10">j.background_( Color.clear );</p>
+<p class="p12"><br></p>
+<p class="p10">g.sendMsg( '/method', 1001, \repaint );</p>
+<p class="p10">g.sendMsg( '/method', 1007, \invalidate );</p>
+<p class="p10">g.sendMsg( '/method', 1007, \validate );</p>
+<p class="p10">g.sendMsg( '/method', 1001, \revalidate );</p>
+<p class="p12"><br></p>
+<p class="p10">n = JavaObject.basicNew( w.id, w.server );</p>
+<p class="p10">r = JavaObject.newFrom( n, \getRootPane );</p>
+<p class="p10">r.revalidate;</p>
+<p class="p10">c = JavaObject.newFrom( n, \getContentPane );</p>
+<p class="p10">d = JavaObject.newFrom( c, \getComponent, 0 );</p>
+<p class="p10">d = JavaObject.newFrom( c, \getComponent, 1 );</p>
+<p class="p10">g.sendMsg( '/print', d.id );</p>
+<p class="p12"><br></p>
+<p class="p10">e = JavaObject.newFrom( d, \getComponent, 0 );</p>
+<p class="p10">g.sendMsg( '/print', e.id );</p>
+<p class="p12"><br></p>
+<p class="p10">g.sendMsg( '/method', 1000, \revalidate );</p>
+<p class="p10">g.sendMsg( '/method', 1014, \invalidate );</p>
+<p class="p10">g.sendMsg( '/method', 1014, \revalidate );</p>
+<p class="p12"><br></p>
+<p class="p10">j.remove</p>
+<p class="p12"><br></p>
+<p class="p10">w.view.bounds;</p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s2">w.view.autohidesScrollers<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= </span><span class="s11">false</span><span class="s2">; </span>// autohide is enabled by default, but we can turn it off</p>
+<p class="p10">w.view.hasHorizontalScroller<span class="Apple-tab-span">	</span>= <span class="s11">false</span>; <span class="s12">// hide the horizontal scroller</span></p>
+<p class="p10">w.view.autohidesScrollers<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s11">true</span>;</p>
+<p class="p10">w.view.hasHorizontalScroller<span class="Apple-tab-span">	</span>= <span class="s11">true</span>;</p>
+<p class="p13"><span class="s2">w.view.visibleOrigin<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= 1200 @ 0; </span>// but we can still scroll using the visibleOrigin method</p>
+<p class="p13"><span class="s2">w.view.visibleOrigin<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= 0 @ 0; </span>// but we can still scroll using the visibleOrigin method</p>
+<p class="p12"><br></p>
+<p class="p13">////////////// PROBLEMS</p>
+<p class="p12"><br></p>
+<p class="p1">view's returned bounds should (?) ignore the viewport's location</p>
+<p class="p12"><br></p>
+<p class="p10">w.view.background = <span class="s11">Color</span>.red;</p>
+</body>
+</html>

@@ -62,7 +62,7 @@ import javax.swing.KeyStroke;
  *	and whose content pane uses a custom layout manager.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 24-Nov-07
+ *	@version	0.57, 12-Dec-07
  */
 public class Frame
 extends JFrame
@@ -171,13 +171,13 @@ extends JFrame
 		return icon;
 	}
 	
-	public void registerMouseResponder( MouseResponder r )
+	public void registerMouseResponder( AbstractMouseResponder r )
 	{
 		if( collMouseResp == null ) collMouseResp = new ArrayList();
 		collMouseResp.add( r );
 	}
 
-	public void unregisterMouseResponder( MouseResponder r )
+	public void unregisterMouseResponder( AbstractMouseResponder r )
 	{
 		collMouseResp.remove( r );
 	}
@@ -188,7 +188,7 @@ extends JFrame
 			acceptsMouseOver = onOff;
 			if( collMouseResp != null ) {
 				for( int i = 0; i < collMouseResp.size(); i++ ) {
-					((MouseResponder) collMouseResp.get( i )).setAcceptMouseOver( onOff );
+					((AbstractMouseResponder) collMouseResp.get( i )).setAcceptMouseOver( onOff );
 				}
 			}
 		}

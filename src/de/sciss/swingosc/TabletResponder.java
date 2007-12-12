@@ -42,10 +42,10 @@ import com.jhlabs.jnitablet.TabletListener;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 26-Nov-07
+ *	@version	0.57, 12-Dec-07
  */
 public class TabletResponder
-extends AbstractResponder
+extends AbstractMouseResponder
 implements TabletListener
 {
 	private static final Class[]	listenerClasses	= { TabletListener.class };
@@ -56,13 +56,19 @@ implements TabletListener
 	public TabletResponder( Object objectID )
 	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
 	{
-		super( objectID, 15 );
+		this( objectID, null );
+	}
+	
+	public TabletResponder( Object objectID, Object frameID  )
+	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
+	{
+		super( objectID, 15, frameID );
 		add();
 		
 		comp				= (Component) object;
 		proxReplyArgs[ 0 ]	= replyArgs[ 0 ];
 	}
-	
+
 	protected Class[] getListenerClasses()
 	{
 		return listenerClasses;
@@ -93,6 +99,7 @@ implements TabletListener
 					state	= "released";
 					break;
 				case MouseEvent.MOUSE_MOVED:
+					if( !acceptsMouseOver ) return;
 					state	= "moved";
 					break;
 				case MouseEvent.MOUSE_DRAGGED:

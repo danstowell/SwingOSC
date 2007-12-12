@@ -2410,10 +2410,7 @@ JSCAbstractUserView : JSCView {
 	}
 }
 
-JSCUserView : JSCAbstractUserView {	var <keyDownFunc;
-	var <mouseBeginTrackFunc, <mouseTrackFunc, <mouseEndTrackFunc;
-	
-	*paletteExample { arg parent, bounds;
+JSCUserView : JSCAbstractUserView {	*paletteExample { arg parent, bounds;
 		^this.new( parent, bounds ).refreshOnFocus_( false ).drawFunc_({ arg view;
 			var b = view.bounds, min = min( b.width, b.height ), max = max( b.width, b.height ),
 			    num = (max / min).asInteger;
@@ -2428,63 +2425,6 @@ JSCUserView : JSCAbstractUserView {	var <keyDownFunc;
 				JPen.fill;
 			});
 		});
-	}
-
-	// it's unclear why mouseDown and mouseBeginTrack exist in parallel
-	// ; we simply map the methods here
-	mouseDown { arg x, y, modifiers, buttonNumber, clickCount;
-		this.mouseBeginTrack( x, y, modifiers );
-		^super.mouseDown( x, y, modifiers, buttonNumber, clickCount );
-	}
-	
-	mouseUp { arg x, y, modifiers;
-		this.mouseEndTrack( x, y, modifiers );
-		^super.mouseUp( x, y, modifiers );
-	}
-	
-	mouseMove { arg x, y, modifiers;
-		this.mouseTrack( x, y, modifiers );
-		^super.mouseMove( x, y, modifiers );	
-	}
-	
-	keyDownFunc_ { arg func;
-		"JSCUserView.keyDownFunc_ : deprecated!".warn;
-		keyDownFunc = func;
-	}
-	
-	mouseBeginTrackFunc_ { arg func;
-		"JSCUserView.mouseBeginTrackFunc_ : deprecated!".warn;
-		if( func.notNil && mouseResp.isNil, { this.prCreateMouseResponder });
-		mouseBeginTrackFunc = func;
-	}
-
-	mouseTrackFunc_ { arg func;
-		"JSCUserView.mouseTrackFunc_ : deprecated!".warn;
-		if( func.notNil && mouseResp.isNil, { this.prCreateMouseResponder });
-		mouseTrackFunc = func;
-	}
-
-	mouseEndTrackFunc_ { arg func;
-		"JSCUserView.mouseEndTrackFunc_ : deprecated!".warn;
-		if( func.notNil && mouseResp.isNil, { this.prCreateMouseResponder });
-		mouseEndTrackFunc = func;
-	}
-	
-	mouseBeginTrack { arg x, y, modifiers; 
-		mouseBeginTrackFunc.value( this, x, y, modifiers );
-	}
-	
-	mouseTrack { arg x, y, modifiers; 
-		mouseTrackFunc.value( this, x, y, modifiers );
-	}
-	
-	mouseEndTrack { arg x, y, modifiers; 
-		mouseEndTrackFunc.value( this, x, y, modifiers );
-	}
-	
-	keyDown { arg key, modifiers, unicode, keycode;
-		keyDownFunc.value( this, key, modifiers, unicode );
-		^super.keyDown( key, modifiers, unicode, keycode );
 	}
 
 	relativeOrigin_ { arg bool;
@@ -2824,6 +2764,11 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 	value_ { arg val;
 		size = val.size;
 		this.setProperty( \value, val.copy );
+	}
+
+	valueAction_ { arg val;
+		this.size = val.size;	
+		this.setPropertyWithAction( \value, val.copy );
 	}
 	
 	reference { // returns array

@@ -61,18 +61,16 @@ import de.sciss.net.OSCMessage;
  *	successive clicks.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 10-Dec-07
+ *	@version	0.57, 12-Dec-07
  */
 public class MouseResponder
-extends AbstractResponder
+extends AbstractMouseResponder
 implements MouseListener, MouseMotionListener
 {
 	private static final Class[] listenerClasses	= { MouseListener.class, MouseMotionListener.class };
 	private static final String[] listenerNames	= { "MouseListener", "MouseMotionListener" };
 	
 	private final boolean	absCoords;
-	private final Frame		f;
-	private boolean			acceptsMouseOver;
 	
 	public MouseResponder( Object objectID )
 	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
@@ -92,33 +90,10 @@ implements MouseListener, MouseMotionListener
 	public MouseResponder( Object objectID, boolean absCoords, Object frameID )
 	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
 	{
-		super( objectID, 7 );
+		super( objectID, 7, frameID );
 		add();
 		
 		this.absCoords	= absCoords;
-		this.f			= frameID == null ? null : (Frame) client.getObject( frameID );
-		if( f != null ) {
-			f.registerMouseResponder( this );
-			acceptsMouseOver = f.getAcceptMouseOver();
-		} else {
-			acceptsMouseOver = true;
-		}
-	}
-	
-	public void setAcceptMouseOver( boolean onOff ) {
-		acceptsMouseOver = onOff;
-	}
-	
-	public boolean getAcceptMouseOver()
-	{
-		return acceptsMouseOver;
-	}
-
-	public void remove()
-	throws IllegalAccessException, InvocationTargetException
-	{
-		if( f != null ) f.unregisterMouseResponder( this );
-		super.remove();
 	}
 		
 	protected Class[] getListenerClasses()

@@ -4,7 +4,7 @@
  *
  *	Additional views.
  *
- *	@version		0.54, 16-Jul-07
+ *	@version		0.57, 11-Dec-07
  *	@author		Hanns Holger Rutz
  */
 JSCCheckBox : JSCControlView {
@@ -507,4 +507,131 @@ JSCScrollBar : JSCControlView {
 		};
 		^super.prSendProperty( key, value );
 	}
+}
+
+JPeakMeterManager {
+	classvar all;
+	var <server, views;
+	
+	*newFrom { arg server;
+		var res;
+		if( all.isNil, {
+			all	= IdentityDictionary.new;
+		});
+		res = all.at( server.name );
+		if( res.isNil, {
+			res = this.new( server );
+//			res.start;
+			all.put( server.name, res ); 
+		});
+		^res;
+	}
+	
+	*new { arg server;
+		^super.new.prInit( server );
+	}
+
+	prInit { arg argServer;
+		views	= IdentityDictionary.new;
+//		var cmds;
+//		server = argServer;
+//		this.clear;
+//		responders = [];
+//		server.addr.asArray.do({ arg addrItem; //support for multiple addresses
+//			this.cmds.do({ arg cmd;
+//				var method;
+//				method = cmd.copyToEnd(1).asSymbol;
+//				responders = responders.add(
+//					OSCresponderNode(addrItem, cmd, 
+//						{ arg time, resp, msg; this.respond(method, msg) }
+//					)
+//				)
+//			});
+//		});
+	}
+	
+	register { arg view;
+		var config = IdentityDictionary.new;
+		views = views.put( view, config );
+	}
+	
+	unregister { arg view;
+		var bndl, config;
+		
+		config = views.removeAt( view );
+		config[ \synths ].do({ arg synth;
+			bndl = bndl.add( synth.freeMsg );
+		});
+		if( bndl.size > 0, {
+			server.listSendBundle( nil, bndl );
+		});
+	}
+	
+	prSetGroup { /* ... */  }
+}
+
+JSCPeakMeterView : JSCControlView {
+	var <bus, <group, manager;
+//	var acResp;	// OSCpathResponder for action listening
+
+	prClose {
+		this.prUnregister;
+		^super.prClose;
+//		acResp.remove;
+//		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
+//					   [ '/free', "ac" ++ this.id ]]);
+	}
+
+	prSCViewNew {
+//		properties.put( \value, false );
+//		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
+//			// don't call valueAction coz we'd create a loop
+//			properties.put( \value, msg[4] != 0 );
+//			{ this.doAction; }.defer;
+//		}).add;
+		^super.prSCViewNew([
+			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.PeakMeterGroup", ']' ]
+		]);
+	}
+	
+	prUnregister {
+		if( manager.notNil, {
+			manager.unregister( this );
+			manager = nil;
+		});
+	}
+	
+	group_ { arg g;
+		group = g;
+		if( manager.notNil, {
+			manager.prSetGroup( this, group );
+		});
+	}
+	
+	bus_ { arg b;
+		// if( (bus.server != b.server) or: { b.numChannels != bus.numChannels }, { ... });
+		this.prUnregister;
+		bus	= b;
+		if( bus.notNil, {
+			manager = JPeakMeterManager.newFrom( bus.server );
+			manager.register( this );
+		});
+		
+//		server.sendMsg( '/method', this.id, \setBus, b.server.addr.hostname, b.server.addr.port, b.server.options.protocol, b.index, b.numChannels );
+	}
+
+//	prSendProperty { arg key, value;
+//		key	= key.asSymbol;
+//
+//		// fix keys
+//		case { key === \value }
+//		{
+//			key = \selected;
+//		}
+//		{ key === \string }
+//		{
+//			key = \text;
+//		};
+//		^super.prSendProperty( key, value );
+//	}
 }

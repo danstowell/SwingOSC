@@ -44,16 +44,18 @@ import com.jhlabs.jnitablet.TabletWrapper;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 27-Nov-07
+ *	@version	0.57, 12-Dec-07
  */
 public class TabletView
 extends UserView
 implements DynamicListening, TabletListener
 {
-	private boolean 		added				= false;
-	private boolean 		inside				= false;
-	private boolean 		pressed				= false;
-	private final List		listeners			= new ArrayList();
+	private boolean 				added			= false;
+	private boolean 				inside			= false;
+	private boolean 				pressed			= false;
+	private final List				listeners		= new ArrayList();
+	private TabletProximityEvent	lastEnterEvent;
+	private boolean					dispatchExit	= false;
 	
 	public TabletView()
 	{
@@ -63,7 +65,7 @@ implements DynamicListening, TabletListener
 		addMouseListener( new MouseAdapter() {
 			public void mousePressed( MouseEvent e )
 			{
-System.out.println( "mousePressed " + isEnabled() );
+//System.out.println( "mousePressed " + isEnabled() );
 				if( isEnabled() ) {
 					pressed = true;
 				}
@@ -72,25 +74,30 @@ System.out.println( "mousePressed " + isEnabled() );
 			public void mouseReleased( MouseEvent e )
 			{
 				pressed = false;
-				if( !inside ) remove();
+//				if( !inside ) remove();
 			}
 			
 			public void mouseEntered( MouseEvent e ) {
-System.out.println( "mouseEntered " + isEnabled() );
+//System.out.println( "mouseEntered " + isEnabled() );
 				if( isEnabled() ) {
 					inside	= true;
-					add();
+					if( lastEnterEvent != null ) {
+						dispatch( lastEnterEvent );
+						lastEnterEvent	= null;
+						dispatchExit	= true;
+					}
+//					add();
 				}
 			}
 
 			public void mouseExited( MouseEvent e ) {
 				inside = false;
-				if( !pressed ) remove();
+//				if( !pressed ) remove();
 			}
 		});
 		
 		// XXX don't ask me why this...
-		add(); remove();
+//		add(); remove();
 		
 //		final TabletWrapper tabletWrapper = TabletWrapper.getInstance();
 //		tabletWrapper.addTabletListener( this );
@@ -129,7 +136,7 @@ System.out.println( "mouseEntered " + isEnabled() );
 
 	public void startListening()
 	{
-//		TabletWrapper.getInstance().addTabletListener( this );
+		add();
 	}
 
 	public void stopListening()
@@ -141,8 +148,27 @@ System.out.println( "mouseEntered " + isEnabled() );
 
 	public void tabletEvent( TabletEvent e )
 	{
-		// ignore messages that originate from drags that started outside the view
-		if( (e.getID() == MouseEvent.MOUSE_DRAGGED) && !pressed ) return;
+		switch( e.getID() ) {
+		case MouseEvent.MOUSE_DRAGGED:
+			// ignore messages that originate from drags that started outside the view
+			if( !pressed ) return;
+			break;
+		case MouseEvent.MOUSE_MOVED:
+			// ignore messages that originate from moves that left the view
+			if( !inside ) return;
+			break;
+		case MouseEvent.MOUSE_PRESSED:
+			// ignore messages that originate from clicking outside the view
+			if( !inside ) return;
+			break;
+		case MouseEvent.MOUSE_RELEASED:
+			// ignore messages that originate from clicking outside the view
+			if( !pressed ) return;
+			break;
+		default:
+			break;
+		}
+
 		for( Iterator iter = listeners.iterator(); iter.hasNext(); ) {
 			((TabletListener) iter.next()).tabletEvent( e );
 		}
@@ -165,11 +191,30 @@ System.out.println( "mouseEntered " + isEnabled() );
 //		System.out.println();
 	}
 
-	public void tabletProximity( TabletProximityEvent e )
+	private void dispatch( TabletProximityEvent e )
 	{
 		for( Iterator iter = listeners.iterator(); iter.hasNext(); ) {
 			((TabletListener) iter.next()).tabletProximity( e );
 		}
+	}
+	
+	public void tabletProximity( TabletProximityEvent e )
+	{
+		if( e.isEnteringProximity() ) {
+			if( inside ) {
+				lastEnterEvent	= null;
+				dispatch( e );
+				dispatchExit	= true;
+			} else {
+				lastEnterEvent	= e;
+			}
+		} else {
+			if( dispatchExit ) {
+				dispatchExit	= false;
+				dispatch( e );
+			}
+		}
+
 //		System.out.println( "TabletProximityEvent" );
 //		System.out.println( "  capabilityMask             " + e.getCapabilityMask() );
 //		System.out.println( "  deviceID                   " + e.getDeviceID() );

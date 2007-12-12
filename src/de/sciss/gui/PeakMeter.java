@@ -72,20 +72,20 @@ implements Disposable
 
 	private int					holdDuration	= DEFAULT_HOLD_DUR;	// milliseconds peak hold
 
-	private float				peak			= -160f;
-	private float				rms				= -160f;
-	private float				hold			= -160f;
-	private float				peakToPaint		= -160f;
-	private float				rmsToPaint		= -160f;
-	private float				holdToPaint		= -160f;
-	private float				peakNorm		= -1.0f;
-	private float				rmsNorm			= -1.0f;
-	private float				holdNorm		= -1.0f;
+	private float				peak;
+	private float				rms;
+	private float				hold;
+	private float				peakToPaint;
+	private float				rmsToPaint;
+	private float				holdToPaint;
+	private float				peakNorm;
+	private float				rmsNorm;
+	private float				holdNorm;
 	
 	private int					recentHeight	= 0;
 	private int					calcedHeight	= -1;			// recentHeight snapshot in recalcPaint()
 	private long				lastUpdate		= System.currentTimeMillis();
-	private long				holdEnd			= lastUpdate;
+	private long				holdEnd;
 	
 	private boolean				holdPainted		= true;
 	private boolean				rmsPainted		= true;
@@ -156,6 +156,8 @@ implements Disposable
 				updateInsets();
 			}
 		});
+		
+		clear();
 	}
 	
 	public void setTicks( int ticks )
@@ -265,6 +267,42 @@ implements Disposable
 		}
 	}
 	
+	/**
+	 *	Clears the peak, peak hold and rms values
+	 *	immediately (without ballistics). This
+	 *	way the component can be reset when the
+	 *	metering task is stopped without waiting
+	 *	for the bars to fall down.
+	 */
+	public void clear()
+	{
+		final int	w1		= getWidth() - (insets.left + insets.right);
+		final int	h1		= getHeight() - (insets.top + insets.bottom);
+		final int	rh1		= (h1 - 1) & ~1;
+
+//		System.out.println( "p clear " + hashCode() );
+		synchronized( sync ) {
+			peak		= -160f;
+			rms			= -160f;
+			hold		= -160f;
+			peakToPaint	= -160f;
+			rmsToPaint	= -160f;
+			holdToPaint	= -160f;
+			peakNorm	= -1.0f;
+			rmsNorm		= -1.0f;
+			holdNorm	= -1.0f;
+			holdEnd		= System.currentTimeMillis();
+			yHold		= (rh1 - (int) (holdNorm * rh1) + 1) & ~1;
+			yPeak		= (rh1 - (int) (peakNorm * rh1) + 1) & ~1;
+			yRMS		= Math.max( (rh1 - (int) (rmsNorm  * rh1) + 1) & ~1, yPeak + 4 );
+			if( refreshParent ) {
+				getParent().repaint( insets.left + getX(), insets.top + getY(), w1, h1 );
+			} else {
+				repaint( insets.left, insets.top, w1, h1 );
+			}
+		}
+	}
+	
 //	/**
 //	 *	Adjusts the speed of the peak and RMS bar falling down.
 //	 *	Defaults to 50 decibels per second. At the moment,
@@ -366,7 +404,7 @@ implements Disposable
 	 *
 	 *	@synchronization	this method is thread safe
 	 */
-	private boolean setPeakAndRMS( float peak, float rms )
+	public boolean setPeakAndRMS( float peak, float rms )
 	{
 		return setPeakAndRMS( peak, rms, System.currentTimeMillis() );
 	}
@@ -389,10 +427,9 @@ implements Disposable
 			} else {
 				return paint * 0.01f + 0.55f;	// 5 ... 15%
 			}
-		} else {
-			return Math.max( -1f, paint * 0.005f + 0.3f );	// 0 ... 5 %  
-//			return paint * 0.005f + 0.3f;	// 0 ... 5 %  
-		}
+		} else if( paint >= -60f ) {
+			return paint * 0.005f + 0.3f;	// 0 ... 5 %
+		} else return -1f;
 	}
 
 //	public void setPeakAndRMS( float peak, float rms )
@@ -415,7 +452,8 @@ implements Disposable
 				peakToPaint	= Math.max( peakToPaint, this.peak );
 //				peakNorm	= Math.max( 0.0f, Math.min( 1.0f, peakToPaint * floorWeight + 1 ));
 				peakNorm 	= paintToNorm( peakToPaint );
-
+//System.out.println( "paintToNorm( peakToPaint = " + peakToPaint + " -> peakNorm = " + peakNorm );
+				
 				if( rmsPainted ) {
 					rms			= (float) (Math.log( rms ) * logRMSCorr);
 					if( rms > this.rms ) {
@@ -427,6 +465,7 @@ implements Disposable
 					rmsToPaint	= Math.max( rmsToPaint, this.rms );
 //					rmsNorm		= Math.max( 0.0f, Math.min( 1.0f, rmsToPaint * floorWeight + 1 ));
 					rmsNorm		= paintToNorm( rmsToPaint );
+//System.out.println( "paintToNorm( rmsToPaint = " + rmsToPaint + " -> rmsNorm = " + rmsNorm );
 				}
 				
 				if( holdPainted ) {
@@ -450,11 +489,11 @@ implements Disposable
 				} else {
 					result		= peakNorm >= 0f;
 				}
-				if( !result) {
-					holdNorm = -1f;
-					peakNorm = -1f;
+//				if( !result) {
+//					holdNorm = -1f;
+//					peakNorm = -1f;
 //					System.out.println( "dang" );
-				}
+//				}
 				
 	//		} else {
 	//	
@@ -472,12 +511,12 @@ implements Disposable
 //			yRMS	= ((int) ((1.0f - rmsNorm)  * recentHeight) + 1) & ~1;
 			yHold	= (rh1 - (int) (holdNorm * rh1) + 1) & ~1;
 			yPeak	= (rh1 - (int) (peakNorm * rh1) + 1) & ~1;
-			yRMS	= Math.max( (rh1 - (int) (rmsNorm  * rh1) + 1) & ~1, yPeak + 4 );
+			yRMS	= Math.max( (rh1 - (int) (rmsNorm  * rh1) + 1) & ~1, yPeak + 2 );
 
-			if( (yPeak != yPeakPainted) || (yRMS != yRMSPainted) || (yHold != yHoldPainted) ) {
+// System.out.println( "JA : yPeak = " + yPeak + ", yRMS = " + yRMS + ", yHold = " + yHold + " ;; " + this.peak + ", " + peakToPaint + ", " + peakNorm );
+
+			 if( (yPeak != yPeakPainted) || (yRMS != yRMSPainted) || (yHold != yHoldPainted) ) {
 				final int minY, maxY;
-
-// System.out.println( "JA " + yPeak + ", " + yRMS + ", " + yHold + " ;; " + this.peak + ", " + peakToPaint + ", " + peakNorm );
 				
 				if( holdPainted ) {
 					minY = Math.min( yHold, yHoldPainted );
@@ -609,7 +648,6 @@ implements Disposable
 	public void paintComponent( Graphics g )
 	{
 		super.paintComponent( g );
-		
 		final Graphics2D		g2;
 		final AffineTransform	atOrig;
 		final int				h1		= getHeight() - insets.top - insets.bottom;
@@ -643,11 +681,11 @@ implements Disposable
 		//		g2.fillRect( 1, 0, 10, yPeak );
 				if( rmsPainted ) {
 //					g2.fillRect( 0, 0, 10, yRMS + 1 );
-					g2.fillRect( 0, 0, 10, yRMS );
+					g2.fillRect( 0, 0, 10, yRMS + 1 );
 					if( holdPainted ) g2.drawImage( imgPeak, 0, yHold, 10, yHold + 1, 0, yHold, 10, yHold + 1, this );
-					g2.drawImage( imgPeak, 0, yPeak,    10, yRMS - 2, 0, yPeak,    10, yRMS - 2, this );
-//					g2.drawImage( imgRMS,  0, yRMS + 2, 10, h,    0, yRMS + 2, 10, h,    this );
-					g2.drawImage( imgRMS,  0, yRMS,     10, h,    0, yRMS,     10, h,    this );
+					final int yClipped = Math.min( h, yRMS );
+					g2.drawImage( imgPeak, 0, yPeak,    10, yClipped, 0, yPeak,    10, yClipped, this );
+					g2.drawImage( imgRMS,  0, yRMS + 2, 10, h,    0, yRMS + 2, 10, h,    this );
 				} else {
 					g2.fillRect( 0, 0, 10, yPeak );
 					if( holdPainted ) g2.drawImage( imgPeak, 0, yHold, 10, yHold + 1, 0, yHold, 10, yHold + 1, this );

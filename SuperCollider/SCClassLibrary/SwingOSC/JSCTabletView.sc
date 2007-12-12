@@ -2,14 +2,13 @@
  *	JSCTabletView
  *	(SwingOSC classes for SuperCollider)
  *
- *	@version		0.57, 27-Nov-07
+ *	@version		0.57, 12-Dec-07
  *	@author		Hanns Holger Rutz
  */
 JSCTabletView : JSCAbstractUserView {
+	var <>proximityAction;
 
-//	var <>mouseDownAction,<>mouseUpAction;
-
-	var tabletResp;
+	var tabletResp, cocoaBorder;
 	
 	mouseDown { arg x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
 	                absoluteX, absoluteY, buttonMask, tanPressure;
@@ -41,6 +40,7 @@ JSCTabletView : JSCAbstractUserView {
 		var bndl;
 		
 		relativeOrigin	= true;
+		cocoaBorder		= if( parent.prGetWindow.border, 20, -2 );
 		jinsets			= Insets( 3, 3, 3, 3 );
 		bndl				= List.new;
 		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.TabletView", ']' ]);
@@ -64,17 +64,27 @@ JSCTabletView : JSCAbstractUserView {
 	//   <buttonMask>, <clickCount>
 		tabletResp		= OSCpathResponder( server.addr, [ '/tablet', this.id ], { arg time, resp, msg;
 			var state, deviceID, x, y, pressure, tiltx, tilty, rotation, tanPressure, absoluteX, absoluteY, absoluteZ,
-			    buttonMask, clickCount, buttonNumber, bounds;
+			    buttonMask, clickCount, buttonNumber, bounds, entering, systemTabletID, tabletID, pointingDeviceType,
+			    uniqueID, pointingDeviceID;
 		
 			state 		= msg[2];
 			
 			if( state === \proximity, {
-			
+				deviceID			= msg[3];
+				entering			= msg[4] != 0;
+				systemTabletID	= msg[5];
+				tabletID			= msg[6];
+				pointingDeviceType	= msg[7];
+				uniqueID			= msg[8];
+				pointingDeviceID	= msg[9];
+
+				proximityAction.value( this, entering, deviceID, pointingDeviceType, systemTabletID, pointingDeviceID, tabletID, uniqueID );
+
 			}, {	// from tabletEvent
 				bounds		= this.bounds;
 				deviceID		= msg[3];
 				x			= msg[4] - bounds.left;
-				y			= bounds.bottom - msg[5] + 20; // sucky cocoa
+				y			= bounds.bottom - msg[5] + cocoaBorder; // sucky cocoa
 				pressure		= msg[6];
 				tiltx		= msg[7];
 				tilty		= msg[8];
@@ -117,7 +127,7 @@ JSCTabletView : JSCAbstractUserView {
 			});
 		});
 		tabletResp.add;
-		msg = [ '/local', "tab" ++ this.id, '[', '/new', "de.sciss.swingosc.TabletResponder", this.id, ']' ];
+		msg = [ '/local', "tab" ++ this.id, '[', '/new', "de.sciss.swingosc.TabletResponder", this.id, parent.prGetWindow.id, ']' ];
 		if( bndl.notNil, {
 			bndl.add( msg );
 		}, {
