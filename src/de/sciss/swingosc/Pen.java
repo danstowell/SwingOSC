@@ -78,7 +78,7 @@ import javax.swing.SwingUtilities;
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.57, 10-Dec-07
+ *	@version	0.57, 18-Dec-07
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -369,7 +369,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 					at		= null;
 				} else {
 //System.out.println( "D" );
-					strk	= new BasicStroke( (float) (gc.strk.getLineWidth() * gc.at.getScaleX()),
+					strk	= new BasicStroke( (float) (gc.strk.getLineWidth() * Math.abs( gc.at.getScaleX() )),
 											   BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER );
 					at		= null;
 				}
@@ -379,7 +379,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 					atInv		= gc.at.createInverse();
 //System.out.println( "A" );
 				} catch( NoninvertibleTransformException e1 ) {
-//System.out.println( "NoninvertibleTransformException" );
+					System.err.println( "Pen->CmdDraw : NoninvertibleTransformException" );
 					// ... what can we do ...
 					at			= null;
 					this.shp	= shp;
@@ -387,6 +387,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 				}
 				this.shp	= atInv.createTransformedShape( shp );
 				at			= new AffineTransform( gc.at );
+				at.translate( -0.5, -0.5 ); 
 //System.out.println( "B" );
 			}
 		}
@@ -403,9 +404,10 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			final AffineTransform atOrig = g2.getTransform();
 			if( at != null ) {
 //System.out.println( "E" );
-				g2.setTransform( at );
+				g2.transform( at );
+			} else {
+				g2.translate( -0.5, -0.5 );
 			}
-			g2.translate( -0.5, -0.5 );
 			g2.setPaint( pnt );
 			g2.setStroke( strk );
 			g2.draw( shp );

@@ -14,7 +14,7 @@
  *
  *	For details, see JSCView.help.rtf and DeveloperInfo.rtf
  *
- *	@version		0.57, 10-Dec-07
+ *	@version		0.57, 18-Dec-07
  *	@author		Hanns Holger Rutz
  *	@author		SuperCollider Developers
  *
@@ -101,7 +101,7 @@ JSCView {  // abstract class
 			server.listSendMsg(['/set', this.id, \bounds ] ++ argBounds );
 		});
 		this.prInvalidateChildBounds;
-		scBounds = rect;
+		scBounds = rect.copy;
 		// XXX CompositeView must move its children!!! sucky cocoa!!!
 	}
 		
@@ -507,15 +507,14 @@ JSCView {  // abstract class
 				h			= msg[6];
 				dw		 	= w - jBounds.width;
 				dh 			= h - jBounds.height;
+//[ "w", w, "h", h, "dw", dw, "dh", dh, "jBounds", jBounds, "scBounds", scBounds ].postln;
 				jBounds.width	= w;
 				jBounds.height= h;
-//				scBounds		= properties[ \bounds ];
-//(": "++this.id++" resized by "++dw++", "++dh).postln;
 				if( scBounds.notNil, {
-//("::: not nil").postln;
 					scBounds.width	= scBounds.width + dw;
 					scBounds.height	= scBounds.height + dh;
 				});
+//[ "--> jBounds", jBounds, "scBounds", scBounds ].postln;
 				this.prBoundsUpdated;
 			},
 			\moved, {
@@ -779,17 +778,21 @@ JSCView {  // abstract class
 		JSCView.importDrag;
 	}
 
+	// contract: the returned rect is not identical to the one passed in
 	prBoundsToJava { arg rect;
 		var pb, pinsets;
 		
 		pb = parent.prGetJInsets.subtractFrom( parent.bounds );
+		// moveBy guarantees that we get a copy!
 		^jinsets.subtractFrom( rect ).moveBy( pb.left.neg, pb.top.neg );
 	}
 
+	// contract: the returned rect is not identical to the one passed in
 	prBoundsFromJava { arg rect;
 		var pb;
 		
 		pb = parent.prGetJInsets.subtractFrom( parent.bounds );
+		// moveBy guarantees that we get a copy!
 		^jinsets.addTo( rect ).moveBy( pb.left, pb.top );
 	}
 
@@ -918,8 +921,11 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 	init { }	// kind of overriden by prInitTopView
 
 	prInitTopView { arg argWindow, argBounds, id;
-//		parent = argParent.asView;	// actual view
-		window = argWindow;
+//		parent		= argParent.asView;	// actual view
+		window		= argWindow;
+//		scBounds		= argBounds;
+//		jBounds		= this.prBoundsToJava( scBounds );
+//		jinsets		= Insets.new;
 		this.prInit( nil, argBounds.asRect, this.class.viewClass, window.server, id );
 //		argParent.add( this );		// maybe window or viewadapter
 	}
@@ -966,11 +972,15 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 //	}
 
 	prBoundsToJava { arg rect;
-		^rect;
+		^rect.copy;
 	}
 
 	prBoundsFromJava { arg rect;
-		^rect;
+		^rect.copy;
+	}
+
+	prBoundsUpdated {
+		if( window.drawHook.notNil, { window.refresh });
 	}
 }
 

@@ -16,7 +16,7 @@
  *
  *	@author		SuperCollider Developers
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Dec-07
+ *	@version		0.57, 18-Dec-07
  */
 JSCWindow : Object
 {
@@ -335,7 +335,7 @@ JSCWindow : Object
 			{ state === \resized }
 			{
 				bounds = this.prBoundsFromJava( Rect( msg[3], msg[4], msg[5], msg[6] ));
-				if( drawHook.notNil, { this.refresh });
+//				if( drawHook.notNil, { this.refresh });
 			}
 			{ state === \moved }
 			{

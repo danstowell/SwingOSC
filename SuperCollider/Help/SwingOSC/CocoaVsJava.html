@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based cross-platform replacements for Cocoa GUI classes</h2>
-<p>This document lists most of the available classes. last mod: 25-nov-07 sciss
+<p>This document lists most of the available classes. last mod: 17-dec-07 sciss
 </p>
 </div>
 <h1>Cocoa vs. Java GUI classes</h1>
@@ -45,6 +45,7 @@ SuperCollider Language on Mac OS comes with a large set of GUI classes that crea
 <tr><td><A HREF="SC://FreqScope">FreqScope</A></td><td><A HREF="JFreqScope.html">JFreqScope</A></td><td>spectrum tool</td></tr>
 <tr><td><A HREF="SC://SCFreqScope">SCFreqScope</A></td><td><A HREF="JSCFreqScope.html">JSCFreqScope</A></td><td>spectrum view</td></tr>
 <tr><td><A HREF="SC://SCUserView">SCUserView</A></td><td><A HREF="JSCUserView.html">JSCUserView</A></td><td>view with customizable graphics</td></tr>
+<tr><td><A HREF="SC://SCTabletView">SCTabletView</A></td><td><A HREF="JSCTabletView.html">JSCTabletView</A></td><td>view for graphic tablet control</td></tr>
 <tr><td><A HREF="SC://Pen">Pen</A></td><td><A HREF="JPen.html">JPen</A></td><td>tool to use with (J)SCUserView and (J)SCWindow</td></tr>
 <tr><td><A HREF="SC://SCTextView">SCTextView</A></td><td><A HREF="JSCTextView.html">JSCTextView</A></td><td>multiline attributed text editor</td></tr>
 <tr><td><A HREF="SC://SCHLayoutView">SCHLayoutView</A></td><td><A HREF="JSCHLayoutView.html">JSCHLayoutView</A></td><td>container with children placed horizontally</td></tr>
@@ -60,8 +61,9 @@ SuperCollider Language on Mac OS comes with a large set of GUI classes that crea
 <tr><td colspan="3">&nbsp;</td></tr>
 <tr><td></td><td><A HREF="JSCCheckBox.html">JSCCheckBox</A></td><td>checkmark toggle button</td></tr>
 <tr><td></td><td><A HREF="JSCTabbedPane.html">JSCTabbedPane</A></td><td>hosts multiple containers that can be switched through tabs</td></tr>
-<tr><td></td><td><A HREF="JSCScrollPane.html">JSCScrollPane</A></td><td><SPAN CLASS="red">wraps container in a virtual viewport with scrollbar navigation</SPAN></td></tr>
+<!-- <tr><td></td><td><A HREF="JSCScrollPane.html">JSCScrollPane</A></td><td><SPAN CLASS="red">wraps container in a virtual viewport with scrollbar navigation</SPAN></td></tr> -->
 <tr><td></td><td><A HREF="JSCScrollBar.html">JSCScrollBar</A></td><td>slider to navigate virtual viewports</td></tr>
+<tr><td></td><td><A HREF="JSCPeakMeterView.html">JSCPeakMeterView</A></td><td>volume level peak meter display</td></tr>
 </table>
 <P>&nbsp;<BR>
 Click above to open the help files and compare the output; a good starting point is (J)EZSlider (<strong>highlighted</strong>). For SwingOSC, you need to copy the help files into the SuperCollider help folder first.
@@ -90,7 +92,7 @@ Click above to open the help files and compare the output; a good starting point
 <P>&nbsp;</P>
 <h2>Missing Classes</h2>
 <P>
-&ndash; These are only available in Cocoa at the moment, but should some day be available in SwingOSC: <A HREF="SC://SCTabletView">SC2DTabletSlider</A>, <A HREF="SC://Speech">SC2DTabletSlider</A>.
+&ndash; These are only available in Cocoa at the moment, but should some day be available in SwingOSC: <A HREF="SC://SC2DTabletSlider">SC2DTabletSlider</A>.
 </P><P>
 &ndash; These are likely to never make it into SwingOSC: <A HREF="SC://HiliteGradient">HiliteGradient</A> (as background colour)
 </P>

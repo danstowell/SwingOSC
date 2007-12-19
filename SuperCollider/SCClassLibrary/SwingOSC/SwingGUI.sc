@@ -3,7 +3,7 @@
  *	It can be accessed from the GUI
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
- *	@version	0.57, 27-Nov-07
+ *	@version	0.57, 18-Dec-07
  */
 SwingGUI {
 	classvar extraClasses;
@@ -80,6 +80,7 @@ SwingGUI {
 	*checkBox { ^JSCCheckBox }
 	*tabbedPane { ^JSCTabbedPane }
 	*scrollBar { ^JSCScrollBar }
+	*peakMeterView { ^JSCPeakMeterView }
 
 	///////////////// crucial /////////////////
 //	*startRow { ^JStartRow }

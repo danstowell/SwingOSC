@@ -7,21 +7,24 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.44">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #544f83}
+p.p1 {margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #52537f}
 p.p2 {margin: 0.0px 0.0px 16.0px 0.0px; font: 24.0px Lucida Grande}
 p.p3 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Lucida Grande}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
-span.s1 {text-decoration: underline ; color: #001fe8}
-span.s2 {color: #0019ba}
+span.s1 {color: #0736dc}
+span.s2 {text-decoration: underline ; color: #0736dc}
+span.s3 {color: #0019ba}
+span.s4 {color: #2b6f11}
 </style>
 </head>
 <body>
-<h2 style="margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #544f83"><b>SwingOSC – Java-based GUI classes</b></h2>
+<h2 style="margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #52537f"><b>SwingOSC – Java-based GUI classes</b></h2>
 <h1 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 24.0px Lucida Grande"><b>JSCPeakMeterView</b></h1>
-<p class="p3"><b>Note: please use the abstraction layer GUI.peakMeterView if possible! (see </b><a href="SC://GUI"><span class="s1"><b>GUI</b></span></a><b>).</b> See also <a href="JSCView.html"><span class="s1">JSCView</span></a>.</p>
+<p class="p3"><b>Note: please use the abstraction layer GUI.peakMeterView if possible! (see </b><a href="SC://GUI"><span class="s1"><b>GUI</b></span></a><b>).</b> See also <a href="JSCView.html"><span class="s2">JSCView</span></a>.</p>
 <p class="p4">(</p>
-<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p4"><span class="Apple-converted-space">    </span>b = <span class="s2">JSCPeakMeterView</span>( w, <span class="s2">Rect</span>( 20, 20, 12, 203 ));</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s3">JSCWindow</span>.new;</p>
+<p class="p4"><span class="Apple-converted-space">    </span>b = <span class="s3">JSCPeakMeterView</span>( w, <span class="s3">Rect</span>( 20, 20, 40, 210 ));</p>
+<p class="p4"><span class="Apple-converted-space">    </span>b.bus = <span class="s3">Bus</span>( <span class="s4">\audio</span>, 0, 1, s );</p>
 <p class="p4"><span class="Apple-converted-space">    </span>w.front;</p>
 <p class="p4">)</p>
 </body>

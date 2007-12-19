@@ -511,7 +511,15 @@ JSCScrollBar : JSCControlView {
 
 JPeakMeterManager {
 	classvar all;
-	var <server, views;
+	var <server;
+	var views;			// IdentityDictionary mapping a JSCPeakMeterView to a config.
+						//	A config is an IdentityDictionary itself with the following entries:
+						//	- \busIndexOffset	the channel offset div(2) in the control bus
+						//	- \numChannels	the number of audio channels (control bus channels div(2))
+						//	- \synths			an Array of Synth instances (the metering synths)
+						//	- \group			the group for the synths _if created by the manager_
+	var cbus;				// current meter control bus
+	var numChannels = 0;	// current number of audio channels
 	
 	*newFrom { arg server;
 		var res;
@@ -521,7 +529,6 @@ JPeakMeterManager {
 		res = all.at( server.name );
 		if( res.isNil, {
 			res = this.new( server );
-//			res.start;
 			all.put( server.name, res ); 
 		});
 		^res;
@@ -533,41 +540,76 @@ JPeakMeterManager {
 
 	prInit { arg argServer;
 		views	= IdentityDictionary.new;
-//		var cmds;
-//		server = argServer;
-//		this.clear;
-//		responders = [];
-//		server.addr.asArray.do({ arg addrItem; //support for multiple addresses
-//			this.cmds.do({ arg cmd;
-//				var method;
-//				method = cmd.copyToEnd(1).asSymbol;
-//				responders = responders.add(
-//					OSCresponderNode(addrItem, cmd, 
-//						{ arg time, resp, msg; this.respond(method, msg) }
-//					)
-//				)
-//			});
-//		});
+		server	= argServer;
 	}
 	
-	register { arg view;
-		var config = IdentityDictionary.new;
-		views = views.put( view, config );
-	}
-	
-	unregister { arg view;
-		var bndl, config;
+	protRegister { arg view;
+		var config, oldCBus, viewNumChannels;
 		
-		config = views.removeAt( view );
-		config[ \synths ].do({ arg synth;
-			bndl = bndl.add( synth.freeMsg );
+		config			= IdentityDictionary.new;
+		views			= views.put( view, config );
+		viewNumChannels	= view.bus.numChannels;
+		config.put( \numChannels, viewNumChannels );
+		config.put( \busIndexOffset, numChannels );
+		this.protSetGroup( view, view.group );	// creates group if necessary
+		oldCBus			= cbus;
+		numChannels		= numChannels + viewNumChannels;
+		cbus				= Bus.control( server, numChannels );
+		
+	}
+	
+	protUnregister { arg view;
+		var bndl, synths, group, config, viewNumChannels;
+		
+		config			= views.removeAt( view );
+		synths			= config.at( \synths );
+		bndl				= Array( synths.size + 1 );
+		group			= config.at( \group );
+		viewNumChannels	= config.at( \numChannels );
+		numChannels		= numChannels - viewNumChannels;
+		synths.do({ arg synth; bndl.add( synth.freeMsg )});
+		if( group.notNil, {
+			bndl.add( group.freeMsg );
 		});
-		if( bndl.size > 0, {
+		if( bndl.notEmpty, {
+			server.listSendBundle( nil, bndl );
+		});
+		if( views.isEmpty, {
+			this.prDispose;
+		});
+	}
+	
+	prDispose {
+		all.removeAt( server.name );
+		cbus.free;
+		cbus		= nil;
+		server	= nil;
+	}
+	
+	protSetGroup { arg view, group;
+		var config, synths, bndl, newGroup, oldGroup;
+		
+		config	= views.at( views );
+		synths	= config.at( \synths );
+		oldGroup	= config.at( \group );
+		bndl		= Array( synths.size + 2 );
+		if( group.isNil, {
+			group	= Group.basicNew( server );
+			// only store groups that _we_ create
+			// in order to properly free them later
+			config.put( \group, group );
+			bndl.add( group.newMsg( server.asGroup, \addToTail ));
+		}, {
+			config.removeAt( \group );
+		});
+		synths.do({ arg synth; bndl.add( synth.moveToTailMsg( group ))});
+		if( oldGroup.notNil, {
+			bndl.add( oldGroup.freeMsg );
+		});
+		if( bndl.notEmpty, {
 			server.listSendBundle( nil, bndl );
 		});
 	}
-	
-	prSetGroup { /* ... */  }
 }
 
 JSCPeakMeterView : JSCControlView {
@@ -596,7 +638,7 @@ JSCPeakMeterView : JSCControlView {
 	
 	prUnregister {
 		if( manager.notNil, {
-			manager.unregister( this );
+			manager.protUnregister( this );
 			manager = nil;
 		});
 	}
@@ -604,19 +646,25 @@ JSCPeakMeterView : JSCControlView {
 	group_ { arg g;
 		group = g;
 		if( manager.notNil, {
-			manager.prSetGroup( this, group );
+			manager.protSetGroup( this, group );
 		});
 	}
 	
 	bus_ { arg b;
+		var numChannels;
 		// if( (bus.server != b.server) or: { b.numChannels != bus.numChannels }, { ... });
 		this.prUnregister;
-		bus	= b;
-		if( bus.notNil, {
-			manager = JPeakMeterManager.newFrom( bus.server );
-			manager.register( this );
+		if( b.notNil and: { b.numChannels > 0 }, {
+			bus			= b;
+			manager		= JPeakMeterManager.newFrom( bus.server );
+			manager.protRegister( this );
+			numChannels	= bus.numChannels;
+		}, {
+			bus			= nil;
+			numChannels	= 0;
 		});
 		
+		server.sendMsg( '/set', this.id, \numChannels, numChannels );
 //		server.sendMsg( '/method', this.id, \setBus, b.server.addr.hostname, b.server.addr.port, b.server.options.protocol, b.index, b.numChannels );
 	}
 
