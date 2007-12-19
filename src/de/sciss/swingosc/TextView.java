@@ -50,7 +50,7 @@ import javax.swing.text.StyledDocument;
  *	mechanism for data updates and utility methods for styling.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.56, 09-Oct-07
+ *	@version	0.57, 19-Dec-07
  */
 public class TextView
 extends JTextPane
@@ -137,6 +137,12 @@ extends JTextPane
 	
 	public void setFont( int rangeStart, int len, Font f )
 	{
+		if( rangeStart == -1 ) {
+			// fixes a bug with empty documents where
+			// the font is not properly applied through setCharacterAttributes...
+			setFont( f );
+			return;
+		}
 		final MutableAttributeSet as = new SimpleAttributeSet();
 		StyleConstants.setFontFamily( as, f.getFamily() );
 		StyleConstants.setFontSize( as, f.getSize() );
@@ -147,6 +153,12 @@ extends JTextPane
 	
 	public void setForeground( int rangeStart, int len, Color c )
 	{
+		if( rangeStart == -1 ) {
+			// fixes a bug with empty documents where
+			// the colour is not properly applied through setCharacterAttributes...
+			setForeground( c );
+			return;
+		}
 		final MutableAttributeSet as = new SimpleAttributeSet();
 		StyleConstants.setForeground( as, c );
 		applyAttr( rangeStart, len, as );
