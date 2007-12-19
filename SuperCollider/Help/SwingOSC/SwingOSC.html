@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>last mod: 30-jul-07 sciss
+<p>last mod: 19-dec-07 sciss
 </p>
 </div>
 <h1>SwingOSC</h1>
@@ -24,20 +24,6 @@ Note that in this document we will assume that the global variable <code>g</code
       <pre>     g = <span class="cl">SwingOSC</span>.default;   <span class="cm">// </span><span class="bigred">!</span>
 	  
 	  </pre>
-<h2>Booting the server from a terminal</h2>
-<P>You can boot a SwingOSC server from within sclang with the boot method (see below). However sometimes you may wish to boot it from a terminal or by double clicking an executable shell script in the Finder. Please refer to the Document <tt class="file">&quot;readme.html&quot;</tt> in the main SwingOSC folder to learn about launching the server from a terminal. You usually launch the server by the following command:</P>
-<PRE>
-	cd <var>&lt;mainSwingOSCFolder&gt;</var>
-  	java -jar build/SwingOSC.jar -t 57111 -i -L
-	
-</PRE>
-<P>Make sure to use <strong>TCP port 57111</strong> and restrict OSC communication to the local machine (<code>-L</code> option) when possible.
-</P><P>
-If you prefer to use UDP transport, use <code>-u</code> instead of <code>-t</code>.
-</P><P>
-To quit the server press <code>Ctrl-C</code> in the terminal.
-Booting and Quitting the Server from within SuperCollider
-</P>
 <H2>Booting and Quitting the Server from within SuperCollider</H2>
 <P>Method signatures:</P>
 <PRE>
@@ -57,7 +43,7 @@ Booting and Quitting the Server from within SuperCollider
         <span class="cl">SwingOSC</span>.program = <span class="st">&quot;java -jar <var>&lt;completePathToAndIncludingSwingOSC.jar&gt;</var>&quot;</span>;
        
 </PRE>
-<P>Here&quot;s for example, what my <tt class="file">&quot;~/scwork/startup.rtf&quot;</tt> reads:</P>
+<P>Here's for example, what my <tt class="file">&quot;~/scwork/startup.rtf&quot;</tt> reads:</P>
 <PRE>
         <span class="cl">SwingOSC</span>.program    = <span class="st">&quot;java -Xdock:icon=/Users/rutz/Documents/workspace/SwingOSC/application.icns -Xdock:name=SwingOSC -jar /Users/rutz/Documents/workspace/SwingOSC/build/SwingOSC.jar&quot;</span>;
         g               = <span class="cl">SwingOSC</span>.default;
@@ -96,7 +82,60 @@ Booting and Quitting the Server from within SuperCollider
 )
 
 </PRE>
-<P>On Mac OS 10.3.9 (Panther) please read the document <tt  class="file">&quot;SuperColliderBUGS.rtf&quot;</tt> to find out about possible boot problems.</P>
+<P><small>On Mac OS 10.3.9 (Panther), there is a known issue with <code>unixCmd</code>s blocking each other, so to boot SwingOSC and <code>scsynth</code> successively, you may need to call <code>g.unblockPipe</code> after booting SwingOSC.</small></P>
+<P>&nbsp;</P>
+<h2>Booting the server from a terminal</h2>
+<P>You can boot a SwingOSC server from within sclang with the boot method (see above). However sometimes you may wish to boot it from a terminal or by double clicking an executable shell script in the Finder. Please refer to the Document <tt class="file">&quot;readme.html&quot;</tt> in the main SwingOSC folder to learn about launching the server from a terminal. You usually launch the server by the following command:</P>
+<PRE>
+	cd <var>&lt;mainSwingOSCFolder&gt;</var>
+  	java -jar build/SwingOSC.jar -t 57111 -i -L
+	
+</PRE>
+<P>Make sure to use <strong>TCP port 57111</strong> and restrict OSC communication to the local machine (<code>-L</code> option) when possible.
+</P><P>
+If you prefer to use UDP transport, use <code>-u</code> instead of <code>-t</code>.
+</P><P>
+To quit the server press <code>Ctrl-C</code> in the terminal.
+</P>
+<P>&nbsp;</P>
+<h2>Creating another server</h2>
+<P>You might want to create another server instance because</P>
+<UL>
+<LI>the GUI needs to be split over different environments</LI>
+<LI>the GUI server is running on a remote machine</LI>
+<LI>several clients are sharing the same server</LI>
+</UL>
+<P><br>To create a new server:</P>
+<PRE>
+	<var>&lt;aServer&gt;</var> = <span class="cl">SwingOSC</span>.new( <var>&lt;name&gt;</var>, <var>&lt;addr&gt;</var>, <var>&lt;options&gt;</var>, <var>&lt;clientID&gt;</var> );
+	
+</PRE>
+<P>The <code>name</code> must be a unique <A HREF="SC://Symbol">Symbol</A> (no two servers with the same name may exist). The <code>addr</code> is a <A HREF="SC://NetAddr">NetAddr</A> object describing the server's socket (IP and port). The <code>options</code> argument is an instance of <A HREF="SwingOptions.html">SwingOptions</A>. If several clients are sharing the same server, use a different <code>clientID</code> <A HREF="SC://Integer">Integer</A> (default: <code>0</code>) for each, so their objectID-allocators won't interfere.</P>
+<P><STRONG>Important:</STRONG> If you don't specify <code>options</code>, default options will be created. <code>loopBack</code> is turned on (<code><span class="kw">true</span></code>) if the supplied <code>addr</code> argument uses the loopback-IP <code><span class="st">&quot;127.0.0.1&quot;</span></code>, otherwise it is off. Inversely, if you don't specify an <code>addr</code>, an appropriate address will be created: if the <code>option</code>'s <code>loopBack</code> flag is <code><span class="kw">true</span></code>, the address will be <code><span class="cl">NetAddr</span>(&nbsp;<span class="st">&quot;127.0.0.1&quot;</span>,&nbsp;57111&nbsp;)</code>. If <code>loopBack</code> is <code><span class="kw">false</span></code>, the local computer's IP address will be determined (only working on Unix systems). Therefore, to use a server without loopback as default:</P>
+<PRE>
+	g = <span class="cl">SwingOSC</span>.new( <span class="sy">\test</span>, options: <span class="cl">SwingOptions</span>.new.loopBack_( <span class="kw">false</span> ));
+	<span class="cl">SwingOSC</span>.default = g;
+	g.boot;
+
+</PRE>
+<P>Do not try to modify the <code>loopBack</code> settings an already existing server.</P>
+<P>Here is another example:</P>
+<pre>(
+    f = <span class="cl">SwingOSC</span>.new( <span class="sy">\secondSwing</span>, <span class="cl">NetAddr</span>( <span class="st">&quot;localhost&quot;</span>, 44444 ));
+    f.options.protocol = <span class="sy">\udp</span>;  <span class="cm">// if you don't want tcp</span>
+    f.waitForBoot({
+        <span class="kw">var</span> win;
+        
+        win = <span class="cl">JSCWindow</span>( server: f );
+        win.onClose = { f.quit; };
+        <span class="cl">JSCStaticText</span>( win.view, <span class="cl">Rect</span>( 40, 40, 100, 30 )).font_( <span class="cl">JFont</span>( <span class="st">&quot;Helvetica&quot;</span>, 36 )).string_( <span class="st">&quot;Kieka&quot;</span> );
+        win.front;
+    });
+    <span class="cm">// use this on MacOS 10.3.9 Panther if booting blocks:</span>
+    <span class="cm">// g.unblockPipe;</span>
+)
+</pre>
+<P>&nbsp;</P>
 <H2>Sending Messages to the Server and Receiving Replies</H2>
 <P>Method signatures:</P>
 <PRE>
@@ -184,30 +223,7 @@ fork {
 
 </pre>
 <P><strong>Note:</strong> a <code>timeout</code> of <code><span class="kw">nil</span></code> means no timeout (waits forever).</P>
-<H2>Instantiating a new Server</H2>
-<P>Method signature:</P>
-<PRE>
-        <var>&lt;aServer&gt;</var> = <span class="cl">SwingOSC</span>.new( <var>&lt;name&gt;</var>, <var>&lt;addr&gt;</var>, <var>&lt;options&gt;</var>, <var>&lt;clientID = 0&gt;</var> )
-        
-</PRE>
-<P>Example:</P>
-      <pre>(
-    f = <span class="cl">SwingOSC</span>.new( <span class="sy">\secondSwing</span>, <span class="cl">NetAddr</span>( <span class="st">&quot;localhost&quot;</span>, 44444 ));
-    f.options.protocol = <span class="sy">\udp</span>;  <span class="cm">// if you don't want tcp</span>
-    f.waitForBoot({
-        <span class="kw">var</span> win;
-        
-        win = <span class="cl">JSCWindow</span>( server: f );
-        win.onClose = { f.quit; };
-        <span class="cl">JSCStaticText</span>( win.view, <span class="cl">Rect</span>( 40, 40, 100, 30 )).font_( <span class="cl">JFont</span>( <span class="st">&quot;Helvetica&quot;</span>, 36 )).string_( <span class="st">&quot;Kieka&quot;</span> );
-        win.front;
-    });
-    <span class="cm">// use this on MacOS 10.3.9 Panther if booting blocks:</span>
-    <span class="cm">// g.unblockPipe;</span>
-)
-
-</pre>
-<P><STRONG>Note:</STRONG> <code>options</code>should be <code><span class="kw">nil</span></code> (default options) or an instance of <A HREF="SwingOptions.html">SwingOptions</A>.</P>
+<P>&nbsp;</P>
 <h2>Adding custom Java classes to the class path</h2>
 <P>Method signatures:</P>
 <PRE>
@@ -216,9 +232,10 @@ fork {
         <var>&lt;aServer&gt;</var>.updateClasses( <var>&lt;url1&gt;</var>, <span class="op">[</span> <var>&lt;url2&gt;</var> <span class="op">... ]</span>)
         
 </PRE>
-<P>Example: see <tt class="file">&quot;DynamicClasses.rtf&quot;</tt> in examples for folder.</P>
+<P>Example: see <tt class="file">&quot;DynamicClasses.html&quot;</tt> in examples for folder.</P>
 <P>URLs can point to single class files, jar archives or folders containing class files. Make sure to use proper <code><span class="st">file://<span class="op">...</span></span></code> URLs and not plain path names for files!</P>
 <P>The <code>updateClasses</code> method can be used to dynamically develop java classes. It is a shorthand for removing and re-adding the URLs in order to use modified recompiled versions of java classes.</P>
+<P>&nbsp;</P>
 <h2>Class methods</h2>
 <P>Method signatures:</P>
 <PRE>

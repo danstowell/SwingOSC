@@ -108,9 +108,26 @@ SwingOSC : Model
 		name			= argName;
 		addr			= argAddr;
 		clientID		= argClientID;
-		options 		= argOptions ? SwingOptions.new;
-		if( addr.isNil, { addr = NetAddr( "127.0.0.1", 57111 )});
-		isLocal		= addr.addr == 2130706433;
+		
+		if( addr.isNil, {
+			options 	= argOptions ?? { SwingOptions.new };
+			isLocal	= true;
+			addr		= NetAddr( if( options.loopBack.not, {ÊSwingOSC.prMyIP }) ? "127.0.0.1", 57111 );
+		}, {
+			isLocal	= addr.addr == 2130706433;
+			if( argOptions.isNil, {
+				options	= SwingOptions.new.loopBack_( isLocal );
+			}, {
+				options	= argOptions;
+				if( options.loopBack && isLocal.not, {
+					"SwingOSC.new : loopBack option is true, but IP is not localhost!".warn;
+				});
+			});
+			if( isLocal.not, {
+				isLocal = addr.ip == SwingOSC.prMyIP;
+			});
+		});
+		
 //		serverRunning	= false;
 		named.put( name, this );
 		set.add( this );
@@ -586,23 +603,11 @@ SwingOSC : Model
 	
 	addStatusWatcher {
 		statusWatcher = 
-// OSCpathResponder is broken!
-//			OSCpathResponder( addr, [ "/info", "status" ], { arg time, resp, msg;
-//				var cmd, one;
-//				alive = true;
-//				this.serverRunning_( true );
-//			//	"SwingOSC is alive!".postln;
 			OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
 				alive = true;
 				this.serverRunning_( true );
 			}).add;	
 	}
-	
-// n.y.a.
-//	notify { arg flag = true;
-//		notified = flag;
-//		this.sendMsg( "/notify", flag.binaryValue );
-//	}
 	
 	dumpOSC { arg code = 1, reply;
 		/*
@@ -629,54 +634,47 @@ SwingOSC : Model
 		this.disconnect;	// try to prevent SC crash, this might be too late though ...
 		"/quit sent\n".inform;
 		alive			= false;
-//		dumpMode 			= 0;
 		serverBooting 	= false;
 		this.serverRunning	= false;
-//		RootNode(this).freeAll;
-//		this.newAllocators;
 	}
 
 	*quitAll {
 		set.do({ arg server; if( server.isLocal, { server.quit }); });
 	}
-	
-// n.y.a.
-//	freeAll {
-//		this.sendMsg( '/g_freeAll', 0 );	// XXX
-////		this.sendMsg( "/clearSched" );
-//		this.initTree;
-//	}
-//	
-//	*freeAll {
-//		set.do({ arg server;
-//			if( server.isLocal, { // debatable ?
-//				server.freeAll;
-//			});
-//		});
-//	}
-//	
-//	// bundling support
-//	openBundle { arg bundle;  // pass in a bundle that you want to continue adding to, or nil for a new bundle.
-//		addr = BundleNetAddr.copyFrom( addr, bundle );
-//	}
-//	
-//	closeBundle { arg time; // set time to false if you don't want to send.
-//		var bundle;
-//		bundle	= addr.bundle;
-//		addr		= addr.saveAddr;
-//		if( time != false, { this.listSendBundle( time, bundle ); });
-//		^bundle;
-//	}
-//	
-//	makeBundle { arg time, func, bundle;
-//		this.openBundle( bundle );
-//		try {
-//			func.value( this );
-//			bundle = this.closeBundle( time );
-//		}{ |error|
-//			addr = addr.saveAddr; // on error restore the normal NetAddr
-//			error.throw;
-//		}
-//		^bundle;
-//	}
+
+	// stolen from jrh's extCollaboration
+	*prMyIP {
+		var i, k, line, pipe, indices, res, keySize, commandLine = "ifconfig", key = "inet", delimiter=$ ;
+		try {
+//			res = Pipe.findValuesForKey( "ifconfig", "inet" );
+			key = key ++ delimiter;
+			keySize = key.size;
+			pipe = Pipe( commandLine, "r" );
+//			Pipe.do( commandLine, { arg l; ... })
+			protect {
+				line	= pipe.getLine;
+				i	= 0;
+				while({ line.notNil }, {
+					indices = line.findAll( key );
+					indices !? {
+						indices.do({ arg j;
+							j = j + keySize;
+							while({ line[ j ] == delimiter }, { j = j + 1 });
+							k = line.find( delimiter.asString, offset: j ) ?? {Êline.size } - 1;
+							res = res.add( line[ j..k ]);
+						});
+					};
+					i = i + 1;
+					line = pipe.getLine;
+				});
+			} {
+				pipe.close;
+			};
+		};
+		^res !? {
+			res = res.reject( _ == "127.0.0.1" ); // remove loopback device ip
+//			if(res.size > 1) { warn("the first of those devices were chosen: " ++ res) };
+			res[ 0 ];
+		};
+	}
 }
