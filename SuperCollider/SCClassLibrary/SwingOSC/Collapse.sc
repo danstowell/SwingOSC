@@ -1,5 +1,5 @@
 /**
- *	(C)opyright 2006-2007 Hanns Holger Rutz. All rights reserved.
+ *	(C)opyright 2006-2008 Hanns Holger Rutz. All rights reserved.
  *	Distributed under the GNU General Public License (GPL).
  *
  *	The Collapse class is useful for deferring actions to a certain clock

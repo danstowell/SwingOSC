@@ -1,4 +1,7 @@
-/*
+/**
+ *	(C)opyright 2006-2008 Hanns Holger Rutz. All rights reserved.
+ *	Distributed under the GNU General Public License (GPL).
+ *
  *	you can use this extension so that
  *	cocoa gui behaves exactly as swingOSC gui,
  *	at least has some more graceful fallbacks...
