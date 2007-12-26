@@ -930,9 +930,29 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 //		argParent.add( this );		// maybe window or viewadapter
 	}
 
-//	prInitTopView { arg argWindow;
-//		window = argWindow;
-//	}
+	prSCViewNew { arg preMsg, postMsg;
+		var bndl, argBounds;
+		
+		if( jinsets.isNil, { jinsets = Insets.new });
+		
+		bndl			= List.new;
+		bndl.addAll( preMsg );
+		jBounds		= this.prBoundsToJava( scBounds );
+//		argBounds		= jBounds.asSwingArg;
+//		bndl.add([ '/set', this.id, \bounds ] ++ argBounds ++ [ \font, '[', '/ref', \font, ']' ]);
+//		if( this.prIsInsideContainer, {
+//			bndl.add([ '/set', "cn" ++ this.id, \bounds ] ++ argBounds );
+//		});
+		if( this.prNeedsTransferHandler, {
+			this.prCreateDnDResponder( bndl );
+		});
+		// NOTE: for global key actions to be working, every view
+		// has to create a key responder, even if it's not using it personally ;-(
+		this.prCreateKeyResponder( bndl );
+		this.prCreateCompResponder( bndl );
+		bndl.addAll( postMsg );
+		server.listSendBundle( nil, bndl );
+	}
 
 	focus { arg flag = true;
 		if( flag, {
