@@ -26,7 +26,7 @@
  *		16-Jun-06		added cancel + reschedule methods
  *		30-Jan-07		removed TypeSafe calls ; added instantaneous ; uses thisThread.seconds
  *
- *	@version	30-Jan-07
+ *	@version	0.57, 31-Dec-07
  *	@author	Hanns Holger Rutz
  */
 Collapse : Object
@@ -93,7 +93,7 @@ Collapse : Object
 //					clock.sched( execTime - now + 0.01, collapseFunc );
 					execTime - now; // + 0.001; why was this extra delay originally needed? XXX
 				}, {					// ok, execute function
-					func.valueArray( args );
+					try { func.valueArray( args )} { arg err; err.reportError };
 					started = false;
 					nil;
 				});

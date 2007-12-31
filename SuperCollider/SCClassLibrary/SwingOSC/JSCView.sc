@@ -148,11 +148,11 @@ JSCView {  // abstract class
 	notClosed { ^dataptr.notNil }
 	
 	remove {
-		if(dataptr.notNil,{
-			parent.prRemoveChild(this);
-			this.prRemove;
+		if( dataptr.notNil, {
+			parent.prRemoveChild( this );
+//			this.prRemove;
 			this.prClose;
-		},{
+		}, {
 			"JSCView-remove : this view was already removed.".debug( this );
 		});
 	}
@@ -630,8 +630,7 @@ JSCView {  // abstract class
 		mouseOverAction.value( this, x, y, modifiers );
 	}
 	
-	prRemove {
-	}
+//	prRemove { }
 
 	prIsInsideContainer {
 		^false;	// default: no
@@ -868,12 +867,21 @@ JSCContainerView : JSCView { // abstract class
 	prInvalidateChildBounds { children.do({ arg child; child.prSetScBounds( nil ); child.prInvalidateChildBounds })}
 
 	prRemoveChild { arg child;
-		children.remove(child);
-		if( child.prIsInsideContainer, {
-			server.sendMsg( '/method', this.id, \remove, '[', '/ref', "cn" ++ child.id, ']' );
-		}, {
-			server.sendMsg( '/method', this.id, \remove, '[', '/ref', child.id, ']' );
+		var bndl;
+		children.remove( child );
+		bndl = Array( 3 );
+		bndl.add([ '/method', this.id, \remove, '[', '/ref', ]  ++
+			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
+		if( this.visible, {
+			bndl.add([ '/method', this.id, \revalidate ]);
+			bndl.add([ '/method', this.id, \repaint ]);
 		});
+		server.listSendBundle( nil, bndl );
+//		if( child.prIsInsideContainer, {
+//			server.sendMsg( '/method', this.id, \remove, '[', '/ref', "cn" ++ child.id, ']' );
+//		}, {
+//			server.sendMsg( '/method', this.id, \remove, '[', '/ref', child.id, ']' );
+//		});
 		// ... decorator replace all
 	}
 	//bounds_  ... replace all
