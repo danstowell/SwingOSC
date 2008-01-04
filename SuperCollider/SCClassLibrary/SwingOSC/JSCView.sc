@@ -14,7 +14,7 @@
  *
  *	For details, see JSCView.help.rtf and DeveloperInfo.rtf
  *
- *	@version		0.57, 18-Dec-07
+ *	@version		0.57, 03-Jan-07
  *	@author		Hanns Holger Rutz
  *	@author		SuperCollider Developers
  *
@@ -2374,6 +2374,31 @@ JSCAbstractUserView : JSCView {
 	var <relativeOrigin;
 
 	var penID			= nil;
+	var lastMouseX, lastMouseY;
+
+	mouseDown { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseDown( x, y, *rest );
+	}
+	
+	mouseUp { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseUp( x, y, *rest );
+	}
+	
+	mouseMove { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseMove( x, y, *rest );
+	}
+	
+	mouseOver { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseOver( x, y, *rest );
+	}
 
 	draw {
 		this.refresh;
@@ -2396,6 +2421,11 @@ JSCAbstractUserView : JSCView {
 
 	prBoundsUpdated {
 		if( drawFunc.notNil, { this.refresh });
+	}
+
+	mousePosition {
+		var b = this.bounds;
+		^((lastMouseX - b.left) @Ê(lastMouseY - b.top));
 	}
 
 	clearOnRefresh_{ arg bool;

@@ -2,7 +2,7 @@
  *  ActionResponder.java
  *  SwingOSC
  *
- *  Copyright (c) 2005-2007 Hanns Holger Rutz. All rights reserved.
+ *  Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ import java.lang.reflect.InvocationTargetException;
  *	in the constructor.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.53, 02-Jul-07
+ *	@version	0.57, 03-Jan-08
 */
 public class ActionResponder
 extends AbstractResponder
@@ -93,7 +93,7 @@ implements ActionListener
 
 	public void actionPerformed( ActionEvent e )
 	{
-		replyArgs[ 2 ] = new Integer( e.getModifiers() );
+//		replyArgs[ 2 ] = new Integer( e.getModifiers() );
 		reply( "performed" );
 	}
 }
