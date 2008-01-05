@@ -4,7 +4,7 @@
  *	we exploit this behaviour to create an easy wrapper
  *	class for Java object control in SwingOSC.
  *
- *	@version	0.55, 25-Jul-07
+ *	@version	0.57, 05-Jan-08
  *	@author	Hanns Holger Rutz
  */
 JavaObject {
@@ -93,7 +93,7 @@ JavaObject {
 	}
 	
 	/**
-	 *	Executes a function where to first
+	 *	Executes a function where the first
 	 *	asynchronous call will be made with a given
 	 *	timeout in seconds. E.g. to facilitate
 	 *
@@ -102,6 +102,22 @@ JavaObject {
 	*withTimeOut { arg timeout = 30.0, func;
 		nextTimeOut = timeout;
 		^func.value;
+	}
+	
+	print {
+		server.sendMsg( '/print', id );
+	}
+	
+	isNull {
+		^this.notNull.not;
+	}
+	
+	notNull {
+		var result, queryID;
+		
+		queryID	= UniqueID.next;
+		result	= server.sendMsgSync([ '/query', queryID, '[', '/method', "de.sciss.swingosc.SwingOSC", \notNull, '[', '/ref', id, ']', ']' ], ['/info', queryID ]);
+		^result.asArray.last.booleanValue;
 	}
 
 	doesNotUnderstand { arg selector ... args;

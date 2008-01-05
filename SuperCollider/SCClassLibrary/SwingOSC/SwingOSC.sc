@@ -10,7 +10,7 @@
  *	- 01-Oct-06	added SwingOptions and TCP mode
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.56, 10-Oct-07
+ *	@version		0.57, 05-Jan-07
  */
 SwingOptions
 {
