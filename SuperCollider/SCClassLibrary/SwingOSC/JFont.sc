@@ -70,7 +70,8 @@ JFont {
 		}, {
 			"JFont.availableFonts : asynchronous call outside routine".warn;
 			{ this.prQueryFontNames( server )}.fork( SwingOSC.clock );
-			^[ "Dialog", "DialogInput", "Monospaced", "SansSerif", "Serif" ];		});
+			^[ "Dialog", "DialogInput", "Monospaced", "SansSerif", "Serif" ];
+		});
 	}
 	
 	*antiAliasing_ { arg flag = false;

@@ -16,7 +16,7 @@
  *
  *	@author		SuperCollider Developers
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 18-Dec-07
+ *	@version		0.57, 06-Jan-07
  */
 JSCWindow : Object
 {
@@ -24,8 +24,8 @@ JSCWindow : Object
 
 	classvar <>allWindows;
 	
-	var dataptr, <name, <>onClose, <view, <userCanClose=true;
-	var <alwaysOnTop=false;
+	var dataptr, <name, <>onClose, <view, <userCanClose = true;
+	var <alwaysOnTop = false;
 	var <drawHook;
 	var <acceptsMouseOver=false;	var <acceptsClickThrough = true;
 	
@@ -34,6 +34,7 @@ JSCWindow : Object
 	var acResp;	// OSCpathResponder for window listening
 	var penID		= nil;
 	var <visible	= false;
+	var <resizable;
 	var <border;
 	
 	var pendingAlpha;
@@ -129,10 +130,11 @@ JSCWindow : Object
 	
 	isClosed { ^dataptr.isNil; }
 	
-	visible_ { arg boo;
-		visible = boo;
-		server.sendBundle( nil,
-			[ '/set', this.id, \visible, boo ]);
+	visible_ { arg bool;
+		if( visible != bool, {
+			visible = bool;
+			server.sendMsg( '/set', this.id, \visible, visible );
+		});
 	}	
 
 	fullScreen {
@@ -143,13 +145,18 @@ JSCWindow : Object
 		server.sendMsg( '/set', this.id, 'graphicsConfiguration.device.fullScreenWindow', '[', '/ref', \null, ']' );
 	}
 	
-	userCanClose_ { arg boo;
-		userCanClose			= boo;
+	userCanClose_ { arg bool;
+		if( userCanClose != bool, {
+			userCanClose = bool;
 												// HIDE_ON_CLOSE, DO_NOTHING_ON_CLOSE
-		server.sendMsg( '/set', this.id, \defaultCloseOperation, if( boo, 1, 0 ) );
+			server.sendMsg( '/set', this.id, \defaultCloseOperation, if( userCanClose, 1, 0 ) );
+		});
 	}
 	
-	acceptsMouseOver_{arg bool;		acceptsMouseOver = bool;			this.prSetAcceptMouseOver(bool);	}	
+	acceptsMouseOver_ { arg bool;
+		if( acceptsMouseOver != bool, {			acceptsMouseOver = bool;				server.sendMsg( '/method', this.id, \setAcceptMouseOver, bool );
+		});
+	}	
 
 	front {
 		if( drawHook.notNil, { this.refresh; });
@@ -164,14 +171,25 @@ JSCWindow : Object
 		});
 	}
 	 
-	alwaysOnTop_{ arg boolean = true;
-		alwaysOnTop = boolean;
-		this.prSetAlwaysOnTop( boolean );
+	alwaysOnTop_ { arg bool = true;
+		if( alwaysOnTop != bool, {
+			alwaysOnTop = bool;
+			server.sendMsg( '/set', this.id, \alwaysOnTop, alwaysOnTop );
+		});
 	}
 		
-	acceptsClickThrough_{|boolean=true|
-		acceptsClickThrough = boolean;
-		this.prSetAcceptsClickThrough(boolean);	
+	acceptsClickThrough_ { arg bool = true;
+		if( acceptsClickThrough != bool, {
+			acceptsClickThrough = bool;
+			if( verbose, { "JSCWindow.acceptsClickThrough_ : has no effect".warn });
+		});
+	}
+	
+	resizable_ { arg bool;
+		if( resizable != bool, {
+			resizable = bool;
+			server.sendMsg( '/set', this.id, \resizable, resizable );
+		});
 	}
 	
 	refresh {
@@ -209,8 +227,10 @@ JSCWindow : Object
 	}
 	
 	name_ { arg argName;
-		name = argName;
-		this.prSetName( argName );
+		if( name != argName, {
+			name = argName;
+			server.listSendMsg([ '/set', this.id, \title ] ++ name.asSwingArg );
+		});
 	}
 	
 	bounds_ { arg argBounds;
@@ -276,13 +296,14 @@ JSCWindow : Object
 
 	/*
 	 *	@param	argName		(String or Symbol) is mapped to property 'title'
-	 *	@param	resizable		(Boolean) is mapped to property 'resizable'
-	 *	@param	border		(Boolean) is mapped to property 'undecorated'
-	 *	@todo	argBounds 	(Rect) is translated to java's coordinate system
+	 *	@param	argBounds 	(Rect) is translated to java's coordinate system
+	 *	@param	argResizable	(Boolean) is mapped to property 'resizable'
+	 *	@param	argBorder		(Boolean) is mapped to property 'undecorated'
 	 */
-	initSCWindow { arg argName, argBounds, resizable, argBorder, scroll, argServer;
+	initSCWindow { arg argName, argBounds, argResizable, argBorder, scroll, argServer;
 		name			= argName.asString;
 		border		= argBorder;
+		resizable		= argResizable;
 		argBounds		= argBounds ?? { Rect.new( 128, 64, 400, 400 )};
 		server		= argServer ?? { SwingOSC.default; };
 		allWindows	= allWindows.add( this );
@@ -351,8 +372,8 @@ JSCWindow : Object
 
 		server.sendBundle( nil,
 			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ [ scroll, ']', ']',
-				\bounds ] ++ this.prBoundsToJava( argBounds ).asSwingArg ++ [ \resizable, resizable,
-				\undecorated, border.not ],
+				\bounds ] ++ this.prBoundsToJava( argBounds ).asSwingArg ++ if( resizable.not, [ \resizable, 0 ]) ++
+				if( border.not, [ \undecorated, 1 ]),
 			[ '/local', "ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.WindowResponder", this.id, ']',
 				viewID, '[', '/method', this.id, "getContentPane", ']' ]
@@ -379,14 +400,6 @@ JSCWindow : Object
 		});
 	}
 
-	prSetAlwaysOnTop{ arg boolean = true;
-		server.sendMsg( '/set', this.id, \alwaysOnTop, boolean );
-	}
-	
-	prSetName { arg argName;
-		server.listSendMsg([ '/set', this.id, \title ] ++ argName.asSwingArg );
-	}
-
 	prGetBounds { arg argBounds;
 		^argBounds.set( bounds.left, bounds.top, bounds.width, bounds.height );
 	}
@@ -395,15 +408,5 @@ JSCWindow : Object
 		bounds		= argBounds;
 		argBounds		= this.prBoundsToJava( argBounds );
 		server.listSendMsg([ '/set', this.id, \bounds ] ++ argBounds.asSwingArg );
-	}
-
-	prSetAcceptMouseOver { arg bool;
-		server.sendMsg( '/method', this.id, \setAcceptMouseOver, bool );
-	}
-
-	prSetAcceptsClickThrough{|boolean=true|
-		acceptsClickThrough = boolean;
-		if( verbose, { "JSCWindow.acceptsClickThrough_ : has no effect".warn });
-//		_SCWindow_AcceptsClickThrough	
 	}
 }
