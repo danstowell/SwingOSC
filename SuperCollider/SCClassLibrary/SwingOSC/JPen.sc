@@ -1,6 +1,36 @@
-/**
- *	SwingOSC replacement for Pen
+/*
+ *	JPen
+ *	(SwingOSC classes for SuperCollider)
  *
+ *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *
+ *	This software is free software; you can redistribute it and/or
+ *	modify it under the terms of the GNU General Public License
+ *	as published by the Free Software Foundation; either
+ *	version 2, june 1991 of the License, or (at your option) any later version.
+ *
+ *	This software is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *	General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public
+ *	License (gpl.txt) along with this software; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *
+ *	For further information, please contact Hanns Holger Rutz at
+ *	contact@sciss.de
+ *
+ *
+ *	Changelog:
+ *	- 03-Oct-06	separate font_ method, font and colour
+ *				removed in string methods!!
+ *	- 01-Jan-07	bundle size increased to 8K again
+ *				; fixes missing List -> asSwingArg ; setSmoothing
+ */
+
+/**
  *	Implementation note: JSCWindow and JSCUserView
  *	call protRefresh when the draw func should be
  *	re-executed. In protRefresh, the draw func is
@@ -15,27 +45,15 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	Changelog
- *		03-Oct-06		separate font_ method, font and colour
- *					removed in string methods!!
- *		Jan-07		bundle size increased to 8K again
- *					; fixes missing List -> asSwingArg ; setSmoothing
- *
  *	@version		0.53, 02-Jul-07
  *	@author		Hanns Holger Rutz
  *
- *	@todo	check if String.bounds is cross platform or not
- *			(might have to replace)
+ *	@todo		check if String.bounds is cross platform or not
+ *				(might have to replace)
  */
 JPen {
 	classvar cmds;
 		
-//	// JJJ begin
-//	*initClass {
-//		cmds = List.new;
-//	}
-//	// JJJ end
-
 	*use { arg function;
 		var res;
 		this.push;

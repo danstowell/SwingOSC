@@ -1,72 +1,39 @@
-/**
- *	(C)opyright 2006-2008 Hanns Holger Rutz. All rights reserved.
- *	Distributed under the GNU General Public License (GPL).
+/*
+ *	Cocoa-Compatibility Extensions
+ *	(SwingOSC classes for SuperCollider)
  *
- *	you can use this extension so that
+ *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *
+ *	This software is free software; you can redistribute it and/or
+ *	modify it under the terms of the GNU General Public License
+ *	as published by the Free Software Foundation; either
+ *	version 2, june 1991 of the License, or (at your option) any later version.
+ *
+ *	This software is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *	General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public
+ *	License (gpl.txt) along with this software; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *
+ *	For further information, please contact Hanns Holger Rutz at
+ *	contact@sciss.de
+ *
+ *
+ *	Changelog:
+ */
+
+/**
+ *	You can use this extension so that
  *	cocoa gui behaves exactly as swingOSC gui,
  *	at least has some more graceful fallbacks...
  *
  *	@version	0.56, 31-Oct-07
  *	@author	Hanns Holger Rutz
  */
-//+ Pen {
-//	*font_ { arg font;
-//		CocoaCompat.penFont = font;
-//	}
-//
-//	*string { arg str;
-//		^str.drawAtPoint( Point( 0, 0 ), CocoaCompat.penFont ?? Font.default, CocoaCompat.penFillColor ?? Color.black );
-//	}
-//	
-//	*stringAtPoint { arg str, point;
-//		^str.drawAtPoint( point, CocoaCompat.penFont ?? Font.default, CocoaCompat.penFillColor ?? Color.black );
-//	}
-//	
-//	*stringInRect { arg str, rect;
-//		^str.drawInRect( rect, CocoaCompat.penFont ?? Font.default, CocoaCompat.penFillColor ?? Color.black );
-//	}
-//	
-//	*stringCenteredIn { arg str, inRect;
-//		^str.drawCenteredIn( inRect, CocoaCompat.penFont ?? Font.default, CocoaCompat.penFillColor ?? Color.black );
-//	}
-//	
-//	*stringLeftJustIn { arg str, inRect;
-//		^str.drawLeftJustIn( inRect, CocoaCompat.penFont ?? Font.default, CocoaCompat.penFillColor ?? Color.black );
-//	}
-//	
-//	*stringRightJustIn { arg str, inRect;
-//		^str.drawRightJustIn( inRect, CocoaCompat.penFont ?? Font.default, CocoaCompat.penFillColor ?? Color.black );
-//	}
-//
-//	*strokeColor_ { arg color;
-//		CocoaCompat.penStrokeColor	= color;
-//		color.setStroke;
-//	}
-//
-//	*fillColor_ { arg color;
-//		CocoaCompat.penFillColor 	= color;
-//		color.setFill;
-//	}
-//	
-//	*color_ { arg color;
-//		CocoaCompat.penFillColor	= color;
-//		CocoaCompat.penStrokeColor	= color;
-//		color.set;
-//	}
-//}
-
-//+ SC2DSlider {
-//	setXY { arg x, y;
-//		this.x = x;
-//		this.y = y;
-//	}
-//	
-//	setXYActive { arg x, y;
-//		this.setXY( x, y );
-//		this.doAction;
-//	}
-//}
-
 + SCDragView {
 	interpretDroppedStrings {Ê^true }
 	
@@ -132,10 +99,6 @@
 	}
 }
 
-//+ SCMultiSliderView {
-//	startIndex_ { arg val; this.setProperty( \startIndex, val )}
-//}
-
 + SCNumberBox {
 	minDecimals { ^0 }
 	maxDecimals { ^8 }
@@ -156,18 +119,6 @@
 		"SCPopUpMenu.allowsReselection_ : not yet working".error;
 	}
 }
-
-//+ SCRangeSlider {
-//	setSpan { arg lo, hi;
-//		this.lo = lo;
-//		this.hi = hi;
-//	}
-//	
-//	setSpanActive { arg lo, hi;
-//		this.setSpan( lo, hi );
-//		this.doAction;
-//	}
-//}
 
 + SCSoundFileView {
 	*cacheFolder { ^nil }

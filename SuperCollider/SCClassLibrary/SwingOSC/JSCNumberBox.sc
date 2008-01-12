@@ -1,77 +1,37 @@
 /*
- *	JSCTextEditBase
+ *	JSCNumberBox
  *	(SwingOSC classes for SuperCollider)
  *
- *	Replacements for the (Cocoa) SCNumberBox.
+ *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
  *
- *	@author		SuperCollider Developers
+ *	This software is free software; you can redistribute it and/or
+ *	modify it under the terms of the GNU General Public License
+ *	as published by the Free Software Foundation; either
+ *	version 2, june 1991 of the License, or (at your option) any later version.
+ *
+ *	This software is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *	General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public
+ *	License (gpl.txt) along with this software; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *
+ *	For further information, please contact Hanns Holger Rutz at
+ *	contact@sciss.de
+ *
+ *
+ *	Changelog:
+ */
+
+/**
+ *	Replacement for the (Cocoa) SCNumberBox.
+ *
  *	@author		Hanns Holger Rutz
  *	@version		0.56, 25-Sep-07
  */
-JSCTextEditBase : JSCStaticTextBase {
-
-	var <>keyString;
-	var	<>typingColor, <>normalColor;
-
-	// ----------------- public instance methods -----------------
-
-	caretColor { ^this.getProperty( \caretColor )}
-	caretColor_ { arg color; this.setProperty( \caretColor, color )}
-
-	value { ^object }
-	value_ { arg val;
-		keyString = nil;
-		this.stringColor = normalColor;
-		object = val;
-		this.string = object.asString;
-	}	
-	valueAction_ { arg val;
-		var prev;
-		prev = object;
-		this.value = val;
-		if (object != prev, { this.doAction });
-	}	
-	boxColor {
-		^this.getProperty(\boxColor, Color.new)
-	}
-	boxColor_ { arg color;
-		this.setProperty(\boxColor, color)
-	}
-
-	properties {
-		^super.properties ++ #[\boxColor]
-	}
-
-	// ----------------- private instance methods -----------------
-
-	init { arg argParent, argBounds, id;
-		typingColor = Color.red;
-		normalColor = Color.black;
-		parent = argParent.asView; // actual view
-// cocoa does parent.asView once more. too cryptic IMO ?
-//		this.prInit( parent, argBounds.asRect, this.class.viewClass, parent.server, id );
-		this.prInit( parent.asView, argBounds.asRect, this.class.viewClass, parent.server, id );
-		argParent.add( this );//maybe window or viewadapter
-	}
-
-	prSendProperty { arg key, value;
-		key	= key.asSymbol;
-
-		// fix keys
-		case { key === \boxColor }
-		{
-			key = \background;
-			if( value == Color.clear, {
-				value = nil;
-			});
-		};
-		^super.prSendProperty( key, value );
-	}
-
-// XXX TEST SWINGOSC 0.55
-//	prNeedsTransferHandler { ^true }
-}
-
 JSCNumberBox : JSCTextEditBase {
 
 	var <>step=1;

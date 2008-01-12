@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCButton. last mod: 30-jul-07 sciss
+<p>This class is meant as an emulation of SCButton. last mod: 12-jan-07 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -60,15 +60,18 @@ b.value = 2;
 <span class="cm">// changes the value and calls the action function if it results in a change of value</span>
 b.valueAction =  3;
 
-<span class="cm">//if you want to make sure the action function is called, use a combo of these: </span>
+<span class="cm">//if you want to make sure the action function is called, use a combo of these:</span>
 b.value = 3;
 b.doAction;
 
-<span class="cm">// values are clipped to size of states </span>
+<span class="cm">// values are clipped to size of states</span>
 b.valueAction =  -1;
 
-<span class="cm">// floats are truncated to integer values </span>
+<span class="cm">// floats are truncated to integer values (see also <A HREF="JFont.html">JFont</A>)</span>
 b.valueAction =  3.3;
+
+<span class="cm">// you can change the font of the button text </span>
+b.font = <span class="cl">JFont</span>( <span class="st">"Serif"</span>, 20 );
 
 </pre>
 <h3>default keyboard mappings</h3>

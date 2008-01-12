@@ -1,7 +1,35 @@
-/**
- *	(C)opyright 2006-2008 Hanns Holger Rutz. All rights reserved.
- *	Distributed under the GNU General Public License (GPL).
+/*
+ *	Collapse
+ *	(SwingOSC classes for SuperCollider)
  *
+ *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *
+ *	This software is free software; you can redistribute it and/or
+ *	modify it under the terms of the GNU General Public License
+ *	as published by the Free Software Foundation; either
+ *	version 2, june 1991 of the License, or (at your option) any later version.
+ *
+ *	This software is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *	General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public
+ *	License (gpl.txt) along with this software; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *
+ *	For further information, please contact Hanns Holger Rutz at
+ *	contact@sciss.de
+ *
+ *
+ *	Changelog:
+ *	- 31-Mar-06	former defer method is renamed to listDefer, former defer2 method becomes defer !
+ *	- 16-Jun-06	added cancel + reschedule methods
+ *	- 30-Jan-07	removed TypeSafe calls ; added instantaneous ; uses thisThread.seconds
+ */
+
+/**
  *	The Collapse class is useful for deferring actions to a certain clock
  *	or scheduling them while reducing system load to a minimum. The Collapse
  *	takes a function to be deferred, a delta time span and a clock
@@ -18,13 +46,6 @@
  *	occur for the given delta time of 100ms. Continuous rotations will update the
  *	arguments (the controller value) while postponing the function until the
  *	user releases the dial.
- *
- *	Class dependancies:
- *
- *	Changelog:
- *		31-Mar-06		former defer method is renamed to listDefer, former defer2 method becomes defer !
- *		16-Jun-06		added cancel + reschedule methods
- *		30-Jan-07		removed TypeSafe calls ; added instantaneous ; uses thisThread.seconds
  *
  *	@version	0.57, 31-Dec-07
  *	@author	Hanns Holger Rutz
