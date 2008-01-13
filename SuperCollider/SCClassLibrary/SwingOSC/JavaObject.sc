@@ -32,7 +32,7 @@
  *	we exploit this behaviour to create an easy wrapper
  *	class for Java object control in SwingOSC.
  *
- *	@version	0.57, 05-Jan-08
+ *	@version	0.57, 12-Jan-08
  *	@author	Hanns Holger Rutz
  */
 JavaObject {
@@ -41,13 +41,17 @@ JavaObject {
 	var <server, <id;
 
 	*initClass {
-		UI.registerForShutdown({ this.destroyAll; });
+		UI.registerForShutdown({ this.destroyAll });
 	}
+
+	// ----------------- constructor -----------------
 
 	*new { arg className, server ... args;
 		^super.new.prInitJavaObject( className, server, args );
 	}
 	
+	// ----------------- public class methods -----------------
+
 	*getClass { arg className, server;
 		^super.new.prInitJavaClass( className, server );
 	}
@@ -64,10 +68,54 @@ JavaObject {
 		^super.newCopyArgs( server, id );
 	}
 	
+	*destroyAll {
+		var list;
+		list = allObjects.copy;
+		allObjects = Array.new( 8 );
+		list.do({ arg obj; obj.destroy });
+	}
+	
+	/**
+	 *	Executes a function where the first
+	 *	asynchronous call will be made with a given
+	 *	timeout in seconds. E.g. to facilitate
+	 *
+	 *	JavaObject.withTimeOut( inf, { jOptionPaneClass.showInputDialog_( ... )});
+	 */
+	*withTimeOut { arg timeout = 30.0, func;
+		nextTimeOut = timeout;
+		^func.value;
+	}
+	
+	// ----------------- public instance methods -----------------
+
+	destroy {
+		server.sendMsg( '/free', id );
+		allObjects.remove( this );
+	}
+	
+	print {
+		server.sendMsg( '/print', id );
+	}
+	
+	isNull {
+		^this.notNull.not;
+	}
+	
+	notNull {
+		var result, queryID;
+		
+		queryID	= UniqueID.next;
+		result	= server.sendMsgSync([ '/query', queryID, '[', '/method', "de.sciss.swingosc.SwingOSC", \notNull, '[', '/ref', id, ']', ']' ], ['/info', queryID ]);
+		^result.asArray.last.booleanValue;
+	}
+
+	// ----------------- private instance methods -----------------
+
 	prInitJavaObject { arg className, argServer, args;
 		var msg;
 		
-		server		= argServer ?? SwingOSC.default;
+		server		= argServer ?? { SwingOSC.default };
 		allObjects	= allObjects.add( this );	// array grows
 		id			= server.nextNodeID;
 		
@@ -81,7 +129,7 @@ JavaObject {
 	}
 	
 	prInitJavaClass { arg className, argServer;
-		server		= argServer ?? SwingOSC.default;
+		server		= argServer ?? { SwingOSC.default };
 		allObjects	= allObjects.add( this );	// array grows
 		id			= server.nextNodeID;
 // this doesn't use the dynamic classloader!
@@ -108,46 +156,6 @@ JavaObject {
 		server.listSendMsg( msg );
 	}
 		
-	destroy {
-		server.sendMsg( '/free', id );
-		allObjects.remove( this );
-	}
-	
-	*destroyAll {
-		var list;
-		list = allObjects.copy;
-		allObjects = Array.new( 8 );
-		list.do({ arg obj; obj.destroy; });
-	}
-	
-	/**
-	 *	Executes a function where the first
-	 *	asynchronous call will be made with a given
-	 *	timeout in seconds. E.g. to facilitate
-	 *
-	 *	JavaObject.withTimeOut( inf, { jOptionPaneClass.showInputDialog_( ... )});
-	 */
-	*withTimeOut { arg timeout = 30.0, func;
-		nextTimeOut = timeout;
-		^func.value;
-	}
-	
-	print {
-		server.sendMsg( '/print', id );
-	}
-	
-	isNull {
-		^this.notNull.not;
-	}
-	
-	notNull {
-		var result, queryID;
-		
-		queryID	= UniqueID.next;
-		result	= server.sendMsgSync([ '/query', queryID, '[', '/method', "de.sciss.swingosc.SwingOSC", \notNull, '[', '/ref', id, ']', ']' ], ['/info', queryID ]);
-		^result.asArray.last.booleanValue;
-	}
-
 	doesNotUnderstand { arg selector ... args;
 		var selStr;
 		

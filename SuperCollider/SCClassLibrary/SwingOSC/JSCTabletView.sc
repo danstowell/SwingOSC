@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.57, 12-Dec-07
+ *	@version		0.57, 12-Jan-08
  *	@author		Hanns Holger Rutz
  */
 JSCTabletView : JSCAbstractUserView {
@@ -35,30 +35,34 @@ JSCTabletView : JSCAbstractUserView {
 
 	var tabletResp, cocoaBorder;
 	
-	mouseDown { arg x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
-	                absoluteX, absoluteY, buttonMask, tanPressure;
-		mouseDownAction.value( this, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
-		                       absoluteX, absoluteY, buttonMask, tanPressure );
+	// ----------------- private instance methods -----------------
+
+	// args:	x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
+	//		absoluteX, absoluteY, buttonMask, tanPressure;
+	doAction { arg ... args;
+		action.value( this, *args );
+		mouseMoveAction.value( this, *args );
 	}
 
-	mouseUp { arg x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
-	              absoluteX, absoluteY, buttonMask, tanPressure;
-		mouseUpAction.value( this, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
-		                     absoluteX, absoluteY, buttonMask, tanPressure );
+	// ----------------- private instance methods -----------------
+
+	// args:	x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
+	//		absoluteX, absoluteY, buttonMask, tanPressure;
+	mouseDown { arg ... args;
+		mouseDownAction.value( this, *args );
 	}
 
-	doAction { arg x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
-	               absoluteX, absoluteY, buttonMask, tanPressure;
-		action.value( this, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
-		              absoluteX, absoluteY, buttonMask, tanPressure );
-		mouseMoveAction.value( this, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
-		                       absoluteX, absoluteY, buttonMask, tanPressure );
+	// args:	x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,
+	//		absoluteX, absoluteY, buttonMask, tanPressure;
+	mouseUp { arg ... args;
+		mouseUpAction.value( this, *args );
 	}
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		tabletResp.remove;
-		^super.prClose([[ '/method', "tab" ++ this.id, \remove ],
-					   [ '/free', "tab" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "tab" ++ this.id, \remove ],
+			 [ '/free', "tab" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {

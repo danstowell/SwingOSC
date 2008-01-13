@@ -30,7 +30,7 @@
  *	Useful adapter for descendants/update mechanism
  *
  *	@author	Hanns Holger Rutz
- *	@version	0.14, 23-Dec-07
+ *	@version	0.57, 12-Jan-08
  */
 UpdateListener // interface
 {
@@ -39,19 +39,27 @@ UpdateListener // interface
 	// adapter implementation
 	var funcUpdate, objects, filter;
 
-	// interface definition
-	*names {
-		^[ \update ];
-	}
+	// ----------------- constructor -----------------
 
 	*new { arg update, what;
 		^super.new.prInit( update, what );
 	}
 	
-	*newFor {Êarg object, update, what;
+	// ----------------- quasi-constructor -----------------
+
+	*newFor { arg object, update, what;
 		^this.new( update, what ).addTo( object );
 	}
 	
+	// ----------------- public class methods -----------------
+
+	// interface definition
+	*names {
+		^[ \update ];
+	}
+
+	// ----------------- public instance methods -----------------
+
 	addTo { arg object;
 		object.addDependant( this );
 		if( objects.isNil, {
@@ -92,6 +100,8 @@ UpdateListener // interface
 		^objects.includes( object );
 	}
 		
+	// ----------------- quasi-interface methods -----------------
+
 	update { arg object, what ... args;
 		if( verbose, {
 			("UpdateListener.update : object = "++object++"; status = "++what).postln;
@@ -105,7 +115,7 @@ UpdateListener // interface
 		});
 	}
 
-	// ------------ private ------------
+	// ----------------- private instance methods -----------------
 
 	prInit { arg update, what;
 		funcUpdate	= update;

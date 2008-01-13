@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 18-Dec-07
+ *	@version		0.57, 12-Jan-08
  */
 SwingGUI {
 	classvar extraClasses;
@@ -44,14 +44,12 @@ SwingGUI {
 		if( GUI.respondsTo( \add ), { GUI.add( this )});
 	}
 
+	// ----------------- public class methods -----------------
+
 	*id { ^\swing }
 	
 	*put { arg key, object;
 		extraClasses.put( key, object );
-	}
-
-	*doesNotUnderstand { arg selector ... args;
-		^extraClasses.perform( selector, *args );
 	}
 
 	///////////////// Common -> GUI -> Base /////////////////
@@ -113,4 +111,10 @@ SwingGUI {
 
 	///////////////// crucial /////////////////
 //	*startRow { ^JStartRow }
+
+	// ----------------- private class methods -----------------
+
+	*doesNotUnderstand { arg selector ... args;
+		^extraClasses.perform( selector, *args );
+	}
 }

@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.57, 03-Jan-07
+ *	@version		0.57, 12-Jan-07
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -36,7 +36,7 @@ JSCContainerView : JSCView { // abstract class
 	// ----------------- public instance methods -----------------
 
 	removeAll {
-		children.copy.do { arg child; child.remove };
+		children.copy.do({ arg child; child.remove });
 	}
 	
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
@@ -78,48 +78,51 @@ JSCContainerView : JSCView { // abstract class
 
 	// ----------------- private instance methods -----------------
 
+	prViewPortID { ^this.id }
+
 	add { arg child;
-		var bndl;
+		var bndl, vpID = this.prViewPortID;
 		
 		children = children.add( child );
-		if (decorator.notNil, { decorator.place(child); });
+		if( decorator.notNil, { decorator.place( child )});
 
 		if( child.id.notNil, { 
-			bndl = List.new;
-			bndl.add([ '/method', this.id, \add,
+			bndl = Array( 3 );
+			bndl.add([ '/method', vpID, \add,
 					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
 			if( this.prGetWindow.visible, {
-				bndl.add([ '/method', this.id, \revalidate ]);
-				bndl.add([ '/method', this.id, \repaint ]);
+				bndl.add([ '/method', vpID, \revalidate ]);
+				bndl.add([ '/method', vpID, \repaint ]);
 			});
 			server.listSendBundle( nil, bndl );
 		});
 	}
 	
-	prInvalidateChildBounds { children.do({ arg child; child.prSetScBounds( nil ); child.prInvalidateChildBounds })}
+	prInvalidateChildBounds {
+		children.do({ arg child;
+			child.prSetScBounds( nil );
+			child.prInvalidateChildBounds;
+		});
+	}
 
 	prRemoveChild { arg child;
-		var bndl;
+		var bndl, vpID = this.prViewPortID;
+		
 		children.remove( child );
 		bndl = Array( 3 );
-		bndl.add([ '/method', this.id, \remove, '[', '/ref', ]  ++
+		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
 			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
 		if( this.visible, {
-			bndl.add([ '/method', this.id, \revalidate ]);
-			bndl.add([ '/method', this.id, \repaint ]);
+			bndl.add([ '/method', vpID, \revalidate ]);
+			bndl.add([ '/method', vpID, \repaint ]);
 		});
 		server.listSendBundle( nil, bndl );
-//		if( child.prIsInsideContainer, {
-//			server.sendMsg( '/method', this.id, \remove, '[', '/ref', "cn" ++ child.id, ']' );
-//		}, {
-//			server.sendMsg( '/method', this.id, \remove, '[', '/ref', child.id, ']' );
-//		});
 		// ... decorator replace all
 	}
 	//bounds_  ... replace all
 
-	prClose {
-		super.prClose;
+	prClose { arg preMsg, postMsg;
+		super.prClose( preMsg, postMsg );
 		children.do({ arg item; item.prClose });
 	}
 
@@ -131,13 +134,22 @@ JSCContainerView : JSCView { // abstract class
 	protDraw {
 		children.do({ arg child; child.protDraw });
 	}
+
+	prSendProperty { arg key, value;
+		switch( key,
+		\background, {	// overriden to redirect to viewport
+			server.listSendMsg([ '/set', this.prViewPortID, key ] ++ value.asSwingArg );
+			^nil;
+		});
+		^super.prSendProperty( key, value );
+	}
 }
 
 JSCCompositeView : JSCContainerView {
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
 
 	asFlowView { arg bounds;
-		^FlowView(this,bounds ?? {this.bounds})
+		^FlowView( this,bounds ?? { this.bounds });
 	}
 
 	// ----------------- private instance methods -----------------
@@ -154,10 +166,40 @@ JSCCompositeView : JSCContainerView {
 JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 	var window;
 
-	*new { arg window, bounds, id;  // JJJ
+	// ----------------- public instance methods -----------------
+
+	focus { arg flag = true;
+		if( flag, {
+			server.sendMsg( '/method', this.id, \requestFocus );
+		}, {
+			"JSCTopView.focus( false ) : not yet implemented".error;
+		});
+	}
+
+	findWindow { ^this.prGetWindow }
+	
+	// only in construction mode, handled internally
+	canReceiveDrag { ^currentDrag.isKindOf( Class )}
+
+	// ----------------- private class methods -----------------
+
+	*new { arg window, bounds, id;
 		^super.new.prInitTopView( window, bounds, id );
 	}
 	
+	// ----------------- public instance methods -----------------
+
+	defaultReceiveDrag {
+		var win, view;
+		win = this.findWindow;
+		view = currentDrag.paletteExample( win, Rect( 10, 10, 140, 24 ));
+		view.keyDownAction_({ arg view, char, modifiers, unicode, keycode;
+			if( keycode == 51, { view.remove });
+		});
+	}
+
+	// ----------------- private instance methods -----------------
+
 	init { }	// kind of overriden by prInitTopView
 
 	prInitTopView { arg argWindow, argBounds, id;
@@ -194,17 +236,7 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		server.listSendBundle( nil, bndl );
 	}
 
-	focus { arg flag = true;
-		if( flag, {
-			server.sendMsg( '/method', this.id, \requestFocus );
-		}, {
-			"JSCTopView.focus( false ) : not yet implemented".error;
-		});
-	}
-
-	prGetWindow {
-		^window;
-	}
+	prGetWindow { ^window }
 
 	// created by JSCWindow
 	handleKeyDownBubbling { arg view, char, modifiers, unicode, keycode;
@@ -215,46 +247,8 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		keyUpAction.value( view, char, modifiers, unicode, keycode );
 	}
 
-	//only in construction mode, handled internally
-	canReceiveDrag { ^currentDrag.isKindOf(Class)}
-
-	findWindow {
-		^window;
-//		JSCWindow.allWindows.do({|win|
-//			if(win.view == this){
-//				^win
-//			}
-//		});
-//		^nil;
-	}
-	
-	defaultReceiveDrag {
-		var win, view;
-		win = this.findWindow;
-		view = currentDrag.paletteExample( win, Rect( 10, 10, 140, 24 ));
-		view.keyDownAction_({ arg view, char, modifiers, unicode, keycode;
-			if( keycode == 51, { view.remove });
-		});
-	}
-
-//	prSendProperty { arg key, value;
-//		var bndl;
-//
-//		key	= key.asSymbol;
-//
-//		switch( key,
-//			\bounds, { ^nil; }	// shouldn't resize content pane
-//		);
-//		^super.prSendProperty( key, value );
-//	}
-
-	prBoundsToJava { arg rect;
-		^rect.copy;
-	}
-
-	prBoundsFromJava { arg rect;
-		^rect.copy;
-	}
+	prBoundsToJava { arg rect; ^rect.copy }
+	prBoundsFromJava { arg rect; ^rect.copy }
 
 	prBoundsUpdated {
 		if( window.drawHook.notNil, { window.refresh });
@@ -266,49 +260,34 @@ JSCScrollTopView : JSCTopView {
 	var <autoScrolls = true;
 	var vpID;
 	
-	prInit { arg ... args;
-		var result;
-		result = super.prInit( *args );
-		vpID = "vp" ++ this.id;
-		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']' );
-	}
+	// ----------------- public instance methods -----------------
 
 	autohidesScrollers_ { arg bool;
 		var hPolicy, vPolicy;
 		autohidesScrollers = bool;
-		hPolicy = this.prCalcPolicy( bool, hasHorizontalScroller ) + 30;
-		vPolicy = this.prCalcPolicy( bool, hasVerticalScroller ) + 20;
+		hPolicy = JSCScrollView.protCalcPolicy( bool, hasHorizontalScroller ) + 30;
+		vPolicy = JSCScrollView.protCalcPolicy( bool, hasVerticalScroller ) + 20;
 
 		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, hPolicy, \verticalScrollBarPolicy, vPolicy );
-	}
-	
-	prCalcPolicy { arg auto, has;
-//		autohidesScrollers			1	0	1	0
-//		hasHorizontalScroller		1	1	0	0
-//		--------------------------------------------
-//		horizontalScrollBarPolicy	0	2	1	1	+ 30
-		^(has.not.binaryValue | ((auto.not && has).binaryValue << 1));
 	}
 	
 	hasHorizontalScroller_ { arg bool;
 		var policy;
 		hasHorizontalScroller = bool;
-		policy = this.prCalcPolicy( autohidesScrollers, bool ) + 30;
+		policy = JSCScrollView.protCalcPolicy( autohidesScrollers, bool ) + 30;
 		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
 	}
 	
 	hasVerticalScroller_ { arg bool;
 		var policy;
 		hasVerticalScroller = bool;
-		policy = this.prCalcPolicy( autohidesScrollers, bool ) + 20;
+		policy = JSCScrollView.protCalcPolicy( autohidesScrollers, bool ) + 20;
 		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
 	}
 	
 	visibleOrigin_ { arg point;
-//		"JSCScrollTopView.visibleOrigin_ : not yet implemented".warn;
 		properties.put( \clipViewOrigin, point );
 		server.sendMsg( '/method', this.id, \setViewPosition, point.x, point.y );
-//		this.setProperty( \clipViewOrigin, point );
 		this.doAction;
 	}
 	
@@ -325,74 +304,111 @@ JSCScrollTopView : JSCTopView {
 	
 	innerBounds {
 		"JSCScrollTopView.innerBounds : not yet implemented".warn;
-		^this.getProperty( \innerBounds, Rect.new )
+		^this.getProperty( \innerBounds, Rect.new );
 	}
 
 	// ----------------- private instance methods -----------------
 
-	add { arg child;	// overriden to redirect to viewport
-		var bndl;
-		
-		children = children.add( child );
-		if (decorator.notNil, { decorator.place(child); });
+	prInit { arg ... args;
+		var result;
+		result = super.prInit( *args );
+		vpID = "vp" ++ this.id;
+		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']' );
+	}
 
-		if( child.id.notNil, { 
-			bndl = List.new;
-			bndl.add([ '/method', vpID, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
-			if( this.prGetWindow.visible, {
-				bndl.add([ '/method', vpID, \revalidate ]);
-				bndl.add([ '/method', vpID, \repaint ]);
-			});
-			server.listSendBundle( nil, bndl );
-		});
-	}
-	
-	prRemoveChild { arg child;	// overriden to redirect to viewport
-		children.remove(child);
-		if( child.prIsInsideContainer, {
-			server.sendMsg( '/method', vpID, \remove, '[', '/ref', "cn" ++ child.id, ']' );
-		}, {
-			server.sendMsg( '/method', vpID, \remove, '[', '/ref', child.id, ']' );
-		});
-		// ... decorator replace all
-	}
-	
-	prSendProperty { arg key, value;
-		switch( key,
-		\background, {	// overriden to redirect to viewport
-			server.listSendMsg([ '/set', vpID, key ] ++ value.asSwingArg );
-			^nil;
-		});
-		^super.prSendProperty( key, value );
-	}
+	prViewPortID { ^vpID }
 }
 
-// JJJ : abstract!
+JSCScrollView : JSCContainerView {
+	var <autohidesScrollers = true, <hasHorizontalScroller = true, <hasVerticalScroller = true;
+	var <autoScrolls = true;
+	var vpID;
+	
+	// ----------------- public instance methods -----------------
+
+	autohidesScrollers_ { arg bool;
+		var hPolicy, vPolicy;
+		autohidesScrollers = bool;
+		hPolicy = JSCScrollView.protCalcPolicy( bool, hasHorizontalScroller ) + 30;
+		vPolicy = JSCScrollView.protCalcPolicy( bool, hasVerticalScroller ) + 20;
+
+		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, hPolicy, \verticalScrollBarPolicy, vPolicy );
+	}
+	
+	hasHorizontalScroller_ { arg bool;
+		var policy;
+		hasHorizontalScroller = bool;
+		policy = JSCScrollView.protCalcPolicy( autohidesScrollers, bool ) + 30;
+		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
+	}
+	
+	hasVerticalScroller_ { arg bool;
+		var policy;
+		hasVerticalScroller = bool;
+		policy = JSCScrollView.protCalcPolicy( autohidesScrollers, bool ) + 20;
+		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
+	}
+	
+	visibleOrigin_ { arg point;
+		properties.put( \clipViewOrigin, point );
+		server.sendMsg( '/method', this.id, \setViewPosition, point.x, point.y );
+		this.doAction;
+	}
+	
+	visibleOrigin {
+		"JSCScrollView.visibleOrigin : not yet implemented".warn;
+		^this.getProperty( \clipViewOrigin, Point.new );
+	}
+	
+	autoScrolls_ { arg bool;
+		"JSCScrollView.autoScrolls_ : not yet implemented".warn;
+		autoScrolls = bool;
+//		server.sendMsg( '/set', this.id, \autoScrolls, bool );
+	}
+	
+	innerBounds {
+		"JSCScrollView.innerBounds : not yet implemented".warn;
+		^this.getProperty( \innerBounds, Rect.new )
+	}
+
+	// ----------------- private class methods -----------------
+
+	*protCalcPolicy { arg auto, has;
+//		autohidesScrollers			1	0	1	0
+//		hasHorizontalScroller		1	1	0	0
+//		--------------------------------------------
+//		horizontalScrollBarPolicy	0	2	1	1	+ 30
+		^(has.not.binaryValue | ((auto.not && has).binaryValue << 1));
+	}
+	
+	// ----------------- private instance methods -----------------
+
+	prInit { arg ... args;
+		var result;
+		result = super.prInit( *args );
+		vpID = "vp" ++ this.id;
+		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']' );
+		XXX
+	}
+
+	prViewPortID { ^vpID }
+}
+
+// abstract class!
 JSCLayoutView : JSCContainerView {
 	// ----------------- public instance methods -----------------
 
-	properties { ^super.properties ++ #[\spacing] }
-	
 	spacing { ^this.getProperty( \spacing, 0 )}
 	
 	spacing_ { arg distance; this.setProperty( \spacing, distance )}
 
-//	add { arg child;
-//		var childID;
-//		
-//		if( child.prGetJInsets.notNil, {
-//			childID = if( child.prIsInsideContainer, { "cn" ++ child.id }, { child.id });
-//			server.sendBundle( nil, [ '/method', id, \putClientProperty, "insets" ] ++ child.prGetJInsets.asSwingArg );
-//		});
-//		^super.add( child );
-//	}
-	
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
 
 	asFlowView {}
 
 	// ----------------- private instance methods -----------------
+
+	properties { ^super.properties ++ #[ \spacing ]}
 
 	prSendProperty { arg key, value;
 		var bndl;
@@ -417,6 +433,8 @@ JSCLayoutView : JSCContainerView {
 }
 
 JSCHLayoutView : JSCLayoutView {
+	// ----------------- private instance methods -----------------
+
 	prSCViewNew {
 		^super.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderAxisLayout", 0, 4, ']', ']' ]
@@ -425,6 +443,8 @@ JSCHLayoutView : JSCLayoutView {
 }
 
 JSCVLayoutView : JSCLayoutView {
+	// ----------------- private instance methods -----------------
+
 	prSCViewNew {
 		^super.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderAxisLayout", 1, 4, ']', ']' ]
@@ -432,14 +452,15 @@ JSCVLayoutView : JSCLayoutView {
 	}
 }
 
-JSCControlView : JSCView { // abstract class
-}
+JSCControlView : JSCView {} // abstract class
 
 JSCSliderBase : JSCControlView {
-	
+	// ----------------- public instance methods -----------------
+
 	knobColor {
 		^this.getProperty(\knobColor, Color.new)
 	}
+	
 	knobColor_ { arg color;
 		this.setProperty(\knobColor, color)
 	}
@@ -451,8 +472,10 @@ JSCSliderBase : JSCControlView {
 		^this.getProperty(\step)
 	}
 	
+	// ----------------- private instance methods -----------------
+
 	properties {
-		^super.properties ++ #[\knobColor, \step]
+		^super.properties ++ #[ \knobColor, \step ];
 	}
 
 	prSnap { arg val;
@@ -469,6 +492,8 @@ JSCSlider : JSCSliderBase
 	var acResp, keyResp;	// OSCpathResponder for action listening
 	var orientation;	// 0 for horiz, 1 for vert
 	var clpse;
+
+	// ----------------- public instance methods -----------------
 
 	value { ^this.getProperty( \value )}
 	
@@ -492,6 +517,23 @@ JSCSlider : JSCSliderBase
 		^this.valueAction = this.value - inc;
 	}
 	
+	thumbSize { ^this.getProperty( \thumbSize, 12 )}
+	
+	thumbSize_ { arg size;
+		"JSCSlider.thumbSize_ : not yet implemented".warn;
+		this.setProperty( \thumbSize, size );
+	}
+	
+	bounds_ { arg rect;
+		var result;
+		result = super.bounds_( rect );
+		if( if( rect.width > rect.height, 0, 1 ) != orientation, {
+			orientation = 1 - orientation;
+			server.sendMsg( '/set', this.id, \orientation, orientation );
+		});
+		^result;
+	}
+
 	defaultKeyDownAction { arg char, modifiers, unicode, keycode;
 		// standard keydown
 		if (char == $r, { this.valueAction = 1.0.rand; ^this });
@@ -507,28 +549,24 @@ JSCSlider : JSCSliderBase
 		^nil		// bubble if it's an invalid key
 	}
 	
-	defaultGetDrag { ^this.value }
 	defaultCanReceiveDrag { ^currentDrag.isNumber }
+	defaultGetDrag { ^this.value }
 	defaultReceiveDrag { this.valueAction = currentDrag }
 
-	prNeedsTransferHandler { ^true }
+	// ----------------- private instance methods -----------------
 
-	thumbSize { ^this.getProperty( \thumbSize, 12 )}
-	
-	thumbSize_ { arg size;
-		"JSCSlider.thumbSize_ : not yet implemented".warn;
-		this.setProperty( \thumbSize, size );
-	}
-	
 	properties {
 		^super.properties ++ #[ \thumbSize ];
 	}
 
-	prClose {
+	prNeedsTransferHandler { ^true }
+
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
 		clpse.cancel;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -555,16 +593,6 @@ JSCSlider : JSCSliderBase
 		]);
 	}
 	
-	bounds_ { arg rect;
-		var result;
-		result = super.bounds_( rect );
-		if( if( rect.width > rect.height, 0, 1 ) != orientation, {
-			orientation = 1 - orientation;
-			server.sendMsg( '/set', this.id, \orientation, orientation );
-		});
-		^result;
-	}
-
 	prSendProperty { arg key, value;
 
 		key	= key.asSymbol;
@@ -588,9 +616,7 @@ JSCSlider : JSCSliderBase
 	}
 }
 
-JSCKnob : JSCSlider
-{
-}
+JSCKnob : JSCSlider {}
 
 JSCRangeSlider : JSCSliderBase {
 
@@ -598,12 +624,16 @@ JSCRangeSlider : JSCSliderBase {
 	var clpse;
 	var orientation;	// 0 for horiz, 1 for vert
 
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		var v;
 		v = this.new( parent, bounds );
 		v.setSpan( 0.2, 0.7 );
 		^v;
 	}
+
+	// ----------------- public instance methods -----------------
 
 	step_ { arg stepSize;
 		super.step_( stepSize );
@@ -654,10 +684,6 @@ JSCRangeSlider : JSCSliderBase {
 		this.doAction;
 	}
 
-	properties {
-		^super.properties ++ #[ \lo, \hi ];
-	}
-	
 	increment {
 		var inc, val; 
 		inc = (if( orientation == 0, { this.bounds.width }, { this.bounds.height }) - 2).max( 1 ).reciprocal;
@@ -678,6 +704,16 @@ JSCRangeSlider : JSCSliderBase {
 			val = 0;
 		});
 		this.setSpanActive( val, this.hi - inc );
+	}
+
+	bounds_ { arg rect;
+		var result;
+		result = super.bounds_( rect );
+		if( if( rect.width > rect.height, 0, 1 ) != orientation, {
+			orientation = 1 - orientation;
+			server.sendMsg( '/set', this.id, \orientation, orientation );
+		});
+		^result;
 	}
 
 	defaultKeyDownAction { arg char, modifiers, unicode;
@@ -708,14 +744,21 @@ JSCRangeSlider : JSCSliderBase {
 		this.setSpanActive( currentDrag.x, currentDrag.y );
 	}
 
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \lo, \hi ];
+	}
+	
 	prNeedsTransferHandler { ^true }
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
 		clpse.cancel;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					  [ '/free', "ac" ++ this.id ],
-					  [ '/method', this.id, \dispose ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ],
+			 [ '/method', this.id, \dispose ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -745,16 +788,6 @@ JSCRangeSlider : JSCSliderBase {
 		]);
 	}
 
-	bounds_ { arg rect;
-		var result;
-		result = super.bounds_( rect );
-		if( if( rect.width > rect.height, 0, 1 ) != orientation, {
-			orientation = 1 - orientation;
-			server.sendMsg( '/set', this.id, \orientation, orientation );
-		});
-		^result;
-	}
-
 	prSendProperty { arg key, value;
 		key	= key.asSymbol;
 
@@ -782,6 +815,8 @@ JSC2DSlider : JSCSliderBase {
 	var acResp;	// OSCpathResponder for action listening
 	var clpse;
 
+	// ----------------- public instance methods -----------------
+
 	step_ { arg stepSize;
 		super.step_( stepSize );
 		this.x_( this.x );
@@ -806,10 +841,6 @@ JSC2DSlider : JSCSliderBase {
 	
 	activey_ { arg val;
 		this.setPropertyWithAction( \y, this.prSnap( val ));
-	}
-	
-	properties {
-		^super.properties ++ #[ \x, \y ];
 	}
 	
 	setXY { arg x, y;
@@ -847,14 +878,21 @@ JSC2DSlider : JSCSliderBase {
 	defaultCanReceiveDrag { ^currentDrag.isKindOf( Point )}
 	defaultReceiveDrag { this.setXYActive( currentDrag.x, currentDrag.y )}
 
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \x, \y ];
+	}
+	
 	prNeedsTransferHandler { ^true }
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
 		clpse.cancel;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ],
-					   [ '/method', this.id, \dispose ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ],
+			 [ '/method', this.id, \dispose ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -904,52 +942,101 @@ JSC2DSlider : JSCSliderBase {
 	}
 }
 
-// JJJ : not yet working
-JSC2DTabletSlider : JSC2DSlider {
-
-//	var <>mouseDownAction,<>mouseUpAction;
-	
-	mouseDown { arg x,y,pressure,tiltx,tilty,deviceID,
-			 buttonNumber,clickCount,absoluteZ,rotation;
-		mouseDownAction.value(this,x,y,pressure,tiltx,tilty,deviceID, 
-			buttonNumber,clickCount,absoluteZ,rotation);
-	}
-	mouseUp { arg x,y,pressure,tiltx,tilty,deviceID, 
-			buttonNumber,clickCount,absoluteZ,rotation;
-		mouseUpAction.value(this,x,y,pressure,tiltx,tilty,deviceID, 
-			buttonNumber,clickCount,absoluteZ,rotation);
-	}
-	doAction { arg x,y,pressure,tiltx,tilty,deviceID, 
-			buttonNumber,clickCount,absoluteZ,rotation;
-		action.value(this,x,y,pressure,tiltx,tilty,deviceID, 
-			buttonNumber,clickCount,absoluteZ,rotation);
-	}
-}
+//// JJJ : not yet working
+//JSC2DTabletSlider : JSC2DSlider {
+//
+////	var <>mouseDownAction,<>mouseUpAction;
+//	
+//	mouseDown { arg x,y,pressure,tiltx,tilty,deviceID,
+//			 buttonNumber,clickCount,absoluteZ,rotation;
+//		mouseDownAction.value(this,x,y,pressure,tiltx,tilty,deviceID, 
+//			buttonNumber,clickCount,absoluteZ,rotation);
+//	}
+//	mouseUp { arg x,y,pressure,tiltx,tilty,deviceID, 
+//			buttonNumber,clickCount,absoluteZ,rotation;
+//		mouseUpAction.value(this,x,y,pressure,tiltx,tilty,deviceID, 
+//			buttonNumber,clickCount,absoluteZ,rotation);
+//	}
+//	doAction { arg x,y,pressure,tiltx,tilty,deviceID, 
+//			buttonNumber,clickCount,absoluteZ,rotation;
+//		action.value(this,x,y,pressure,tiltx,tilty,deviceID, 
+//			buttonNumber,clickCount,absoluteZ,rotation);
+//	}
+//}
 
 JSCButton : JSCControlView {
 	var <states;
 	
 	var acResp;	// OSCpathResponder for action listening
 
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		var v;
-		v = this.new(parent, bounds);
+		v = this.new( parent, bounds );
 		v.states = [
-			["Push", Color.black, Color.red],
-			["Pop", Color.white, Color.blue]];
-		^v
+			[ "Push", Color.black, Color.red ],
+			[ "Pop", Color.white, Color.blue ]];
+		^v;
 	}
 	
-	value {
-		^this.getProperty(\value)
-	}
+	// ----------------- public instance methods -----------------
+
+	value { ^this.getProperty( \value )}
+	
 	value_ { arg val;
 		this.setProperty( \value, this.prFixValue( val ));
-	}	
+	}
+	
 	valueAction_ { arg val;
 		this.setPropertyWithAction( \value, this.prFixValue( val ));
 	}	
 
+	doAction { arg modifiers;
+		action.value( this, modifiers );
+	}
+	
+	font { ^this.getProperty( \font )}
+
+	font_ { arg argFont;
+//		font = argFont;
+		this.setProperty( \font, argFont );
+	}
+
+	states_ { arg array;
+		states = array.deepCopy;
+		this.setProperty( \states, states );
+	}
+	
+	defaultKeyDownAction { arg char, modifiers, unicode;
+// JJJ handled automatically by javax.swing.AbstractButton
+//		if (char == $ , { this.valueAction = this.value + 1; ^this });
+		if (char == $\r, { this.valueAction = this.value + 1; ^this });
+		if (char == $\n, { this.valueAction = this.value + 1; ^this });
+		if (char == 3.asAscii, { this.valueAction = this.value + 1; ^this });
+		^nil;		// bubble if it's an invalid key
+	}
+
+	defaultGetDrag { ^this.value }
+
+	defaultCanReceiveDrag {
+		^currentDrag.isNumber or: { currentDrag.isKindOf( Function )};
+	}
+	
+	defaultReceiveDrag {
+		if( currentDrag.isNumber, {
+			this.valueAction = currentDrag;
+		}, {
+			this.action = currentDrag;
+		});
+	}
+
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \value, \font, \states ];
+	}
+	
 	prFixValue { arg val;
 		val = val.asInteger;
 		// clip() would be better but SCButton resets to zero always
@@ -959,55 +1046,13 @@ JSCButton : JSCControlView {
 		^val;
 	}
 	
-	doAction { arg modifiers;
-		action.value( this, modifiers );
-	}
-	
-	defaultKeyDownAction { arg char, modifiers, unicode;
-// JJJ handled automatically by javax.swing.AbstractButton
-//		if (char == $ , { this.valueAction = this.value + 1; ^this });
-		if (char == $\r, { this.valueAction = this.value + 1; ^this });
-		if (char == $\n, { this.valueAction = this.value + 1; ^this });
-		if (char == 3.asAscii, { this.valueAction = this.value + 1; ^this });
-		^nil		// bubble if it's an invalid key
-	}
-
-	font { ^this.getProperty( \font )}
-
-	font_ { arg argFont;
-//		font = argFont;
-		this.setProperty( \font, argFont );
-	}
-
-	states_ { arg array;
-		states = array;
-		this.setProperty(\states, states);
-	}
-	
-	properties {
-		^super.properties ++ #[\value, \font, \states]
-	}
-	
-	defaultGetDrag { 
-		^this.value
-	}
-	defaultCanReceiveDrag {
-		^currentDrag.isNumber or: { currentDrag.isKindOf(Function) };
-	}
-	defaultReceiveDrag {
-		if (currentDrag.isNumber) {
-			this.valueAction = currentDrag;
-		}{
-			this.action = currentDrag;
-		};
-	}
-
 	prNeedsTransferHandler { ^true }
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -1069,27 +1114,49 @@ JSCPopUpMenu : JSCControlView {
 	var acResp;	// OSCpathResponder for action listening
 	var <>allowsReselection = false;
 
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		var v;
 		v = this.new(parent, bounds);
-		v.items = #["linear","exponential","sine","welch","squared","cubed"];
-		^v
+		v.items = #[ "linear", "exponential", "sine", "welch", "squared", "cubed" ];
+		^v;
 	}
 		
-	value {
-		^this.getProperty(\value)
-	}
+	// ----------------- public instance methods -----------------
+
+	value { ^this.getProperty( \value )}
+	
 	value_ { arg val;
 		this.setProperty(\value, this.prFixValue( val ));
-	}	
+	}
+		
 	valueAction_ { arg val;
 		this.setPropertyWithAction(\value, this.prFixValue( val ));
 	}
 	
-	prFixValue { arg val;
-		^val.clip( 0, items.size - 1 );
+	font { ^this.getProperty( \font )}
+	
+	font_ { arg argFont;
+//		font = argFont;
+		this.setProperty( \font, argFont );
 	}
+	
+	items_ { arg array;
+		items = array.copy;
+		this.setProperty( \items, items );
+	}
+	
+	item { ^items[ this.value ]}
 
+	stringColor {
+		^this.getProperty( \stringColor, Color.new );
+	}
+	
+	stringColor_ { arg color;
+		this.setProperty( \stringColor, color );
+	}
+	
 	defaultKeyDownAction { arg char, modifiers, unicode;
 // JJJ used by lnf
 //		if (char == $ , { this.valueAction = this.value + 1; ^this });
@@ -1103,47 +1170,30 @@ JSCPopUpMenu : JSCControlView {
 		^nil		// bubble if it's an invalid key
 	}
 	
-	font { ^this.getProperty( \font )}
-	
-	font_ { arg argFont;
-//		font = argFont;
-		this.setProperty( \font, argFont );
-	}
-	
-	items_ { arg array;
-		items = array;
-		this.setProperty(\items, items);
-	}
-	
-	item { ^items[ this.value ]}
+	defaultGetDrag { ^this.value }
+	defaultCanReceiveDrag { ^currentDrag.isNumber }
 
-	stringColor {
-		^this.getProperty(\stringColor, Color.new)
-	}
-	stringColor_ { arg color;
-		this.setProperty(\stringColor, color)
-	}
-	
-	properties {
-		^super.properties ++ #[\value, \font, \items, \stringColor]
-	}
-
-	defaultGetDrag { 
-		^this.value
-	}
-	defaultCanReceiveDrag {
-		^currentDrag.isNumber;
-	}
 	defaultReceiveDrag {
 		this.valueAction = currentDrag;
 	}
 
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \value, \font, \items, \stringColor ];
+	}
+
+	prFixValue { arg val;
+		^val.clip( 0, items.size - 1 );
+	}
+
 	prNeedsTransferHandler { ^true }
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -1182,7 +1232,7 @@ JSCPopUpMenu : JSCControlView {
 		^super.prSendProperty( key, value );
 	}
 
-// XXX einstweilen...
+// XXX at the moment...
 //	prBoundsToJava { arg rect;
 //		var pb;
 //		
@@ -1231,11 +1281,11 @@ JSCPopUpMenu : JSCControlView {
 	}
 }
 
-
-
 JSCStaticTextBase : JSCView {
-	var <string, <object, <>setBoth=true;
+	var <string, <object, <>setBoth = true;
 	
+	// ----------------- public instance methods -----------------
+
 	font { ^this.getProperty( \font )}
 	
 	font_ { arg argFont;
@@ -1260,11 +1310,13 @@ JSCStaticTextBase : JSCView {
 
 	object_ { arg obj;
 		object = obj;
-		if (setBoth) { this.string = object.asString(80); };
+		if( setBoth, { this.string = object.asString( 80 )});
 	}
 	
+	// ----------------- private instance methods -----------------
+
 	properties {
-		^super.properties ++ #[\string, \font, \stringColor]
+		^super.properties ++ #[ \string, \font, \stringColor ];
 	}
 
 	prSendProperty { arg key, value;
@@ -1313,12 +1365,17 @@ JSCStaticTextBase : JSCView {
 }
 
 JSCStaticText : JSCStaticTextBase {
+
+	// ----------------- public class methods -----------------
+	
 	*paletteExample { arg parent, bounds;
 		var v;
 		v = this.new(parent, bounds);
 		v.string = "The lazy brown fox";
 		^v
 	}
+
+	// ----------------- private instance methods -----------------
 
 	prSCViewNew {
 		properties.put( \canFocus, false );
@@ -1334,27 +1391,30 @@ JSCListView : JSCControlView {
 	
 	var acResp;	// listens to list selection changes
 	
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		var v;
 		v = this.new(parent, bounds);
-		v.items = #["linear","exponential","sine","welch","squared","cubed"];
-		^v
+		v.items = #[ "linear", "exponential", "sine", "welch", "squared", "cubed" ];
+		^v;
 	}
 	
-	item {
-		^items[this.value]
-	}
-	value {
-		^this.getProperty( \value );
-	}
+	// ----------------- public instance methods -----------------
+
+	item { ^items[ this.value ]}
+
+	value { ^this.getProperty( \value )}
+
 	value_ { arg val;
 		this.setProperty( \value, this.prFixValue( val ));
-	}	
+	}
+	
 	valueAction_ { arg val;
 		this.setPropertyWithAction( \value, this.prFixValue( val ));
 	}
 	
-	allowsDeselection_ {Êarg bool;
+	allowsDeselection_ { arg bool;
 		if( allowsDeselection != bool, {
 			allowsDeselection = bool;
 			if( allowsDeselection, {
@@ -1369,15 +1429,42 @@ JSCListView : JSCControlView {
 		});
 	}
 
-	prFixValue { arg val;
-		if( allowsDeselection and: { val.isNil }, { ^nil });
-		val = (val ? 0).asInteger;
-		if( (val < 0) || (val >= items.size), {
-			val = 0;
-		});
-		^val;
+	font { ^this.getProperty( \font )}
+	
+	font_ { arg argFont;
+//		font = argFont;
+		this.setProperty( \font, argFont );
 	}
-
+	
+	items_ { arg array;
+		items = array.copy;
+		this.setProperty( \items, items );
+	}
+	
+	stringColor {
+		^this.getProperty( \stringColor, Color.new );
+	}
+	
+	stringColor_ { arg color;
+		this.setProperty( \stringColor, color );
+	}
+	
+	selectedStringColor {
+		^this.getProperty( \selectedStringColor, Color.new );
+	}
+	
+	selectedStringColor_ { arg color;
+		this.setProperty( \selectedStringColor, color );
+	}
+	
+	hiliteColor {
+		^this.getProperty( \hiliteColor, Color.new );
+	}
+	
+	hiliteColor_ { arg color;
+		this.setProperty( \hiliteColor, color );
+	}
+	
 	defaultKeyDownAction { arg char, modifiers, unicode;
 		var index;
 		if( this.value.notNil, {
@@ -1400,57 +1487,36 @@ JSCListView : JSCControlView {
 		^nil;	// bubble if it's an invalid key
 	}
 	
-	font { ^this.getProperty( \font )}
-	
-	font_ { arg argFont;
-//		font = argFont;
-		this.setProperty( \font, argFont );
-	}
-	items_ { arg array;
-		items = array;
-		this.setProperty(\items, items);
-	}
-	stringColor {
-		^this.getProperty(\stringColor, Color.new)
-	}
-	stringColor_ { arg color;
-		this.setProperty(\stringColor, color)
-	}
-	
-	selectedStringColor {
-		^this.getProperty(\selectedStringColor, Color.new)
-	}
-	selectedStringColor_ { arg color;
-		this.setProperty(\selectedStringColor, color)
-	}
-	
-	hiliteColor {
-		^this.getProperty(\hiliteColor, Color.new)
-	}
-	hiliteColor_ { arg color;
-		this.setProperty(\hiliteColor, color)
-	}
-	
-	properties {
-		^super.properties ++ #[\value, \font, \items, \stringColor]
-	}
 
-	defaultGetDrag { 
-		^this.value
-	}
-	defaultCanReceiveDrag {
-		^currentDrag.isNumber;
-	}
+	defaultGetDrag { ^this.value }
+	defaultCanReceiveDrag { ^currentDrag.isNumber }
+
 	defaultReceiveDrag {
 		this.valueAction = currentDrag;
 	}
 
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \value, \font, \items, \stringColor ];
+	}
+
+	prFixValue { arg val;
+		if( allowsDeselection and: { val.isNil }, { ^nil });
+		val = (val ? 0).asInteger;
+		if( (val < 0) || (val >= items.size), {
+			val = 0;
+		});
+		^val;
+	}
+
 	prNeedsTransferHandler { ^true }
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prIsInsideContainer { ^true }
@@ -1557,12 +1623,17 @@ JSCListView : JSCControlView {
 JSCDragView : JSCStaticTextBase {
 	var <>interpretDroppedStrings = true;
 	
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		var v;
 		v = this.new(parent, bounds);
 		v.object = \something;
 		^v
 	}
+	
+	// ----------------- private instance methods -----------------
+
 	defaultGetDrag { ^object }
 
 	prNeedsTransferHandler { ^true }
@@ -1579,6 +1650,8 @@ JSCDragView : JSCStaticTextBase {
 }
 
 JSCDragSource : JSCDragView {
+	// ----------------- private instance methods -----------------
+
 	prSCViewNew {
 		^super.prSCViewNew([
 //			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Label", ']', ']',
@@ -1592,12 +1665,17 @@ JSCDragSource : JSCDragView {
 	prGetDnDModifiers { ^0 } 	// no modifiers needed
 }
 
-JSCDragSink : JSCDragView {	
+JSCDragSink : JSCDragView {
+	// ----------------- public instance methods -----------------
+
 	defaultCanReceiveDrag { ^true;	}
+
 	defaultReceiveDrag {
 		this.object = currentDrag;
 		this.doAction;
 	}
+
+	// ----------------- private instance methods -----------------
 
 	prSCViewNew {
 		^super.prSCViewNew([
@@ -1612,14 +1690,19 @@ JSCDragSink : JSCDragView {
 	prGetDnDModifiers { ^-1 }	// don't allow it to be drag source
 }
 
-JSCDragBoth : JSCDragView {		// JJJ not subclass of JSCDragSink
-	defaultCanReceiveDrag { ^true;	}
+JSCDragBoth : JSCDragView {		// in SwingOSC not subclass of JSCDragSink
+	// ----------------- public instance methods -----------------
+
+	defaultCanReceiveDrag { ^true }
+	
 	defaultReceiveDrag {
 		this.object = currentDrag;
 		this.doAction;
 	}
 
 	defaultGetDrag { ^object }
+
+	// ----------------- private instance methods -----------------
 
 	prSCViewNew {
 		^super.prSCViewNew([
@@ -1636,7 +1719,6 @@ JSCDragBoth : JSCDragView {		// JJJ not subclass of JSCDragSink
 	prGetDnDModifiers { ^0 } 	// no modifiers needed
 }
 
-
 JSCAbstractUserView : JSCView {
 	var <drawFunc;
 	var <clearOnRefresh = true;
@@ -1646,33 +1728,7 @@ JSCAbstractUserView : JSCView {
 	var penID			= nil;
 	var lastMouseX, lastMouseY;
 
-	mouseDown { arg x, y ... rest;
-		lastMouseX	= x;
-		lastMouseY	= y;
-		^super.mouseDown( x, y, *rest );
-	}
-	
-	mouseUp { arg x, y ... rest;
-		lastMouseX	= x;
-		lastMouseY	= y;
-		^super.mouseUp( x, y, *rest );
-	}
-	
-	mouseMove { arg x, y ... rest;
-		lastMouseX	= x;
-		lastMouseY	= y;
-		^super.mouseMove( x, y, *rest );
-	}
-	
-	mouseOver { arg x, y ... rest;
-		lastMouseX	= x;
-		lastMouseY	= y;
-		^super.mouseOver( x, y, *rest );
-	}
-
-	draw {
-		this.refresh;
-	}
+	// ----------------- public instance methods -----------------
 
 	refresh {
 //		if( drawFunc.isNil, {
@@ -1683,19 +1739,9 @@ JSCAbstractUserView : JSCView {
 		});
 	}
 
-	prHasFocus_ { arg focus;
-		super.prHasFocus_( focus );
-		// the user may wish to paint differently according to the focus
-		if( refreshOnFocus and: { drawFunc.notNil }, { this.refresh });
-	}
-
-	prBoundsUpdated {
-		if( drawFunc.notNil, { this.refresh });
-	}
-
 	mousePosition {
 		var b = this.bounds;
-		^((lastMouseX - b.left) @Ê(lastMouseY - b.top));
+		^((lastMouseX - b.left) @ (lastMouseY - b.top));
 	}
 
 	clearOnRefresh_{ arg bool;
@@ -1733,9 +1779,49 @@ JSCAbstractUserView : JSCView {
 	focusVisible { ^this.getProperty( \focusVisible, true )}
 	focusVisible_ { arg visible; this.setProperty( \focusVisible, visible )}
 
-	prClose {
+	// ----------------- private instance methods -----------------
+
+	mouseDown { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseDown( x, y, *rest );
+	}
+	
+	mouseUp { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseUp( x, y, *rest );
+	}
+	
+	mouseMove { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseMove( x, y, *rest );
+	}
+	
+	mouseOver { arg x, y ... rest;
+		lastMouseX	= x;
+		lastMouseY	= y;
+		^super.mouseOver( x, y, *rest );
+	}
+
+//	draw {
+//		this.refresh;
+//	}
+
+	prHasFocus_ { arg focus;
+		super.prHasFocus_( focus );
+		// the user may wish to paint differently according to the focus
+		if( refreshOnFocus and: { drawFunc.notNil }, { this.refresh });
+	}
+
+	prBoundsUpdated {
+		if( drawFunc.notNil, { this.refresh });
+	}
+
+	prClose { arg preMsg, postMsg;
 		this.drawFunc_( nil );
-		^super.prClose;
+		^super.prClose( preMsg, postMsg );
 	}
 
 	protDraw {
@@ -1749,6 +1835,8 @@ JSCAbstractUserView : JSCView {
 }
 
 JSCUserView : JSCAbstractUserView {
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		^this.new( parent, bounds ).refreshOnFocus_( false ).drawFunc_({ arg view;
 			var b = view.bounds, min = min( b.width, b.height ), max = max( b.width, b.height ),
@@ -1766,10 +1854,14 @@ JSCUserView : JSCAbstractUserView {
 		});
 	}
 
+	// ----------------- public instance methods -----------------
+
 	relativeOrigin_ { arg bool;
 		relativeOrigin = bool;
 		this.setProperty( \relativeOrigin, bool );
 	}
+
+	// ----------------- private instance methods -----------------
 
 	prSCViewNew {
 		relativeOrigin	= false;
@@ -1814,12 +1906,13 @@ JSCTextView : JSCView {
 //		^this.getProperty( \string );
 //	}
 
+	// ----------------- public instance methods -----------------
+
 	string_ { arg str;
 		^this.setString( str, -1 );
 	}
 		
 	selectedString {
-//		^this.getProperty( \selectedString );
 		^string.copyRange( selStart, selStop - 1 );  // stupid inclusive ending
 	}
 	
@@ -1828,23 +1921,15 @@ JSCTextView : JSCView {
 		// XXX
 	}
 	
-	selectionStart {
-//		^this.getProperty( \selectedRangeLocation );
-		^selStart;
-	}
+	selectionStart { ^selStart }
+	selectionSize { ^(selStop - selStart) }
 	
-	selectionSize {
-//		^this.getProperty( \selectedRange );
-		^(selStop - selStart);
-	}	
-	
-	stringColor_ {arg color;
+	stringColor_ { arg color;
 		stringColor = color;
 		this.setStringColor( color, -1, 0 );
 	}
 	
 	setStringColor { arg color, rangeStart = -1, rangeSize = 0;
-//		this.setProperty( \setTextColor, [ color, rangeStart, rangeSize ]);
 		server.listSendMsg([ '/method', this.id, \setForeground, rangeStart, rangeSize ] ++ color.asSwingArg );
 	}
 	
@@ -1854,7 +1939,6 @@ JSCTextView : JSCView {
 	}
 	
 	setFont { arg font, rangestart = -1, rangesize = 0;
-//		this.setProperty( \setFont, [ font, rangestart, rangesize ]);
 		server.listSendMsg([ '/method', this.id, \setFont, rangestart, rangesize ] ++ font.asSwingArg );
 	}
 	
@@ -1893,12 +1977,6 @@ JSCTextView : JSCView {
 		server.sendMsg( '/set', this.id, \editable, bool );
 	}
 	
-// JJJ begin comment
-//	enabled_{|bool|
-//		this.editable(bool);
-//	}
-// JJJ end comment
-
 	usesTabToFocusNextView_ { arg bool;
 		usesTabToFocusNextView = bool;
 		this.setProperty( \usesTabToFocusNextView, bool );
@@ -1911,19 +1989,16 @@ JSCTextView : JSCView {
 	
 	autohidesScrollers_ { arg bool;
 		autohidesScrollers = bool;
-//		this.setProperty( \setAutohidesScrollers, bool );
 		this.prUpdateScrollers;
 	}
 	
 	hasHorizontalScroller_{ arg bool;
 		hasHorizontalScroller = bool;
-//		this.setProperty( \setHasHorizontalScroller, bool );
 		this.prUpdateScrollers;
 	}
 	
 	hasVerticalScroller_{ arg bool;
 		hasVerticalScroller = bool;
-//		this.setProperty( \setHasVerticalScroller, bool );
 		this.prUpdateScrollers;
 	}
 	
@@ -1941,6 +2016,21 @@ JSCTextView : JSCView {
 		// XXX update client send string rep.
 	}
 
+	defaultKeyDownAction { arg key, modifiers, unicode;
+		// check for 'ctrl+enter' = interprete
+		if( (unicode == 0x0D) and: { ((modifiers & 0x40000) != 0) && enterInterpretsSelection }, {
+			if( selStop > selStart, {	// text is selected
+				this.selectedString.interpretPrint;
+			}, {
+				this.prCurrentLine.interpretPrint;
+			});
+			^this;
+		});
+		^nil;
+	}
+
+	// ----------------- private instance methods -----------------
+	
 	prIsInsideContainer { ^true }
 
 	prSCViewNew {
@@ -1995,39 +2085,11 @@ if( msg[4] != str.size, { ("Yukk. len is "++msg[4]++"; but string got "++str.siz
 			\verticalScrollBarPolicy, hasVerticalScroller.if( autohidesScrollers.if( 20, 22 ), 21 ));
 	}
 
-//	prSendProperty { arg key, value;
-//		var bndl, string, rangeStart, rangeSize;
-//
-//		key	= key.asSymbol;
-//
-//		// fix keys
-//		case
-//		{ key === \setAutohidesScrollers or: { key === \setHasVerticalScroller or: { key === \setHasHorizontalScroller }} }
-//		{
-////("hasH "++hasHorizontalScroller++"; hasV "++hasVerticalScroller++"; autoHide "++autohidesScrollers).postln;
-//			^nil;
-//		};
-//		^super.prSendProperty( key, value );
-//	}
-
-	prClose {
+	prClose { arg preMsg, postMsg;
 		txResp.remove;
-		^super.prClose([[ '/method', "tx" ++ this.id, \remove ]])
+		^super.prClose( preMsg ++ [[ '/method', "tx" ++ this.id, \remove ]], postMsg );
 	}
 
-	defaultKeyDownAction { arg key, modifiers, unicode;
-		// check for 'ctrl+enter' = interprete
-		if( (unicode == 0x0D) and: { ((modifiers & 0x40000) != 0) && enterInterpretsSelection }, {
-			if( selStop > selStart, {	// text is selected
-				this.selectedString.interpretPrint;
-			}, {
-				this.prCurrentLine.interpretPrint;
-			});
-			^this;
-		});
-		^nil;
-	}
-	
 	prCurrentLine {
 		var startIdx, stopIdx;
 		
@@ -2042,10 +2104,8 @@ JSCAbstractMultiSliderView : JSCView {
 	var <>metaAction;
 	var <size = 0;
 		
-	properties {
-		^super.properties ++ #[ \value, \strokeColor, \x, \y, \drawLines, \drawRects, \selectionSize, \step ]; // JJJ not thumbSize, thumbWidth, not absoluteX
-	}
-	
+	// ----------------- public instance methods -----------------
+
 	step_ { arg stepSize; this.setPropertyWithAction( \step, stepSize )}
 	
 	step { ^this.getProperty( \step )}
@@ -2068,12 +2128,18 @@ JSCAbstractMultiSliderView : JSCView {
 	
 	drawRects_ { arg abool; this.setProperty( \drawRects, abool )}
 
+	doMetaAction { // performed on ctrl click
+		metaAction.value( this );
+	} 
+
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \value, \strokeColor, \x, \y, \drawLines, \drawRects, \selectionSize, \step ]; // JJJ not thumbSize, thumbWidth, not absoluteX
+	}
+	
 	defaultCanReceiveDrag {	^true }
 			
-	doMetaAction { 
-		metaAction.value(this)
-	} //on ctrl click
-
 	prNeedsTransferHandler { ^true }
 }
 
@@ -2087,10 +2153,8 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 	var <editable = true;
 	var <elasticMode = 0;
 		
-	properties {
-		^super.properties ++ #[ \elasticResizeMode, \fillColor, \thumbWidth, \thumbHeight, \xOffset, \showIndex, \startIndex, \referenceValues, \isFilled, \readOnly ];	// JJJ not \thumbSize, but \thumbHeight, added \readOnly
-	}
-	
+	// ----------------- public instance methods -----------------
+
 	elasticMode_{ arg mode;
 		elasticMode = mode;
 		this.setProperty( \elasticResizeMode, mode );
@@ -2211,13 +2275,20 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 		if (unicode == 16rF701, { this.gap = this.gap - 1; ^this });
 		^nil		// bubble if it's an invalid key
 	}
-	
-	prClose {
+
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \elasticResizeMode, \fillColor, \thumbWidth, \thumbHeight, \xOffset, \showIndex, \startIndex, \referenceValues, \isFilled, \readOnly ];	// JJJ not \thumbSize, but \thumbHeight, added \readOnly
+	}
+		
+	prClose { arg preMsg, postMsg;
 		vlResp.remove;
 		acResp.remove;
 		clpse.cancel;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-		                [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -2320,19 +2391,19 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 	var vlResp;
 	var clpse;
 
+// rather useless behaviour in SCEnvelopeView (using shift+click you can ignore it),
+// so keep it out for now
+//	var <fixedSelection = false;
+	
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		^this.new( parent, bounds ).value_([ (0..4)/4, sqrt( (0..4)/4 )])
 			.thumbSize_( 4 ).drawLines_( true ).selectionColor_( Color.red );
 	}
 
-	properties {
-		^super.properties ++ #[ \font, \selectedIndex, \clipThumbs, \lockBounds, \horizontalEditMode ];  // \lastIndex
-	}
+	// ----------------- public instance methods -----------------
 
-// rather useless behaviour in SCEnvelopeView (using shift+click you can ignore it),
-// so keep it out for now
-//	var <fixedSelection = false;
-	
 	value_ { arg val;
 		var oldSize, xvals, yvals, curves, valClip;
 		
@@ -2588,6 +2659,47 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 	editable_{ arg boolean; this.setEditable( -1, boolean )}	
 	selectionColor_ { arg acolor; this.setProperty( \selectionColor, acolor )}
 	
+// currently broken in cocoa
+/*
+	addValue { arg xval, yval;
+		var arr, arrx, arry, aindx;
+		// XXX could use custom server method!!
+		aindx = this.lastIndex;
+//		aindx.postln;
+		if( xval.isNil && yval.isNil, {
+			arr = this.value;
+			arrx = arr @ 0;
+			arry = arr @ 1;
+			xval = arrx[ aindx ] + 0.05;
+			yval = arry[ aindx ];
+		});
+		if( aindx < (arrx.size - 1), {
+			arrx = arrx.insert( aindx + 1, xval );
+			arry = arry.insert( aindx + 1, yval );
+		}, {
+			arrx = arrx.add( xval );
+			arry = arry.add( yval );
+		});		
+		this.value_([ arrx, arry ]);
+	}
+*/
+
+// see comment for <fixedSelection	
+//	fixedSelection_ { arg bool;
+//		fixedSelection =  bool;
+//		this.setProperty(\setFixedSelection, bool);
+//	}
+
+	font { ^this.getProperty( \font )}
+
+	font_ { arg argFont;
+		this.setProperty( \font, argFont );
+	}
+	
+	clipThumbs { ^this.getProperty( \clipThumbs )}
+
+	clipThumbs_ { arg bool; this.setProperty( \clipThumbs, bool )}
+
 	defaultGetDrag { ^this.value }
 
 // currently broken in cocoa
@@ -2657,43 +2769,19 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 		^nil;		// bubble if it's an invalid key
 	}
 
-// currently broken in cocoa
-/*
-	addValue { arg xval, yval;
-		var arr, arrx, arry, aindx;
-		// XXX could use custom server method!!
-		aindx = this.lastIndex;
-//		aindx.postln;
-		if( xval.isNil && yval.isNil, {
-			arr = this.value;
-			arrx = arr @ 0;
-			arry = arr @ 1;
-			xval = arrx[ aindx ] + 0.05;
-			yval = arry[ aindx ];
-		});
-		if( aindx < (arrx.size - 1), {
-			arrx = arrx.insert( aindx + 1, xval );
-			arry = arry.insert( aindx + 1, yval );
-		}, {
-			arrx = arrx.add( xval );
-			arry = arry.add( yval );
-		});		
-		this.value_([ arrx, arry ]);
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \font, \selectedIndex, \clipThumbs, \lockBounds, \horizontalEditMode ];  // \lastIndex
 	}
-*/
 
-// see comment for <fixedSelection	
-//	fixedSelection_ { arg bool;
-//		fixedSelection =  bool;
-//		this.setProperty(\setFixedSelection, bool);
-//	}
-
-	prClose {
+	prClose { arg preMsg, postMsg;
 		vlResp.remove;
 		acResp.remove;
 		clpse	= Collapse({ this.doAction });
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-		                [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -2796,7 +2884,7 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 		},
 		\horizontalEditMode, {
 			ival = [ \free, \clamp, \relay ].indexOf( value );
-			if( ival.isNil, {ÊError( "Illegal edit mode '" ++ value ++ "'" ).throw });
+			if( ival.isNil, { Error( "Illegal edit mode '" ++ value ++ "'" ).throw });
 			value = ival;
 		});
 		^super.prSendProperty( key, value );
@@ -2813,16 +2901,6 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 			2.do({ arg j; var xyvals = val[ j ]; xyvals.size.do({ arg i; xyvals[ i ] = xyvals[ i ].clip( 0.0, 1.0 )})});
 		});
 	}
-
-	font { ^this.getProperty( \font )}
-
-	font_ { arg argFont;
-		this.setProperty( \font, argFont );
-	}
-	
-	clipThumbs { ^this.getProperty( \clipThumbs )}
-
-	clipThumbs_ { arg bool; this.setProperty( \clipThumbs, bool )}
 }
 
 JSCTextEditBase : JSCStaticTextBase {
@@ -2836,30 +2914,34 @@ JSCTextEditBase : JSCStaticTextBase {
 	caretColor_ { arg color; this.setProperty( \caretColor, color )}
 
 	value { ^object }
+	
 	value_ { arg val;
 		keyString = nil;
 		this.stringColor = normalColor;
 		object = val;
 		this.string = object.asString;
-	}	
+	}
+	
 	valueAction_ { arg val;
 		var prev;
 		prev = object;
 		this.value = val;
 		if (object != prev, { this.doAction });
-	}	
+	}
+	
 	boxColor {
-		^this.getProperty(\boxColor, Color.new)
+		^this.getProperty( \boxColor, Color.new );
 	}
+	
 	boxColor_ { arg color;
-		this.setProperty(\boxColor, color)
+		this.setProperty( \boxColor, color );
 	}
+
+	// ----------------- private instance methods -----------------
 
 	properties {
 		^super.properties ++ #[\boxColor]
 	}
-
-	// ----------------- private instance methods -----------------
 
 	init { arg argParent, argBounds, id;
 		typingColor = Color.red;

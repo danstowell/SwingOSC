@@ -31,10 +31,12 @@
  *	JComponent (using JSCPlugView) or JPanel (using JSCPlugContainerView)
  *	with other JSCView classes.
  *
- *	@version		0.55, 03-Aug-07
+ *	@version		0.57, 12-Jan-08
  *	@author		Hanns Holger Rutz
  */
 JSCPlugView : JSCView {
+	// ----------------- constructor -----------------
+
 	*new { arg parent, bounds, javaObject;
 		var basic;
 		
@@ -49,6 +51,8 @@ JSCPlugView : JSCView {
 //	}
 
 	// from JavaObject.sc
+
+	// ----------------- private instance methods -----------------
 
 	doesNotUnderstand { arg selector ... args;
 		server.sendMsg( *this.prMethodCall( selector, args ));
@@ -71,6 +75,8 @@ JSCPlugView : JSCView {
 }
 
 JSCPlugContainerView : JSCContainerView {
+	// ----------------- constructor -----------------
+
 	*new { arg parent, bounds, javaObject;
 		var basic;
 		
@@ -79,6 +85,8 @@ JSCPlugContainerView : JSCContainerView {
 		^basic.init( parent, bounds, javaObject.id );
 	}
 	
+	// ----------------- private instance methods -----------------
+
 //	prSetJavaClass { arg class;
 //		javaClass = class;
 //	}

@@ -3,173 +3,147 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
-<title></title>
-<meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
-<style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #564d85}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #564d85; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #564d85; min-height: 13.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000; min-height: 14.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000; min-height: 12.0px}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-span.s1 {text-decoration: underline}
-span.s2 {color: #0000bf}
-span.s3 {color: #bf0000}
-span.s4 {color: #007300}
-span.s5 {color: #000000}
-span.Apple-tab-span {white-space:pre}
-</style>
+<title>SwingOSC Help : JSCVLayoutView</title>
+<link type="text/css" href="swing.css" rel="stylesheet">
 </head>
 <body>
-<p class="p1"><b>SwingOSC – Java-based cross-platform replacements for Cocoa GUI classes</b></p>
-<p class="p2"><br></p>
-<p class="p3">This class is meant as an emulation of SCVLayoutView. last mod: 03-feb-07 sciss</p>
-<p class="p3">Also refer to [<span class="s1">JSCView</span>] for different behaviour affecting all widgets</p>
-<p class="p4"><br></p>
-<p class="p3"><b>no-op / not working</b></p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p3"><b>different behaviour</b></p>
-<p class="p4"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
-<p class="p3"><b>extended functionality</b></p>
-<p class="p4"><b></b><br></p>
-<p class="p3"><b>known issues / todo</b></p>
-<p class="p5"><b></b><br></p>
-<p class="p6"><b>JSCVLayoutView</b></p>
-<p class="p7"><br></p>
-<p class="p8"><b>Note: please use the abstraction layer GUI.vLayoutView if possible! (see [</b><b><span class="s1">GUI</span></b><b>])</b></p>
-<p class="p7"><br></p>
-<p class="p8">A container view that lays out all its children vertically from top to bottom. For the horizontal version, see [<span class="s1">JSCHLayoutView</span>].</p>
-<p class="p9"><span class="Apple-converted-space"> </span></p>
-<p class="p10">(</p>
-<p class="p10">q = 10;</p>
-<p class="p10">w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p7"><br></p>
-<p class="p10">v = <span class="s2">JSCVLayoutView</span>(w,<span class="s2">Rect</span>(10,10,300,300));</p>
-<p class="p7"><br></p>
-<p class="p10"><span class="s2">Array</span>.fill(q,{ <span class="s2">arg</span> i;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">JSCRangeSlider</span>(v,<span class="s2">Rect</span>(0,0,75,20)).hi_(i / q)</p>
-<p class="p10">});</p>
-<p class="p7"><br></p>
-<p class="p10">w.front</p>
-<p class="p10">)</p>
-<p class="p7"><br></p>
-<p class="p7"><br></p>
-<p class="p7"><br></p>
-<p class="p11"><b>elastic</b></p>
-<p class="p10">resize the window ... oooh</p>
-<p class="p12"><br></p>
-<p class="p13">// note: children can never exceed the bounds</p>
-<p class="p13">// of their parent container in swing !!</p>
-<p class="p10">(</p>
-<p class="p10">q = 10;</p>
-<p class="p10">w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p7"><br></p>
-<p class="p10">v = <span class="s2">JSCVLayoutView</span>(w,<span class="s2">Rect</span>(10,10,300,300));</p>
-<p class="p10">v.background = <span class="s2">Color</span>.red(alpha:0.2);</p>
-<p class="p10">v.resize = 5; <span class="s3">// <span class="Apple-converted-space">  </span>elastic</span></p>
-<p class="p10"><span class="s2">Array</span>.fill(q,{<span class="Apple-converted-space">  </span><span class="s2">arg</span> i;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">var</span> s;</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s = <span class="s2">JSCRangeSlider</span>(v,<span class="s2">Rect</span>(0,0,75,20)).hi_( i / q );</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s</p>
-<p class="p10">});</p>
-<p class="p7"><br></p>
-<p class="p10">w.front</p>
-<p class="p10">)</p>
-<p class="p7"><br></p>
-<p class="p13">//Contents are elastic</p>
-<p class="p10">(</p>
-<p class="p10">q = 10;</p>
-<p class="p10">w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p7"><br></p>
-<p class="p10">v = <span class="s2">JSCVLayoutView</span>(w,<span class="s2">Rect</span>(10,10,300,300));</p>
-<p class="p10">v.background = <span class="s2">Color</span>.red(alpha:0.2);</p>
-<p class="p10">v.resize = 5; <span class="s3">// <span class="Apple-converted-space">  </span>elastic</span></p>
-<p class="p10"><span class="s2">Array</span>.fill(q,{<span class="Apple-converted-space">  </span><span class="s2">arg</span> i;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">var</span> s;</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s = <span class="s2">JSCRangeSlider</span>(v,<span class="s2">Rect</span>(0,0,75,20)).hi_( i / q );</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s.resize = 5; <span class="s3">// elastic</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span>s</p>
-<p class="p10">});</p>
-<p class="p7"><br></p>
-<p class="p10">w.front</p>
-<p class="p10">)</p>
-<p class="p7"><br></p>
-<p class="p13">//set minHeight on contents</p>
-<p class="p10">(</p>
-<p class="p10">q = 5;</p>
-<p class="p10">w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p7"><br></p>
-<p class="p10">v = <span class="s2">JSCVLayoutView</span>(w,<span class="s2">Rect</span>(10,10,300,300));</p>
-<p class="p10">v.background = <span class="s2">Color</span>.red(alpha:0.2);</p>
-<p class="p10">v.resize = 5; <span class="s3">// <span class="Apple-converted-space">  </span>elastic</span></p>
-<p class="p7"><br></p>
-<p class="p10"><span class="s2">Array</span>.fill(q,{<span class="Apple-converted-space">  </span><span class="s2">arg</span> i;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">var</span> s;</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s = <span class="s2">JSCRangeSlider</span>(v,<span class="s2">Rect</span>(0,0,75,20)).hi_( i / 5 );</p>
-<p class="p10"><span class="Apple-tab-span">	</span>if(i &lt; 2,{</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.resize = 5; <span class="s3">// some elastic</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.setProperty(<span class="s4">\minHeight</span>,20);</p>
-<p class="p10"><span class="Apple-tab-span">	</span>},{</p>
-<p class="p13"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.resize = 1; </span>// some not elastic</p>
-<p class="p10"><span class="Apple-tab-span">	</span>});</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s</p>
-<p class="p10">});</p>
-<p class="p7"><br></p>
-<p class="p10">w.front</p>
-<p class="p10">)</p>
-<p class="p7"><br></p>
-<p class="p10">(</p>
-<p class="p10">q = 5;</p>
-<p class="p10">w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p7"><br></p>
-<p class="p10">v = <span class="s2">JSCVLayoutView</span>(w,<span class="s2">Rect</span>(10,10,300,300));</p>
-<p class="p10">v.background = <span class="s2">Color</span>.red(alpha:0.2);</p>
-<p class="p10">v.resize = 5; <span class="s3">// <span class="Apple-converted-space">  </span>elastic</span></p>
-<p class="p7"><br></p>
-<p class="p10"><span class="s2">Array</span>.fill(q,{<span class="Apple-converted-space">  </span><span class="s2">arg</span> i;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="s2">var</span> s;</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s = <span class="s2">JSCRangeSlider</span>(v,<span class="s2">Rect</span>(0,0,75,20));</p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span>s.hi = i / 5;</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s.resize = 5;</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s.setProperty(<span class="s4">\minHeight</span>,20);</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s.setProperty(<span class="s4">\maxHeight</span>,40);</p>
-<p class="p10"><span class="Apple-tab-span">	</span>s</p>
-<p class="p10">});</p>
-<p class="p7"><br></p>
-<p class="p10">w.front</p>
-<p class="p10">)</p>
-<p class="p14"><br></p>
-<p class="p14"><br></p>
-<p class="p14"><br></p>
-<p class="p11"><b>spacing</b></p>
-<p class="p7"><br></p>
-<p class="p8">Default spacing between components is 4 pixels. You can alter this value but setting the 'spacing' property:</p>
-<p class="p7"><br></p>
-<p class="p10">(</p>
-<p class="p10">q = 10;</p>
-<p class="p10">w = <span class="s2">JSCWindow</span>.new;</p>
-<p class="p7"><br></p>
-<p class="p10">v = <span class="s2">JSCVLayoutView</span>(w,<span class="s2">Rect</span>(10,10,300,300));</p>
-<p class="p10">v.spacing = 0;<span class="Apple-tab-span">	</span><span class="s3">// no padding</span></p>
-<p class="p7"><br></p>
-<p class="p10"><span class="s2">Array</span>.fill(q,{<span class="Apple-converted-space"> </span></p>
-<p class="p15"><span class="s5"><span class="Apple-tab-span">	</span></span>JSCRangeSlider<span class="s5">(v,</span>Rect<span class="s5">(0,0,75,20))</span></p>
-<p class="p10">});</p>
-<p class="p7"><br></p>
-<p class="p10">w.front</p>
-<p class="p10">)</p>
-<p class="p7"><br></p>
-<p class="p10">v.spacing = 8;</p>
+<div class="osc">
+<h2>SwingOSC &ndash; Java-based GUI classes</h2>
+<p>This class is meant as an emulation of SCHLayoutView. last mod: 30-jul-07 sciss
+<br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
+</p>
+<!-- <table> -->
+<!-- <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr> -->
+<!-- <tr><td colspan="2" class="oscTabSection">different behaviour</td></tr> -->
+<!-- <tr><td colspan="2" class="oscTabSection">extended functionality</td></tr> -->
+<!-- <tr><td colspan="2" class="oscTabSection">known issues / todo</td></tr> -->
+<!-- </table> -->
+</div>
+<h1>JSCVLayoutView</h1>
+<p><strong>
+Note: please use the abstraction layer GUI.hLayoutView if possible! (see <A HREF="SC://GUI">GUI</A>)
+</strong></p>
+<P>
+A container view that lays out all its children vertically from top to bottom. For the horizontal version, see <A HREF="JSCHLayoutView.html">JSCHLayoutView</A>.
+</P>
+ <pre>(
+q = 10;
+w = <span class="cl">JSCWindow</span>.new;
+
+h = <span class="cl">JSCVLayoutView</span>(w,<span class="cl">Rect</span>(0,0,300,300));
+
+<span class="cl">Array</span>.fill(q,{ <span class="kw">arg</span> i;
+    <span class="cl">JSCRangeSlider</span>(h,<span class="cl">Rect</span>(0,0,75,20)).hi_(i / q);
+});
+
+w.front
+)
+
+</pre>
+<h3>elastic</h3>
+<P>Resize the window to see the effect.</P>
+<PRE>
+<span class="cm">// note: children can never exceed the bounds</span>
+<span class="cm">// of their parent container in swing !!</span>
+(
+q = 10;
+w = <span class="cl">JSCWindow</span>.new;
+
+h = <span class="cl">JSCVLayoutView</span>(w,<span class="cl">Rect</span>(10,10,300,300));
+h.background = <span class="cl">Color</span>.red(alpha:0.2);
+h.resize = 5; <span class="cm">// elastic</span>
+<span class="cl">Array</span>.fill(q,{  <span class="kw">arg</span> i;
+    <span class="kw">var</span> s;
+    s = <span class="cl">JSCRangeSlider</span>(h,<span class="cl">Rect</span>(0,0,75,20)).hi_( i / q );
+    s
+});
+
+w.front
+)
+
+<span class="cm">// Contents are elastic</span>
+(
+q = 10;
+w = <span class="cl">JSCWindow</span>.new;
+h = <span class="cl">JSCVLayoutView</span>(w,<span class="cl">Rect</span>(10,10,300,300));
+h.background = <span class="cl">Color</span>.red(alpha:0.2);
+h.resize = 5; <span class="cm">// elastic</span>
+<span class="cl">Array</span>.fill(q,{  <span class="kw">arg</span> i;
+    <span class="kw">var</span> s;
+    s = <span class="cl">JSCRangeSlider</span>(h,<span class="cl">Rect</span>(0,0,75,20)).hi_( i / q );
+    s.resize = 5; <span class="cm">// elastic</span>
+    s
+});
+
+w.front
+)
+
+<span class="cm">// set minHeight on contents</span>
+(
+q = 5;
+w = <span class="cl">JSCWindow</span>.new;
+
+h = <span class="cl">JSCVLayoutView</span>(w,<span class="cl">Rect</span>(10,10,300,300));
+h.background = <span class="cl">Color</span>.red(alpha:0.2);
+h.resize = 5; <span class="cm">// elastic</span>
+
+<span class="cl">Array</span>.fill(q,{  <span class="kw">arg</span> i;
+    <span class="kw">var</span> s;
+    s = <span class="cl">JSCRangeSlider</span>(h,<span class="cl">Rect</span>(0,0,75,20)).hi_( i / 5 );
+    if(i &lt; 2,{
+        s.resize = 5; <span class="cm">// some elastic</span>
+        s.setProperty(<span class="sy">\minHeight</span>,20);
+    },{
+        s.resize = 1; <span class="cm">// some not elastic</span>
+    });
+    s
+});
+
+w.front
+)
+
+(
+q = 5;
+w = <span class="cl">JSCWindow</span>.new;
+
+h = <span class="cl">JSCVLayoutView</span>(w,<span class="cl">Rect</span>(0,0,300,300));
+h.background = <span class="cl">Color</span>.red(alpha:0.2);
+h.resize = 5; <span class="cm">// elastic</span>
+
+<span class="cl">Array</span>.fill(q,{  <span class="kw">arg</span> i;
+	<span class="kw">var</span> s;
+	s = <span class="cl">JSCRangeSlider</span>(h,<span class="cl">Rect</span>(0,0,75,20));
+	
+	s.hi = i / 5;
+	s.resize = 5;
+	s.setProperty(<span class="sy">\minHeight</span>,20);
+	s.setProperty(<span class="sy">\maxHeight</span>,40);
+	s
+});
+
+w.front
+)
+
+</pre>
+<h3>Spacing</h3>
+<P>Default spacing between components is 4 pixels. You can alter this value but setting the 'spacing' property:
+</P>
+<pre>
+(
+q = 10;
+w = <span class="cl">JSCWindow</span>.new;
+
+v = <span class="cl">JSCVLayoutView</span>(w,<span class="cl">Rect</span>(10,10,300,300));
+v.spacing = 0;  <span class="cm">// no padding</span>
+
+<span class="cl">Array</span>.fill(q,{ 
+    <span class="cl">JSCRangeSlider</span>(v,<span class="cl">Rect</span>(0,0,75,20))
+});
+
+w.front
+)
+
+v.spacing = 8;
+</pre>
 </body>
 </html>

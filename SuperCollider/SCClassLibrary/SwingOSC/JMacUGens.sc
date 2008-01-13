@@ -30,7 +30,7 @@
  *	Replacements for the mac only mouse control UGens
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.52, 10-apr-07
+ *	@version		0.57, 12-Jan-08
  */
 
 /**
@@ -56,10 +56,7 @@ JMouseBase : Object
 	classvar <controlBus;
 	classvar <>server;
 	
-	*clear {
-		controlBus.free;	// nil.free is allowed
-		controlBus = nil;
-	}
+	// ----------------- quasi-constructor -----------------
 
 	// warp 0 = linear
 	// warp 1 = exponential
@@ -82,16 +79,15 @@ JMouseBase : Object
 		^outputUGen;
 	}
 	
+	// ----------------- public class methods -----------------
+
+	*clear {
+		controlBus.free;	// nil.free is allowed
+		controlBus = nil;
+	}
+
 	*set { arg val;
 		^this.prSet( val, true );
-	}
-	
-	*prSet { arg val, warn;
-		if( controlBus.isNil.not, {
-			controlBus.server.sendMsg( "/c_set", controlBus.index + this.prChannel, val );
-		}, {
-			if( warn, { "JMouseBase.set : control bus has not yet been created".error });
-		});
 	}
 	
 	*makeGUI { arg panelSize = 360;
@@ -162,10 +158,20 @@ JMouseBase : Object
 		win.front;
 	}
 
+	// ----------------- private class methods -----------------
+
+	*prSet { arg val, warn;
+		if( controlBus.isNil.not, {
+			controlBus.server.sendMsg( "/c_set", controlBus.index + this.prChannel, val );
+		}, {
+			if( warn, { "JMouseBase.set : control bus has not yet been created".error });
+		});
+	}
+	
 	*prAllocBus {
 		var serv;
 		
-		serv			= server ?? Server.default;
+		serv			= server ?? { Server.default };
 		controlBus	= Bus.control( serv, 3 );
 		controlBus.fill( 0, controlBus.numChannels );
 	}
@@ -173,21 +179,29 @@ JMouseBase : Object
 
 JMouseX : JMouseBase
 {
+	// ----------------- private class methods -----------------
+
 	*prChannel { ^0 }
 }
 
 JMouseY : JMouseBase
 {
+	// ----------------- private class methods -----------------
+
 	*prChannel { ^1 }
 }
 
 JMouseButton : JMouseBase {
+	// ----------------- quasi-constructor -----------------
+
 	*kr {
 		arg minval = 0, maxval = 1, lag = 0.2;
 
 		// uses control bus channel 2
 		^super.kr( minval, maxval, \linear, lag );
 	}
+
+	// ----------------- private class methods -----------------
 
 	*prChannel { ^2 }
 }
@@ -196,10 +210,7 @@ JKeyState : Object {
 	classvar <controlBus;
 	classvar <>server;
 
-	*clear {
-		controlBus.free;	// nil.free is allowed
-		controlBus = nil;
-	}
+	// ----------------- quasi-constructor -----------------
 
 	*kr { arg keycode = 0, minval = 0, maxval = 1, lag = 0.2;
 		var keyUGen, outputUGen;
@@ -214,9 +225,22 @@ JKeyState : Object {
 		^outputUGen;
 	}
 
+	// ----------------- public class methods -----------------
+
+	*clear {
+		controlBus.free;	// nil.free is allowed
+		controlBus = nil;
+	}
+
 	*makeGUI { arg panelSize = 360;
 		JMouseBase.makeGUI( panelSize );
 	}
+
+	*set { arg keycode, val;
+		^this.prSet( keycode, val, true );
+	}
+	
+	// ----------------- private class methods -----------------
 
 	*prAllocBus {
 		var serv;
@@ -226,10 +250,6 @@ JKeyState : Object {
 		controlBus.fill( 0, controlBus.numChannels );
 	}
 
-	*set { arg keycode, val;
-		^this.prSet( keycode, val, true );
-	}
-	
 	*prSet { arg keycode, val, warn;
 		if( controlBus.isNil.not, {
 			controlBus.server.sendMsg( "/c_set", controlBus.index + keycode.clip( 0, controlBus.numChannels ), val );

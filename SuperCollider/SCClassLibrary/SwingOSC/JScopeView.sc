@@ -26,77 +26,95 @@
  *	Changelog:
  */
 
-JScopeOut : UGen {
-	*ar { arg inputArray , bufnum=0;
-		^RecordBuf.ar( inputArray, bufnum );
-	}
-	*kr { arg inputArray , bufnum=0;
-		^RecordBuf.ar( K2A.ar( inputArray ), bufnum );
-	}
-}
-
 /**
  *	Replacement for the (Cocoa) SCScope class.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.53, 29-Apr-07
+ *	@version		0.57, 12-Jan-08
  */
+JScopeOut : UGen {
+	// ----------------- quasi-constructors -----------------
+
+	*ar { arg inputArray, bufnum = 0;
+		^RecordBuf.ar( inputArray, bufnum );
+	}
+	
+	*kr { arg inputArray, bufnum = 0;
+		^RecordBuf.ar( K2A.ar( inputArray ), bufnum );
+	}
+}
+
 JSCScope : JSCView {
 
 	var audioServer;
 
+	// ----------------- public instance methods -----------------
+
 	bufnum {
-		^this.getProperty(\bufnum)
+		^this.getProperty( \bufnum );
 	}
+	
 	bufnum_ { arg num;
-		this.setProperty(\bufnum, num);
-	}	
+		this.setProperty( \bufnum, num );
+	}
+	
 	x {
-		^this.getProperty(\x)
+		^this.getProperty( \x );
 	}
+	
 	x_ { arg val;
-		this.setProperty(\x, val);
-	}	
+		this.setProperty( \x, val );
+	}
+	
 	y {
-		^this.getProperty(\y)
+		^this.getProperty( \y );
 	}
+	
 	y_ { arg val;
-		this.setProperty(\y, val);
-	}	
+		this.setProperty( \y, val );
+	}
+	
 	xZoom {
-		^this.getProperty(\xZoom)
+		^this.getProperty( \xZoom );
 	}
+	
 	xZoom_ { arg val;
-		this.setProperty(\xZoom, val);
-	}	
-	yZoom {
-		^this.getProperty(\yZoom)
+		this.setProperty( \xZoom, val );
 	}
+	
+	yZoom {
+		^this.getProperty( \yZoom );
+	}
+	
 	yZoom_ { arg val;
-		this.setProperty(\yZoom, val);
-	}	
+		this.setProperty( \yZoom, val );
+	}
 
 	gridColor {
-		^this.getProperty(\gridColor)
+		^this.getProperty( \gridColor );
 	}
+	
 	gridColor_ { arg color;
-		this.setProperty(\gridColor, color);
-	}	
+		this.setProperty( \gridColor, color );
+	}
 
 	waveColors {
-		^this.getProperty(\waveColors)
+		^this.getProperty( \waveColors );
 	}
+	
 	waveColors_ { arg arrayOfColors;
-		this.setProperty(\waveColors, arrayOfColors);
+		this.setProperty( \waveColors, arrayOfColors );
 	}
 	
 	style_ { arg val;
-		this.setProperty(\style, val);
+		this.setProperty( \style, val );
 		// 0 = vertically spaced
 		// 1 = overlapped
 		// 2 = x/y
 	}
 	
+	// ----------------- private instance methods -----------------
+
 	properties {
 //		^super.properties ++ #[\bufnum, \x, \y, \xZoom, \yZoom, \gridColor, \waveColors, \style, \antiAliasing ]
 		^super.properties ++ #[\bufnum, \x, \y, \xZoom, \yZoom, \gridColor, \waveColors, \style ]
@@ -131,8 +149,8 @@ JSCScope : JSCView {
 		]);
 	}
 
-	prClose {
-		^super.prClose([[ '/method', this.id, \stopListening ]]);
+	prClose { arg preMsg, postMsg;
+		^super.prClose( preMsg ++ [[ '/method', this.id, \stopListening ]], postMsg );
 	}
 
 	prSendProperty { arg key, value;

@@ -30,9 +30,9 @@
  *	Replacement for the (Cocoa) SCTextField.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.51, 02-Mar-07
+ *	@version		0.57, 12-Jan-08
  *
- *	@todo		check if drag-n-drop is actually working ?
+ *	@todo		drag-n-drop currently not working
  */
 JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 
@@ -43,6 +43,7 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 	var txResp;
 	var serverString = "";	// necessary coz we immediately store client-side on string_ !
 	
+	// ----------------- public instance methods -----------------
 
 //	defaultKeyDownAction { arg key, modifiers, unicode;
 //		if(unicode == 0,{ ^this });
@@ -85,12 +86,15 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 //	defaultCanReceiveDrag { ^currentDrag.isString }
 //	defaultReceiveDrag { this.valueAction = currentDrag }
 
-	prClose {
+	// ----------------- private instance methods -----------------
+
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
 		txResp.remove;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					  [ '/method', "tx" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id, "tx" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/method', "tx" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id, "tx" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {

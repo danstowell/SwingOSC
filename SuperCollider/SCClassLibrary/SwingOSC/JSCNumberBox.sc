@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCNumberBox.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.56, 25-Sep-07
+ *	@version		0.57, 12-Jan-08
  */
 JSCNumberBox : JSCTextEditBase {
 
@@ -81,12 +81,9 @@ JSCNumberBox : JSCTextEditBase {
 //		});
 		^nil		// bubble if it's an invalid key	}
 
-	defaultGetDrag { 
-		^object.asFloat
-	}
-	defaultCanReceiveDrag {
-		^currentDrag.isNumber;
-	}
+	defaultGetDrag { ^object.asFloat }
+	defaultCanReceiveDrag { ^currentDrag.isNumber }
+
 	defaultReceiveDrag {
 		this.valueAction = currentDrag;	
 	}
@@ -94,6 +91,7 @@ JSCNumberBox : JSCTextEditBase {
 	maxDecimals {
 		^this.getProperty( \maxDecimals, 8 );
 	}
+	
 	maxDecimals_ { arg val;
 		val = max( 0, val.asInteger );
 		if( val < this.minDecimals, {
@@ -101,9 +99,11 @@ JSCNumberBox : JSCTextEditBase {
 		});
 		this.setProperty( \maxDecimals, val );
 	}
+	
 	minDecimals {
 		^this.getProperty( \minDecimals, 0 );
 	}
+	
 	minDecimals_ { arg val;
 		val = max( 0, val.asInteger );
 		if( val > this.maxDecimals, {
@@ -111,18 +111,20 @@ JSCNumberBox : JSCTextEditBase {
 		});
 		this.setProperty( \minDecimals, val );
 	}
+	
+	// ----------------- private instance methods -----------------
+
 	properties {
 		^super.properties ++ #[ \minDecimals, \maxDecimals ];
 	}
 
-	// ----------------- private instance methods -----------------
-
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
 		txResp.remove;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					  [ '/method', "tx" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id, "tx" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/method', "tx" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id, "tx" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {

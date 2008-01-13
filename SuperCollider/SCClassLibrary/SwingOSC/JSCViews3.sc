@@ -27,16 +27,20 @@
  */
 
 /**
- *	@version		0.57, 20-Dec-07
+ *	@version		0.57, 12-Jan-08
  *	@author		Hanns Holger Rutz
  */
 JSCCheckBox : JSCControlView {
 	var acResp;	// OSCpathResponder for action listening
 
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		^this.new( parent, bounds ).value_( true );
 	}
 	
+	// ----------------- public instance methods -----------------
+
 	value_ { arg val;
 		this.setProperty( \value, val );
 	}
@@ -58,10 +62,6 @@ JSCCheckBox : JSCControlView {
 	}
 
 	string { ^this.getProperty( \string ); }
-	
-	properties {
-		^super.properties ++ #[ \value, \font, \string ];
-	}
 	
 	defaultGetDrag { 
 		^this.value;
@@ -87,14 +87,21 @@ JSCCheckBox : JSCControlView {
 		};
 	}
 
+	// ----------------- private instance methods -----------------
+
+	properties {
+		^super.properties ++ #[ \value, \font, \string ];
+	}
+	
 	prNeedsTransferHandler {
 		^true;
 	}
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {
@@ -286,15 +293,17 @@ JSCTabbedPane : JSCContainerView {
 		(this.class.name ++ "." ++ methodName ++ " failed : " ++ message).error;
 	}
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 //	public void setMnemonicAt(int tabIndex, int mnemonic)
 }
 
+// !!! DEPRECATED !!!
 JSCScrollPane : JSCContainerView {
 	horizontalScrollBarShown_ { arg type;
 		this.setProperty( \hPolicy, type );
@@ -362,10 +371,14 @@ JSCScrollBar : JSCControlView {
 	var maxExtent;
 	var <isAdjusting = false;
 
+	// ----------------- public class methods -----------------
+
 	*paletteExample { arg parent, bounds;
 		^this.new( parent, bounds ).extent_( 0.1 );
 	}
 	
+	// ----------------- public instance methods -----------------
+
 	value_ { arg val;
 		val = val.clip( 0.0, 1.0 - this.extent );
 		this.setProperty( \value, val );
@@ -429,10 +442,6 @@ JSCScrollBar : JSCControlView {
 
 	blockIncrement { ^this.getProperty( \blockIncrement )}
 
-	properties {
-		^super.properties ++ #[ \value ];
-	}
-	
 	defaultGetDrag { ^Point( this.value, this.value + this.extent )}	
 	defaultCanReceiveDrag {
 		^currentDrag.isNumber or: { currentDrag.isKindOf( Function ) or: { currentDrag.isKindOf( Point )}};
@@ -464,15 +473,20 @@ JSCScrollBar : JSCControlView {
 		^result;
 	}
 
-	prNeedsTransferHandler {
-		^true;
-	}
+	// ----------------- private instance methods -----------------
 
-	prClose {
+	properties {
+		^super.properties ++ #[ \value ];
+	}
+	
+	prNeedsTransferHandler { ^true }
+
+	prClose { arg preMsg, postMsg;
 		acResp.remove;
 		clpse.cancel;
-		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-					   [ '/free', "ac" ++ this.id ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "ac" ++ this.id, \remove ],
+			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
 	prSCViewNew {

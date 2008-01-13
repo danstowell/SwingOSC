@@ -35,7 +35,7 @@
  *	@author	Hanns Holger Rutz
  */
 + SCDragView {
-	interpretDroppedStrings {Ê^true }
+	interpretDroppedStrings { ^true }
 	
 	interpretDroppedStrings_ { arg bool;
 		"SCDragView.interpretDroppedStrings_ : not yet working".error;

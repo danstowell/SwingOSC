@@ -33,7 +33,7 @@
  *	The client side representation of a SwingOSC server
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 05-Jan-07
+ *	@version		0.57, 12-Jan-08
  */
 SwingOptions
 {
@@ -48,6 +48,8 @@ SwingOptions
 		default = this.new;
 	}
 	
+	// ----------------- constructor -----------------
+
 	*new {
 		default.notNil.if({
 			^default.copy;
@@ -56,10 +58,11 @@ SwingOptions
 		});
 	}
 
-	// session-password
+	// ----------------- public instance methods -----------------
 
 	asOptionsString { arg port = 57111;
 		var o;
+		// XXX session-password
 		o = if( protocol === \tcp, " -t ", " -u ");
 		o = o ++ port;
 		
@@ -72,7 +75,7 @@ SwingOptions
 		if( oscBufSize != 65536, {
 			o = o ++ " -b " ++ oscBufSize;
 		});
-		^o
+		^o;
 	}
 }
 
@@ -116,8 +119,10 @@ SwingOSC : Model
 //		CmdPeriod.add( this );
 	}
 
+	// ----------------- constructor -----------------
+
 	/*
-	*	@param	name			a unique name for the server
+	 *	@param	name			a unique name for the server
 	 *	@param	addr			a NetAddr object specifying the SwingOSC
 	 *						server address
 	 *	@param	options		currently nil
@@ -127,55 +132,25 @@ SwingOSC : Model
 		^super.new.init( name, addr, options, clientID );
 	}
 	
-	init { arg argName, argAddr, argOptions, argClientID;
-		name			= argName;
-		addr			= argAddr;
-		clientID		= argClientID;
-		
-		if( addr.isNil, {
-			options 	= argOptions ?? { SwingOptions.new };
-			isLocal	= true;
-			addr		= NetAddr( if( options.loopBack.not, {ÊSwingOSC.prMyIP }) ? "127.0.0.1", 57111 );
-		}, {
-			isLocal	= addr.addr == 2130706433;
-			if( argOptions.isNil, {
-				options	= SwingOptions.new.loopBack_( isLocal );
-			}, {
-				options	= argOptions;
-				if( options.loopBack && isLocal.not, {
-					"SwingOSC.new : loopBack option is true, but IP is not localhost!".warn;
-				});
-			});
-			if( isLocal.not, {
-				isLocal = addr.ip == SwingOSC.prMyIP;
-			});
-		});
-		
-//		serverRunning	= false;
-		named.put( name, this );
-		set.add( this );
-		this.newAllocators;
+	// ----------------- public class methods -----------------
 
-		screenWidth	= 640;	// will be updated
-		screenHeight	= 480;
-		
-		// note: this can fail when sclang doesn't get port 57120
-		// which unfortunately happens from time to time. it would
-		// be better to use rendezvous
-		helloResp		= OSCpathResponder( nil, [ '/swing', \hello ], { arg time, resp, msg;
-			var pingAddr, protocol;
-			pingAddr = NetAddr( msg[ 2 ].asString, msg[ 3 ].asInteger );
-			protocol	= msg[ 4 ];
-//("pingAddr : "++pingAddr++"; req.addr "++addr).postln;
-			if( pingAddr == addr and: { protocol == options.protocol }, {
-//				this.initTree;
-				this.serverRunning_( false );
-				this.serverRunning_( true );	// invokes initTree
-			});
-		}).add;
-		
-		this.initTree({ serverRunning = true; this.changed( \serverRunning )});
+	*quitAll {
+		set.do({ arg server; if( server.isLocal, { server.quit })});
 	}
+
+	*retrieveScreenBounds {
+		this.default.retrieveScreenBounds;
+	}
+		
+	*resumeThreads {
+		"SwingOSC.resumeThreads...".postln;
+		set.do({ arg server;
+			server.stopAliveThread;
+			server.startAliveThread( 0.7 );
+		});
+	}
+	
+	// ----------------- public instance methods -----------------
 	
 	connect {
 		if( options.protocol === \tcp, {
@@ -273,26 +248,6 @@ SwingOSC : Model
 		}.fork( clock );
 	}
 	
-	// needs to be called inside a routine!
-	prRetrieveScreenBounds {
-		var reply = this.sendMsgSync(
-			[ '/get', '[', '/local', \toolkit, '[', '/method', 'java.awt.Toolkit', \getDefaultToolkit, ']', ']',
-					 'screenSize.width', 'screenSize.height' ], [ '/set', \toolkit ]
-		);
-		if( reply.notNil, {
-			reply.copyToEnd( 2 ).pairsDo({ arg key, value;
-				switch( key.asString,
-					"screenSize.width", { screenWidth = value.asInt; },
-					"screenSize.height", { screenHeight = value.asInt; }
-				);
-			});
-		});			
-	}
-
-	*retrieveScreenBounds {
-		this.default.retrieveScreenBounds;
-	}
-		
 	newAllocators {
 		nodeAllocator	= NodeIDAllocator( clientID );
 	}
@@ -451,21 +406,6 @@ SwingOSC : Model
 		^result;
 	}
 
-	serverRunning_ { arg val;
-		if( val != serverRunning, {
-			serverRunning = val;
-			if( serverRunning, {
-				this.initTree({
-					this.changed( \serverRunning );
-				}, {
-					"SwingOSC.initTree : timeout".error;
-				});			
-			}, {
-				{ this.changed( \serverRunning ); }.defer;
-			});
-		});
-	}
-	
 	wait { arg responseName;
 		var resp, routine;
 
@@ -546,14 +486,6 @@ SwingOSC : Model
 		});
 	}
 	
-	*resumeThreads {
-		"SwingOSC.resumeThreads...".postln;
-		set.do({ arg server;
-			server.stopAliveThread;
-			server.startAliveThread( 0.7 );
-		});
-	}
-	
 	boot { arg startAliveThread = true;
 		var resp;
 		
@@ -605,7 +537,7 @@ SwingOSC : Model
 	}
 	
 	reboot { arg func; // func is evaluated when server is off
-		if( isLocal.not, { "C an't reboot a remote server".inform; ^this });
+		if( isLocal.not, { "Can't reboot a remote server".inform; ^this });
 		if( serverRunning, {
 			Routine.run {
 				this.quit;
@@ -622,14 +554,6 @@ SwingOSC : Model
 	
 	status {
 		this.sendMsg( '/query', \status, 0 );
-	}
-	
-	addStatusWatcher {
-		statusWatcher = 
-			OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
-				alive = true;
-				this.serverRunning_( true );
-			}).add;	
 	}
 	
 	dumpOSC { arg code = 1, reply;
@@ -661,9 +585,7 @@ SwingOSC : Model
 		this.serverRunning	= false;
 	}
 
-	*quitAll {
-		set.do({ arg server; if( server.isLocal, { server.quit }); });
-	}
+	// ----------------- private class methods -----------------
 
 	// stolen from jrh's extCollaboration
 	*prMyIP {
@@ -683,7 +605,7 @@ SwingOSC : Model
 						indices.do({ arg j;
 							j = j + keySize;
 							while({ line[ j ] == delimiter }, { j = j + 1 });
-							k = line.find( delimiter.asString, offset: j ) ?? {Êline.size } - 1;
+							k = line.find( delimiter.asString, offset: j ) ?? { line.size } - 1;
 							res = res.add( line[ j..k ]);
 						});
 					};
@@ -699,5 +621,96 @@ SwingOSC : Model
 //			if(res.size > 1) { warn("the first of those devices were chosen: " ++ res) };
 			res[ 0 ];
 		};
+	}
+
+	// ----------------- private instance methods -----------------
+
+	init { arg argName, argAddr, argOptions, argClientID;
+		name			= argName;
+		addr			= argAddr;
+		clientID		= argClientID;
+		
+		if( addr.isNil, {
+			options 	= argOptions ?? { SwingOptions.new };
+			isLocal	= true;
+			addr		= NetAddr( if( options.loopBack.not, { SwingOSC.prMyIP }) ? "127.0.0.1", 57111 );
+		}, {
+			isLocal	= addr.addr == 2130706433;
+			if( argOptions.isNil, {
+				options	= SwingOptions.new.loopBack_( isLocal );
+			}, {
+				options	= argOptions;
+				if( options.loopBack && isLocal.not, {
+					"SwingOSC.new : loopBack option is true, but IP is not localhost!".warn;
+				});
+			});
+			if( isLocal.not, {
+				isLocal = addr.ip == SwingOSC.prMyIP;
+			});
+		});
+		
+//		serverRunning	= false;
+		named.put( name, this );
+		set.add( this );
+		this.newAllocators;
+
+		screenWidth	= 640;	// will be updated
+		screenHeight	= 480;
+		
+		// note: this can fail when sclang doesn't get port 57120
+		// which unfortunately happens from time to time. it would
+		// be better to use rendezvous
+		helloResp		= OSCpathResponder( nil, [ '/swing', \hello ], { arg time, resp, msg;
+			var pingAddr, protocol;
+			pingAddr = NetAddr( msg[ 2 ].asString, msg[ 3 ].asInteger );
+			protocol	= msg[ 4 ];
+//("pingAddr : "++pingAddr++"; req.addr "++addr).postln;
+			if( pingAddr == addr and: { protocol == options.protocol }, {
+//				this.initTree;
+				this.serverRunning_( false );
+				this.serverRunning_( true );	// invokes initTree
+			});
+		}).add;
+		
+		this.initTree({ serverRunning = true; this.changed( \serverRunning )});
+	}
+
+	addStatusWatcher {
+		statusWatcher = 
+			OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
+				alive = true;
+				this.serverRunning_( true );
+			}).add;	
+	}
+	
+	// needs to be called inside a routine!
+	prRetrieveScreenBounds {
+		var reply = this.sendMsgSync(
+			[ '/get', '[', '/local', \toolkit, '[', '/method', 'java.awt.Toolkit', \getDefaultToolkit, ']', ']',
+					 'screenSize.width', 'screenSize.height' ], [ '/set', \toolkit ]
+		);
+		if( reply.notNil, {
+			reply.copyToEnd( 2 ).pairsDo({ arg key, value;
+				switch( key.asString,
+					"screenSize.width", { screenWidth = value.asInt; },
+					"screenSize.height", { screenHeight = value.asInt; }
+				);
+			});
+		});			
+	}
+
+	serverRunning_ { arg val;
+		if( val != serverRunning, {
+			serverRunning = val;
+			if( serverRunning, {
+				this.initTree({
+					this.changed( \serverRunning );
+				}, {
+					"SwingOSC.initTree : timeout".error;
+				});			
+			}, {
+				{ this.changed( \serverRunning ); }.defer;
+			});
+		});
 	}
 }

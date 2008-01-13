@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.57, 21-Dec-07
+ *	@version		0.57, 12-Jan-08
  *	@author		Hanns Holger Rutz
  */
 JPeakMeterManager {
@@ -44,6 +44,8 @@ JPeakMeterManager {
 	var numChannels = 0;	// current number of audio channels
 	var <id;				// server side manager id
 	
+	// ----------------- quasi-constructor -----------------
+
 	*newFrom { arg guiServer, audioServer;
 		var res, guiServerDict;
 		if( all.isNil, {
@@ -62,9 +64,13 @@ JPeakMeterManager {
 		^res;
 	}
 	
+	// ----------------- constructor -----------------
+
 	*new { arg guiServer, audioServer;
 		^super.new.prInit( guiServer, audioServer );
 	}
+
+	// ----------------- private instance methods -----------------
 
 	prInit { arg argGuiServer, argAudioServer;
 		views		= IdentityDictionary.new;
@@ -173,6 +179,8 @@ JSCPeakMeterView : JSCControlView {
 	var <rmsPainted = true, <holdPainted = true;
 //	var acResp;	// OSCpathResponder for action listening
 
+	// ----------------- public instance methods -----------------
+
 	active_ { arg bool;
 		active = bool;
 		if( manager.notNil, {
@@ -215,33 +223,6 @@ JSCPeakMeterView : JSCControlView {
 		this.setProperty( \font, argFont );
 	}
 
-	prClose {
-		this.prUnregister;
-		^super.prClose;
-//		acResp.remove;
-//		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-//					   [ '/free', "ac" ++ this.id ]]);
-	}
-
-	prSCViewNew {
-//		properties.put( \value, false );
-//		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
-//			// don't call valueAction coz we'd create a loop
-//			properties.put( \value, msg[4] != 0 );
-//			{ this.doAction; }.defer;
-//		}).add;
-		^super.prSCViewNew([
-			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.PeakMeterGroup", ']' ]
-		]);
-	}
-	
-	prUnregister {
-		if( manager.notNil, {
-			manager.protUnregister( this );
-			manager = nil;
-		});
-	}
-	
 	group_ { arg g;
 		group = g;
 		if( manager.notNil, {
@@ -267,6 +248,35 @@ JSCPeakMeterView : JSCControlView {
 //		server.sendMsg( '/method', this.id, \setBus, b.server.addr.hostname, b.server.addr.port, b.server.options.protocol, b.index, b.numChannels );
 	}
 
+	// ----------------- private instance methods -----------------
+
+	prClose { arg preMsg, postMsg;
+		this.prUnregister;
+		^super.prClose( preMsg, postMsg );
+//		acResp.remove;
+//		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
+//					   [ '/free', "ac" ++ this.id ]]);
+	}
+
+	prSCViewNew {
+//		properties.put( \value, false );
+//		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
+//			// don't call valueAction coz we'd create a loop
+//			properties.put( \value, msg[4] != 0 );
+//			{ this.doAction; }.defer;
+//		}).add;
+		^super.prSCViewNew([
+			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.PeakMeterGroup", ']' ]
+		]);
+	}
+	
+	prUnregister {
+		if( manager.notNil, {
+			manager.protUnregister( this );
+			manager = nil;
+		});
+	}
+	
 	prSendProperty { arg key, value;
 		key	= key.asSymbol;
 

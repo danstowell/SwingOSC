@@ -35,14 +35,13 @@
  */
 
 /**
- *	For details, see JSCView.help.rtf and DeveloperInfo.rtf
+ *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.57, 03-Jan-07
+ *	@version		0.57, 12-Jan-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
  *	@todo		need to check all default properties are readable
- *	@todo		should call revalidate() only if parent window is already showing
  */
 JSCView {  // abstract class
 	classvar <>currentDrag, <>currentDragString;
@@ -55,7 +54,7 @@ JSCView {  // abstract class
 	var <mouseDownAction, <mouseUpAction, <mouseOverAction, <mouseMoveAction;	var <>keyDownAction, <>keyUpAction, <>keyTyped;	var <beginDragAction,<>canReceiveDragHandler,<receiveDragHandler;
 	var <>onClose;
 
-	var <server;	// the SwingOSC server used for this gadget
+	var <server;	// the SwingOSC server used for this view
 	var properties;
 	var keyResp, dndResp, mouseResp, cmpResp;
 	var <hasFocus = false;
@@ -305,7 +304,7 @@ JSCView {  // abstract class
 		if( clpseMouseDrag.notNil, { clpseMouseDrag.cancel; clpseMouseDrag = nil });
 		cmpResp.remove;
 		
-		bndl = List.new;
+		bndl = Array( preMsg.size + postMsg.size + 5 );
 		bndl.addAll( preMsg );
 		bndl.add([ '/method', "key" ++ this.id, \remove ]);
 		bndl.add([ '/method', "cmp" ++ this.id, \remove ]);
@@ -466,38 +465,38 @@ JSCView {  // abstract class
 	keyUp { arg char, modifiers, unicode,keycode; 
 		this.keyTyped = char;
 		// always call global keydown action first
-		globalKeyUpAction.value(this, char, modifiers, unicode, keycode);
-		this.handleKeyUpBubbling(this, char, modifiers, unicode, keycode);
+		globalKeyUpAction.value( this, char, modifiers, unicode, keycode );
+		this.handleKeyUpBubbling( this, char, modifiers, unicode, keycode );
 	}
 	
 	handleKeyDownBubbling { arg view, char, modifiers, unicode, keycode;
 		var result;
 		// nil from keyDownAction --> pass it on
-		if (keyDownAction.isNil) {
-			this.defaultKeyDownAction(char,modifiers,unicode,keycode);
+		if( keyDownAction.isNil, {
+			this.defaultKeyDownAction( char,modifiers,unicode,keycode );
 			result = nil;
-		}{
-			result = keyDownAction.value(view, char, modifiers, unicode, keycode);
-		};
-		if(result.isNil) {  
+		}, {
+			result = keyDownAction.value( view, char, modifiers, unicode, keycode );
+		});
+		if( result.isNil, {  
 			// call keydown action of parent view
-			parent.handleKeyDownBubbling(view, char, modifiers, unicode, keycode);
-		};
+			parent.handleKeyDownBubbling( view, char, modifiers, unicode, keycode );
+		});
 	}
 	
 	handleKeyUpBubbling { arg view, char, modifiers, unicode, keycode;
 		var result;
 		// nil from keyDownAction --> pass it on
-		if (keyUpAction.isNil) {
-			this.defaultKeyUpAction(char,modifiers,unicode,keycode);
+		if( keyUpAction.isNil, {
+			this.defaultKeyUpAction( char,modifiers,unicode,keycode );
 			result = nil;
-		}{
-			result = keyUpAction.value(view, char, modifiers, unicode, keycode);
-		};
-		if(result.isNil) {  
+		}, {
+			result = keyUpAction.value( view, char, modifiers, unicode, keycode );
+		});
+		if( result.isNil, {  
 			// call keydown action of parent view
-			parent.handleKeyUpBubbling(view, char, modifiers, unicode, keycode);
-		};
+			parent.handleKeyUpBubbling( view, char, modifiers, unicode, keycode );
+		});
 	}
 
 	prSetScBounds { arg rect; scBounds = rect }
@@ -654,25 +653,18 @@ JSCView {  // abstract class
 	
 //	prRemove { }
 
-	prIsInsideContainer {
-		^false;	// default: no
-	}
+	prIsInsideContainer { ^false }	// default: no
 	
-	prGetDnDModifiers {
-		^2;		// default: control key
-	}
+	prGetDnDModifiers { ^2 }	// default: control key
 	
-	prNeedsTransferHandler {
-		^false;
-	}
+	prNeedsTransferHandler { ^false }
 	
 	beginDrag {
-		currentDrag = if (beginDragAction.notNil) 
-		{	
-			beginDragAction.value(this)
-		}{
-			this.defaultGetDrag
-		};
+		currentDrag = if( beginDragAction.notNil, {
+			beginDragAction.value( this );
+		}, {
+			this.defaultGetDrag;
+		});
 		currentDragString = currentDrag.asCompileString;
 	}
 	
@@ -795,9 +787,7 @@ JSCView {  // abstract class
 	}
 	
 	// this can be overridden
-	prImportDrag {
-		JSCView.importDrag;
-	}
+	prImportDrag { JSCView.importDrag }
 
 	// contract: the returned rect is not identical to the one passed in
 	prBoundsToJava { arg rect;

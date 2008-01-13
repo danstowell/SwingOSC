@@ -29,9 +29,6 @@
 /**
  *	A replacement for (Cocoa) SCWindow.
  *
- *	Not yet working:
- *	- bounds are not tracked
- *
  *	Different behaviour
  *	- bounds are automatically restored when quitting
  *	  minimization or full screen (cocoa windows don't do this)
@@ -40,7 +37,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 06-Jan-07
+ *	@version		0.57, 12-Jan-08
  */
 JSCWindow : Object
 {
@@ -51,9 +48,9 @@ JSCWindow : Object
 	var dataptr, <name, <>onClose, <view, <userCanClose = true;
 	var <alwaysOnTop = false;
 	var <drawHook;
-	var <acceptsMouseOver=false;	var <acceptsClickThrough = true;
+	var <acceptsMouseOver = false;	var <acceptsClickThrough = true;
 	
-	var <server, id;
+	var <server, <id;
 	var bounds;
 	var acResp;	// OSCpathResponder for window listening
 	var penID		= nil;
@@ -61,7 +58,7 @@ JSCWindow : Object
 	var <resizable;
 	var <border;
 	
-	var pendingAlpha;
+	var pendingAlpha;	// alpha can only be set when window was made visible, so this is a lazy storage
 	
 	*initClass {
 		UI.registerForShutdown({ this.closeAll });
@@ -78,8 +75,8 @@ JSCWindow : Object
 	*closeAll {
 		var list;
 		list = allWindows.copy;
-		allWindows = Array.new(8);
-		list.do({ arg window; window.close; });
+		allWindows = Array.new( 8 );
+		list.do({ arg window; window.close });
 	}
 		
 	*screenBounds { arg server;
@@ -97,8 +94,8 @@ JSCWindow : Object
 		
 		scrB	= this.screenBounds;
 		h	= c.size * 28 + 12;
-		w = JSCWindow( "View Palette", Rect( (scrB.width - 300) / 2, (scrB.height - h) / 2, 300, h ),
-			resizable: false );
+		w	= JSCWindow( "View Palette", Rect( (scrB.width - 300) / 2, (scrB.height - h) / 2, 300, h ),
+				resizable: false );
 		w.view.decorator = f = FlowLayout( w.view.bounds );
 
 		c.do({ arg item;
@@ -139,20 +136,10 @@ JSCWindow : Object
 	}
 
 	asView { ^view }
-	add { arg aView; view.add( aView )}
 	
-	close {
-		this.prClose;
-	}
+	close { this.prClose }
 	
-	closed {
-		dataptr = nil;
-		view.prClose;
-		onClose.value; // call user function
-		allWindows.remove( this );
-	}
-	
-	isClosed { ^dataptr.isNil; }
+	isClosed { ^dataptr.isNil }
 	
 	visible_ { arg bool;
 		if( visible != bool, {
@@ -194,7 +181,7 @@ JSCWindow : Object
 			});
 		});
 	}
-	 
+	
 	alwaysOnTop_ { arg bool = true;
 		if( alwaysOnTop != bool, {
 			alwaysOnTop = bool;
@@ -274,7 +261,7 @@ JSCWindow : Object
 	}
 	
 	play { arg function;
-		AppClock.play({ 
+		SwingOSC.clock.play({ 
 			if( dataptr.notNil, {
 				function.value;
 			});
@@ -285,11 +272,11 @@ JSCWindow : Object
 		^view.findByID( id );
 	}
 
-	callDrawHook {
-		this.refresh;
-	}
+//	callDrawHook {
+//		this.refresh;
+//	}
 	
-	id { ^id }
+//	id { ^id }
 
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
 
@@ -312,12 +299,21 @@ JSCWindow : Object
 	// ----------------- private class methods -----------------
 	
 	*prGetScreenBounds { arg argBounds, server;
-		server = server ?? { SwingOSC.default; };
+		server = server ?? { SwingOSC.default };
 		^argBounds.set( 0, 0, server.screenWidth, server.screenHeight );
 	}
 
 	// ----------------- private instance methods -----------------
 
+	add { arg aView; view.add( aView )}
+
+	closed {
+		dataptr = nil;
+		view.prClose;
+		onClose.value; // call user function
+		allWindows.remove( this );
+	}
+	
 	/*
 	 *	@param	argName		(String or Symbol) is mapped to property 'title'
 	 *	@param	argBounds 	(Rect) is translated to java's coordinate system

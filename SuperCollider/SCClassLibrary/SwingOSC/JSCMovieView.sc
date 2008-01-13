@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCMovieView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.45, 04-Feb-07
+ *	@version		0.57, 12-Jan-08
  */
 JSCMovieView : JSCView{
 	var <rate, <loopMode, <muted, <path, <editable;
@@ -43,73 +43,77 @@ JSCMovieView : JSCView{
 	2 Playback stops when end is reached.		
 	*/
 	
-	start{
-		this.setProperty(\start);		
-	}
-	
-	stop{
-		this.setProperty(\stop);		
-	}
-	
-	path_{|moviePath|
-		path = moviePath;
-		this.setProperty(\setMovie, moviePath);	
-	}
-	
-	muted_{|bool|
-		muted = bool;
-		this.setProperty(\setMuted, bool);		
-	}
-	
-	playSelectionOnly_{|bool|
-		this.setProperty(\setPlaysSelectionOnly, bool);
-	}
-	
-	rate_{|ratein|
-		rate = ratein;
-		this.setProperty(\setRate, ratein);
-	}
-	
-	loopMode_{|mode|
-		loopMode = mode;
-		this.setProperty(\setLoopMode, mode);
-	}	
-	
-	gotoEnd{
-		this.setProperty(\gotoEnd);
-	}
-	stepForward{
-		this.setProperty(\stepForward);
-	}
-	
-	stepBack{
-		this.setProperty(\stepBack);	
-	}
-	
-	gotoBeginning{
-		this.setProperty(\gotoBeginning);
-	}	
-	
-	currentTime_{|time|
-		this.setProperty(\setCurrentTime, time);
-	}	
+	// ----------------- public instance methods -----------------
 
-	currentTime{
+	start {
+		this.setProperty( \start );		
+	}
+	
+	stop {
+		this.setProperty( \stop );		
+	}
+	
+	path_ { arg moviePath;
+		path = moviePath;
+		this.setProperty( \setMovie, moviePath );	
+	}
+	
+	muted_ { arg bool;
+		muted = bool;
+		this.setProperty( \setMuted, bool );		
+	}
+	
+	playSelectionOnly_ { arg bool;
+		this.setProperty( \setPlaysSelectionOnly, bool );
+	}
+	
+	rate_ { arg ratein;
+		rate = ratein;
+		this.setProperty( \setRate, ratein );
+	}
+	
+	loopMode_ { arg mode;
+		loopMode = mode;
+		this.setProperty( \setLoopMode, mode );
+	}	
+	
+	gotoEnd {
+		this.setProperty( \gotoEnd );
+	}
+	
+	stepForward {
+		this.setProperty( \stepForward );
+	}
+	
+	stepBack {
+		this.setProperty( \stepBack );	
+	}
+	
+	gotoBeginning {
+		this.setProperty( \gotoBeginning );
+	}	
+	
+	currentTime_ { arg time;
+		this.setProperty( \setCurrentTime, time );
+	}
+
+	currentTime {
 		"JSCMovieView-currentTime is not implemented".warn;
+		^0;
 //		^this.getProperty(\getCurrentTime);
 	}	
 		
-	editable_{|bool|
+	editable_ { arg bool;
 		editable = bool;
-		this.setProperty(\setEditable, bool);		
+		this.setProperty( \setEditable, bool );		
 	}
 	
-	showControllerAndAdjustSize{|show, adjust|
-		this.setProperty(\showControllerAndAdjustSize, [show, adjust]);
+	showControllerAndAdjustSize { arg show, adjust;
+		this.setProperty( \showControllerAndAdjustSize, [ show, adjust ]);
 	}
 	
-	resizeWithMagnification{|size|
-		this.setProperty(\resizeWithMagnification, size)
+	resizeWithMagnification { arg size;
+		this.setProperty( \resizeWithMagnification, size );
 	}
 	
 	fixedAspectRatio_ { arg bool;
@@ -117,20 +121,32 @@ JSCMovieView : JSCView{
 		this.setProperty( \fixedAspectRatio, bool );
 	}
 	
-	copy{
-		this.setProperty(\copy);
+	copy {
+		this.setProperty( \copy );
 	}
-	clear{
-		this.setProperty(\clear);
+	
+	clear {
+		this.setProperty( \clear );
 	}
-	cut{
-		this.setProperty(\cut);
-	}			
-	paste{
-		this.setProperty(\paste);
-	}	
+	
+	cut {
+		this.setProperty( \cut );
+	}
+	
+	paste {
+		this.setProperty( \paste );
+	}
 
-	// JJJ begin
+	skipFrames { arg numFrames;
+		server.sendMsg( '/method', this.id, \skip, numFrames );
+	}
+	
+	frame_ { arg frameIdx;
+		server.sendMsg( '/method', this.id, \setCurrentFrame, frameIdx );
+	}
+
+	// ----------------- private instance methods -----------------
+
 	prSCViewNew {
 //		properties.put( \bufnum, 0 );
 //		properties.put( \x, 0.0 );
@@ -141,25 +157,11 @@ JSCMovieView : JSCView{
 		^super.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.MovieView", ']' ]		]);
 	}
-	// JJJ end
-	
-	// JJJ begin
-	prClose {
-		^super.prClose([[ '/method', this.id, \dispose ]]);
-	}
-	// JJJ end
-	
-	// JJJ begin
-	skipFrames { arg numFrames;
-		server.sendMsg( '/method', this.id, \skip, numFrames );
-	}
-	
-	frame_ { arg frameIdx;
-		server.sendMsg( '/method', this.id, \setCurrentFrame, frameIdx );
-	}
-	// JJJ end
 
-	// JJJ begin
+	prClose { arg preMsg, postMsg;
+		^super.prClose( preMsg ++ [[ '/method', this.id, \dispose ]], postMsg );
+	}
+
 	prSendProperty { arg key, value;
 		key	= key.asSymbol;
 
@@ -217,5 +219,4 @@ JSCMovieView : JSCView{
 		);
 		^super.prSendProperty( key, value );
 	}
-	// JJJ end
 }

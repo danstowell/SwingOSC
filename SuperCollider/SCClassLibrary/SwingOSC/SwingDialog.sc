@@ -33,7 +33,7 @@
  *	- multiple input file selection
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.50, 09-Feb-07
+ *	@version		0.57, 12-Jan-08
  */
 SwingDialog {
 	classvar result, ok, cancel;
@@ -42,6 +42,8 @@ SwingDialog {
 		UI.registerForReset({ this.clear });
 	}
 	
+	// ----------------- public class methods -----------------
+
 	*getPaths { arg okFunc, cancelFunc, maxSize=20;
 		if(result.notNil,{
 			"A SwingDialog is already in progress.  do: [SwingDialog.clear]".warn;
@@ -54,6 +56,23 @@ SwingDialog {
 		this.prGetPathsDialog(result);
 	}
 	
+	*clear { // in case of errors, invalidate any previous dialogs
+		ok = cancel = result = nil;
+	}
+
+	*savePanel { arg okFunc, cancelFunc;
+		if( result.notNil, {
+			"A SwingDialog is already in progress. Call: SwingDialog.clear".warn;
+			^nil;
+		});
+		result = String.new( 512 );
+		ok = okFunc;
+		cancel = cancelFunc;
+		this.prSavePanel( result );
+	}
+	
+	// ----------------- private class methods -----------------
+
 	*prGetPathsDialog { arg argResult;
 		this.prShowDialog( "Open", 0 );
 	}
@@ -121,16 +140,6 @@ SwingDialog {
 		dlg.setVisible( true );
 	}
 	
-	*savePanel { arg okFunc,cancelFunc;
-		if(result.notNil,{
-			"A SwingDialog is already in progress.  do: [SwingDialog.clear]".warn;
-			^nil
-		});
-		result = String.new(512);
-		ok = okFunc;
-		cancel = cancelFunc;
-		this.prSavePanel(result);
-	}
 	*prSavePanel { arg argResult;
 		this.prShowDialog( "Save", 1 );
 	}
@@ -142,6 +151,7 @@ SwingDialog {
 		ok.value(res);
 		ok = nil;
 	}
+	
 	*cancel {
 		var res;
 		res = result;
@@ -149,12 +159,10 @@ SwingDialog {
 		cancel.value(res);
 		cancel = nil;
 	}
+	
 	*error {
 		this.clear;
 		"An error has occured during a SwingDialog".error;
-	}
-	*clear { // in case of errors, invalidate any previous dialogs
-		ok = cancel = result = nil;
 	}
 }
 

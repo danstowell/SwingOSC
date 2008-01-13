@@ -35,12 +35,53 @@ JEZSlider
 	var <>labelView, <>sliderView, <>numberView, <>controlSpec, <>action, <value;
 	var <round = 0.001;
 	
+	// ----------------- constructor -----------------
+
 	*new { arg window, dimensions, label, controlSpec, action, initVal, 
 			initAction = false, labelWidth = 80, numberWidth = 80;
 		^super.new.init( window, dimensions, label, controlSpec, action, initVal, 
 			initAction, labelWidth, numberWidth );
 	}
 	
+	// ----------------- public instance methods -----------------
+
+	value_ { arg value; numberView.valueAction = value }
+	
+	set { arg label, spec, argAction, initVal, initAction = false;
+		labelView.string	= label;
+		controlSpec		= spec.asSpec;
+		action			= argAction;
+		initVal			= initVal ? controlSpec.default;
+		if( initAction, {
+			this.value		= initVal;
+		}, {
+			value			= initVal;
+			sliderView.value	= controlSpec.unmap(value);
+			numberView.value	= value.round(round);
+		});
+	}
+	
+	// JJJ begin
+	round_ { arg argRound;
+		var str;
+	
+		round = argRound;
+		
+		if( round == 0, {
+			numberView.maxDecimals = 8;
+		}, {
+			str = round.asString;
+			numberView.maxDecimals = str.size - (str.indexOf( $. ) ?? 0) - 1;
+		});
+	}
+	// JJJ end
+
+	visible_ { arg bool; [ labelView, sliderView, numberView ].do( _.visible_( bool ))}
+	
+	remove { [ labelView, sliderView, numberView ].do( _.remove )}
+
+	// ----------------- private instance methods -----------------
+
 	init { arg window, dimensions, label, argControlSpec, argAction, initVal, 
 			initAction, labelWidth, numberWidth;
 		var	decorator = window.asView.tryPerform( \decorator ),			gap = decorator.tryPerform( \gap );				gap.notNil.if({			(dimensions = dimensions.copy).x_( dimensions.x - (2 * gap.x) );		});		labelView			= JSCStaticText( window, labelWidth @ dimensions.y );
@@ -94,40 +135,6 @@ JEZSlider
 			numberView.value	= value.round(round);
 		});
 	}
-	
-	value_ { arg value; numberView.valueAction = value }
-	
-	set { arg label, spec, argAction, initVal, initAction = false;
-		labelView.string	= label;
-		controlSpec		= spec.asSpec;
-		action			= argAction;
-		initVal			= initVal ? controlSpec.default;
-		if( initAction, {
-			this.value		= initVal;
-		}, {
-			value			= initVal;
-			sliderView.value	= controlSpec.unmap(value);
-			numberView.value	= value.round(round);
-		});
-	}
-	
-	// JJJ begin
-	round_ { arg argRound;
-		var str;
-	
-		round = argRound;
-		
-		if( round == 0, {
-			numberView.maxDecimals = 8;
-		}, {
-			str = round.asString;
-			numberView.maxDecimals = str.size - (str.indexOf( $. ) ?? 0) - 1;
-		});
-	}
-	// JJJ end
-
-	visible_ { arg bool; [ labelView, sliderView, numberView ].do( _.visible_( bool ))}
-	remove { [ labelView, sliderView, numberView ].do( _.remove )}
 }
 
 JEZNumber
@@ -135,37 +142,18 @@ JEZNumber
 	var <>labelView, <>numberView, <>controlSpec, <>action, <value;
 	var <round = 0.001;
 	
+	// ----------------- constructor -----------------
+
 	*new { arg window, dimensions, label, controlSpec, action, initVal, 
 			initAction=false, labelWidth=80, numberWidth = 80;
 		^super.new.init(window, dimensions, label, controlSpec, action, initVal, 
 			initAction, labelWidth, numberWidth);
 	}
-	init { arg window, dimensions, label, argControlSpec, argAction, initVal, 
-			initAction, labelWidth, numberWidth;
-		labelView = JSCStaticText(window, labelWidth @ dimensions.y);
-		labelView.string = label;
-		labelView.align = \right;
-		
-		controlSpec = argControlSpec.asSpec;
-		initVal = initVal ? controlSpec.default;
-		action = argAction;
-		
-		numberView = JSCNumberBox(window, numberWidth @ dimensions.y);
-		numberView.action = {
-			numberView.value = value = controlSpec.constrain(numberView.value);
-			action.value(this);
-		};
-		// JJJ
-		numberView.maxDecimals = 3;	// for default round of 0.001
-		
-		if (initAction) {
-			this.value = initVal;
-		}{
-			value = initVal;
-			numberView.value = value.round(round);
-		};
-	}
+
+	// ----------------- public instance methods -----------------
+
 	value_ { arg value; numberView.valueAction = value }
+	
 	set { arg label, spec, argAction, initVal, initAction=false;
 		labelView.string = label;
 		controlSpec = spec.asSpec;
@@ -194,7 +182,37 @@ JEZNumber
 	}
 	// JJJ end
 
-	visible_ { |bool|		[labelView, numberView].do(_.visible_(bool))	}
+	visible_ { |bool|
+		[labelView, numberView].do(_.visible_(bool))
+	}
 
 	remove { [labelView, numberView].do(_.remove) }
+
+	// ----------------- private instance methods -----------------
+	
+	init { arg window, dimensions, label, argControlSpec, argAction, initVal, 
+			initAction, labelWidth, numberWidth;
+		labelView = JSCStaticText(window, labelWidth @ dimensions.y);
+		labelView.string = label;
+		labelView.align = \right;
+		
+		controlSpec = argControlSpec.asSpec;
+		initVal = initVal ? controlSpec.default;
+		action = argAction;
+		
+		numberView = JSCNumberBox(window, numberWidth @ dimensions.y);
+		numberView.action = {
+			numberView.value = value = controlSpec.constrain(numberView.value);
+			action.value(this);
+		};
+		// JJJ
+		numberView.maxDecimals = 3;	// for default round of 0.001
+		
+		if (initAction) {
+			this.value = initVal;
+		}{
+			value = initVal;
+			numberView.value = value.round(round);
+		};
+	}
 }

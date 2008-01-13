@@ -45,7 +45,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.53, 02-Jul-07
+ *	@version		0.57, 13-Jan-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not
@@ -194,10 +194,10 @@ JPen {
 		cmds = cmds.add([ "fov", rect.left, rect.top, rect.width, rect.height ]);
 	}
 	
-	*drawAquaButton { arg rect, type=0, down=false, on=false;
-		// XXX
-		(thisMethod.name ++ " not implemented").warn;
-	}
+//	*drawAquaButton { arg rect, type=0, down=false, on=false;
+//		// XXX
+//		(thisMethod.name ++ " not implemented").warn;
+//	}
 
 	*setSmoothing { arg flag=true;
 		cmds.add([ "ali", flag.binaryValue ]);
@@ -215,16 +215,16 @@ JPen {
 		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 0, 0 ]);
 	}
 	
-	*stringCenteredIn { arg str, inRect;
-		cmds = cmds.add([ "dsr", str, inRect.left, inRect.top, inRect.width, inRect.height, 0.5, 0.5 ]);
+	*stringCenteredIn { arg str, rect;
+		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 0.5, 0.5 ]);
 	}
 	
-	*stringLeftJustIn { arg str, inRect;
-		cmds = cmds.add([ "dsr", str, inRect.left, inRect.top, inRect.width, inRect.height, 0, 0.5 ]);
+	*stringLeftJustIn { arg str, rect;
+		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 0, 0.5 ]);
 	}
 	
-	*stringRightJustIn { arg str, inRect;
-		cmds = cmds.add([ "dsr", str, inRect.left, inRect.top, inRect.width, inRect.height, 1, 0.5 ]);
+	*stringRightJustIn { arg str, rect;
+		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 1, 0.5 ]);
 	}
 
 	

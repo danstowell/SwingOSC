@@ -141,7 +141,7 @@
 
 // don't blame me for this hackery
 + SCViewHolder {
-//	prIsInsideContainer {Ê^false }
+//	prIsInsideContainer { ^false }
 	prSetScBounds {}
 	prInvalidateChildBounds {}
 	protDraw {}

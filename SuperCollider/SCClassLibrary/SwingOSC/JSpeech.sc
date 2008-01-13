@@ -29,82 +29,87 @@
 /**
  *	Replacement for (Cocoa) Speech
  *
- *	@version	0.57, 25-Nov-07
+ *	@version	0.57, 12-Jan-08
  *	@author	Hanns Holger Rutz
  */
 JSpeechChannel{
-	var < channel, <pitch, <volume, <pitchMod, <voice, <rate;
-	var < wordDoneAction, < doneAction;
-	var < paused = false, isActive;
+	var <channel, <pitch, <volume, <pitchMod, <voice, <rate;
+	var <wordDoneAction, <doneAction;
+	var <paused = false, isActive;
 	
 	
-	*new{|chan|
-		^super.newCopyArgs(chan);
+	// ----------------- constructor -----------------
+
+	*new{ arg chan;
+		^super.newCopyArgs( chan );
 	}
 	
-	wordDoneAction_{|action|
-		JSpeech.wordDoneActions.put(channel, action)
+	// ----------------- public instance methods -----------------
+
+	wordDoneAction_ { arg action;
+		JSpeech.wordDoneActions.put( channel, action );
 	}
 
-	doneAction_{|action|
-		JSpeech.doneActions.put(channel, action)
+	doneAction_ { arg action;
+		JSpeech.doneActions.put( channel, action );
 	}
 		
-	pitch_{|midinote|
+	pitch_ { arg midinote;
 		pitch = midinote;
-		JSpeech.setSpeechPitch(channel, pitch);
+		JSpeech.setSpeechPitch( channel, pitch );
 	}
 	
-	volume_{|amp|
+	volume_ { arg amp;
 		volume = amp;
-		JSpeech.setSpeechVolume(channel, volume);		
+		JSpeech.setSpeechVolume( channel, volume );		
 	}
 	
-	pitchMod_{|mod|
+	pitchMod_ {  arg mod;
 		pitchMod = mod;
-		JSpeech.setSpeechPitchMod(channel, pitchMod);	
+		JSpeech.setSpeechPitchMod( channel, pitchMod );
 	}
 	
-	rate_{|ratein|
+	rate_ { arg ratein;
 		rate = ratein;
-		JSpeech.setSpeechRate(channel, rate);
+		JSpeech.setSpeechRate( channel, rate );
 	}
 	
-	voice_{|num|
+	voice_ { arg num;
 		voice = num;
-		JSpeech.setSpeechVoice(channel, voice);			
+		JSpeech.setSpeechVoice( channel, voice );			
 	}
 	
-	stop{|when|
-		if(when.isNumber.not){
-			when = JSpeech.stopMethods[when];
-		};
-		JSpeech.stop(channel, when);
+	stop { arg when;
+		if( when.isNumber.not, {
+			when = JSpeech.stopMethods[ when ];
+		});
+		JSpeech.stop( channel, when );
 	}
 	
-	pause{|bool|
+	pause { arg bool;
 		paused = bool;
-		JSpeech.pause(channel, bool.binaryValue);
+		JSpeech.pause( channel, bool.binaryValue );
 	}
 	
-	isActive{
-		^this.prIsActive(channel);
+	isActive {
+		^this.prIsActive( channel );
 	}
-	
 		
-	speak{|string, force=false|
-		if(force.not){
-			this.prSpeak(channel, string);
+	speak { arg string, force = false;
+		if( force.not, {
+			this.prSpeak( channel, string );
 			^this
-		};
-		r{
-			this.stop(0);
+		});
+		r {
+			this.stop( 0 );
 			0.5.wait;
-			this.prSpeak(channel, string);
-		}.play
+			this.prSpeak( channel, string );
+		}.play;
 	}
+
+	// ----------------- private instance methods -----------------
 	
-	prSpeak{|channel, txt|
+	prSpeak { arg channel, txt;
 		var result = JSpeech.initialized;
 //		_SpeakText
 		if( result.not, { result = JSpeech.init });	
@@ -113,10 +118,9 @@ JSpeechChannel{
 		});
 	}
 	
-	prIsActive{|chan|
+	prIsActive { arg chan;
 //		_SpeechVoiceIsSpeaking
 	}
-
 }
 
 JSpeech {
@@ -126,6 +130,8 @@ JSpeech {
 	classvar <>server;
 	
 	classvar svolume = 1.0, srate = 120, spchrange = 10, spch = 80;
+
+	// ----------------- public class methods -----------------
 
 	*setSpeechVoice { arg chan, voice;
 		"JSpeech.setSpeechVoice : not yet implemented".error;
@@ -170,12 +176,23 @@ JSpeech {
 	}
 
 	//when: 0 kImmediate, 1 kEndOfWord, 2 kEndOfSentence
-	*stop { arg chan, when=0;
+	*stop { arg chan, when = 0;
 		"JSpeech.stop : not yet implemented".error;
 //		_SetSpeechStopAt
 	}
 
-	// private
+	*doWordAction { arg chan;
+		wordAction.value( chan ); // backward compatibility
+		wordActions[ chan ].value( channels[ chan ]);
+	}
+
+	*doSpeechDoneAction { arg chan;
+		doneAction.value( chan );
+		doneActions[ chan ].value( channels[ chan ]);
+	}
+
+	// ----------------- private class methods -----------------
+
 	*init { arg num = 1;
 		if( server.isNil, { server = SwingOSC.default });
 		if( server.serverRunning.not, {
@@ -202,15 +219,5 @@ JSpeech {
 			[ '/set', \speech, \volume, svolume, \rate, srate, \pitchRange, spchrange, \pitch, spch ]
 		);
 		^true;
-	}
-
-	*doWordAction { arg chan;
-		wordAction.value( chan ); // backward compatibility
-		wordActions[ chan ].value( channels[ chan ]);
-	}
-
-	*doSpeechDoneAction { arg chan;
-		doneAction.value( chan );
-		doneActions[ chan ].value( channels[ chan ]);
 	}
 }

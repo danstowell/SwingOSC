@@ -33,9 +33,9 @@
  *	Replacement for / enhancement of the (Cocoa) SCSoundFileView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.54, 29-Jul-07
+ *	@version		0.57, 12-Jan-08
  */
-JSCSoundFileView : JSCView { // JJJ not JSCScope
+JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	classvar cacheServers;	// IdentitySet whose elements are SwingOSC instances
 
 	classvar <cacheCapacity		= 50;
@@ -53,6 +53,23 @@ JSCSoundFileView : JSCView { // JJJ not JSCScope
 	
 	var viewResp, asyncResp, asyncID;
 	var numFrames = 0, numChannels = 1, <sampleRate = 44100;
+	
+	// ----------------- public class methods -----------------
+	
+	*cacheCapacity_ { arg megaBytes;
+		cacheCapacity = megaBytes;
+		cacheServers.do(_.sendMsg( '/set', \cache, \capacity, cacheCapacity ));
+	}
+	
+	*cacheFolder_ { arg path;
+		cacheFolder = path;
+		cacheServers.do(_.sendMsg( '/set', \cache, \folder, '[', '/new', "java.io.File", cacheFolder, ']' ));
+	}
+	
+	*cacheActive_ { arg bool;
+		cacheActive = bool;
+		cacheServers.do(_.sendMsg( '/set', \cache, \active, cacheCapacity ));
+	}
 	
 	// ----------------- public instance methods -----------------
 
@@ -499,23 +516,6 @@ if( val == 2, { "JSCSoundFileView.style_ : lissajou not yet implemented".error; 
 //		^super.properties ++ #[ \yZoom, \gridColor, \waveColors, \style ]
 //	}
 
-	// ----------------- public class methods -----------------
-	
-	*cacheCapacity_ { arg megaBytes;
-		cacheCapacity = megaBytes;
-		cacheServers.do(_.sendMsg( '/set', \cache, \capacity, cacheCapacity ));
-	}
-	
-	*cacheFolder_ { arg path;
-		cacheFolder = path;
-		cacheServers.do(_.sendMsg( '/set', \cache, \folder, '[', '/new', "java.io.File", cacheFolder, ']' ));
-	}
-	
-	*cacheActive_ { arg bool;
-		cacheActive = bool;
-		cacheServers.do(_.sendMsg( '/set', \cache, \active, cacheCapacity ));
-	}
-	
 	// ----------------- private instance methods -----------------
 
 	init { arg argParent, argBounds;
@@ -578,12 +578,13 @@ if( val == 2, { "JSCSoundFileView.style_ : lissajou not yet implemented".error; 
 			]);
 	}
 
-	prClose {
+	prClose { arg preMsg, postMsg;
 		viewResp.remove;
 		this.prFreeAsyncResp;
-		^super.prClose([[ '/method', "vw" ++ this.id, \remove ],
-					   [ '/free', "vw" ++ this.id ],
-					   [ '/method', this.id, \dispose ]]);
+		^super.prClose( preMsg ++
+			[[ '/method', "vw" ++ this.id, \remove ],
+			 [ '/free', "vw" ++ this.id ],
+			 [ '/method', this.id, \dispose ]], postMsg );
 	}
 
 	prSetSpecs { arg aSoundFile, fileStartFrame, fileNumFrames, fileNumChannels, sr, blockSize;
@@ -728,39 +729,38 @@ if( val == 2, { "JSCSoundFileView.style_ : lissajou not yet implemented".error; 
 JSoundFileViewProgressWindow{
 	var win, slider;
 	
-	// JJJ begin
 	var popUpRout;
-	// JJJ end
 	
-	*new{|name|
-		^super.new.makeWindow(name)
+	// ----------------- constructor -----------------
+
+	*new { arg name;
+		^super.new.makeWindow( name );
 	}
 	
-	makeWindow{|name|
-		// JJJ begin
+	// ----------------- public instance methods -----------------
+
+	makeWindow { arg name;
 		win = JSCWindow.new( "Reading: " ++ name,
 				 Rect( 100, 100, 300, 40 ), false );
-		win.view.decorator = FlowLayout(win.view.bounds);
-		slider = JSCRangeSlider(win, Rect(4,4,290,10))
+		win.view.decorator = FlowLayout( win.view.bounds );
+		slider = JSCRangeSlider( win, Rect( 4, 4, 290, 10 ))
 //			.editable_( false )
 			.canFocus_( false );
-		popUpRout = { 1.5.wait; win.front; }.fork( SwingOSC.clock );
-		// JJJ end
+		popUpRout = { 1.5.wait; win.front }.fork( SwingOSC.clock );
 	}
 	
-	update{|changed, changer|
+	// ----------------- quasi-interface methods -----------------
+
+	update { arg changed, changer;
 		
-		if(changer === \progress){
-			{slider.lo_(0).hi_(changed.readProgress)}.defer
-			^this
-		};
-		// JJJ begin
-		if( changer === \progressFinished, {
+		if( changer === \progress, {
+			{ slider.lo_( 0 ).hi_( changed.readProgress )}.defer;
+			^this;
+		}, { if( changer === \progressFinished, {
 			popUpRout.stop;
 			{ win.close;
 			  changed.removeDependant( this );
 			}.defer;
-		});
-		// JJJ end;
+		})});
 	}
 }
