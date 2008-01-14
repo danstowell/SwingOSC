@@ -58,6 +58,7 @@ JSCView {  // abstract class
 	var properties;
 	var keyResp, dndResp, mouseResp, cmpResp;
 	var <hasFocus = false;
+	var <id;
 	
 	var clpseMouseMove, clpseMouseDrag;
 
@@ -146,8 +147,8 @@ JSCView {  // abstract class
 		});
 	}
 
-	id { ^this.getProperty( \id )}
-
+//	id { ^this.getProperty( \id )}
+//
 //	id_ { arg id; this.setProperty( \id, id )}
 
 	opaque { ^this.getProperty( \opaque )}
@@ -287,8 +288,9 @@ JSCView {  // abstract class
 		properties.put( \canFocus, true );
 		properties.put( \resize, 1 );
 //		this.id		= argID ?? { server.nextNodeID; };
-		properties.put( \id, argID ?? { server.nextNodeID });
-		dataptr		= this.id;
+//		properties.put( \id, argID ?? { server.nextNodeID });
+		id			= argID ?? { server.nextNodeID };
+		dataptr		= id;
 
 		^this.prSCViewNew;
 	}

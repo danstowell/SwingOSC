@@ -25,6 +25,7 @@
  *
  *  Changelog:
  *		02-Jan-07	created
+ *		14-Jan-08	calls calcSizes again and applies preferred dim to work with JSCScrollTopView
  */
 package de.sciss.swingosc;
 
@@ -43,7 +44,7 @@ import javax.swing.JComponent;
  *	SuperCollider cocoa GUI's SCCompositeView (resize property).
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.57, 10-Dec-07
+ *  @version	0.57, 14-Jan-08
  *  
  *  @todo		calcSizes : should rather read minWidth / minHeight etc. client properties
  */
@@ -55,6 +56,8 @@ implements LayoutManager
  	private final boolean resizeActive;
 
     private static final Insets	zeroInsets		= new Insets( 0, 0, 0, 0 );
+    
+//    private boolean sizeUnknown = false;
 
     public ColliderLayout()
     {
@@ -74,7 +77,9 @@ implements LayoutManager
 
     private void calcSizes( Container parent )
     {
-        final int	nComps = parent.getComponentCount();
+//    	System.out.println( "calcSizes" );
+
+    	final int	nComps = parent.getComponentCount();
 //      Dimension	d;
         Component	c;
 //      Point		p;
@@ -110,6 +115,8 @@ implements LayoutManager
 
     public Dimension preferredLayoutSize( Container parent )
     {
+//    	System.out.println( "preferredLayoutSize" );
+
     	calcSizes( parent );
 
         final Insets insets = parent.getInsets();
@@ -120,7 +127,9 @@ implements LayoutManager
 
     public Dimension minimumLayoutSize( Container parent )
     {
-        calcSizes( parent );
+//    	System.out.println( "minimumLayoutSize" );
+//
+    	calcSizes( parent );
 
         final Insets insets = parent.getInsets();
         
@@ -130,6 +139,11 @@ implements LayoutManager
 
     public void layoutContainer( Container parent )
     {
+//		if( sizeUnknown ) {
+			parent.setPreferredSize( preferredLayoutSize( parent ));
+//		}
+
+//System.out.println( "layoutContainer " + preferredWidth + ", " + preferredHeight );
     	if( !resizeActive ) return;
     	
 //      final Insets	insets 	= parent.getInsets();

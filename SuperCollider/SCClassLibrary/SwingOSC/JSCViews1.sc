@@ -78,7 +78,7 @@ JSCContainerView : JSCView { // abstract class
 
 	// ----------------- private instance methods -----------------
 
-	prViewPortID { ^this.id }
+	prViewPortID { ^id }
 
 	add { arg child;
 		var bndl, vpID = this.prViewPortID;
@@ -87,12 +87,17 @@ JSCContainerView : JSCView { // abstract class
 		if( decorator.notNil, { decorator.place( child )});
 
 		if( child.id.notNil, { 
-			bndl = Array( 3 );
-			bndl.add([ '/method', vpID, \add,
+			bndl = Array( 4 );
+			bndl.add([ '/method', this.id, \add,
 					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
 			if( this.prGetWindow.visible, {
-				bndl.add([ '/method', vpID, \revalidate ]);
-				bndl.add([ '/method', vpID, \repaint ]);
+//				if( this.id != vpID, {
+					bndl.add([ '/method', this.id, \revalidate ]);
+//					bndl.add([ '/method', this.id, \revalidate ]);
+//				}, {
+//					bndl.add([ '/method', vpID, \revalidate ]);
+//				});
+				bndl.add([ '/method', child.id, \repaint ]);
 			});
 			server.listSendBundle( nil, bndl );
 		});
@@ -113,8 +118,8 @@ JSCContainerView : JSCView { // abstract class
 		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
 			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
 		if( this.visible, {
-			bndl.add([ '/method', vpID, \revalidate ]);
-			bndl.add([ '/method', vpID, \repaint ]);
+			bndl.add([ '/method', this.id, \revalidate ]);
+			bndl.add([ '/method', this.id, \repaint ]);
 		});
 		server.listSendBundle( nil, bndl );
 		// ... decorator replace all
@@ -308,6 +313,45 @@ JSCScrollTopView : JSCTopView {
 	}
 
 	// ----------------- private instance methods -----------------
+
+	add { arg child;
+		var bndl, vpID = this.prViewPortID;
+		
+		children = children.add( child );
+		if( decorator.notNil, { decorator.place( child )});
+
+		if( child.id.notNil, { 
+			bndl = Array( 4 );
+			bndl.add([ '/method', vpID, \add,
+					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
+			if( this.prGetWindow.visible, {
+//				if( this.id != vpID, {
+					bndl.add([ '/method', this.id, \validate ]);
+					bndl.add([ '/method', this.id, \revalidate ]);
+//				}, {
+//					bndl.add([ '/method', vpID, \revalidate ]);
+//				});
+				bndl.add([ '/method', child.id, \repaint ]);
+			});
+			server.listSendBundle( nil, bndl );
+		});
+	}
+
+	prRemoveChild { arg child;
+		var bndl, vpID = this.prViewPortID;
+		
+		children.remove( child );
+		bndl = Array( 4 );
+		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
+			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
+		if( this.visible, {
+			bndl.add([ '/method', this.id, \validate ]);
+			bndl.add([ '/method', this.id, \revalidate ]);
+			bndl.add([ '/method', this.id, \repaint ]);
+		});
+		server.listSendBundle( nil, bndl );
+		// ... decorator replace all
+	}
 
 	prInit { arg ... args;
 		var result;
