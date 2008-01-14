@@ -26,14 +26,18 @@
  *  Changelog:
  *		03-Feb-07	added acceptsMouseOver
  *		24-Nov-07	added keyboard shortcuts for close and minimize
+ *		14-Jan-08	handles sucky cocoa bounds conversion
  */
 package de.sciss.swingosc;
 
 import java.awt.Color;
 import java.awt.Component;
+//import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
+//import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 // import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -62,7 +66,7 @@ import javax.swing.KeyStroke;
  *	and whose content pane uses a custom layout manager.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 12-Dec-07
+ *	@version	0.57, 14-Jan-08
  */
 public class Frame
 extends JFrame
@@ -75,57 +79,60 @@ extends JFrame
 	private JComponent	topView;
 	private JScrollPane	scrollPane;
 	
-	public Frame( boolean hasScroll )
-	{
-		super();
-		init( hasScroll );
-	}
+//	public Frame( boolean hasScroll )
+//	{
+//		super();
+//		init( hasScroll );
+//	}
+//	
+//	public Frame()
+//	{
+//		this( false );
+//	}
+//	
+//	public Frame( GraphicsConfiguration gc, boolean hasScroll )
+//	{
+//		super( gc );
+//		init( hasScroll );
+//	}
+//
+//	public Frame( GraphicsConfiguration gc )
+//	{
+//		this( gc, false );
+//	}
 	
-	public Frame()
-	{
-		this( false );
-	}
-	
-	public Frame( GraphicsConfiguration gc, boolean hasScroll )
-	{
-		super( gc );
-		init( hasScroll );
-	}
-
-	public Frame( GraphicsConfiguration gc )
-	{
-		this( gc, false );
-	}
-	
-	public Frame( String title, boolean hasScroll )
+	public Frame( String title, Rectangle cocoaBounds, boolean hasBorder, boolean hasScroll )
 	{
 		super( title );
-		init( hasScroll );
+		init( cocoaBounds, hasBorder, hasScroll );
 	}
 
-	public Frame( String title )
-	{
-		this( title, false );
-	}
-
-	public Frame( String title, GraphicsConfiguration gc, boolean hasScroll )
-	{
-		super( title, gc );
-		init( hasScroll );
-	}
-
-	public Frame( String title, GraphicsConfiguration gc )
-	{
-		this( title, gc, false );
-	}
+//	public Frame( String title )
+//	{
+//		this( title, false );
+//	}
+//
+//	public Frame( String title, GraphicsConfiguration gc, boolean hasScroll )
+//	{
+//		super( title, gc );
+//		init( hasScroll );
+//	}
+//
+//	public Frame( String title, GraphicsConfiguration gc )
+//	{
+//		this( title, gc, false );
+//	}
 	
 	public JComponent getTopView()
 	{
 		return topView;
 	}
 	
-	private void init( boolean hasScroll )
+	private void init( Rectangle cocoaBounds, boolean hasBorder, boolean hasScroll )
 	{
+		if( !hasBorder ) {
+			setUndecorated( true );
+		}
 		if( hasScroll ) {
 			topView		= new ContentPane( false );
 			scrollPane	= new ScrollPane( topView ); // ...SCROLLBAR_AS_NEEDED
@@ -158,6 +165,27 @@ extends JFrame
 				setExtendedState( Frame.ICONIFIED );
 			}
 		});
+		
+		topView.setPreferredSize( cocoaBounds.getSize() );
+		pack();	// frame is made displayable
+		final Rectangle screenBounds = getGraphicsConfiguration().getBounds();
+//		System.out.println( "screenBounds = " + screenBounds );
+//		final Dimension size = getSize();
+		final Insets insets = getInsets();
+//		System.out.println( "insets = " + insets );
+//		System.out.println( "size = " + size );
+		setLocation( screenBounds.x + cocoaBounds.x - insets.left,
+		             (screenBounds.y + screenBounds.height) - (cocoaBounds.y + cocoaBounds.height) - insets.top );
+	}
+	
+	public void setCocoaBounds( Rectangle r )
+	{
+		final Rectangle	screenBounds	= getGraphicsConfiguration().getBounds();
+		final Insets	insets			= getInsets();
+		
+		setBounds( screenBounds.x + r.x - insets.left,
+		           (screenBounds.y + screenBounds.height) - (r.y + r.height) - insets.top,
+		           r.width + (insets.left + insets.right), r.height + (insets.top + insets.bottom) );
 	}
 	
 	public void setIcon( Icon icon )
@@ -248,6 +276,15 @@ extends JFrame
     		return;
         }
     }
+    
+//    public void setCocoaBounds( Rectangle r )
+//    {
+//    	
+//		screenBounds 	= JSCWindow.screenBounds( server );
+//		cocoaHeight	= java.height - 22;
+//
+//		^Rect.new( java.left, screenBounds.height - java.top - 22 - cocoaHeight, java.width, cocoaHeight );
+//    }
 
     private static class ScrollPane
     extends JScrollPane

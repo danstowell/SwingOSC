@@ -335,32 +335,32 @@ JSCWindow : Object
 		this.prInit( name, argBounds, resizable, border, scroll ); // , view );
 	}
 
-	prBoundsToJava { arg cocoa;
-		var screenBounds;
-
-		screenBounds 	= JSCWindow.screenBounds( server );
-
-		^if( border, {
-			// + 20 for window bar XXX this is only true on aqua lnf ...
-			Rect.new( cocoa.left, screenBounds.height - cocoa.top - cocoa.height - 22,
-					 cocoa.width, cocoa.height + 22 );
-		}, {
-			Rect.new( cocoa.left, screenBounds.height - cocoa.top - cocoa.height,
-					 cocoa.width, cocoa.height );
-		});
-	}
+//	prBoundsToJava { arg cocoa;
+//		var screenBounds;
+//
+//		screenBounds 	= JSCWindow.screenBounds( server );
+//
+//		^if( border, {
+//			// + 20 for window bar XXX this is only true on aqua lnf ...
+//			Rect.new( cocoa.left, screenBounds.height - cocoa.top - cocoa.height - 22,
+//					 cocoa.width, cocoa.height + 22 );
+//		}, {
+//			Rect.new( cocoa.left, screenBounds.height - cocoa.top - cocoa.height,
+//					 cocoa.width, cocoa.height );
+//		});
+//	}
 		
-	prBoundsFromJava { arg java;
-		var screenBounds, cocoaHeight;
-
-		screenBounds 	= JSCWindow.screenBounds( server );
-		cocoaHeight	= java.height - 22;
-
-		^Rect.new( java.left, screenBounds.height - java.top - 22 - cocoaHeight, java.width, cocoaHeight );
-	}
+//	prBoundsFromJava { arg java;
+//		var screenBounds, cocoaHeight;
+//
+//		screenBounds 	= JSCWindow.screenBounds( server );
+//		cocoaHeight	= java.height - 22;
+//
+//		^Rect.new( java.left, screenBounds.height - java.top - 22 - cocoaHeight, java.width, cocoaHeight );
+//	}
 		
 	prInit { arg argName, argBounds, resizable, border, scroll; // , view;
-		var viewID;
+		var viewID, bndl;
 
 		bounds 	= argBounds;
 		// tricky, we have to allocate the TopView's id here
@@ -375,12 +375,14 @@ JSCWindow : Object
 			case
 			{ state === \resized }
 			{
-				bounds = this.prBoundsFromJava( Rect( msg[3], msg[4], msg[5], msg[6] ));
+//				bounds = this.prBoundsFromJava( Rect( msg[3], msg[4], msg[5], msg[6] ));
+				bounds = Rect( msg[3], msg[4], msg[5], msg[6] );
 //				if( drawHook.notNil, { this.refresh });
 			}
 			{ state === \moved }
 			{
-				bounds = this.prBoundsFromJava( Rect( msg[3], msg[4], msg[5], msg[6] ));
+//				bounds = this.prBoundsFromJava( Rect( msg[3], msg[4], msg[5], msg[6] ));
+				bounds = Rect( msg[3], msg[4], msg[5], msg[6] );
 			}
 			{ state === \closing }
 			{
@@ -390,14 +392,21 @@ JSCWindow : Object
 			}
 		}).add;
 
-		server.sendBundle( nil,
-			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ [ scroll, ']', ']',
-				\bounds ] ++ this.prBoundsToJava( argBounds ).asSwingArg ++ if( resizable.not, [ \resizable, 0 ]) ++
-				if( border.not, [ \undecorated, 1 ]),
-			[ '/local', "ac" ++ this.id,
+//		server.sendBundle( nil,
+//			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ [ scroll, ']', ']',
+//				\bounds ] ++ this.prBoundsToJava( argBounds ).asSwingArg ++ if( resizable.not, [ \resizable, 0 ]) ++
+//				if( border.not, [ \undecorated, 1 ]),
+//			[ '/local', "ac" ++ this.id,
+//				'[', '/new', "de.sciss.swingosc.WindowResponder", this.id, ']',
+//				viewID, '[', '/method', this.id, "getContentPane", ']' ]
+//		);
+		bndl = Array( 3 );
+		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ argBounds.asSwingArg ++ [ border, scroll, ']', ]);
+		if( resizable.not, { bndl.add([ '/set', this.id, \resizable, 0 ])});
+		bndl.add([ '/local', "ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.WindowResponder", this.id, ']',
-				viewID, '[', '/method', this.id, "getContentPane", ']' ]
-		);
+				viewID, '[', '/method', this.id, "getContentPane", ']' ]);
+		server.listSendBundle( nil, bndl );
 
 		view = if( scroll, {
 			JSCScrollTopView( this, argBounds.moveTo( 0, 0 ), viewID );
@@ -426,7 +435,8 @@ JSCWindow : Object
 
 	prSetBounds { arg argBounds;
 		bounds		= argBounds;
-		argBounds		= this.prBoundsToJava( argBounds );
-		server.listSendMsg([ '/set', this.id, \bounds ] ++ argBounds.asSwingArg );
+//		argBounds		= this.prBoundsToJava( argBounds );
+//		server.listSendMsg([ '/set', this.id, \bounds ] ++ argBounds.asSwingArg );
+		server.listSendMsg([ '/set', this.id, \cocoaBounds ] ++ argBounds.asSwingArg );
 	}
 }

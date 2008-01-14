@@ -30,6 +30,8 @@
  
 package de.sciss.swingosc;
 
+import java.awt.Container;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.IOException;
@@ -62,12 +64,20 @@ implements ComponentListener, WindowListener, WindowFocusListener
 	private static final String[] listenerNames	 =
 		{ "WindowListener", "WindowFocusListener", "ComponentListener" };
 
-	private final Object[] shortReplyArgs = new Object[ 2 ];
+	private final Object[]	shortReplyArgs = new Object[ 2 ];
+	private final boolean	cocoaOrient;
 
-	public WindowResponder( Object objectID )
+	public WindowResponder( Object objectID  )
+	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
+	{
+		this( objectID, true );
+	}
+
+	public WindowResponder( Object objectID, boolean cocoaOrient )
 	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
 	{
 		super( objectID, 6 );
+		this.cocoaOrient	= cocoaOrient;
 		add();
 
 		shortReplyArgs[ 0 ]	= replyArgs[ 0 ];
@@ -90,15 +100,22 @@ implements ComponentListener, WindowListener, WindowFocusListener
 
 	private void reply( String stateName, ComponentEvent e )
 	{
-		Rectangle b = e.getComponent().getBounds();
+		final Container	c				= (Container) e.getComponent();
+		final Rectangle	b				= c.getBounds();
+		final Insets	insets			= c.getInsets();
+		final Rectangle screenBounds	= c.getGraphicsConfiguration().getBounds();
 		
+		replyArgs[ 1 ] = stateName;
+		replyArgs[ 2 ] = new Integer( b.x - screenBounds.x + insets.left );
+		replyArgs[ 3 ] = new Integer( cocoaOrient ?
+			(screenBounds.y + screenBounds.height) - (b.y + b.height) + insets.bottom :
+			(b.y - screenBounds.y + insets.top)
+		);
+		replyArgs[ 4 ] = new Integer( b.width - (insets.left + insets.right) );
+		replyArgs[ 5 ] = new Integer( b.height - (insets.top + insets.bottom) );
+
 		try {
 			// [ "/window", <componentID>, <state>, <x>, <y>, <w>, <h> ]
-			replyArgs[ 1 ] = stateName;
-			replyArgs[ 2 ] = new Integer( b.x );
-			replyArgs[ 3 ] = new Integer( b.y );
-			replyArgs[ 4 ] = new Integer( b.width );
-			replyArgs[ 5 ] = new Integer( b.height );
 			client.reply( new OSCMessage( getOSCCommand(), replyArgs ));
 		}
 		catch( IOException ex ) {

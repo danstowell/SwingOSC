@@ -61,7 +61,7 @@ JSCView {  // abstract class
 	
 	var clpseMouseMove, clpseMouseDrag;
 
-	var jinsets, scBounds, jBounds;
+	var jinsets, scBounds, <jBounds;
 	
 	*initClass {
 		unicodeMap = IdentityDictionary.new;
