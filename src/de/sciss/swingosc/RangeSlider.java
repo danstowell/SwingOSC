@@ -26,6 +26,7 @@
  *  Changelog:
  *		15-Dec-05	created
  *		02-Feb-07	added vertical orientation
+ *		14-Jan-08	more pretty knob image scaling
  */
 
 package de.sciss.swingosc;
@@ -46,7 +47,7 @@ import javax.swing.SwingConstants;
  *	A slider that can have variable width.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.45, 02-Feb-07
+ *	@version	0.57, 14-Jan-08
  *
  *	@todo		vertical orientation
  */
@@ -241,9 +242,9 @@ implements SwingConstants
 							// will sometimes not be painted
 							waitForImage( progImgColr );
 						}
-						gImg.drawImage( progImgColr, 0, 0, 16, kh, this );
+						drawImage( gImg, progImgColr, kh );
 					} else {
-						gImg.drawImage( progImg, 0, 0, 16, kh, this );
+						drawImage( gImg, progImg, kh );
 					}
 					gImg.dispose();
 					pntProg = new TexturePaint( progBufImg, new Rectangle( 0, 0, 16, kh ));
@@ -257,13 +258,13 @@ implements SwingConstants
 							progImg.getSource(), fltKnobD ));
 						// please don't ask me why
 						// we need a media tracker here
-						// ; if we omit mit, the image
+						// ; if we omit it, the image
 						// will sometimes not be painted
 						waitForImage( progImgD );
 					}
 					progBufImgD = new BufferedImage( 16, kh, BufferedImage.TYPE_INT_ARGB );
 					gImg = progBufImgD.createGraphics();
-					gImg.drawImage( progImgD, 0, 0, 16, kh, this );
+					drawImage( gImg, progImgD, kh );
 					gImg.dispose();
 					pntProgD = new TexturePaint( progBufImgD, new Rectangle( 0, 0, 16, kh ));
 				}
@@ -275,7 +276,7 @@ implements SwingConstants
 		g2.drawLine( kx, ky + 1, kx, kh - 2 );
 		g2.fillRect( kx + kw - 1, ky + 1, 2, kh - 1 );
 	}
-
+	
 	private void paintVKnob( Graphics2D g2, int w, int h )
 	{
 		final int ch = h - 2;
@@ -308,23 +309,21 @@ implements SwingConstants
 					final Graphics2D gImg;
 					progBufImg = new BufferedImage( kw, 16, BufferedImage.TYPE_INT_ARGB );
 					gImg = progBufImg.createGraphics();
-//					gImg.rotate( Math.PI / 2 );
 					gImg.rotate( -Math.PI / 2 );
+					gImg.translate( -16, 0 );
 					if( colrKnob != null ) {
 						if( progImgColr == null ) {
 							progImgColr = createImage( new FilteredImageSource(
 									progImg.getSource(), fltKnob ));
 							// please don't ask me why
 							// we need a media tracker here
-							// ; if we omit mit, the image
+							// ; if we omit it, the image
 							// will sometimes not be painted
 							waitForImage( progImgColr );
 						}
-//						gImg.drawImage( progImgColr, 0, -kw, 16, kw, this );
-						gImg.drawImage( progImgColr, -16, 0, 16, kw, this );
+						drawImage( gImg, progImgColr, kw );
 					} else {
-//						gImg.drawImage( progImg, 0, -kw, 16, kw, this );
-						gImg.drawImage( progImg, -16, 0, 16, kw, this );
+						drawImage( gImg, progImgColr, kw );
 					}
 					gImg.dispose();
 					pntProg = new TexturePaint( progBufImg, new Rectangle( 0, 0, kw, 16 ));
@@ -344,8 +343,9 @@ implements SwingConstants
 					}
 					progBufImgD = new BufferedImage( kw, 16, BufferedImage.TYPE_INT_ARGB );
 					gImg = progBufImgD.createGraphics();
-					gImg.rotate( -Math.PI / 2, (double) kw / 2, (double) kw / 2 );
-					gImg.drawImage( progImgD, 0, 0, kw, 16, this );
+					gImg.rotate( -Math.PI / 2 );
+					gImg.translate( -16, 0 );
+					drawImage( gImg, progImgD, kw );
 					gImg.dispose();
 					pntProgD = new TexturePaint( progBufImgD, new Rectangle( 0, 0, kw, 16 ));
 				}
@@ -356,5 +356,16 @@ implements SwingConstants
 		g2.setPaint( colrBdLRSh );
 		g2.drawLine( kx + 1, ky, kw - 2, ky );
 		g2.fillRect( kx + 1, ky + kh - 1, kw - 1, 2 );
+	}
+
+	private void drawImage( Graphics2D gImg, Image img, int ext )
+	{
+		if( ext <= 15 ) {
+			gImg.drawImage( img, 0, 0, 16, ext, this );
+		} else {
+			gImg.drawImage( img, 0,       0, 16,       6, 0, 0, 16,  6, this );
+			gImg.drawImage( img, 0,       6, 16, ext - 8, 0, 6, 16,  7, this );
+			gImg.drawImage( img, 0, ext - 8, 16,     ext, 0, 7, 16, 15, this );
+		}
 	}
 }

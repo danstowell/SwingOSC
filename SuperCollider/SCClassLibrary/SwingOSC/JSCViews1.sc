@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.57, 12-Jan-07
+ *	@version		0.57, 14-Jan-07
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -160,7 +160,6 @@ JSCCompositeView : JSCContainerView {
 	// ----------------- private instance methods -----------------
 
 	prSCViewNew {
-		properties.put( \opaque, false );
 		jinsets = Insets( 3, 3, 3, 3 );  // so focus borders of children are not clipped
 		^super.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderLayout", ']', ']' ]
@@ -263,7 +262,9 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 JSCScrollTopView : JSCTopView {
 	var <autohidesScrollers = true, <hasHorizontalScroller = true, <hasVerticalScroller = true;
 	var <autoScrolls = true;
-	var vpID;
+	var vpID, chResp;
+	
+	var viewX = 0, viewY = 0, viewW = 0, viewH = 0;
 	
 	// ----------------- public instance methods -----------------
 
@@ -287,18 +288,18 @@ JSCScrollTopView : JSCTopView {
 		var policy;
 		hasVerticalScroller = bool;
 		policy = JSCScrollView.protCalcPolicy( autohidesScrollers, bool ) + 20;
-		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
+		server.sendMsg( '/set', this.id, \verticalScrollBarPolicy, policy );
 	}
 	
 	visibleOrigin_ { arg point;
-		properties.put( \clipViewOrigin, point );
+		viewX	= point.x;
+		viewY	= point.y;
 		server.sendMsg( '/method', this.id, \setViewPosition, point.x, point.y );
 		this.doAction;
 	}
 	
 	visibleOrigin {
-		"JSCScrollTopView.visibleOrigin : not yet implemented".warn;
-		^this.getProperty( \clipViewOrigin, Point.new );
+		^Point( viewX, viewY );
 	}
 	
 	autoScrolls_ { arg bool;
@@ -308,8 +309,7 @@ JSCScrollTopView : JSCTopView {
 	}
 	
 	innerBounds {
-		"JSCScrollTopView.innerBounds : not yet implemented".warn;
-		^this.getProperty( \innerBounds, Rect.new );
+		^Rect( 0, 0, viewW, viewH );
 	}
 
 	// ----------------- private instance methods -----------------
@@ -325,12 +325,8 @@ JSCScrollTopView : JSCTopView {
 			bndl.add([ '/method', vpID, \add,
 					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
 			if( this.prGetWindow.visible, {
-//				if( this.id != vpID, {
-					bndl.add([ '/method', this.id, \validate ]);
-					bndl.add([ '/method', this.id, \revalidate ]);
-//				}, {
-//					bndl.add([ '/method', vpID, \revalidate ]);
-//				});
+				bndl.add([ '/method', this.id, \validate ]);
+				bndl.add([ '/method', this.id, \revalidate ]);
 				bndl.add([ '/method', child.id, \repaint ]);
 			});
 			server.listSendBundle( nil, bndl );
@@ -353,12 +349,41 @@ JSCScrollTopView : JSCTopView {
 		// ... decorator replace all
 	}
 
-	prInit { arg ... args;
-		var result;
-		result = super.prInit( *args );
-		vpID = "vp" ++ this.id;
-		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']' );
+	prClose { arg preMsg, postMsg;
+		chResp.remove;
+		^super.prClose( preMsg ++
+			[[ '/method', "ch" ++ this.id, \remove ],
+		      [ '/free', "ch" ++ this.id ]], postMsg );
 	}
+	
+	prSCViewNew { arg preMsg, postMsg;
+		chResp	= OSCpathResponder( server.addr, [ '/change', this.id ], { arg time, resp, msg;
+			var newVal;
+		
+			// [ /change, 1001, performed, viewX, ..., viewY, ..., viewWidth, ..., viewHeight, ... ]
+
+			viewW = msg[8];
+			viewH = msg[10];
+			if( viewX != msg[4] or: { viewY != msg[6] }, {
+				viewX = msg[4];
+				viewY = msg[6];
+				{ this.doAction }.defer;
+			});
+		}).add;
+		vpID = "vp" ++ this.id;
+		^super.prSCViewNew([[ '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']',
+			"ch" ++ this.id,
+			'[', '/new', "de.sciss.swingosc.ChangeResponder", this.id, '[', '/array', \viewX, \viewY, \viewWidth, \viewHeight, ']', ']' ]]);
+	}
+
+//	prInit { arg ... args;
+//		var result;
+//		result = super.prInit( *args );
+//		vpID = "vp" ++ this.id;
+//		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']',
+//			"ac" ++ this.id,
+//			'[', '/new', "de.sciss.swingosc.ChangeResponder", this.id, '[', '/array', \viewX, \viewY, \viewWidth, \viewHeight ']', ']' );
+//	}
 
 	prViewPortID { ^vpID }
 }
@@ -366,9 +391,18 @@ JSCScrollTopView : JSCTopView {
 JSCScrollView : JSCContainerView {
 	var <autohidesScrollers = true, <hasHorizontalScroller = true, <hasVerticalScroller = true;
 	var <autoScrolls = true;
-	var vpID;
+	var vpID, chResp;
+
+	var viewX = 0, viewY = 0, viewW = 0, viewH = 0;
 	
+	var <hasBorder = false;
+
 	// ----------------- public instance methods -----------------
+
+	hasBorder_ { arg bool = true;
+		"JSCScrollView.hasBorder_ : not yet implemented".warn;
+		this.setProperty( \border, bool );
+	}
 
 	autohidesScrollers_ { arg bool;
 		var hPolicy, vPolicy;
@@ -390,18 +424,18 @@ JSCScrollView : JSCContainerView {
 		var policy;
 		hasVerticalScroller = bool;
 		policy = JSCScrollView.protCalcPolicy( autohidesScrollers, bool ) + 20;
-		server.sendMsg( '/set', this.id, \horizontalScrollBarPolicy, policy );
+		server.sendMsg( '/set', this.id, \verticalScrollBarPolicy, policy );
 	}
-	
+
 	visibleOrigin_ { arg point;
-		properties.put( \clipViewOrigin, point );
+		viewX	= point.x;
+		viewY	= point.y;
 		server.sendMsg( '/method', this.id, \setViewPosition, point.x, point.y );
 		this.doAction;
 	}
 	
 	visibleOrigin {
-		"JSCScrollView.visibleOrigin : not yet implemented".warn;
-		^this.getProperty( \clipViewOrigin, Point.new );
+		^Point( viewX, viewY );
 	}
 	
 	autoScrolls_ { arg bool;
@@ -411,8 +445,7 @@ JSCScrollView : JSCContainerView {
 	}
 	
 	innerBounds {
-		"JSCScrollView.innerBounds : not yet implemented".warn;
-		^this.getProperty( \innerBounds, Rect.new )
+		^Rect( 0, 0, viewW, viewH );
 	}
 
 	// ----------------- private class methods -----------------
@@ -426,6 +459,70 @@ JSCScrollView : JSCContainerView {
 	}
 	
 	// ----------------- private instance methods -----------------
+
+	add { arg child;
+		var bndl, vpID = this.prViewPortID;
+		
+		children = children.add( child );
+		if( decorator.notNil, { decorator.place( child )});
+
+		if( child.id.notNil, { 
+			bndl = Array( 4 );
+			bndl.add([ '/method', vpID, \add,
+					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
+			if( this.prGetWindow.visible, {
+				bndl.add([ '/method', this.id, \validate ]);
+				bndl.add([ '/method', this.id, \revalidate ]);
+				bndl.add([ '/method', child.id, \repaint ]);
+			});
+			server.listSendBundle( nil, bndl );
+		});
+	}
+
+	prRemoveChild { arg child;
+		var bndl, vpID = this.prViewPortID;
+		
+		children.remove( child );
+		bndl = Array( 4 );
+		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
+			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
+		if( this.visible, {
+			bndl.add([ '/method', this.id, \validate ]);
+			bndl.add([ '/method', this.id, \revalidate ]);
+			bndl.add([ '/method', this.id, \repaint ]);
+		});
+		server.listSendBundle( nil, bndl );
+		// ... decorator replace all
+	}
+	
+	prClose { arg preMsg, postMsg;
+		chResp.remove;
+		^super.prClose( preMsg ++
+			[[ '/method', "ch" ++ this.id, \remove ],
+		      [ '/free', "ch" ++ this.id ]], postMsg );
+	}
+
+	prSCViewNew {
+		chResp	= OSCpathResponder( server.addr, [ '/change', this.id ], { arg time, resp, msg;
+			var newVal;
+		
+			// [ /change, 1001, performed, viewX, ..., viewY, ..., viewWidth, ..., viewHeight, ... ]
+
+			viewW = msg[8];
+			viewH = msg[10];
+			if( viewX != msg[4] or: { viewY != msg[6] }, {
+				viewX = msg[4];
+				viewY = msg[6];
+				{ this.doAction }.defer;
+			});
+		}).add;
+		vpID = "vp" ++ this.id;
+		^super.prSCViewNew([
+			[ '/local', vpID, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderLayout", 0, ']', ']',
+			  this.id, '[', '/new', "de.sciss.swingosc.ScrollPane", '[', '/ref', vpID, ']', ']',
+ 			  "ch" ++ this.id, '[', '/new', "de.sciss.swingosc.ChangeResponder", this.id,
+ 			  	'[', '/array', \viewX, \viewY, \viewWidth, \viewHeight, ']', ']' ]]);
+	}
 
 	prInit { arg ... args;
 		var result;
