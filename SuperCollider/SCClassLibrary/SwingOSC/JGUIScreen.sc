@@ -37,7 +37,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Jan-08
+ *	@version		0.57, 15-Jan-08
  */
 JSCWindow : Object
 {
@@ -118,14 +118,14 @@ JSCWindow : Object
 				penID	= server.nextNodeID;
 				server.sendBundle( nil,
 					[ '/local', penID, '[', '/new', 'de.sciss.swingosc.Pen', '[', '/ref', this.id, ']', ']' ],
-					[ '/method', this.id, \setIcon, '[', '/ref', penID, ']' ]
+					[ '/set', this.view.id, \icon, '[', '/ref', penID, ']' ]
 				);
 //				if( visible, { JPen.protRefresh( func, this, server, penID, this.id )});
 			});
 		}, {
 			if( func.isNil, {
 				server.sendBundle( nil,
-					[ '/method', this.id, \setIcon, '[', '/ref', \null, ']' ],
+					[ '/set', this.view.id, \icon, '[', '/ref', \null, ']' ],
 					[ '/method', penID, \dispose ],
 					[ '/free', penID ]
 				);

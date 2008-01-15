@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class allows you to access Java classes in a rather direct way. last mod: 25-sep-07 sciss
+<p>This class allows you to access Java classes in a rather direct way. last mod: 15-Jan-08 sciss
 </p>
 </div>
 <h1>JavaObject</h1>
@@ -19,7 +19,7 @@
 <h2>Instantiation</h2>
 <P>You create an instance of a java class by calling</P>
 <pre>
-    <span class="cl">JavaObject</span>.new( <var>&lt;fullyQualifiedJavaClassName&gt;</var>, <span class="op">[</span> <var>&lt;swingOSCserver&gt;</var>, <span class="op">[ ...</span> <var>&lt;constructorArgs&gt;</var> <span class="op">]]</span>)
+    <span class="cl">JavaObject</span>.new( <var>&lt;fullyQualifiedJavaClassName&gt;</var>, <span class="op">[</span> <var>&lt;swingOSCserver&gt;</var>, <span class="op">[ &hellip;</span> <var>&lt;constructorArgs&gt;</var> <span class="op">]]</span>)
 	
 </pre>
 <P>You can then access that instance just like you would in java, by calling any of its methods. Note however, that methods defined in <tt class="file">Object.sc</tt> are often handled by SuperCollider and are not forwarded to java. Some of these have been overriden to be usable in java, like <code>free</code>, <code>stop</code>, <code>update</code>, but others not (e.g. <code>equals</code>). In case of a name conflict, you must make direct use of <code><span class="cl">SwingOSC</span> -&gt; sendMsg</code>.</P>
@@ -90,6 +90,7 @@ fork { <span class="kw">var</span> red, green, blue;
 )
 
 </pre>
+<P>Please note the example of <code>notNull</code> in the next section to see how <code><span class="cl">NullPointerException</span></code>s can be avoided.</P>
 <h2>Accessing classes</h2>
 <P>Sometimes you will want to access static methods, i.e. you need access to a class object which you don&quot;t instantiate. One example is showing a dialog using javax.swing.JOptionPane. To do this, use <code>*getClass</code> :</P>
 <pre>
@@ -102,9 +103,10 @@ f.showMessageDialog( <span class="kw">nil</span>, <span class="st">&quot;Il arri
 <span class="cm">// after the user has confirmed the input dialog, the result (java.lang.String) is stored in server-side h:</span>
 h = <span class="cl">JavaObject</span>.newFrom( f, <span class="sy">\showInputDialog</span>, <span class="kw">nil</span>, <span class="st">&quot;Votre marque de voiture?&quot;</span> );
 <span class="cm">// let's read that string:</span>
-fork { h.toString_.postln }; <span class="cm">// tricky ;-)</span>
+fork { if( h.notNull, { (<span class="st">"Result: "</span> ++ h.toString_).postln }, { <span class="st">"Dialog still open!"</span>.postln })}; <span class="cm">// tricky ;-3</span>
 
 </pre>
+<P>Note the security check <code>notNull</code> to see if the server object <code>h</code> is actually existing.</P>
 <h2>Accessing fields</h2>
 <P>Sometimes you will want to access an object's field, for example because you don't have an appropriate getter method at hand. You can do a server-side creation of an object holding a field's value by using the <code>*getField</code> method:</P>
 <pre>
@@ -130,6 +132,11 @@ y.println( <span class="st">&quot;Hola Mundo&quot;</span> );
 x = <span class="cl">JavaObject</span>.basicNew( w.id, w.server );
 <span class="cm">// call setCursor (which is a method in java.awt.Component and thus also applies to javax.swing.JFrame)</span>
 x.setCursor( <span class="cl">JavaObject</span>( <span class="sy">'java.awt.Cursor'</span>, x.server, 1 ));   <span class="cm">// 1 = crosshair shape</span>
+
+</pre>
+<P>For quick checking, the method <code>print</code> is directly translated into a SwingOSC <code>[&nbsp;<span class="st">"/print"</span>&nbsp;&hellip;&nbsp;]</code> command:</P>
+<pre>
+x.print;
 
 </pre>
 <h2>Cleaning up</h2>

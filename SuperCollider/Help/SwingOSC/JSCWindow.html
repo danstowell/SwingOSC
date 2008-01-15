@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCWindow. last mod: 18-dec-07 sciss
+<p>This class is meant as an emulation of SCWindow. last mod: 15-Jan-08 sciss
 </p>
 <table>
 <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -46,7 +46,7 @@ A class representing a user interface window. See also <A HREF="JSCView.html">JS
 <UL>
 <LI><code>name</code> &ndash; the name that will be displayed in the title bar. An instance of <A HREF="SC://String">String</A> or <A HREF="SC://Symbol">Symbol</A>. The default is <code><span class="st">&quot;panel&quot;</span></code>.
 <LI><code>bounds</code> &ndash; a <A HREF="SC://Rect">Rect</A> specifying the location and size of the window. The size does not include the title bar. <STRONG>Note:</STRONG> Location is measured from the <EM>bottom left</EM> of the screen. This is different from view location, which is measured from the <EM>upper left</EM> of the window (not including the title bar). The default is <code><span class="cl">Rect</span>(&nbsp;128,&nbsp;64,&nbsp;400,&nbsp;400 )</code>.</LI>
-<LI><code>resizable</code> &ndash; a <A HREF="SC://Boolean">Boolean</A> indicating whether this window can be resized by the user. The default is <code><span class="kw">true</span></code>.</LI>
+<LI><code>resizable</code> &ndash; a <A HREF="SC://Boolean">Boolean</A> indicating whether this window can be resized by the user. The default is <code><span class="kw">true</span></code>. Use <code>resizable_</code> to change this behaviour after the window has been created.</LI>
 <LI><code>border</code> &ndash; a <A HREF="SC://Boolean">Boolean</A> indicating whether this window has a border. Borderless windows have no title bar and thus can only be closed in code. The default is <code><span class="kw">true</span></code>.</LI>
 <LI><code>server</code> &ndash; use this argument to specify the <A HREF="SwingOSC.html">SwingOSC</A> server to use (if <code><span class="kw">nil</span</code>, the default server will be used).</LI>
 </UL>
@@ -154,11 +154,16 @@ s.waitForBoot({
 <PRE>
 (
     <span class="kw">var</span> win, rout;
-    win = <span class="cl">JSCWindow</span>( <span class="st">&quot;&quot;</span>, <span class="cl">Rect</span>( 200, 200, 160, 12 ), <span class="kw">false</span> ).front;
+    win = <span class="cl">JSCWindow</span>( <span class="st">&quot;&quot;</span>, <span class="cl">Rect</span>( 200, 200, 160, 12 )).front;
     rout = fork {&#160;<span class="kw">inf</span>.do({ win.name = <span class="cl">Date</span>.getDate.format( <span class="st">&quot;%T&quot;</span> ); 1.wait })};
     win.onClose = { rout.stop };
     w = win;
 )
+</PRE>
+<P>&nbsp;</P>
+<P><code>resizable</code> and <code>resizable_</code> are getter and setter methods for making the window resizable by the user (SwingOSC only). The value is a <A HREF="SC://Boolean">Boolean</A>. Note that regardless of its setting, the window can always be programmtically resized with the <code>bounds_</code> method. Example:</P>
+<PRE>
+    w.resizable = <span class="kw">false</span>;
 </PRE>
 <P>&nbsp;</P>
 <P><code>alwaysOnTop</code> and <code>alwaysOnTop_</code> are getter and setter methods for making the window float above all other windows (requires Java 1.5+). The value is a <A HREF="SC://Boolean">Boolean</A>. Example:</P>

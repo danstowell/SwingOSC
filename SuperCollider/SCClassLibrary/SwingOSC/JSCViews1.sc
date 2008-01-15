@@ -400,8 +400,10 @@ JSCScrollView : JSCContainerView {
 	// ----------------- public instance methods -----------------
 
 	hasBorder_ { arg bool = true;
-		"JSCScrollView.hasBorder_ : not yet implemented".warn;
-		this.setProperty( \border, bool );
+		if( hasBorder != bool, {
+			hasBorder = bool;
+			this.setProperty( \border, bool );
+		});
 	}
 
 	autohidesScrollers_ { arg bool;
@@ -518,7 +520,7 @@ JSCScrollView : JSCContainerView {
 		}).add;
 		vpID = "vp" ++ this.id;
 		^super.prSCViewNew([
-			[ '/local', vpID, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderLayout", 0, ']', ']',
+			[ '/local', vpID, '[', '/new', "de.sciss.swingosc.ContentPane", 0, ']',
 			  this.id, '[', '/new', "de.sciss.swingosc.ScrollPane", '[', '/ref', vpID, ']', ']',
  			  "ch" ++ this.id, '[', '/new', "de.sciss.swingosc.ChangeResponder", this.id,
  			  	'[', '/array', \viewX, \viewY, \viewWidth, \viewHeight, ']', ']' ]]);

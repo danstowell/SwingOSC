@@ -30,9 +30,7 @@
  */
 package de.sciss.swingosc;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -46,11 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
-import javax.swing.Icon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
@@ -61,12 +57,11 @@ import javax.swing.KeyStroke;
  *	and whose content pane uses a custom layout manager.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 14-Jan-08
+ *	@version	0.57, 15-Jan-08
  */
 public class Frame
 extends JFrame
 {
-	private Icon		icon				= null;
 	private List		collMouseResp		= null;
 	
 	private boolean 	acceptsMouseOver	= false;
@@ -183,17 +178,6 @@ extends JFrame
 		           r.width + (insets.left + insets.right), r.height + (insets.top + insets.bottom) );
 	}
 	
-	public void setIcon( Icon icon )
-	{
-		this.icon = icon;
-		repaint();
-	}
-	
-	public Icon getIcon()
-	{
-		return icon;
-	}
-	
 	public void registerMouseResponder( AbstractMouseResponder r )
 	{
 		if( collMouseResp == null ) collMouseResp = new ArrayList();
@@ -280,36 +264,4 @@ extends JFrame
 //
 //		^Rect.new( java.left, screenBounds.height - java.top - 22 - cocoaHeight, java.width, cocoaHeight );
 //    }
-
-    private class ContentPane
-	extends JPanel // JComponent
-	{
-		private Color colrBg;
-
-		private ContentPane( boolean resizeActive )
-		{
-			super( new ColliderLayout( resizeActive ));
-			setOpaque( true );
-		}
-
-		public void paintComponent( Graphics g )
-		{
-			super.paintComponent( g );
-			
-			if( (colrBg != null) && (colrBg.getAlpha() > 0) ) {
-				g.setColor( colrBg );
-				g.fillRect( 0, 0, getWidth(), getHeight() );
-			}
-			
-			if( icon != null ) {
-				icon.paintIcon( this, g, 0, 0 );
-			}
-		}
-
-		public void setBackground( Color c )
-		{
-			colrBg = c;
-			repaint();
-		}
-	}
 }
