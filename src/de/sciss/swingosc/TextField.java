@@ -66,7 +66,7 @@ extends JTextField
 	{
 		super( doc, text, columns );
 	}
-
+	
 	// this is here to make DocumentResponder less complex
 	// (because now it can connect both Caret and Document listeners to the same object)
 	// ; this just forwards the request to the Document.

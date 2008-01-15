@@ -26,6 +26,7 @@
  *  Changelog:
  *		25-Dec-05	created
  *		25-Mar-06	uses OSCClient
+ *		15-Jan-08	handles cut/copy/paste from/to clipboard
  */
 
 package de.sciss.swingosc;
@@ -33,9 +34,14 @@ package de.sciss.swingosc;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 import javax.swing.event.MouseInputListener;
@@ -86,14 +92,14 @@ import de.sciss.net.OSCMessage;
  *	<code>stringData</code> to a value will always effect the ongoing drag-and-drop!
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.40, 25-Mar-06
+ *	@version	0.57, 15-Jan-08
  */
 public class DummyTransferHandler
 extends TransferHandler
 implements Transferable, MouseInputListener
 {
-	private static final DataFlavor 	dummyFlavor 		= new DataFlavor( Object.class, "Dummy" );
-	private static final Object		dummy			= new Object();
+	private static final DataFlavor 	dummyFlavor 	= new DataFlavor( Object.class, "Dummy" );
+	private static final Object			dummy			= new Object();
 	private static final DataFlavor[]	flavors	 		= new DataFlavor[] { dummyFlavor, DataFlavor.stringFlavor };
 	
 	// "Meta" key modifier is only available on Mac OS X
@@ -120,7 +126,7 @@ implements Transferable, MouseInputListener
 	 * 	initiate a drag export automatically when a mouse drag with the specified modifier
 	 * 	keys occurs.
 	 * 	
-	 *	@param	objectID				SwingOSC reference pointing to a </code>JComponent<code> object
+	 *	@param	objectID			SwingOSC reference pointing to a </code>JComponent<code> object
 	 *	@param	modifiers			mask of modifiers that need to be pressed to initiate a drag ; like
 	 * 								<code>2</code> for <code>InputEvent.CTRL_MASK</code>, or
 	 *								<code>8</code> for <code>InputEvent.ALT_MASK</code>
@@ -136,10 +142,11 @@ implements Transferable, MouseInputListener
 		
 		exportMsg			= new OSCMessage( getOSCCommand(), new Object[] { objectID, "export" });
 		importDummyMsg		= new OSCMessage( getOSCCommand(), new Object[] { objectID, "import", "dummy" });
-		importStringArgs		= new Object[] { objectID, "import", "string", null };
+		importStringArgs	= new Object[] { objectID, "import", "string", null };
 		this.modifiers		= modifiers;
 		
 		add();
+		installSuperBehavior();
 	}
 
 	public void add()
@@ -160,6 +167,23 @@ implements Transferable, MouseInputListener
 			object.removeMouseListener( this );
 			object.removeMouseMotionListener( this );
 			isListening = false;
+		}
+	}
+	
+	private void installSuperBehavior()
+	{
+		final ActionMap amap						= object.getActionMap();
+		final Action	actionPasteFromClipboard	= amap.get( "paste-from-clipboard" );
+		final Action	actionCopyToClipboard		= amap.get( "copy-to-clipboard" );
+		final Action	actionCutToClipboard		= amap.get( "cut-to-clipboard" );
+		if( actionPasteFromClipboard != null ) {
+			amap.put( "paste-from-clipboard", new ActionSuperBehavior( actionPasteFromClipboard ));
+		}
+		if( actionCopyToClipboard != null ) {
+			amap.put( "copy-to-clipboard", new ActionSuperBehavior( actionCopyToClipboard ));
+		}
+		if( actionCutToClipboard != null ) {
+			amap.put( "cut-to-clipboard", new ActionSuperBehavior( actionCutToClipboard ));
 		}
 	}
 	
@@ -251,7 +275,13 @@ implements Transferable, MouseInputListener
 		return this;
 	}
 	
-//	protected void exportDone( JComponent c, Transferable t,  int action )
+//	public void exportToClipboard( JComponent comp, Clipboard clip, int action )
+//	{
+//		System.out.println( "exportToClipboard" );
+//		super.exportToClipboard( comp, clip, action );
+//	}
+
+	//	protected void exportDone( JComponent c, Transferable t,  int action )
 //	{
 ////System.out.println( "exportDone " + t + "; " + action );		
 //		super.exportDone( c, t, action );
@@ -372,4 +402,30 @@ implements Transferable, MouseInputListener
 //	{
 //		return 32;
 //	}
+	
+	private class ActionSuperBehavior
+	extends AbstractAction
+	{
+		private final Action superBehavior;
+		
+		private ActionSuperBehavior( Action superBehavior )
+		{
+			super();
+			this.superBehavior = superBehavior;
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			if( isListening ) {
+				remove();
+				try {
+					superBehavior.actionPerformed( e );
+				} finally {
+					add();
+				}
+				return;
+			}
+			superBehavior.actionPerformed( e );
+		}
+	}
 }
