@@ -82,9 +82,9 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 	string_ { arg s; super.string = s.as(String); }
 
 // doesn't work yet
-//	defaultGetDrag { ^this.string }
-//	defaultCanReceiveDrag { ^currentDrag.isString }
-//	defaultReceiveDrag { this.valueAction = currentDrag }
+	defaultGetDrag { ^this.string }
+	defaultCanReceiveDrag { ^currentDrag.isString }
+	defaultReceiveDrag { this.valueAction = currentDrag }
 
 	// ----------------- private instance methods -----------------
 

@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.57, 14-Jan-07
+ *	@version		0.57, 16-Jan-07
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -90,7 +90,7 @@ JSCContainerView : JSCView { // abstract class
 			bndl = Array( 4 );
 			bndl.add([ '/method', this.id, \add,
 					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
-			if( this.prGetWindow.visible, {
+			if( this.prAllVisible, {
 //				if( this.id != vpID, {
 					bndl.add([ '/method', this.id, \revalidate ]);
 //					bndl.add([ '/method', this.id, \revalidate ]);
@@ -103,10 +103,26 @@ JSCContainerView : JSCView { // abstract class
 		});
 	}
 	
-	prInvalidateChildBounds {
+	prInvalidateBounds {
+		scBounds = nil;
 		children.do({ arg child;
-			child.prSetScBounds( nil );
-			child.prInvalidateChildBounds;
+//			child.prSetScBounds( nil );
+			child.prInvalidateBounds;
+		});
+	}
+
+	prInvalidateAllVisible {
+		allVisible = nil;
+		children.do({ arg child;
+			child.prInvalidateAllVisible;
+		});
+	}
+
+	prVisibilityChange {
+//		[ this, "prVisibilityChange", "children=", children ].postln;
+		children.do({ arg child;
+//			[ this, "prVisibilityChange", "->", child ].postln;
+			child.prVisibilityChange;
 		});
 	}
 
@@ -117,7 +133,7 @@ JSCContainerView : JSCView { // abstract class
 		bndl = Array( 3 );
 		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
 			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
-		if( this.visible, {
+		if( this.prAllVisible, {
 			bndl.add([ '/method', this.id, \revalidate ]);
 			bndl.add([ '/method', this.id, \repaint ]);
 		});
@@ -257,6 +273,10 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 	prBoundsUpdated {
 		if( window.drawHook.notNil, { window.refresh });
 	}
+	
+	prAllVisible {
+		^(visible and: { this.prGetWindow.visible });
+	}
 }
 
 JSCScrollTopView : JSCTopView {
@@ -324,7 +344,7 @@ JSCScrollTopView : JSCTopView {
 			bndl = Array( 4 );
 			bndl.add([ '/method', vpID, \add,
 					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
-			if( this.prGetWindow.visible, {
+			if( this.prAllVisible, {
 				bndl.add([ '/method', this.id, \validate ]);
 				bndl.add([ '/method', this.id, \revalidate ]);
 				bndl.add([ '/method', child.id, \repaint ]);
@@ -340,7 +360,7 @@ JSCScrollTopView : JSCTopView {
 		bndl = Array( 4 );
 		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
 			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
-		if( this.visible, {
+		if( this.prAllVisible, {
 			bndl.add([ '/method', this.id, \validate ]);
 			bndl.add([ '/method', this.id, \revalidate ]);
 			bndl.add([ '/method', this.id, \repaint ]);
@@ -472,7 +492,7 @@ JSCScrollView : JSCContainerView {
 			bndl = Array( 4 );
 			bndl.add([ '/method', vpID, \add,
 					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
-			if( this.prGetWindow.visible, {
+			if( this.prAllVisible, {
 				bndl.add([ '/method', this.id, \validate ]);
 				bndl.add([ '/method', this.id, \revalidate ]);
 				bndl.add([ '/method', child.id, \repaint ]);
@@ -488,7 +508,7 @@ JSCScrollView : JSCContainerView {
 		bndl = Array( 4 );
 		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
 			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
-		if( this.visible, {
+		if( this.prAllVisible, {
 			bndl.add([ '/method', this.id, \validate ]);
 			bndl.add([ '/method', this.id, \revalidate ]);
 			bndl.add([ '/method', this.id, \repaint ]);
@@ -1698,7 +1718,6 @@ JSCListView : JSCControlView {
 			key = \selectedIndex;
 			value = value ? -1;
 			if( value >= 0, {
-				value = value.asSwingArg;
 				server.sendBundle( nil,
 					[ '/set', this.id, \selectedIndex, value ],
 					[ '/method', this.id, \ensureIndexIsVisible, value ]
@@ -1869,22 +1888,15 @@ JSCAbstractUserView : JSCView {
 	var <relativeOrigin;
 
 	var penID			= nil;
-	var lastMouseX, lastMouseY;
+	var pendingDraw	= false;
 
 	// ----------------- public instance methods -----------------
 
 	refresh {
-//		if( drawFunc.isNil, {
-//			server.sendMsg( '/method', this.id, \repaint );
-//		}, { });
+		pendingDraw = false;
 		if( drawFunc.notNil, {
 			JPen.protRefresh( drawFunc, this, server, penID, this.id );
 		});
-	}
-
-	mousePosition {
-		var b = this.bounds;
-		^((lastMouseX - b.left) @ (lastMouseY - b.top));
 	}
 
 	clearOnRefresh_{ arg bool;
@@ -1900,8 +1912,8 @@ JSCAbstractUserView : JSCView {
 					[ '/local', penID, '[', '/new', "de.sciss.swingosc.Pen", '[', '/ref', this.id, ']', relativeOrigin.not, ']' ],
 					[ '/method', this.id, \setPen, '[', '/ref', penID, ']' ]
 				);
-				drawFunc = func;
-				this.refresh;
+			}, {
+				^this;
 			});
 		}, {
 			if( func.isNil, {
@@ -1912,15 +1924,90 @@ JSCAbstractUserView : JSCView {
 				);
 				penID = nil;
 				drawFunc = nil;
-			}, {
-				drawFunc = func;
-				this.refresh;
+				pendingDraw = false;
+				^this;
 			});
+		});
+		drawFunc = func;
+		if( this.prAllVisible, {
+			pendingDraw = false;
+			JPen.protRefresh( drawFunc, this, server, penID, this.id );
+		}, {
+			pendingDraw = true;
 		});
 	}
 	
 	focusVisible { ^this.getProperty( \focusVisible, true )}
 	focusVisible_ { arg visible; this.setProperty( \focusVisible, visible )}
+
+	// ----------------- private instance methods -----------------
+
+//	draw {
+//		this.refresh;
+//	}
+
+	prFocusChange {
+		// the user may wish to paint differently according to the focus
+		if( refreshOnFocus, { this.protDraw });
+	}
+	
+	prVisibilityChange {
+//		[ this, "prVisibilityChange", pendingDraw ].postln;
+		if( pendingDraw, { this.protDraw });
+	}
+
+	prBoundsUpdated {
+		this.protDraw;
+	}
+
+	prClose { arg preMsg, postMsg;
+		this.drawFunc_( nil );
+		^super.prClose( preMsg, postMsg );
+	}
+
+	protDraw {
+		if( drawFunc.notNil and: { this.prAllVisible }, {
+			// cmpID == nil --> don't repaint, because this
+			// will be done already by JSCWindow, and hence
+			// would slow down refresh unnecessarily (???)
+			JPen.protRefresh( drawFunc, this, server, penID, nil );
+		});
+	}
+}
+
+JSCUserView : JSCAbstractUserView {
+	var lastMouseX, lastMouseY;
+
+	// ----------------- public class methods -----------------
+
+	*paletteExample { arg parent, bounds;
+		^this.new( parent, bounds ).refreshOnFocus_( false ).drawFunc_({ arg view;
+			var b = view.bounds, min = min( b.width, b.height ), max = max( b.width, b.height ),
+			    num = (max / min).asInteger;
+			JPen.addRect( b );
+			JPen.clip;
+			JPen.translate( b.left, b.top );
+			JPen.scale( min, min );
+			num.do({ 	arg i;
+				var rel = i / num;
+				JPen.fillColor = Color.hsv( rel, 0.4, 0.6 );
+				JPen.addWedge( (0.5 + i) @ 0.5, 0.4, rel * pi + 0.2, 1.5pi );
+				JPen.fill;
+			});
+		});
+	}
+
+	// ----------------- public instance methods -----------------
+
+	mousePosition {
+		var b = this.bounds;
+		^((lastMouseX - b.left) @ (lastMouseY - b.top));
+	}
+
+	relativeOrigin_ { arg bool;
+		relativeOrigin = bool;
+		this.setProperty( \relativeOrigin, bool );
+	}
 
 	// ----------------- private instance methods -----------------
 
@@ -1947,64 +2034,6 @@ JSCAbstractUserView : JSCView {
 		lastMouseY	= y;
 		^super.mouseOver( x, y, *rest );
 	}
-
-//	draw {
-//		this.refresh;
-//	}
-
-	prHasFocus_ { arg focus;
-		super.prHasFocus_( focus );
-		// the user may wish to paint differently according to the focus
-		if( refreshOnFocus and: { drawFunc.notNil }, { this.refresh });
-	}
-
-	prBoundsUpdated {
-		if( drawFunc.notNil, { this.refresh });
-	}
-
-	prClose { arg preMsg, postMsg;
-		this.drawFunc_( nil );
-		^super.prClose( preMsg, postMsg );
-	}
-
-	protDraw {
-		if( drawFunc.notNil, {
-			// cmpID == nil --> don't repaint, because this
-			// will be done already by JSCWindow, and hence
-			// would slow down refresh unnecessarily
-			JPen.protRefresh( drawFunc, this, server, penID, nil );
-		});
-	}
-}
-
-JSCUserView : JSCAbstractUserView {
-	// ----------------- public class methods -----------------
-
-	*paletteExample { arg parent, bounds;
-		^this.new( parent, bounds ).refreshOnFocus_( false ).drawFunc_({ arg view;
-			var b = view.bounds, min = min( b.width, b.height ), max = max( b.width, b.height ),
-			    num = (max / min).asInteger;
-			JPen.addRect( b );
-			JPen.clip;
-			JPen.translate( b.left, b.top );
-			JPen.scale( min, min );
-			num.do({ 	arg i;
-				var rel = i / num;
-				JPen.fillColor = Color.hsv( rel, 0.4, 0.6 );
-				JPen.addWedge( (0.5 + i) @ 0.5, 0.4, rel * pi + 0.2, 1.5pi );
-				JPen.fill;
-			});
-		});
-	}
-
-	// ----------------- public instance methods -----------------
-
-	relativeOrigin_ { arg bool;
-		relativeOrigin = bool;
-		this.setProperty( \relativeOrigin, bool );
-	}
-
-	// ----------------- private instance methods -----------------
 
 	prSCViewNew {
 		relativeOrigin	= false;
@@ -3111,5 +3140,5 @@ JSCTextEditBase : JSCStaticTextBase {
 	}
 
 // XXX TEST SWINGOSC 0.55
-//	prNeedsTransferHandler { ^true }
+	prNeedsTransferHandler { ^true }
 }

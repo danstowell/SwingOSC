@@ -99,12 +99,6 @@
 	}
 }
 
-+ JFont {
-	asSwingArg {
-		^([ '[', '/new', 'java.awt.Font', this.name, this.style, this.size, ']' ]);
-	}
-}
-
 + Point {
 	asSwingArg {
 		^([ '[', '/new', 'java.awt.Point', this.x, this.y, ']' ]);
@@ -148,8 +142,9 @@
 // don't blame me for this hackery
 + SCViewHolder {
 //	prIsInsideContainer { ^false }
-	prSetScBounds {}
-	prInvalidateChildBounds {}
+//	prSetScBounds {}
+	prInvalidateBounds {}
+	prInvalidateAllVisible {}
 	protDraw {}
 	id { ^nil }	// this is detected by JSCContainerView!
 }

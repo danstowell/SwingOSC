@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of Pen. last mod: 12-jan-08 sciss
+<p>This class is meant as an emulation of Pen. last mod: 16-jan-08 sciss
 </p>
 <table>
 <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -91,7 +91,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         };
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 
     (
@@ -140,7 +139,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         };
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 
     (
@@ -172,6 +170,7 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
     w = <span class="cl">JSCWindow</span>.new.front;
     w.view.background_( <span class="cl">Color</span>.white );
+    d = 0.0;
     w.drawHook = {
         <span class="kw">var</span> ang1, ang2, rad1, rad2;
         <span class="kw">var</span> di = 1.0 - d;
@@ -201,14 +200,12 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
             <span class="cl">JPen</span>.stroke;
         });
     };
-    d = 0.0;
-    w.refresh;
-    d = 0.97; <span class="cm">// animation decay</span>
     )
 
     (
         <span class="kw">var</span> run = <span class="kw">true</span>;
         w.onClose = { run = <span class="kw">false</span> }; <span class="cm">// closing window stops animation</span>
+        d = 0.97; <span class="cm">// animation decay</span>
         { while { run } { w.refresh; 0.1.wait }}.fork( <span class="cl">AppClock</span> );
     )
     
@@ -235,7 +232,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
             <span class="cl">JPen</span>.perform([ <span class="sy">\stroke</span>, <span class="sy">\fill</span> ].choose );
         };
     };
-    w.refresh;
     )
 
     (
@@ -265,7 +261,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
             <span class="cl">JPen</span>.perform([ <span class="sy">\stroke</span>, <span class="sy">\fill</span> ].choose );
         };
     };
-    w.refresh;
     )
 
     (
@@ -300,7 +295,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
             <span class="cl">JPen</span>.perform([ <span class="sy">\stroke</span>, <span class="sy">\fill</span> ].choose );
         };
     };
-    w.refresh;
     )
 
     (
@@ -353,7 +347,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         };
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 
     (
@@ -388,7 +381,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -417,7 +409,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.fill;
     };
-    w.refresh;
     )          
 </pre>
 <P>&nbsp;</P>
@@ -610,7 +601,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         <span class="cl">JPen</span>.stringRightJustIn( txt, rect );
         <span class="cl">JPen</span>.strokeRect( rect );
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -645,7 +635,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
     
     <span class="cm">// cumulative translations</span>
@@ -663,7 +652,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
             <span class="cl">JPen</span>.stroke;
         };
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -695,7 +683,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -727,7 +714,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -770,7 +756,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         c = c - 0.95; <span class="cm">// for subsequent animation</span>
         
     };
-    w.refresh;
     )
 
     (
@@ -860,7 +845,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         }, matrix[ i ]);
         sliders.nextLine;
     };
-    w.refresh;
 )
 </pre>
 <P>&nbsp;</P>
@@ -892,7 +876,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -935,7 +918,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         <span class="cl">JPen</span>.line( 10 @ 120, 300 @ 120);
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -970,7 +952,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.stroke;
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -1008,7 +989,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         
         <span class="cl">JPen</span>.fill;
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -1034,7 +1014,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
             <span class="cl">JPen</span>.translate( 100, 0 );
         });
     };
-    w.refresh;
     )
 </pre>
 <P>&nbsp;</P>
@@ -1075,7 +1054,6 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         });
     };
 
-    w.refresh;
     w.front;
 )
 

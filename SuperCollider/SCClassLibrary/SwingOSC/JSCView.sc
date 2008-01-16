@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.57, 12-Jan-08
+ *	@version		0.57, 16-Jan-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -59,10 +59,11 @@ JSCView {  // abstract class
 	var keyResp, dndResp, mouseResp, cmpResp;
 	var <hasFocus = false;
 	var <id;
+	var <visible = true;
 	
 	var clpseMouseMove, clpseMouseDrag;
 
-	var jinsets, scBounds, <jBounds;
+	var jinsets, scBounds, <jBounds, <allVisible;
 	
 	*initClass {
 		unicodeMap = IdentityDictionary.new;
@@ -122,14 +123,23 @@ JSCView {  // abstract class
 		}, {
 			server.listSendMsg(['/set', this.id, \bounds ] ++ argBounds );
 		});
-		this.prInvalidateChildBounds;
+		this.prInvalidateBounds;
 		scBounds = rect.copy;
 		// XXX CompositeView must move its children!!! sucky cocoa!!!
 	}
 		
-	visible { ^this.getProperty( \visible )}
+//	visible { ^this.getProperty( \visible )}
 
-	visible_ { arg bool; this.setProperty( \visible, bool )}
+	visible_ { arg bool;
+//		this.setProperty( \visible, bool )}
+		if( visible != bool, {
+			visible = bool;	// must be set before calling prVisiblityChange
+			this.prInvalidateAllVisible;
+			this.prVisibilityChange;
+			server.sendMsg( '/set', if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id }),
+				\visible, visible );
+		});
+	}
 	
 	enabled { ^this.getProperty( \enabled )}
 
@@ -249,8 +259,8 @@ JSCView {  // abstract class
 	doAction { action.value( this )}
 	
 	properties {
-		^#[ \visible, \enabled, \canFocus, \resize, \background,
-		    \minWidth, \maxWidth, \minHeight, \maxHeight, \opaque ] // JJJ: opaque, no bounds
+		^#[ \enabled, \canFocus, \resize, \background,
+		    \minWidth, \maxWidth, \minHeight, \maxHeight, \opaque ] // JJJ: opaque, no bounds ; no visible
 	}
 
 	getPropertyList {
@@ -283,7 +293,7 @@ JSCView {  // abstract class
 		properties	= IdentityDictionary.new;
 //		properties.put( \bounds, argBounds );
 		scBounds		= argBounds;
-		properties.put( \visible, true );
+//		properties.put( \visible, true );
 		properties.put( \enabled, true );
 		properties.put( \canFocus, true );
 		properties.put( \resize, 1 );
@@ -501,7 +511,7 @@ JSCView {  // abstract class
 		});
 	}
 
-	prSetScBounds { arg rect; scBounds = rect }
+//	prSetScBounds { arg rect; scBounds = rect }
 	prGetJInsets { ^jinsets }
 
 	// subclasses can override this to do special refreshes
@@ -515,7 +525,7 @@ JSCView {  // abstract class
 			^nil;
 		});
 		cmpResp = OSCpathResponder( server.addr, [ '/component', this.id ], { arg time, resp, msg;
-			var state, x, y, w, h, dx, dy, dw, dh;
+			var state, x, y, w, h, dx, dy, dw, dh, temp;
 //			var scBounds;
 		
 			state = msg[2].asSymbol;
@@ -547,21 +557,22 @@ JSCView {  // abstract class
 				dy 			= y - jBounds.top;
 				jBounds.left	= x;
 				jBounds.top	= y;
-//				scBounds		= properties[ \bounds ];
-//(": "++this.id++" moved by "++dx++", "++dy).postln;
-				if( scBounds.notNil, {
-//("::: not nil").postln;
-					scBounds.left	= scBounds.left + dx;
-					scBounds.top	= scBounds.top + dy;
+				temp			= scBounds;	// save it since prInvalidateBounds deletes it!
+				if( temp.notNil, {
+					temp.left	= temp.left + dx;
+					temp.top	= temp.top + dy;
 				});
-				this.prInvalidateChildBounds;
+				this.prInvalidateBounds;
+				scBounds		= temp;
 				this.prBoundsUpdated;
 			},
 			\gainedFocus, {
-				this.prHasFocus_( true );
+				hasFocus = true;
+				this.prFocusChange;
 			},
 			\lostFocus, {
-				this.prHasFocus_( false );
+				hasFocus = false;
+				this.prFocusChange;
 			});
 		});
 		cmpResp.add;
@@ -573,12 +584,15 @@ JSCView {  // abstract class
 		});
 	}
 	
-	prInvalidateChildBounds {}
+	prInvalidateBounds { scBounds = nil }
+	prInvalidateAllVisible { allVisible = nil }
 
 	// subclasses can override this to invoke special refreshes
-	prHasFocus_ { arg focus;
-		hasFocus = focus;
-	}
+	prFocusChange {}
+	
+	// subclasses can override this to invoke special refreshes
+	// ; this is called _before_ the visibility message is sent out!
+	prVisibilityChange {}
 
 	prCreateMouseResponder { arg bndl;
 		var msg, win;
@@ -692,31 +706,6 @@ JSCView {  // abstract class
 
 		// fix keys
 		switch( key,
-			\visible, {
-				if( this.prIsInsideContainer, {
-					server.sendMsg( '/set', "cn" ++ this.id, key, value.asSwingArg );
-					^nil;
-				});
-			},
-//			\background, {
-//				if( value.isNil or: { value.isKindOf( Gradient ) or: { value.isKindOf( HiliteGradient ) or: { value.alpha < 1.0 }}}, {
-//					if( this.opaque != false, {	// nil or false
-//						this.opaque_( false );
-//					});
-//				}, { if( value.alpha == 1.0, {
-//					if( this.opaque == false, {
-//						this.opaque_( true );
-//					});
-//				})})
-//			},
-//			\bounds, {
-//				value = this.prBoundsToJava( value );
-//				if( this.prIsInsideContainer, {
-//					server.sendBundle( nil, [ '/set', this.id, key ] ++ value.asSwingArg,
-//								          [ '/set', "cn" ++ this.id, key ] ++ value.asSwingArg );
-//					^nil;
-//				});
-//			},
 			\resize, {
 				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
 				if( value == 1, {
@@ -732,35 +721,26 @@ JSCView {  // abstract class
 			\canFocus, {
 				key = \focusable;
 			},
-			\id, {
-				^nil; // not forwarded
-			},
+//			\id, {
+//				^nil; // not forwarded
+//			},
 			\minWidth, {
-				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
-//				server.sendMsg( '/method', id, \putClientProperty, "minWidth",
-//					(value + jinsets.left + jinsets.right).asSwingArg );
-				server.sendMsg( '/method', id, \putClientProperty, "minWidth", value.asSwingArg );
+				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });				server.listSendMsg([ '/method', id, \putClientProperty, "minWidth" ] ++ value.asSwingArg );
 				^nil;
 			},
 			\maxWidth, {
 				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
-//				server.sendMsg( '/method', id, \putClientProperty, "maxWidth",
-//					(value + jinsets.left + jinsets.right).asSwingArg );
-				server.sendMsg( '/method', id, \putClientProperty, "maxWidth", value.asSwingArg );
+				server.listSendMsg([ '/method', id, \putClientProperty, "maxWidth" ] ++ value.asSwingArg );
 				^nil;
 			},
 			\minHeight, {
 				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
-//				server.sendMsg( '/method', id, \putClientProperty, "minHeight",
-//					(value + jinsets.top + jinsets.bottom).asSwingArg );
-				server.sendMsg( '/method', id, \putClientProperty, "minHeight", value.asSwingArg );
+				server.listSendMsg([ '/method', id, \putClientProperty, "minHeight" ] ++ value.asSwingArg );
 				^nil;
 			},
 			\maxHeight, {
 				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
-//				server.sendMsg( '/method', id, \putClientProperty, "maxHeight",
-//					(value + jinsets.top + jinsets.bottom).asSwingArg );
-				server.sendMsg( '/method', id, \putClientProperty, "maxHeight", value.asSwingArg );
+				server.sendMsg([ '/method', id, \putClientProperty, "maxHeight" ] ++ value.asSwingArg );
 				^nil;
 			}
 		);
@@ -779,7 +759,7 @@ JSCView {  // abstract class
 		});
 	}
 	
-	// never called with SwingOSC!
+	// never called with SwingOSC (?)
 	*importDrag { 
 		// this is called when an NSString is the drag object
 		// from outside of the SC app
@@ -810,4 +790,17 @@ JSCView {  // abstract class
 	}
 
 	protDraw {}
+
+	prAllVisible {
+//		[ this, "> prAllVisible", visible, allVisible ].postln;
+		if( allVisible.isNil, {	// cache the info
+			if( visible.not, {
+				allVisible = false;
+			}, {
+				allVisible = this.parent.prAllVisible;
+			});
+		});
+//		[ this, "< prAllVisible", visible, allVisible ].postln;
+		^allVisible;
+	}
 }

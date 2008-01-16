@@ -9,28 +9,18 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCUserView. last mod: 13-jan-08 sciss
+<p>This class is meant as an emulation of SCUserView. last mod: 16-jan-08 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
-<tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
-<tr><td class="oscTabKey">block size</td><td class="oscTabValue">block sizes for decimation are ignored</td></tr>
-<tr><td class="oscTabKey">path names</td><td class="oscTabValue">(in the SoundFile object) cannot be relative. use .absolutePath instead. files must be locally accessible</td></tr>
-<tr><td class="oscTabKey">lissajou</td><td class="oscTabValue">lissajou style (style == 2) is not supported</td></tr>
+<!-- <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr> -->
 <tr><td colspan="2" class="oscTabSection">different behaviour</td></tr>
-<tr><td class="oscTabKey">memory</td><td class="oscTabValue">waveform cache is read / written from harddisk (tmp folder) and not kept completely in RAM</td></tr>
-<tr><td class="oscTabKey">resolution</td><td class="oscTabValue">waveform can be displayed at full sample resolution. when zoomed out, peak + RMS are shown</td></tr>
+<tr><td class="oscTabKey">refresh</td><td class="oscTabValue">see the introductory paragraph for SwingOSC's refresh policy</td></tr>
+<tr><td class="oscTabKey">view bounds</td><td class="oscTabValue">here is no way to paint outside the logical bounds of a swing view, all draw operations are automatically clipped to the view's bounds.</td></tr>
 <tr><td colspan="2" class="oscTabSection">extended functionality</td></tr>
-<tr><td class="oscTabKey">action</td><td class="oscTabValue">additional arguments for type of action and parameters</td></tr>
-<tr><td class="oscTabKey">cache</td><td class="oscTabValue">management of waveform cache</td></tr>
-<tr><td colspan="2" class="oscTabSection">known issues / todo</td></tr>
-<tr><td class="oscTabKey">elasticResizeMode</td><td class="oscTabValue">not yet implemented (this is always _1_ now)</td></tr>
-<tr><td class="oscTabKey">read</td><td class="oscTabValue">can only be asynchronous. put in a Routine to wait for completion</td></tr>
-<tr><td class="oscTabKey">setData</td><td class="oscTabValue">can only be asynchronous. put in a Routine.</td></tr>
-<tr><td class="oscTabKey">data</td><td class="oscTabValue">(getter) not yet implemented</td></tr>
-<tr><td class="oscTabKey">performance</td><td class="oscTabValue">graphics update could be more efficiently buffering during scrolling</td></tr>
-<tr><td class="oscTabKey">metaAction</td><td class="oscTabValue">does not get evaluated on ctrl+mouseclick/drag</td></tr>
-<tr><td class="oscTabKey">background</td><td class="oscTabValue">offscreen image paints transparent pixels black on Linux / Sun Java SE 1.6 (therefore background_ has no effect, and selections are not visible ;-C )</td></tr>
+<tr><td class="oscTabKey">focusVisible_</td><td class="oscTabValue">allows you to switch off the default focus border painting</td></tr>
+<tr><td class="oscTabKey">refreshOnFocus_</td><td class="oscTabValue">allows you to switch off refreshing as result of focus change</td></tr>
+<!-- <tr><td colspan="2" class="oscTabSection">known issues / todo</td></tr> -->
 </table>
 </div>
 <P>&nbsp;</P>
@@ -44,8 +34,20 @@ Note: please use the abstraction layer GUI.userView if possible! (see <A HREF="S
 </P>
 <h2>drawFunc_</h2>
 <P>Sets the function which should be evaluated if the view is refreshed.
-<strong>Note:</strong> This happens when you call <code>refresh</code>, when the view is focused/unfocused (unless you set <code>refreshOnFocus</code> to <code><span class="kw">false</span></code>), or when the view is resized.</P>
-<P>Example:</P>
+<strong>Note:</strong> A refresh happens if either of the following conditions meet:
+</P>
+<UL>
+<LI>you call <code>refresh</code> on the view.</LI>
+<LI>you call <code>refresh</code> on the window that contains the view.</LI>
+<LI>the view and all its parents including the window are visible, and either
+<UL>
+<LI>you call <code>drawFunc_</code> on the view</LI>
+<LI>or the view is resized.</LI>
+<LI>or <code>refreshOnFocus</code> is <code><span class="kw">true</span></code> and the view gains or looses focus.</LI>
+</UL>
+</LI>
+</UL>
+<P><br>Example:</P>
 <pre>
 (
     <span class="kw">var</span> func;
@@ -83,7 +85,6 @@ Note: please use the abstraction layer GUI.userView if possible! (see <A HREF="S
         v = <span class="cl">JSCUserView</span>( w, <span class="cl">Rect</span>( 20 + (i * 120), 100, 100, 100 ));
         v.drawFunc = func;
     };
-<span class="cm">// w.refresh;</span>
 )
     
 v.refresh;  <span class="cm">// updates the last created (third) view</span>
@@ -148,7 +149,7 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
         c.keyDownAction = { <span class="kw">arg</span> view, char, modifiers, unicode, keycode;
             [char, modifiers, unicode, keycode].postln;
             c.drawFunc = {
-                <span class="cl">JPen</span>.font           = <span class="cl">JFont</span>( <span class="st">&quot;Helvetica&quot;</span>, 70 );
+                <span class="cl">JPen</span>.font       = <span class="cl">JFont</span>( <span class="st">&quot;Helvetica&quot;</span>, 70 );
                 <span class="cl">JPen</span>.fillColor  = <span class="cl">Color</span>.blue( 0.3, 0.5 );
                 <span class="cl">JPen</span>.stringAtPoint( char.asString, 180 @ 150 );
             };
@@ -215,7 +216,6 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
         v.mouseUpAction = endTrackFunc;
         v.mouseMoveAction = trackFunc;
     };
-<span class="cm">// w.refresh;</span>
 )
     
 <span class="cm">// draw on the view</span>

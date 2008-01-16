@@ -84,6 +84,10 @@ JFont {
 // ??? should we do this ??? cocoa doesn't
 		SwingOSC.set.do({ arg server; server.listSendMsg([ '/local', \font ] ++ this.asSwingArg )});
 	}
+
+	asSwingArg {
+		^([ '[', '/new', 'java.awt.Font', this.name, this.style, this.size, ']' ]);
+	}
 	
 	*availableFonts { arg server;
 		if( names.notNil, { ^names });

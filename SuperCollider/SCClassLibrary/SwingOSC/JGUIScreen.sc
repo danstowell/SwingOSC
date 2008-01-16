@@ -37,7 +37,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 15-Jan-08
+ *	@version		0.57, 16-Jan-08
  */
 JSCWindow : Object
 {
@@ -58,7 +58,11 @@ JSCWindow : Object
 	var <resizable;
 	var <border;
 	
-	var pendingAlpha;	// alpha can only be set when window was made visible, so this is a lazy storage
+// NOTE: pendingAlpha is not needed any more since Frame now calls pack and
+// hence makes itself 'displayable'!
+//	var pendingAlpha;	// alpha can only be set when window was made visible, so this is a lazy storage
+	var pendingDraw = false;
+	var wasOpened = false;
 	
 	*initClass {
 		UI.registerForShutdown({ this.closeAll });
@@ -91,6 +95,9 @@ JSCWindow : Object
 			JSCStaticText, JSCDragSource, JSCDragSink, JSCDragBoth,
 			JSCEnvelopeView, JSCUserView, JSCCheckBox, JSCScrollBar
 		];
+
+//		c = JSCView.allSubclasses.select({ arg cl; cl.class.findMethod( \paletteExample ).notNil })
+//			.sort({ arg a, b; a.name <= b.name });
 		
 		scrB	= this.screenBounds;
 		h	= c.size * 28 + 12;
@@ -120,7 +127,8 @@ JSCWindow : Object
 					[ '/local', penID, '[', '/new', 'de.sciss.swingosc.Pen', '[', '/ref', this.id, ']', ']' ],
 					[ '/set', this.view.id, \icon, '[', '/ref', penID, ']' ]
 				);
-//				if( visible, { JPen.protRefresh( func, this, server, penID, this.id )});
+			}, {
+				^this;
 			});
 		}, {
 			if( func.isNil, {
@@ -130,9 +138,18 @@ JSCWindow : Object
 					[ '/free', penID ]
 				);
 				penID = nil;
+				drawHook = nil;
+				pendingDraw = false;
+				^this;
 			});
 		});
 		drawHook = func;
+		if( visible, {
+			pendingDraw = false;
+			JPen.protRefresh( drawHook, this, server, penID, this.id );
+		}, {
+			pendingDraw = true;
+		});
 	}
 
 	asView { ^view }
@@ -142,8 +159,17 @@ JSCWindow : Object
 	isClosed { ^dataptr.isNil }
 	
 	visible_ { arg bool;
+		if( bool && wasOpened.not, {
+			^this.front;
+		});
 		if( visible != bool, {
 			visible = bool;
+			if( pendingDraw, {
+				pendingDraw = false;
+				JPen.protRefresh( drawHook, this, server, penID, this.id );
+			});
+			view.prInvalidateAllVisible;
+			view.prVisibilityChange;
 			server.sendMsg( '/set', this.id, \visible, visible );
 		});
 	}	
@@ -170,16 +196,25 @@ JSCWindow : Object
 	}	
 
 	front {
-		if( drawHook.notNil, { this.refresh; });
-		server.sendBundle( nil,
-			[ '/set', this.id, \visible, true ],
-			[ '/method', this.id, \toFront ]);
+		var bndl;
+		wasOpened = true;
+		bndl = Array( 3 );
 		if( visible.not, {
-			visible = true;
-			if( pendingAlpha.notNil, {
-				this.alpha_( pendingAlpha );
+			visible = true;	// must be set to true before calling view.protDraw!
+			if( pendingDraw, {
+				pendingDraw = false;
+				JPen.protRefresh( drawHook, this, server, penID, this.id );
 			});
+			view.prInvalidateAllVisible;
+			view.prVisibilityChange;
+			bndl.add([ '/set', this.id, \visible, true ]);
 		});
+//		if( pendingAlpha.notNil, {
+//			bndl.add([ '/set', this.id, \alpha, pendingAlpha ]);
+//			pendingAlpha = nil;
+//		});
+		bndl.add([ '/method', this.id, \toFront ]);
+		server.listSendBundle( nil, bndl );
 	}
 	
 	alwaysOnTop_ { arg bool = true;
@@ -204,12 +239,13 @@ JSCWindow : Object
 	}
 	
 	refresh {
-		view.protDraw;
+		pendingDraw = false;
 		if( drawHook.isNil, {
 			server.sendMsg( '/method', this.id, \repaint );
 		}, {
 			JPen.protRefresh( drawHook, this, server, penID, this.id );
 		});
+		view.protDraw;
 	}
 	
 	minimize {
@@ -229,12 +265,13 @@ JSCWindow : Object
 	
 //		server.sendMsg( '/set', this.id, \background, *(Color( 1, 1, 1, alpha ).asSwingArg) );
 //		server.sendMsg( '/set', this.id, \background, *(Color( 0.8, 0.8, 0.8, alpha ).asSwingArg) );
-		if( visible, {
+
+//		if( visible, {
+//			pendingAlpha = nil;
 			server.sendMsg( '/set', this.id, \alpha, alpha );
-			pendingAlpha = nil;
-		}, {
-			pendingAlpha = alpha;
-		});
+//		}, {
+//			pendingAlpha = alpha;
+//		});
 	}
 	
 	name_ { arg argName;
@@ -304,6 +341,12 @@ JSCWindow : Object
 	}
 
 	// ----------------- private instance methods -----------------
+
+//	protDraw {
+//		if( drawHook.notNil and: { this.visible }, {
+//			JPen.protRefresh( drawHook, this, server, penID, this.id );
+//		});
+//	}
 
 	add { arg aView; view.add( aView )}
 
