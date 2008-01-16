@@ -79,6 +79,7 @@ JSCContainerView : JSCView { // abstract class
 	// ----------------- private instance methods -----------------
 
 	prViewPortID { ^id }
+	prChildOrder { ^-1 }
 
 	add { arg child;
 		var bndl, vpID = this.prViewPortID;
@@ -89,7 +90,7 @@ JSCContainerView : JSCView { // abstract class
 		if( child.id.notNil, { 
 			bndl = Array( 4 );
 			bndl.add([ '/method', this.id, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', 0 ]);
+					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', this.prChildOrder ]);
 			if( this.prAllVisible, {
 //				if( this.id != vpID, {
 					bndl.add([ '/method', this.id, \revalidate ]);
@@ -176,6 +177,8 @@ JSCCompositeView : JSCContainerView {
 
 	// ----------------- private instance methods -----------------
 
+	prChildOrder { ^0 }
+
 	prSCViewNew {
 		jinsets = Insets( 3, 3, 3, 3 );  // so focus borders of children are not clipped
 		^super.prSCViewNew([
@@ -221,6 +224,8 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 
 	// ----------------- private instance methods -----------------
 
+	prChildOrder { ^0 }
+	
 	init { }	// kind of overriden by prInitTopView
 
 	prInitTopView { arg argWindow, argBounds, id;

@@ -208,40 +208,15 @@ JSCTabbedPane : JSCContainerView {
 
 	// ------------- private methods -------------
 	
-	// this needs to be overwritten since
-	// new tabs would otherwise created _before_ old ones ;-C
-	//
-	// also we need to create an entry in the tab list
 	add { arg child;
 		var tab;
-		var bndl, vpID = this.prViewPortID;
 
 		tab = IdentityDictionary.new;
 		tab.put( \enabled, true );
 		tab.put( \component, child );
 		tabs.add( tab );
 		if( this.value.isNil, { properties.put( \value, 0 )});
-//		^super.add( child );
-		
-		children = children.add( child );
-		if( decorator.notNil, { decorator.place( child )});
-
-		if( child.id.notNil, { 
-			bndl = Array( 4 );
-			bndl.add([ '/method', this.id, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' /*, 0 */ ]);
-			if( this.prAllVisible, {
-//				if( this.id != vpID, {
-					bndl.add([ '/method', this.id, \revalidate ]);
-//					bndl.add([ '/method', this.id, \revalidate ]);
-//				}, {
-//					bndl.add([ '/method', vpID, \revalidate ]);
-//				});
-				bndl.add([ '/method', child.id, \repaint ]);
-			});
-//			bndl.postcs;
-			server.listSendBundle( nil, bndl );
-		});
+		^super.add( child );
 	}
 
 	prSetTabProperty { arg index, value, key, javaSelector;
