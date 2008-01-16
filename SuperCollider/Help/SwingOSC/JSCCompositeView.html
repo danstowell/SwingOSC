@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCCompositeView. last mod: 30-jul-07 sciss
+<p>This class is meant as an emulation of SCCompositeView. last mod: 16-Jan-08 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -49,6 +49,17 @@ w.front;
 </pre>
 <P>Coordinates are the same as that for the window, not relative to the origin of the composite view (as in other gui frameworks).
 </P>
+<h3>overlapping children</h3>
+<P>If children are placed in a way that their bounding boxes overlap, a child that was created <EM>after</EM> another child will appear <EM>in&nbsp;front</EM> of that other child:
+</P>
+<pre>
+(
+b.bounds = b.bounds.moveBy( -50, -50 );
+a.background = <span class="cl">Color</span>.red;
+b.background = <span class="cl">Color</span>.blue;  <span class="cm">// this appears in front of the red one</span>
+)
+</pre>
+<P>&nbsp;</P>
 <h3>keydown bubbling</h3>
 <P>Note that the <code>keyDown</code> action is assigned to the composite view. If c and d do not have <code>keyDown</code> actions themselves, the event is passed to <code>b</code>, the parent.
 <PRE>

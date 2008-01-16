@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of Font. last mod: 11-apr-07 sciss
+<p>This class is meant as an emulation of Font. last mod: 16-Jan-08 sciss
 </p>
 <table>
 <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -93,93 +93,53 @@ w.front;
 <P>Example:</P>
 <PRE>
 (
-<span class="cm">// start server</span>
-s.boot;
-)
+<span class="kw">var</span> w, f, t, c, names, range, char, start, stop, lastStop, fontSize = 14; <span class="cm">// change fontSize if you like</span>
 
-(
-<span class="cm">// define a synth</span>
-<span class="cl">SynthDef</span>(<span class="st">&quot;window-test&quot;</span>, { <span class="kw">arg</span> note = 36, fc = 1000, rq = 0.25, bal=0, amp=0.4, gate = 1;
-        <span class="kw">var</span> x;
-        x = <span class="cl">Mix</span>.fill(4, { 
-            <span class="cl">LFSaw</span>.ar((note + {0.1.rand2}.dup).midicps, 0, 0.02) 
-        });
-        x = <span class="cl">RLPF</span>.ar(x, fc, rq).softclip;
-        x = <span class="cl">RLPF</span>.ar(x, fc, rq, amp).softclip;
-        x = <span class="cl">Balance2</span>.ar(x[0], x[1], bal);
-        x = x * <span class="cl">EnvGen</span>.kr(<span class="cl">Env</span>.cutoff, gate, doneAction: 2);
-        <span class="cl">Out</span>.ar(0, x);
-    }, [0.1, 0.1, 0.1, 0.1, 0.1, 0]
-).send(s);
-)
-
-(
-<span class="kw">var</span> w, startButton, noteControl, cutoffControl, resonControl;
-<span class="kw">var</span> balanceControl, ampControl;
-<span class="kw">var</span> synth, cmdPeriodFunc;
-
-<span class="cm">// make the window</span>
-w = <span class="cl">JSCWindow</span>( <span class="st">&quot;another control panel&quot;</span>, <span class="cl">Rect</span>( 20, 400, 240, 180 ), resizable: <span class="kw">false</span> );
-w.front; <span class="cm">// make window visible and front window.</span>
-w.view.decorator = <span class="cl">FlowLayout</span>(w.view.bounds);
-
-<span class="cm">//w.view.background = Gradient( Color.rand( 0.0, 1.0 ), Color.rand( 0.0, 1.0 ), [ \h, \v ].choose );</span>
-
-<span class="cm">// add a button to start and stop the sound.</span>
-startButton = <span class="cl">JSCButton</span>( w, 75 @ 24 )
-    .states_([
-        [ <span class="st">&quot;Start&quot;</span>, <span class="cl">Color</span>.black, <span class="cl">Color</span>.green ],
-        [ <span class="st">&quot;Stop&quot;</span>, <span class="cl">Color</span>.white, <span class="cl">Color</span>.red ]
-    ])
-    .action_({ <span class="kw">arg</span> view;
-        if( view.value == 1, {
-            <span class="cm">// start sound</span>
-            synth = <span class="cl">Synth</span>( <span class="st">&quot;window-test&quot;</span>, [
-                <span class="sy">\note</span>, noteControl.value,
-                <span class="sy">\fc</span>, cutoffControl.value,
-                <span class="sy">\rq</span>, resonControl.value,
-                <span class="sy">\bal</span>, balanceControl.value,
-                <span class="sy">\amp</span>, ampControl.value.dbamp ]);
-        }, {
-            <span class="cm">// set gate to zero to cause envelope to release</span>
-            synth.release; synth = <span class="kw">nil</span>;
-        });
+w       = <span class="cl">JSCWindow</span>( <span class="st">&quot;Fonts&quot;</span>, <span class="cl">Rect</span>( 128, 128, 800, (fontSize + 9) * 20 + 80 ), resizable: <span class="kw">false</span> );
+t       = <span class="cl">JSCTabbedPane</span>( w, w.view.bounds );
+names   = <span class="cl">JFont</span>.availableFonts;
+stop        = 0;
+lastStop    = stop;
+while({ stop &lt; names.size }, {
+    if( names[ stop ].first != char, {
+        char    = names[ stop ].first;
+        start   = stop;
     });
-
-<span class="cm">// create controls for all parameters</span>
-w.view.decorator.nextLine;
-noteControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Note&quot;</span>, <span class="cl">ControlSpec</span>( 24, 60, <span class="sy">\lin</span>, 1 ), 
-    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\note</span>, ez.value )}, 36 );
-    
-w.view.decorator.nextLine;
-cutoffControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Cutoff&quot;</span>, <span class="cl">ControlSpec</span>( 200, 5000, <span class="sy">\exp</span> ), 
-    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\fc</span>, ez.value )}, 1000 );
-    
-w.view.decorator.nextLine;
-resonControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Resonance&quot;</span>, <span class="cl">ControlSpec</span>( 0.1, 0.7 ), 
-    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\rq</span>, ez.value )}, 0.2 );
-    
-w.view.decorator.nextLine;
-balanceControl = <span class="cl">JEZNumber</span>( w, 400 @ 24, <span class="st">&quot;Balance&quot;</span>, <span class="sy">\bipolar</span>, 
-    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\bal</span>, ez.value )}, 0 );
-    
-w.view.decorator.nextLine;
-ampControl = <span class="cl">JEZNumber</span>(w, 400 @ 24, <span class="st">&quot;Amp&quot;</span>, <span class="cl">ControlSpec</span>( 0.ampdb, 1.ampdb, <span class="sy">\db</span> ), 
-    { <span class="kw">arg</span> ez; synth.set( <span class="sy">\amp</span>, ez.value.dbamp )}, -6 );
-
-
-<span class="cm">// set start button to zero upon a cmd-period</span>
-cmdPeriodFunc = { startButton.value = 0; synth = <span class="kw">nil</span> };
-<span class="cl">CmdPeriod</span>.add( cmdPeriodFunc );
-
-<span class="cm">// stop the sound when window closes and remove cmdPeriodFunc.</span>
-w.onClose = {
-    synth.free;
-    <span class="cl">CmdPeriod</span>.remove( cmdPeriodFunc );
-};
+    stop = stop + 1;
+    if( (((stop - lastStop) % 60) == 0) || (stop == names.size), {
+        if( (stop &lt; names.size) &amp;&amp; (start &gt; lastStop), {
+            stop = start;
+        });
+        c = <span class="cl">JSCCompositeView</span>( t, t.bounds );
+        c.decorator = f = <span class="cl">FlowLayout</span>( c.bounds, 4 @&#160;4, 4 @ 2 );
+        range = names.copyRange( lastStop, stop - 1 );
+        t.setTitleAt( t.numTabs - 1, range.first.first ++ <span class="st">&quot; ... &quot;</span> ++ range.last.first );
+        range.do({ <span class="kw">arg</span> name, i; <span class="kw">var</span> font;
+            font = <span class="cl">JFont</span>( name, 13 );
+            
+            <span class="cl">JSCStaticText</span>( c, <span class="cl">Rect</span>( 0, 0, 56, fontSize + 7 ))
+                .font_( font )
+                .string_( name );
+        
+            <span class="cl">JSCButton</span>( c, <span class="cl">Rect</span>( 0, 0, 140, fontSize + 7 ))
+                .font_( font )
+                .states_([[ name&#160;]])
+                .action_({ font.postcs });
+            
+            <span class="cl">JSCNumberBox</span>( c, <span class="cl">Rect</span>( 0, 0, 56, fontSize + 7 ))
+                .font_( font )
+                .object_( pi );
+                
+            if( (i = i + 1) % 3 == 0, { f.nextLine });
+        });
+        lastStop = stop;
+    });
+});
+t.value = 0;
+w.front;
 )
 
-</pre>
+</PRE>
 <h2>Logical Names and Variants</h2>
 <P>Since it typically depends on your platform which fonts are available, convenient methods are provided to access some standard types of fonts and to get variants of fonts:</P>
 <pre>

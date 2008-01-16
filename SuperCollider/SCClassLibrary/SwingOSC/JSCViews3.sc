@@ -303,66 +303,66 @@ JSCTabbedPane : JSCContainerView {
 //	public void setMnemonicAt(int tabIndex, int mnemonic)
 }
 
-// !!! DEPRECATED !!!
-JSCScrollPane : JSCContainerView {
-	horizontalScrollBarShown_ { arg type;
-		this.setProperty( \hPolicy, type );
-	}
-
-	horizontalScrollBarShown { ^this.getProperty( \hPolicy ); }
-
-	verticalScrollBarShown_ { arg type;
-		this.setProperty( \vPolicy, type );
-	}
-
-	verticalScrollBarShown { ^this.getProperty( \vPolicy ); }
-	
-	add { arg child;
-		var bndl;
-
-		if( children.size > 0, {
-			MethodError( "Cannot add more than one child", this ).throw;
-		});
-
-		children = children.add( child );
-		bndl = List.new;
-		bndl.add([ '/method', this.id, \setViewportView,
-				'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
-//		if( this.prGetWindow.visible, {
-//			bndl.add([ '/method', this.id, \revalidate ]);
+//// !!! DEPRECATED !!!
+// JSCScrollPane : JSCContainerView {
+//	horizontalScrollBarShown_ { arg type;
+//		this.setProperty( \hPolicy, type );
+//	}
+//
+//	horizontalScrollBarShown { ^this.getProperty( \hPolicy ); }
+//
+//	verticalScrollBarShown_ { arg type;
+//		this.setProperty( \vPolicy, type );
+//	}
+//
+//	verticalScrollBarShown { ^this.getProperty( \vPolicy ); }
+//	
+//	add { arg child;
+//		var bndl;
+//
+//		if( children.size > 0, {
+//			MethodError( "Cannot add more than one child", this ).throw;
 //		});
-		server.listSendBundle( nil, bndl );
-	}
-
-	prSendProperty { arg key, value;
-		key	= key.asSymbol;
-
-		// fix keys
-		case
-		{ key === \hPolicy }
-		{
-			key 		= \horizontalScrollBarPolicy;
-			value	= [ \auto, \never, \always ].indexOf( value ) + 30;
-		}
-		{ key === \vPolicy }
-		{
-			key 		= \verticalScrollBarPolicy;
-			value	= [ \auto, \never, \always ].indexOf( value ) + 20;
-		};
-		^super.prSendProperty( key, value );
-	}
-	
-	prRemoveChild { arg child;
-		children.remove( child );
-		server.sendMsg( '/method', this.id, \setViewportView, '[', '/ref', \null, ']' );
-	}
-
-	prSCViewNew {
-		^super.prSCViewNew([
-			[ '/local', this.id, '[', '/new', "javax.swing.JScrollPane", ']' ]
-		]);
-	}
-}
+//
+//		children = children.add( child );
+//		bndl = List.new;
+//		bndl.add([ '/method', this.id, \setViewportView,
+//				'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
+////		if( this.prGetWindow.visible, {
+////			bndl.add([ '/method', this.id, \revalidate ]);
+////		});
+//		server.listSendBundle( nil, bndl );
+//	}
+//
+//	prSendProperty { arg key, value;
+//		key	= key.asSymbol;
+//
+//		// fix keys
+//		case
+//		{ key === \hPolicy }
+//		{
+//			key 		= \horizontalScrollBarPolicy;
+//			value	= [ \auto, \never, \always ].indexOf( value ) + 30;
+//		}
+//		{ key === \vPolicy }
+//		{
+//			key 		= \verticalScrollBarPolicy;
+//			value	= [ \auto, \never, \always ].indexOf( value ) + 20;
+//		};
+//		^super.prSendProperty( key, value );
+//	}
+//	
+//	prRemoveChild { arg child;
+//		children.remove( child );
+//		server.sendMsg( '/method', this.id, \setViewportView, '[', '/ref', \null, ']' );
+//	}
+//
+//	prSCViewNew {
+//		^super.prSCViewNew([
+//			[ '/local', this.id, '[', '/new', "javax.swing.JScrollPane", ']' ]
+//		]);
+//	}
+// }
 
 JSCScrollBar : JSCControlView {
 	var acResp;	// OSCpathResponder for action listening

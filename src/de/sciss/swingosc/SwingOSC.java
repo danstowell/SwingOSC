@@ -46,6 +46,7 @@
  *					- uses new OSCClient class
  *		08-Aug-06	- uses custom class loader ; added /classes command
  *		01-Oct-06	uses new NetUtil version
+ *		18-Jan-08	fixed checkMethodArgs to put lower priority to Object assignment
  */
  
 package de.sciss.swingosc;
@@ -82,7 +83,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.57, 25-Nov-07
+ *  @version	0.57, 16-Jan-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -491,11 +492,9 @@ implements OSCListener, OSCProcessor, Runnable
 		for( int j = 0, k = msgArgOff; j < signature.length; j++, k++ ) {
 			type		= signature[ j ];
 			msgArg	= msgArgs[ k ];
-			if( (msgArg == null) || (type.isAssignableFrom( msgArg.getClass() ))) {
+			if( msgArg == null ) {
 				result[ j ] = msgArg;
-				match	   += 4;	// direct assignment always preferred
-			} else if( type.equals( String.class )) {
-				result[ j ]  = msgArg.toString();
+				match	   += 4;
 			} else if( type.isPrimitive() ) {
 				if( msgArg instanceof Number ) {
 					if( type.equals( Boolean.TYPE )) {
@@ -571,7 +570,18 @@ implements OSCListener, OSCProcessor, Runnable
 						return -1;
 					}
 				}
-			} else {	// not assignable
+			} else if( type.equals( String.class )) {
+				if( msgArg instanceof String ) {
+					result[ j ]	= msgArg;
+					match      += 4;
+				} else {
+					result[ j ]	= msgArg.toString();
+				}
+			// direct assignment always preferred
+			} else if( type.isAssignableFrom( msgArg.getClass() )) {
+				result[ j ] = msgArg;
+				match	   += type.equals( Object.class ) ? 2 : 4;
+			} else { // not assignable
 				return -1;
 			}
 		} // for signature types

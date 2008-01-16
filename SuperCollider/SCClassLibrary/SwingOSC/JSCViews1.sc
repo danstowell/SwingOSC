@@ -89,7 +89,7 @@ JSCContainerView : JSCView { // abstract class
 		if( child.id.notNil, { 
 			bndl = Array( 4 );
 			bndl.add([ '/method', this.id, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
+					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', 0 ]);
 			if( this.prAllVisible, {
 //				if( this.id != vpID, {
 					bndl.add([ '/method', this.id, \revalidate ]);
@@ -99,6 +99,7 @@ JSCContainerView : JSCView { // abstract class
 //				});
 				bndl.add([ '/method', child.id, \repaint ]);
 			});
+//			bndl.postcs;
 			server.listSendBundle( nil, bndl );
 		});
 	}
@@ -343,7 +344,7 @@ JSCScrollTopView : JSCTopView {
 		if( child.id.notNil, { 
 			bndl = Array( 4 );
 			bndl.add([ '/method', vpID, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
+					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', 0 ]);
 			if( this.prAllVisible, {
 				bndl.add([ '/method', this.id, \validate ]);
 				bndl.add([ '/method', this.id, \revalidate ]);
@@ -491,7 +492,7 @@ JSCScrollView : JSCContainerView {
 		if( child.id.notNil, { 
 			bndl = Array( 4 );
 			bndl.add([ '/method', vpID, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']' ]);
+					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', 0 ]);
 			if( this.prAllVisible, {
 				bndl.add([ '/method', this.id, \validate ]);
 				bndl.add([ '/method', this.id, \revalidate ]);
