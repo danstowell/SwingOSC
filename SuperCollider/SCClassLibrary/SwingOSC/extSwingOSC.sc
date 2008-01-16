@@ -145,6 +145,7 @@
 //	prSetScBounds {}
 	prInvalidateBounds {}
 	prInvalidateAllVisible {}
+	prVisibilityChange {}
 	protDraw {}
 	id { ^nil }	// this is detected by JSCContainerView!
 }
