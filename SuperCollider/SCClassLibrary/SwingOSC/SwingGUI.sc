@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Jan-08
+ *	@version		0.57, 17-Jan-08
  */
 SwingGUI {
 	classvar extraClasses;
@@ -41,7 +41,7 @@ SwingGUI {
 		Class.initClassTree( Event );
 		extraClasses = Event.new;
 		Class.initClassTree( GUI );
-		if( GUI.respondsTo( \add ), { GUI.add( this )});
+		GUI.add( this );
 	}
 
 	// ----------------- public class methods -----------------
@@ -51,6 +51,13 @@ SwingGUI {
 	*put { arg key, object;
 		extraClasses.put( key, object );
 	}
+
+	///////////////// Common -> GUI /////////////////
+
+	*freqScope { ^JFreqScope }
+	*freqScopeView { ^JSCFreqScope }
+	*scopeView { ^JSCScope }
+	*stethoscope { ^JStethoscope }
 
 	///////////////// Common -> GUI -> Base /////////////////
 
@@ -80,16 +87,13 @@ SwingGUI {
 	*movieView { ^JSCMovieView }
 	*textView { ^JSCTextView }
 //	*quartzComposerView { ^JSCQuartzComposerView }
-	*scopeView { ^JSCScope }
-	*freqScope { ^JFreqScope }
-	*freqScopeView { ^JSCFreqScope }
+	*scrollView { ^JSCScrollView }
 	*ezSlider { ^JEZSlider }
 	*ezNumber { ^JEZNumber }
-	*stethoscope { ^JStethoscope }
 	
 	*font { ^JFont }
 	*pen { ^JPen }
-			
+	
 	///////////////// Common -> Audio /////////////////
 
 	*mouseX { ^JMouseX }

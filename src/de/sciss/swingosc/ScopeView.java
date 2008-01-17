@@ -444,13 +444,13 @@ implements OSCListener, ActionListener
 	{
 		super.paintComponent( g );
 		
-		final Graphics2D			g2		= (Graphics2D) g;
+		final Graphics2D		g2		= (Graphics2D) g;
 		final int				w		= getWidth();
 		final int				h		= getHeight();
-		final AffineTransform		atOrig	= g2.getTransform();
-		final Stroke				strkOrig	= g2.getStroke();
+		final AffineTransform	atOrig	= g2.getTransform();
+		final Stroke			strkOrig= g2.getStroke();
 		final float				sy;
-		float					offY		= 0f;
+		float					offY	= 0f;
 		int						x, y;
 	
 		g2.setColor( getBackground() );

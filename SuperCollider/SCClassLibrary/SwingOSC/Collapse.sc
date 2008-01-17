@@ -32,10 +32,10 @@
 /**
  *	The Collapse class is useful for deferring actions to a certain clock
  *	or scheduling them while reducing system load to a minimum. The Collapse
- *	takes a function to be deferred, a delta time span and a clock
+ *	constructor takes a function to be deferred, a delta time span and a clock
  *	to defer to. An action is deferred by calling the defer method with
  *	arbitrary arguments. The function's value method is called with these
- *	arguments after the schedule delay. When defer is called before the
+ *	arguments after the scheduled delay. When defer is called before the
  *	function was executed, the function is deferred again by the schedule delay
  *	and the pending call is cancelled. The new arguments overwrite the previous
  *	(pending) arguments.
