@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<P>This class is meant as an emulation of SCView. last mod: 25-nov-07 sciss
+<P>This class is meant as an emulation of SCView. last mod: 18-Jan-08 sciss
 </p>
 <table>
 <!-- <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -226,7 +226,7 @@ c.canFocus_( <span class="kw">false</span> );	<span class="cm">// cannot be focu
 c.hasFocus;	<span class="cm">// --&gt; false</span>
 
 </pre>
-<h2>Instance methods : refresh</h2>
+<!-- <h2>Instance methods : refresh</h2>
 <P>Under certain circumstances a view will not automatically update its appearance. This forces a redraw. This behaviour is different in Cocoa and SwingOSC ; in SwingOSC generally you need to call refresh
 only in a very few cases ; one case (shown below) is when you open a window containing buttons to which no states have been yet assigned:
 </P>
@@ -249,7 +249,7 @@ c.refresh;
 <span class="cm">//needs separate refresh</span>
 d.refresh;
 
-</pre>
+</pre> -->
 <h2>Drag and Drop</h2>
 <P>
 Each view subclass has a default object that it exports when dragged from.  For sliders its the value of the slider, for lists it is the currently selected numeric index etc.  

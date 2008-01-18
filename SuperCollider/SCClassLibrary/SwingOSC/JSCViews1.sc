@@ -27,11 +27,12 @@
  */
 
 /**
- *	@version		0.57, 16-Jan-07
+ *	@version		0.57, 18-Jan-07
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
 	var <children, <>decorator;
+	var pendingValidation = false;
 			
 	// ----------------- public instance methods -----------------
 
@@ -78,29 +79,45 @@ JSCContainerView : JSCView { // abstract class
 
 	// ----------------- private instance methods -----------------
 
-	prViewPortID { ^id }
+	prViewPortID { ^id }	// actually this refers to a viewport-view!! we should fuse that with the containerID concept XXX
 	prChildOrder { ^-1 }
 
+	prGetRefTopLeft {
+// more efficient but too difficult to maintain
+//		var refTopLeft;
+//		var pTopLeft;
+//		if( scBounds.isNil, {
+//			// need to revalidate bounds
+//			pTopLeft		= parent.prGetRefTopLeft;
+//			refTopLeft	= jBounds.moveBy( pTopLeft.x, pTopLeft.y );
+//			scBounds		= jinsets.addTo( refTopLeft );
+//			^refTopLeft;
+//		}, {
+//			^(scBounds.leftTop - jinsets.leftTop);
+//		});
+		^(this.bounds.leftTop - jinsets.leftTop);
+	}
+
 	add { arg child;
-		var bndl, vpID = this.prViewPortID;
+		var bndl, vpID;
 		
 		children = children.add( child );
 		if( decorator.notNil, { decorator.place( child )});
 
-		if( child.id.notNil, { 
+		if( child.id.notNil, {
+			vpID = this.prViewPortID;
 			bndl = Array( 4 );
-			bndl.add([ '/method', this.id, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', this.prChildOrder ]);
+			bndl.add([ '/method', vpID, \add, '[', '/ref', child.prContainerID, ']', this.prChildOrder ]);
 			if( this.prAllVisible, {
-//				if( this.id != vpID, {
-					bndl.add([ '/method', this.id, \revalidate ]);
-//					bndl.add([ '/method', this.id, \revalidate ]);
-//				}, {
-//					bndl.add([ '/method', vpID, \revalidate ]);
-//				});
+				if( this.id != vpID, {
+					bndl.add([ '/method', vpID, \validate ]);
+				});
+				bndl.add([ '/method', this.id, \revalidate ]);
 				bndl.add([ '/method', child.id, \repaint ]);
+				pendingValidation = false;
+			}, {
+				pendingValidation = true;
 			});
-//			bndl.postcs;
 			server.listSendBundle( nil, bndl );
 		});
 	}
@@ -120,29 +137,62 @@ JSCContainerView : JSCView { // abstract class
 		});
 	}
 
-	prVisibilityChange {
-//		[ this, "prVisibilityChange", "children=", children ].postln;
+	prVisibilityChange { arg pre, post;
+		var vpID;
+		if( pendingValidation, {
+			if( this.prAllVisible, {
+				vpID = this.prViewPortID;
+				if( this.id != vpID, {
+					post.add([ '/method', vpID, \validate ]);
+				});
+				post.add([ '/method', this.id, \revalidate ]);
+				post.add([ '/method', this.id, \repaint ]);
+				pendingValidation = false;
+			});
+		});
 		children.do({ arg child;
-//			[ this, "prVisibilityChange", "->", child ].postln;
-			child.prVisibilityChange;
+			child.prVisibilityChange( pre, post );
 		});
 	}
 
 	prRemoveChild { arg child;
-		var bndl, vpID = this.prViewPortID;
+		var bndl, vpID;
 		
 		children.remove( child );
-		bndl = Array( 3 );
-		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
-			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
+		bndl = Array( 4 );
+		vpID = this.prViewPortID;
+		bndl.add([ '/method', vpID, \remove, '[', '/ref', child.prContainerID, ']' ]);
 		if( this.prAllVisible, {
+			if( this.id != vpID, {
+				bndl.add([ '/method', vpID, \validate ]);
+			});
 			bndl.add([ '/method', this.id, \revalidate ]);
 			bndl.add([ '/method', this.id, \repaint ]);
+			pendingValidation = false;
+		}, {
+			pendingValidation = true;
 		});
 		server.listSendBundle( nil, bndl );
 		// ... decorator replace all
 	}
 	//bounds_  ... replace all
+
+	prMoveChild { arg bndl, child;
+		var vpID;
+		if( child.prAllVisible, {
+			vpID = this.prViewPortID;
+			if( this.id != vpID, {
+				bndl.add([ '/method', vpID, \validate ]);
+			});
+			bndl.add([ '/method', this.id, \revalidate ]);
+			bndl.add([ '/method', child.id, \repaint ]);
+			pendingValidation = false;
+		}, {
+			pendingValidation = true;
+		});
+	}
+
+	prVisibleChild {}
 
 	prClose { arg preMsg, postMsg;
 		super.prClose( preMsg, postMsg );
@@ -204,6 +254,33 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 	
 	// only in construction mode, handled internally
 	canReceiveDrag { ^currentDrag.isKindOf( Class )}
+
+//	// bug: visible_( false ) doesn't properly refresh the view ...
+//	visible_ { arg bool;
+//		var bndl; //, cntID, tempID;
+//		if( visible != bool, {
+//			visible = bool;	// must be set before calling prVisiblityChange
+//			this.prInvalidateAllVisible;
+//			bndl = List.new;
+//			this.prVisibilityChange( bndl );
+////			cntID = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
+//			bndl.add([ '/set', this.id, \visible, visible ]);
+////			if( visible, {
+////				bndl.add([ '/methodr', '[', '/method', this.id, \getParent, ']', \repaint ]);
+////			}, {
+////				tempID = server.nextNodeID;
+////				bndl.add([ '/local', tempID, '[', '/new', "javax.swing.JPanel", ']' ]);
+////				bndl.add([ '/set', this.prGetWindow.id, \contentPane, '[', '/ref', tempID, ']' ]);
+////				bndl.add([ '/method', tempID, \revalidate ]);
+////				bndl.add([ '/set', this.prGetWindow.id, \contentPane, '[', '/ref', this.id, ']' ]);
+////			});
+//////			bndl.add([ '/methodr', '[', '/method', this.prGetWindow.id, \getRootPane, ']', \repaint ]);
+////			bndl.add([ '/methodr', '[', '/method', cntID, \getParent, ']', \validate ]);
+////			bndl.add([ '/methodr', '[', '/method', cntID, \getParent, ']', \repaint ]);
+//			bndl.add([ '/method', this.id, \repaint ]);
+//			server.listSendBundle( nil, bndl );
+//		});
+//	}
 
 	// ----------------- private class methods -----------------
 
@@ -340,39 +417,22 @@ JSCScrollTopView : JSCTopView {
 
 	// ----------------- private instance methods -----------------
 
-	add { arg child;
-		var bndl, vpID = this.prViewPortID;
-		
-		children = children.add( child );
-		if( decorator.notNil, { decorator.place( child )});
-
-		if( child.id.notNil, { 
-			bndl = Array( 4 );
-			bndl.add([ '/method', vpID, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', 0 ]);
-			if( this.prAllVisible, {
-				bndl.add([ '/method', this.id, \validate ]);
-				bndl.add([ '/method', this.id, \revalidate ]);
-				bndl.add([ '/method', child.id, \repaint ]);
-			});
-			server.listSendBundle( nil, bndl );
-		});
+	prGetRefTopLeft {
+		^Point( 0, 0 );
 	}
 
-	prRemoveChild { arg child;
-		var bndl, vpID = this.prViewPortID;
-		
-		children.remove( child );
-		bndl = Array( 4 );
-		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
-			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
+	prVisibleChild { arg pre, post, child;
+		var vpID;
 		if( this.prAllVisible, {
-			bndl.add([ '/method', this.id, \validate ]);
-			bndl.add([ '/method', this.id, \revalidate ]);
-			bndl.add([ '/method', this.id, \repaint ]);
+			vpID = this.prViewPortID;
+			if( this.id != vpID, {
+				post.add([ '/method', vpID, \validate ]);
+			});
+			post.add([ '/method', this.id, \revalidate ]);
+			pendingValidation = false;
+		}, {
+			pendingValidation = true;
 		});
-		server.listSendBundle( nil, bndl );
-		// ... decorator replace all
 	}
 
 	prClose { arg preMsg, postMsg;
@@ -386,7 +446,7 @@ JSCScrollTopView : JSCTopView {
 		chResp	= OSCpathResponder( server.addr, [ '/change', this.id ], { arg time, resp, msg;
 			var newVal;
 		
-			// [ /change, 1001, performed, viewX, ..., viewY, ..., viewWidth, ..., viewHeight, ... ]
+			// [ /change, 1001, performed, viewX, ..., viewY, ..., innerWidth, ..., innerHeight, ... ]
 
 			viewW = msg[8];
 			viewH = msg[10];
@@ -399,7 +459,7 @@ JSCScrollTopView : JSCTopView {
 		vpID = "vp" ++ this.id;
 		^super.prSCViewNew([[ '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']',
 			"ch" ++ this.id,
-			'[', '/new', "de.sciss.swingosc.ChangeResponder", this.id, '[', '/array', \viewX, \viewY, \viewWidth, \viewHeight, ']', ']' ]]);
+			'[', '/new', "de.sciss.swingosc.ChangeResponder", this.id, '[', '/array', \viewX, \viewY, \innerWidth, \innerHeight, ']', ']' ]]);
 	}
 
 //	prInit { arg ... args;
@@ -408,7 +468,7 @@ JSCScrollTopView : JSCTopView {
 //		vpID = "vp" ++ this.id;
 //		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']',
 //			"ac" ++ this.id,
-//			'[', '/new', "de.sciss.swingosc.ChangeResponder", this.id, '[', '/array', \viewX, \viewY, \viewWidth, \viewHeight ']', ']' );
+//			'[', '/new', "de.sciss.swingosc.ChangeResponder", this.id, '[', '/array', \viewX, \viewY, \innerWidth, \innerHeight ']', ']' );
 //	}
 
 	prViewPortID { ^vpID }
@@ -488,41 +548,24 @@ JSCScrollView : JSCContainerView {
 	
 	// ----------------- private instance methods -----------------
 
-	add { arg child;
-		var bndl, vpID = this.prViewPortID;
-		
-		children = children.add( child );
-		if( decorator.notNil, { decorator.place( child )});
-
-		if( child.id.notNil, { 
-			bndl = Array( 4 );
-			bndl.add([ '/method', vpID, \add,
-					'[', '/ref', child.prIsInsideContainer.if({ "cn" ++ child.id }, child.id ), ']', 0 ]);
-			if( this.prAllVisible, {
-				bndl.add([ '/method', this.id, \validate ]);
-				bndl.add([ '/method', this.id, \revalidate ]);
-				bndl.add([ '/method', child.id, \repaint ]);
-			});
-			server.listSendBundle( nil, bndl );
-		});
+	prGetRefTopLeft {
+		^Point( 0, 0 );
 	}
 
-	prRemoveChild { arg child;
-		var bndl, vpID = this.prViewPortID;
-		
-		children.remove( child );
-		bndl = Array( 4 );
-		bndl.add([ '/method', vpID, \remove, '[', '/ref', ]  ++
-			child.prIsInsideContainer.if({[ "cn" ++ child.id ]}, {[ child.id ]}) ++ [ ']' ]);
+	prVisibleChild { arg pre, post, child;
+		var vpID;
 		if( this.prAllVisible, {
-			bndl.add([ '/method', this.id, \validate ]);
-			bndl.add([ '/method', this.id, \revalidate ]);
-			bndl.add([ '/method', this.id, \repaint ]);
+			vpID = this.prViewPortID;
+			if( this.id != vpID, {
+				post.add([ '/method', vpID, \validate ]);
+			});
+			post.add([ '/method', this.id, \revalidate ]);
+			pendingValidation = false;
+		}, {
+			pendingValidation = true;
 		});
-		server.listSendBundle( nil, bndl );
-		// ... decorator replace all
 	}
-	
+
 	prClose { arg preMsg, postMsg;
 		chResp.remove;
 		^super.prClose( preMsg ++
@@ -534,7 +577,7 @@ JSCScrollView : JSCContainerView {
 		chResp	= OSCpathResponder( server.addr, [ '/change', this.id ], { arg time, resp, msg;
 			var newVal;
 		
-			// [ /change, 1001, performed, viewX, ..., viewY, ..., viewWidth, ..., viewHeight, ... ]
+			// [ /change, 1001, performed, viewX, ..., viewY, ..., innerWidth, ..., innerHeight, ... ]
 
 			viewW = msg[8];
 			viewH = msg[10];
@@ -549,7 +592,7 @@ JSCScrollView : JSCContainerView {
 			[ '/local', vpID, '[', '/new', "de.sciss.swingosc.ContentPane", 0, ']',
 			  this.id, '[', '/new', "de.sciss.swingosc.ScrollPane", '[', '/ref', vpID, ']', ']',
  			  "ch" ++ this.id, '[', '/new', "de.sciss.swingosc.ChangeResponder", this.id,
- 			  	'[', '/array', \viewX, \viewY, \viewWidth, \viewHeight, ']', ']' ]]);
+ 			  	'[', '/array', \viewX, \viewY, \innerWidth, \innerHeight, ']', ']' ]]);
 	}
 
 	prInit { arg ... args;
@@ -1559,6 +1602,7 @@ JSCListView : JSCControlView {
 	var <allowsDeselection = false;
 	
 	var acResp;	// listens to list selection changes
+	var cnID;
 	
 	// ----------------- public class methods -----------------
 
@@ -1688,9 +1732,10 @@ JSCListView : JSCControlView {
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prIsInsideContainer { ^true }
+	prContainerID { ^cnID }
 
 	prSCViewNew {
+		cnID = "cn" ++this.id;
 		properties.put( \value, 0 );
 		
 		acResp = OSCpathResponder( server.addr, [ '/list', this.id ], { arg time, resp, msg;
@@ -1958,7 +2003,6 @@ JSCAbstractUserView : JSCView {
 	}
 	
 	prVisibilityChange {
-//		[ this, "prVisibilityChange", pendingDraw ].postln;
 		if( pendingDraw, { this.protDraw });
 	}
 
@@ -1973,10 +2017,11 @@ JSCAbstractUserView : JSCView {
 
 	protDraw {
 		if( drawFunc.notNil and: { this.prAllVisible }, {
-			// cmpID == nil --> don't repaint, because this
-			// will be done already by JSCWindow, and hence
-			// would slow down refresh unnecessarily (???)
-			JPen.protRefresh( drawFunc, this, server, penID, nil );
+//			// cmpID == nil --> don't repaint, because this
+//			// will be done already by JSCWindow, and hence
+//			// would slow down refresh unnecessarily (???)
+//			JPen.protRefresh( drawFunc, this, server, penID, nil );
+			JPen.protRefresh( drawFunc, this, server, penID, this.id );
 		});
 	}
 }
@@ -2074,6 +2119,8 @@ JSCTextView : JSCView {
 	
 	var <string = "";
 	var selStart = 0, selStop = 0;
+	
+	var cnID;
 
 //	mouseDown { arg clickPos;
 ////		this.focus(true);
@@ -2209,9 +2256,10 @@ JSCTextView : JSCView {
 
 	// ----------------- private instance methods -----------------
 	
-	prIsInsideContainer { ^true }
+	prContainerID { ^cnID }
 
 	prSCViewNew {
+		cnID = "cn" ++this.id;
 //		properties.put( \value, 0 );
 		
 		txResp = OSCpathResponder( server.addr, [ '/doc', this.id ], { arg time, resp, msg;

@@ -37,7 +37,7 @@ import javax.swing.event.ChangeListener;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 15-Jan-08
+ *	@version	0.57, 18-Jan-08
  */
 public class ScrollPane
 extends JScrollPane
@@ -71,16 +71,30 @@ extends JScrollPane
 		return getViewport().getViewPosition().y;
 	}
 
+	// this is just the visible width!
 	public int getViewWidth()
 	{
 		return getViewport().getExtentSize().width;
 	}
 
+	// this is just the visible height!
 	public int getViewHeight()
 	{
 		return getViewport().getExtentSize().height;
 	}
 	
+	// this is max( visible width, full view width)
+	public int getInnerWidth()
+	{
+		return getViewport().getViewSize().width;
+	}
+
+	// this is max( visible height, full view height)
+	public int getInnerHeight()
+	{
+		return getViewport().getViewSize().height;
+	}
+
 	public void addChangeListener( ChangeListener l )
 	{
 		getViewport().addChangeListener( l );

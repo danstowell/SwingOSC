@@ -32,7 +32,7 @@
  *	It specifies the space that a container must leave at each of its edges. 
  *
  *	@author	Hanns Holger Rutz
- *	@version	0.57, 12-Jan-08
+ *	@version	0.57, 18-Jan-08
  */
 Insets {
 	var <top, <left, <bottom, <right;
@@ -52,6 +52,10 @@ Insets {
 	
 	subtractFrom { arg rect;
 		^if( allZero, rect, { rect.insetAll( left.neg, top.neg, right.neg, bottom.neg )});
+	}
+	
+	leftTop {
+		^Point( left, top );
 	}
 
 	// ----------------- private instance methods -----------------

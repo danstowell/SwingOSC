@@ -307,6 +307,7 @@ JPen {
 		});
 		// these are 56 additional bytes:
 		bndl.add([ '/method', penID, \stopRec ]);
+//		[ "cmpID", cmpID ].postln;
 		if( cmpID.notNil, { bndl.add([ '/method', cmpID, \repaint ])});
 
 //("FLUSHING FINAL LEN = "++(len+56)).postln;

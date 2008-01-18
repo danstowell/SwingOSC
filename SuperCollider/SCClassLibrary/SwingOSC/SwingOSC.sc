@@ -24,16 +24,17 @@
  *
  *
  *	Changelog
- *	- 06-Mar-06	added fixes by AdC
- *	- 11-Jun-06	removed slowOSC stuff (fixed in SC)
- *	- 01-Oct-06	added SwingOptions and TCP mode
+ *		06-Mar-06		added fixes by AdC
+ *		11-Jun-06		removed slowOSC stuff (fixed in SC)
+ *		01-Oct-06		added SwingOptions and TCP mode
+ *		18-Jan-08		added deathBounces to aliveThread
  */
 
 /**
  *	The client side representation of a SwingOSC server
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Jan-08
+ *	@version		0.57, 18-Jan-08
  */
 SwingOptions
 {
@@ -100,8 +101,7 @@ SwingOSC : Model
 
 	var <screenWidth, <screenHeight;
 	
-	// not used now
-	var alive = false, booting = false, aliveThread, statusWatcher;
+	var booting = false, aliveThread, statusWatcher;
 
 	var helloResp;
 
@@ -454,21 +454,28 @@ SwingOSC : Model
 		condition.wait;
 	}
 
-	startAliveThread { arg delay = 4.0, period = 0.7;
+	startAliveThread { arg delay = 2.0, period = 0.7, deathBounces = 4;
+		var lives = deathBounces;
 		^aliveThread ?? {
-			this.addStatusWatcher;
+			statusWatcher = OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
+				lives = deathBounces;
+//				alive = true;
+				this.serverRunning = true;
+			}).add;	
 			aliveThread = {
 				// this thread polls the server to see if it is alive
 				delay.wait;
 				loop {
-					if( serverBooting and: { (options.protocol === \tcp) and: { addr.isConnected.not; }; }, {
-						try { this.connect; };
+					if( serverBooting and: { (options.protocol === \tcp) and: { addr.isConnected.not }}, {
+						try { this.connect };
 					}, {
 						this.status;
 					});
+					lives = lives - 1;
 					period.wait;
-					this.serverRunning = alive;
-					alive = false;
+					if( lives <= 0, {
+						this.serverRunning = false;
+					});
 				};
 			}.fork( clock );
 			aliveThread;
@@ -532,8 +539,13 @@ SwingOSC : Model
 //		cmd = program + "-u" + addr.port + "-i" + "-L"; // + "-h 127.0.0.1:57120";
 		
 		cmd = program ++ options.asOptionsString( addr.port );
-		unixCmd( cmd );
 		("booting " ++ cmd).inform;
+//		{
+//			var result;
+//			result = systemCmd( cmd );
+//			("SwingOSC exited (" ++ result ++ ")").postln;
+//		}.fork( clock );
+		unixCmd( cmd );
 	}
 	
 	reboot { arg func; // func is evaluated when server is off
@@ -580,7 +592,7 @@ SwingOSC : Model
 		this.sendMsg( '/quit' );
 		this.disconnect;	// try to prevent SC crash, this might be too late though ...
 		"/quit sent\n".inform;
-		alive			= false;
+//		alive			= false;
 		serverBooting 	= false;
 		this.serverRunning	= false;
 	}
@@ -675,13 +687,13 @@ SwingOSC : Model
 		this.initTree({ serverRunning = true; this.changed( \serverRunning )});
 	}
 
-	addStatusWatcher {
-		statusWatcher = 
-			OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
-				alive = true;
-				this.serverRunning_( true );
-			}).add;	
-	}
+//	addStatusWatcher {
+//		statusWatcher = 
+//			OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
+//				alive = true;
+//				this.serverRunning_( true );
+//			}).add;	
+//	}
 	
 	// needs to be called inside a routine!
 	prRetrieveScreenBounds {

@@ -1,4 +1,4 @@
-// adapted for SwingOSC ; last mod : 03-feb-07 sciss
+// adapted for SwingOSC ; last mod : 11-dec-07 sciss
 
 // blackrain - 1105
 JKnob {
@@ -22,7 +22,7 @@ JKnob {
 
 		knob = JSCUserView.new(parent, bounds)
 			.focusVisible_( false )
-			.keyDownFunc_({arg me, key, modifiers, unicode;
+			.keyDownAction_({arg me, key, modifiers, unicode;
 				keyDownFunc.value(key, modifiers, unicode);
 			})
 			.mouseOverAction_({arg v, x, y; this.mouseOverAction.value(this, x, y); })

@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.57, 16-Jan-08
+ *	@version		0.57, 18-Jan-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -63,7 +63,7 @@ JSCView {  // abstract class
 	
 	var clpseMouseMove, clpseMouseDrag;
 
-	var jinsets, scBounds, <jBounds, <allVisible;
+	var jinsets, scBounds, jBounds, allVisible;
 	
 	*initClass {
 		unicodeMap = IdentityDictionary.new;
@@ -104,25 +104,26 @@ JSCView {  // abstract class
 	asView { ^this }
 	
 	bounds {
-		var pb;
+		var pTopLeft;
 		if( scBounds.isNil, {
 			// need to revalidate bounds
-			pb		= parent.prGetJInsets.subtractFrom( parent.bounds );  // note: this recursively calls bounds
-			scBounds = jinsets.addTo( jBounds.moveBy( pb.left, pb.top ));
+			pTopLeft	= parent.prGetRefTopLeft;
+			scBounds	= jinsets.addTo( jBounds.moveBy( pTopLeft.x, pTopLeft.y ));
 		});
 		^scBounds.copy;
 	}
 
 	bounds_ { arg rect;
-		var argBounds;
+		var argBounds, bndl, cnID = this.prContainerID;
 		jBounds	= this.prBoundsToJava( rect );
 		argBounds	= jBounds.asSwingArg;
-		if( this.prIsInsideContainer, {
-			server.sendBundle( nil, [ '/set', this.id, \bounds ] ++ argBounds,
-						          [ '/set', "cn" ++ this.id, \bounds ] ++ argBounds );
-		}, {
-			server.listSendMsg(['/set', this.id, \bounds ] ++ argBounds );
+		bndl		= Array( 5 );
+		bndl.add([ '/set', this.id, \bounds ] ++ argBounds );
+		if( this.id != cnID, {
+			bndl.add([ '/set', cnID, \bounds ] ++ argBounds );
 		});
+		if( parent.notNil, { parent.prMoveChild( bndl, this )});
+		server.listSendBundle( nil, bndl );
 		this.prInvalidateBounds;
 		scBounds = rect.copy;
 		// XXX CompositeView must move its children!!! sucky cocoa!!!
@@ -131,13 +132,17 @@ JSCView {  // abstract class
 //	visible { ^this.getProperty( \visible )}
 
 	visible_ { arg bool;
-//		this.setProperty( \visible, bool )}
+		var pre, post;
 		if( visible != bool, {
 			visible = bool;	// must be set before calling prVisiblityChange
 			this.prInvalidateAllVisible;
-			this.prVisibilityChange;
-			server.sendMsg( '/set', if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id }),
-				\visible, visible );
+			pre	= List.new;
+			post	= List.new;
+			this.prVisibilityChange( pre, post );
+			if( parent.notNil, { parent.prVisibleChild( pre, post, this )});
+			pre.add([ '/set', this.prContainerID, \visible, visible ]);
+			pre.addAll( post );
+			server.listSendBundle( nil, pre );
 		});
 	}
 	
@@ -306,7 +311,7 @@ JSCView {  // abstract class
 	}
 	
 	prClose { arg preMsg, postMsg;
-		var bndl;
+		var bndl, cnID = this.prContainerID;
 		
 		// nil.remove is allowed
 		keyResp.remove;
@@ -325,7 +330,7 @@ JSCView {  // abstract class
 		bndl.add([ '/free', "key" ++ this.id, "cmp" ++ this.id, this.id ] ++
 			dndResp.notNil.if([ "dnd" ++ this.id ]) ++
 			mouseResp.notNil.if([ "mse" ++ this.id ]) ++
-			this.prIsInsideContainer.if([ "cn" ++ this.id ]);
+			if( this.id != cnID, {[ cnID ]});
 		);
 		bndl.addAll( postMsg );
 		server.listSendBundle( nil, bndl );
@@ -335,7 +340,7 @@ JSCView {  // abstract class
 	}
 
 	prSCViewNew { arg preMsg, postMsg;
-		var bndl, argBounds;
+		var bndl, argBounds, cnID = this.prContainerID;
 		
 		if( jinsets.isNil, { jinsets = Insets.new });
 		
@@ -344,8 +349,8 @@ JSCView {  // abstract class
 		jBounds		= this.prBoundsToJava( scBounds );
 		argBounds		= jBounds.asSwingArg;
 		bndl.add([ '/set', this.id, \bounds ] ++ argBounds ++ [ \font, '[', '/ref', \font, ']' ]);
-		if( this.prIsInsideContainer, {
-			bndl.add([ '/set', "cn" ++ this.id, \bounds ] ++ argBounds );
+		if( this.id != cnID, {
+			bndl.add([ '/set', cnID, \bounds ] ++ argBounds );
 		});
 		if( this.prNeedsTransferHandler, {
 			this.prCreateDnDResponder( bndl );
@@ -512,7 +517,7 @@ JSCView {  // abstract class
 	}
 
 //	prSetScBounds { arg rect; scBounds = rect }
-	prGetJInsets { ^jinsets }
+//	prGetJInsets { ^jinsets }
 
 	// subclasses can override this to do special refreshes
 	prBoundsUpdated {}
@@ -669,7 +674,7 @@ JSCView {  // abstract class
 	
 //	prRemove { }
 
-	prIsInsideContainer { ^false }	// default: no
+	prContainerID { ^this.id }
 	
 	prGetDnDModifiers { ^2 }	// default: control key
 	
@@ -707,7 +712,7 @@ JSCView {  // abstract class
 		// fix keys
 		switch( key,
 			\resize, {
-				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
+				id = this.prContainerID;
 				if( value == 1, {
 					server.sendBundle( nil, [ '/method', id, \putClientProperty, "resize", '[', '/ref', \null, ']' ],
 								          [ '/method', id, \putClientProperty, "sizeref", '[', '/ref', \null, ']' ]);
@@ -725,21 +730,22 @@ JSCView {  // abstract class
 //				^nil; // not forwarded
 //			},
 			\minWidth, {
-				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });				server.listSendMsg([ '/method', id, \putClientProperty, "minWidth" ] ++ value.asSwingArg );
+				id = this.prContainerID;
+				server.listSendMsg([ '/method', id, \putClientProperty, "minWidth" ] ++ value.asSwingArg );
 				^nil;
 			},
 			\maxWidth, {
-				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
+				id = this.prContainerID;
 				server.listSendMsg([ '/method', id, \putClientProperty, "maxWidth" ] ++ value.asSwingArg );
 				^nil;
 			},
 			\minHeight, {
-				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
+				id = this.prContainerID;
 				server.listSendMsg([ '/method', id, \putClientProperty, "minHeight" ] ++ value.asSwingArg );
 				^nil;
 			},
 			\maxHeight, {
-				id = if( this.prIsInsideContainer, { "cn" ++ this.id }, { this.id });
+				id = this.prContainerID;
 				server.sendMsg([ '/method', id, \putClientProperty, "maxHeight" ] ++ value.asSwingArg );
 				^nil;
 			}
@@ -773,20 +779,20 @@ JSCView {  // abstract class
 
 	// contract: the returned rect is not identical to the one passed in
 	prBoundsToJava { arg rect;
-		var pb, pinsets;
+		var pTopLeft, pinsets;
 		
-		pb = parent.prGetJInsets.subtractFrom( parent.bounds );
+		pTopLeft = parent.prGetRefTopLeft;
 		// moveBy guarantees that we get a copy!
-		^jinsets.subtractFrom( rect ).moveBy( pb.left.neg, pb.top.neg );
+		^jinsets.subtractFrom( rect ).moveBy( pTopLeft.x.neg, pTopLeft.y.neg );
 	}
 
 	// contract: the returned rect is not identical to the one passed in
 	prBoundsFromJava { arg rect;
-		var pb;
+		var pTopLeft;
 		
-		pb = parent.prGetJInsets.subtractFrom( parent.bounds );
+		pTopLeft = parent.prGetRefTopLeft;
 		// moveBy guarantees that we get a copy!
-		^jinsets.addTo( rect ).moveBy( pb.left, pb.top );
+		^jinsets.addTo( rect ).moveBy( pTopLeft.x, pTopLeft.y );
 	}
 
 	protDraw {}

@@ -36,7 +36,7 @@ import javax.swing.JPanel;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 15-Jan-08
+ *	@version	0.57, 18-Jan-08
  */
 public class ContentPane
 extends JPanel // JComponent
@@ -48,6 +48,7 @@ extends JPanel // JComponent
 	{
 		super( new ColliderLayout( resizeActive ));
 		setOpaque( true );
+		this.putClientProperty( "origin", Boolean.TRUE ); // detected by Pen
 	}
 
 	public void setIcon( Icon icon )

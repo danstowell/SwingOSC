@@ -37,7 +37,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 16-Jan-08
+ *	@version		0.57, 18-Jan-08
  */
 JSCWindow : Object
 {
@@ -159,6 +159,7 @@ JSCWindow : Object
 	isClosed { ^dataptr.isNil }
 	
 	visible_ { arg bool;
+		var pre, post;
 		if( bool && wasOpened.not, {
 			^this.front;
 		});
@@ -168,9 +169,13 @@ JSCWindow : Object
 				pendingDraw = false;
 				JPen.protRefresh( drawHook, this, server, penID, this.id );
 			});
+			pre	= List.new;
+			post	= List.new;
 			view.prInvalidateAllVisible;
-			view.prVisibilityChange;
-			server.sendMsg( '/set', this.id, \visible, visible );
+			view.prVisibilityChange( pre, post );
+			pre.add([ '/set', this.id, \visible, visible ]);
+			pre.addAll( post );
+			server.listSendBundle( nil, pre );
 		});
 	}	
 
@@ -444,8 +449,8 @@ JSCWindow : Object
 //				viewID, '[', '/method', this.id, "getContentPane", ']' ]
 //		);
 		bndl = Array( 3 );
-		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ argBounds.asSwingArg ++ [ border, scroll, ']', ]);
-		if( resizable.not, { bndl.add([ '/set', this.id, \resizable, 0 ])});
+		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ argBounds.asSwingArg ++ [ border.not.binaryValue | (scroll.binaryValue << 1) |Ê(resizable.not.binaryValue << 2), ']', ]);
+//		if( resizable.not, { bndl.add([ '/set', this.id, \resizable, 0 ])});
 		bndl.add([ '/local', "ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.WindowResponder", this.id, ']',
 				viewID, '[', '/method', this.id, "getContentPane", ']' ]);

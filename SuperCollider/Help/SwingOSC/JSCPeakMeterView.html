@@ -7,72 +7,73 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.44">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #585c71}
+p.p1 {margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #585c70}
 p.p2 {margin: 0.0px 0.0px 16.0px 0.0px; font: 24.0px Lucida Grande}
-p.p3 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Lucida Grande}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+p.p3 {margin: 0.0px 0.0px 16.0px 0.0px; font: 24.0px Lucida Grande; color: #bf0000}
+p.p4 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Lucida Grande}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #723b2a}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
-span.s1 {color: #4961ad}
-span.s2 {text-decoration: underline ; color: #4961ad}
-span.s3 {color: #193ba4}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #6b3d2c}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
+span.s1 {color: #4c63aa}
+span.s2 {text-decoration: underline ; color: #4c63aa}
+span.s3 {color: #1e3fa0}
 span.s4 {color: #606060}
-span.s5 {color: #55632c}
-span.s6 {color: #1337a8}
-span.s7 {color: #0019ba}
-span.s8 {color: #516528}
-span.s9 {color: #0024b5}
-span.s10 {color: #2b6f11}
+span.s5 {color: #58612f}
+span.s6 {color: #193ba4}
+span.s7 {color: #0024b5}
+span.s8 {color: #55632c}
+span.s9 {color: #062cb0}
+span.s10 {color: #3b6c19}
 span.s11 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<h2 style="margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #585c71"><b>SwingOSC – Java-based GUI classes</b></h2>
+<h2 style="margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #585c70"><b>SwingOSC – Java-based GUI classes</b></h2>
 <h1 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 24.0px Lucida Grande"><b>JSCPeakMeterView</b></h1>
-<p class="p3"><b>Note: please use the abstraction layer GUI.peakMeterView if possible! (see </b><a href="SC://GUI"><span class="s1"><b>GUI</b></span></a><b>).</b> See also <a href="JSCView.html"><span class="s2">JSCView</span></a>.</p>
-<p class="p4">(</p>
-<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s3">JSCWindow</span>( <span class="s4">"Meter"</span>, <span class="s3">Rect</span>( 200, 200, 128, 225 ), <span class="s3">false</span> );</p>
-<p class="p4"><span class="Apple-converted-space">    </span>b = <span class="s3">JSCPeakMeterView</span>( w, <span class="s3">Rect</span>( 4, 4, 56, 217 ));</p>
-<p class="p4"><span class="Apple-converted-space">    </span>b.bus = <span class="s3">Bus</span>( <span class="s5">\audio</span>, s.options.numOutputBusChannels, 2, s );</p>
-<p class="p4"><span class="Apple-converted-space">    </span>w.front;</p>
-<p class="p4">)</p>
-<p class="p5"><br></p>
-<p class="p4">b.border = <span class="s6">true</span>;</p>
-<p class="p4">b.border = <span class="s6">false</span>;</p>
-<p class="p4">b.caption = <span class="s6">true</span>;</p>
-<p class="p4">b.caption = <span class="s6">false</span>;</p>
-<p class="p4">b.caption = <span class="s6">true</span>;</p>
-<p class="p4">b.font = <span class="s7">JFont</span>( <span class="s4">"Eurostile"</span>, 11 );</p>
-<p class="p4">b.font = <span class="s7">JFont</span>( <span class="s4">"Andale Mono"</span>, 13 );</p>
-<p class="p4">b.captionVisible = <span class="s6">false</span>;</p>
-<p class="p4">b.captionVisible = <span class="s6">true</span>;</p>
-<p class="p4">b.captionPosition = <span class="s8">\right</span>;</p>
-<p class="p4">b.captionPosition = <span class="s8">\left</span>;</p>
-<p class="p4">b.captionPosition = <span class="s8">\center</span>;</p>
-<p class="p4">b.rmsPainted = <span class="s9">false</span>;</p>
-<p class="p4">b.rmsPainted = <span class="s9">true</span>;</p>
-<p class="p4">b.holdPainted = <span class="s9">false</span>;</p>
-<p class="p4">b.holdPainted = <span class="s9">true</span>;</p>
-<p class="p5"><br></p>
-<p class="p4">b.bus = <span class="s7">Bus</span>( <span class="s10">\audio</span>, s.options.numOutputBusChannels, 4, s );</p>
-<p class="p4">b.bounds = <span class="s7">Rect</span>( 4, 4, 72, 217 );</p>
-<p class="p4">b.refresh;</p>
-<p class="p5"><br></p>
-<p class="p4">b.bounds = <span class="s7">Rect</span>( 4, 4, 128, 217 );</p>
-<p class="p4">b.refresh;</p>
-<p class="p5"><br></p>
-<p class="p4">g.reboot;</p>
-<p class="p4">s.boot;</p>
-<p class="p5"><br></p>
-<p class="p6">b.mouseDownAction = { <span class="s4">"Doing!"</span>.postln };</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p4">(</p>
+<p class="p3"><b>!!!INCOMPLETE!!!</b></p>
+<p class="p4"><b>Note: please use the abstraction layer GUI.peakMeterView if possible! (see </b><a href="SC://GUI"><span class="s1"><b>GUI</b></span></a><b>).</b> See also <a href="JSCView.html"><span class="s2">JSCView</span></a>.</p>
+<p class="p5">(</p>
+<p class="p5"><span class="Apple-converted-space">    </span>w = <span class="s3">JSCWindow</span>( <span class="s4">"Meter"</span>, <span class="s3">Rect</span>( 200, 200, 128, 225 ), <span class="s3">false</span> );</p>
+<p class="p5"><span class="Apple-converted-space">    </span>b = <span class="s3">JSCPeakMeterView</span>( w, <span class="s3">Rect</span>( 4, 4, 56, 217 ));</p>
+<p class="p5"><span class="Apple-converted-space">    </span>b.bus = <span class="s3">Bus</span>( <span class="s5">\audio</span>, s.options.numOutputBusChannels, 2, s );</p>
+<p class="p5"><span class="Apple-converted-space">    </span>w.front;</p>
+<p class="p5">)</p>
+<p class="p6"><br></p>
+<p class="p5">b.border = <span class="s6">true</span>;</p>
+<p class="p5">b.border = <span class="s6">false</span>;</p>
+<p class="p5">b.caption = <span class="s6">true</span>;</p>
+<p class="p5">b.caption = <span class="s6">false</span>;</p>
+<p class="p5">b.caption = <span class="s6">true</span>;</p>
+<p class="p5">b.font = <span class="s7">JFont</span>( <span class="s4">"Eurostile"</span>, 11 );</p>
+<p class="p5">b.font = <span class="s7">JFont</span>( <span class="s4">"Andale Mono"</span>, 13 );</p>
+<p class="p5">b.captionVisible = <span class="s6">false</span>;</p>
+<p class="p5">b.captionVisible = <span class="s6">true</span>;</p>
+<p class="p5">b.captionPosition = <span class="s8">\right</span>;</p>
+<p class="p5">b.captionPosition = <span class="s8">\left</span>;</p>
+<p class="p5">b.captionPosition = <span class="s8">\center</span>;</p>
+<p class="p5">b.rmsPainted = <span class="s9">false</span>;</p>
+<p class="p5">b.rmsPainted = <span class="s9">true</span>;</p>
+<p class="p5">b.holdPainted = <span class="s9">false</span>;</p>
+<p class="p5">b.holdPainted = <span class="s9">true</span>;</p>
+<p class="p6"><br></p>
+<p class="p5">b.bus = <span class="s7">Bus</span>( <span class="s10">\audio</span>, s.options.numOutputBusChannels, 4, s );</p>
+<p class="p5">b.bounds = <span class="s7">Rect</span>( 4, 4, 72, 217 );</p>
+<p class="p5">b.refresh;</p>
+<p class="p6"><br></p>
+<p class="p5">b.bounds = <span class="s7">Rect</span>( 4, 4, 128, 217 );</p>
+<p class="p5">b.refresh;</p>
+<p class="p6"><br></p>
+<p class="p5">g.reboot;</p>
+<p class="p5">s.boot;</p>
+<p class="p6"><br></p>
+<p class="p5">b.mouseDownAction = { <span class="s4">"Doing!"</span>.postln };</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p5">(</p>
 <p class="p7"><span class="s3">SynthDef</span>( <span class="s4">"eisk-meter"</span>, { <span class="s3">arg</span> i_aInBs = 0, i_kOtBs, t_trig;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s3">var</span> in, rms, peak;</p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
@@ -90,13 +91,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p7">}).send( s );</p>
 <p class="p7">)</p>
-<p class="p5"><br></p>
+<p class="p6"><br></p>
 <p class="p10">//x = Synth( "eisk-meter", [ \i_aInBs, b.bus.index, \i_kOtBs, ~cbus.index ], target: ~group );</p>
-<p class="p4">b.active = <span class="s3">true</span>;</p>
-<p class="p4">x = 2.collect({ <span class="s7">arg</span> i; <span class="s7">Synth</span>.basicNew( <span class="s4">"eisk-meter"</span>, s )});</p>
-<p class="p4">s.listSendBundle( <span class="s7">nil</span>, x.collect({ arg synth, i;<span class="s7"> synth</span>.newMsg( ~group, [ <span class="s10">\i_aInBs</span>, b.bus.index + i, <span class="s10">\i_kOtBs</span>, ~cbus.index + (i &lt;&lt; 1) ])}));</p>
-<p class="p5"><br></p>
-<p class="p4">b.active = <span class="s3">false</span>;</p>
-<p class="p4">x.do(<span class="s7">_</span>.free)</p>
+<p class="p5">b.active = <span class="s3">true</span>;</p>
+<p class="p5">x = 2.collect({ <span class="s7">arg</span> i; <span class="s7">Synth</span>.basicNew( <span class="s4">"eisk-meter"</span>, s )});</p>
+<p class="p5">s.listSendBundle( <span class="s7">nil</span>, x.collect({ arg synth, i;<span class="s7"> synth</span>.newMsg( ~group, [ <span class="s10">\i_aInBs</span>, b.bus.index + i, <span class="s10">\i_kOtBs</span>, ~cbus.index + (i &lt;&lt; 1) ])}));</p>
+<p class="p6"><br></p>
+<p class="p5">b.active = <span class="s3">false</span>;</p>
+<p class="p5">x.do(<span class="s7">_</span>.free)</p>
 </body>
 </html>

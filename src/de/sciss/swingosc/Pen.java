@@ -73,12 +73,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import javax.swing.Icon;
-import javax.swing.SwingUtilities;
+import javax.swing.JComponent;
+//import javax.swing.SwingUtilities;
 
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.57, 18-Dec-07
+ *	@version	0.57, 18-Jan-08
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -107,6 +108,9 @@ implements Icon
 	private GraphicsContext				gc;
 	
 	private boolean						absCoords;
+	
+	private Component					lastComp	= null;
+	private Component					lastRef		= null;
 
 	public Pen()
 	{
@@ -247,8 +251,23 @@ implements Icon
 		
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 		if( absCoords ) {
-			final Component ref		= SwingUtilities.getRootPane( c ).getContentPane();
-			final Point		ptCorr	= GUIUtil.convertPoint( ref, new Point( x, y ), c );
+//			final Component ref		= SwingUtilities.getRootPane( c ).getContentPane();
+			final Point		ptCorr;
+			if( (c != lastComp) || (lastRef == null) ) { 
+				lastRef	= c;
+			
+				while( lastRef.getParent() != null &&
+					(!(lastRef instanceof JComponent) ||
+					(((JComponent) lastRef).getClientProperty( "origin" ) == null)) ) {
+				
+					lastRef = lastRef.getParent();
+				}
+				lastComp = c;
+			}
+			ptCorr = GUIUtil.convertPoint( lastRef, new Point( x, y ), c );
+			
+//			System.out.println( "translate " + x + ", " + y );
+			
 			if( (ptCorr.x != 0 ) || (ptCorr.y != 0) ) g2.translate( ptCorr.x, ptCorr.y );
 		} else {
 			if( (x != 0 ) || (y != 0) ) g2.translate( x, y );
@@ -257,6 +276,7 @@ implements Icon
 			cmds[ i ].perform( g2 );
 		}
 
+//System.out.println( "transform was " + g2.getTransform() + "; orig " + atOrig );
 		g2.setTransform( atOrig );
 		g2.setStroke( strkOrig );
 		g2.setClip( clipOrig );

@@ -57,11 +57,15 @@ import javax.swing.KeyStroke;
  *	and whose content pane uses a custom layout manager.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 15-Jan-08
+ *	@version	0.57, 18-Jan-08
  */
 public class Frame
 extends JFrame
 {
+	public static final int	FLAG_UNDECORATED	= 0x01;
+	public static final int	FLAG_SCROLLPANE		= 0x02;
+	public static final int	FLAG_NORESIZE		= 0x04;
+	
 	private List		collMouseResp		= null;
 	
 	private boolean 	acceptsMouseOver	= false;
@@ -91,10 +95,10 @@ extends JFrame
 //		this( gc, false );
 //	}
 	
-	public Frame( String title, Rectangle cocoaBounds, boolean hasBorder, boolean hasScroll )
+	public Frame( String title, Rectangle cocoaBounds, int flags )
 	{
 		super( title );
-		init( cocoaBounds, hasBorder, hasScroll );
+		init( cocoaBounds, flags );
 	}
 
 //	public Frame( String title )
@@ -118,12 +122,15 @@ extends JFrame
 		return topView;
 	}
 	
-	private void init( Rectangle cocoaBounds, boolean hasBorder, boolean hasScroll )
+	private void init( Rectangle cocoaBounds, int flags )
 	{
-		if( !hasBorder ) {
+		if( (flags & FLAG_UNDECORATED) != 0 ) {
 			setUndecorated( true );
 		}
-		if( hasScroll ) {
+		if( (flags & FLAG_NORESIZE) != 0 ) {
+			setResizable( false );
+		}
+		if( (flags & FLAG_SCROLLPANE) != 0 ) {
 			topView		= new ContentPane( false );
 			scrollPane	= new ScrollPane( topView ); // ...SCROLLBAR_AS_NEEDED
 //			scrollPane.setViewportBorder( null );
