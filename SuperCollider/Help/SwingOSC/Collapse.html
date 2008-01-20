@@ -17,8 +17,8 @@
 The <code><span style="cl">Collapse</span></code> class is useful for deferring actions to a certain clock or scheduling them while reducing system load to a minimum. The <code><span style="cl">Collapse</span></code> constructor takes a function to be deferred, a delta time span and a clock to defer to:
 <pre>
     <span class="cl">Collapse</span>.new( <var>&lt;(Function) func&gt;</var>, <var>&lt;(Number) delta = 0.0&gt;</var>, <var>&lt;(Clock) clock = AppClock&gt;</var> ) 
+
 </pre>
-</P>
 <h2>defer</h2>
 <P>
 An action is deferred by calling the <code>defer</code> method with arbitrary arguments. The function's <code>value</code> method is called with these arguments after the scheduled delay. When <code>defer</code> is called before the function was executed, the function is deferred <EM>again</EM> by the schedule delay and the pending call is cancelled. The new arguments overwrite the previous (pending) arguments. An example for the usage of <code>defer</code> is to allow a MIDI controller dial to be turned until the target position has been found, so that an action is executed only after the dial has been released for a given amount of time (e.g. 100ms).
