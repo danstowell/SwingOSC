@@ -32,7 +32,7 @@
  *	It specifies the space that a container must leave at each of its edges. 
  *
  *	@author	Hanns Holger Rutz
- *	@version	0.57, 18-Jan-08
+ *	@version	0.58, 18-Jan-08
  */
 Insets {
 	var <top, <left, <bottom, <right;

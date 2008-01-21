@@ -37,7 +37,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 18-Jan-08
+ *	@version		0.58, 18-Jan-08
  */
 JSCWindow : Object
 {

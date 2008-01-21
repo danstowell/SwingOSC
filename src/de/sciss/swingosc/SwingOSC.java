@@ -83,7 +83,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.57, 16-Jan-08
+ *  @version	0.58, 21-Jan-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -93,7 +93,7 @@ import de.sciss.util.URLClassLoaderManager;
 public class SwingOSC
 implements OSCListener, OSCProcessor, Runnable
 {
-	public static final double		VERSION			= 0.57;
+	public static final double		VERSION			= 0.58;
 
 	private OSCServer				serv			= null;
 	

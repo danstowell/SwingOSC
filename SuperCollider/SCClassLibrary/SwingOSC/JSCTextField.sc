@@ -30,9 +30,7 @@
  *	Replacement for the (Cocoa) SCTextField.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Jan-08
- *
- *	@todo		drag-n-drop currently not working
+ *	@version		0.58, 12-Jan-08
  */
 JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 

@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.57, 18-Jan-07
+ *	@version		0.58, 21-Jan-07
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -600,7 +600,6 @@ JSCScrollView : JSCContainerView {
 		result = super.prInit( *args );
 		vpID = "vp" ++ this.id;
 		server.sendMsg( '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']' );
-		XXX
 	}
 
 	prViewPortID { ^vpID }
@@ -3193,6 +3192,5 @@ JSCTextEditBase : JSCStaticTextBase {
 		^super.prSendProperty( key, value );
 	}
 
-// XXX TEST SWINGOSC 0.55
 	prNeedsTransferHandler { ^true }
 }

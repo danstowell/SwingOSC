@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCScope class.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Jan-08
+ *	@version		0.58, 12-Jan-08
  */
 JScopeOut : UGen {
 	// ----------------- quasi-constructors -----------------

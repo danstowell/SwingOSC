@@ -34,7 +34,7 @@
  *	The client side representation of a SwingOSC server
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 18-Jan-08
+ *	@version		0.58, 18-Jan-08
  */
 SwingOptions
 {
@@ -89,7 +89,7 @@ SwingOSC : Model
 
 	// note this is the SC class lib version, not necessarily the
 	// server version (reflected by the instance variable serverVersion)
-	classvar <version = 0.57;
+	classvar <version = 0.58;
 
 	var <name, <addr, <clientID = 0;
 	var <isLocal;

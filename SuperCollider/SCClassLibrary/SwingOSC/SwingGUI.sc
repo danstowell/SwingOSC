@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 17-Jan-08
+ *	@version		0.58, 17-Jan-08
  */
 SwingGUI {
 	classvar extraClasses;

@@ -47,7 +47,7 @@
  *	arguments (the controller value) while postponing the function until the
  *	user releases the dial.
  *
- *	@version	0.57, 31-Dec-07
+ *	@version	0.58, 31-Dec-07
  *	@author	Hanns Holger Rutz
  */
 Collapse : Object

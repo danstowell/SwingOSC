@@ -30,7 +30,7 @@
  *	A replacement for (Cocoa) Stethoscope.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Jan-08
+ *	@version		0.58, 12-Jan-08
  */
 JStethoscope {
 	classvar ugenScopes;	var <server, <numChannels, <rate,  <index;

@@ -30,7 +30,7 @@
  *	Replacement for the cocoa font class.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.52, 11-Mar-07
+ *	@version		0.58, 21-Jan-08
  */
 JFont {
 	classvar <>verbose = false;

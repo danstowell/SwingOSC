@@ -31,7 +31,7 @@
  *	cocoa gui behaves exactly as swingOSC gui,
  *	at least has some more graceful fallbacks...
  *
- *	@version	0.56, 31-Oct-07
+ *	@version	0.58, 21-Jan-08
  *	@author	Hanns Holger Rutz
  */
 + SCDragView {

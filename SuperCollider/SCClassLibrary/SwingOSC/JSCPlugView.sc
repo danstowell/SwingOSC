@@ -31,16 +31,19 @@
  *	JComponent (using JSCPlugView) or JPanel (using JSCPlugContainerView)
  *	with other JSCView classes.
  *
- *	@version		0.57, 12-Jan-08
+ *	@version		0.58, 21-Jan-08
  *	@author		Hanns Holger Rutz
  */
 JSCPlugView : JSCView {
+	var <javaObject;
+	
 	// ----------------- constructor -----------------
 
 	*new { arg parent, bounds, javaObject;
 		var basic;
 		
 		basic = super.prBasicNew;
+		basic.prSetJavaObject( javaObject );
 		^basic.init( parent, bounds, javaObject.id );
 	}
 	
@@ -54,67 +57,31 @@ JSCPlugView : JSCView {
 
 	// ----------------- private instance methods -----------------
 
-	doesNotUnderstand { arg selector ... args;
-		server.sendMsg( *this.prMethodCall( selector, args ));
+	doesNotUnderstand { arg ... args;
+		javaObject.doesNotUnderstand( *args );
 	}
-
-	prMethodCall { arg selector, args;
-		var listMsg = List.new;
-		listMsg.add( '/method' );
-		listMsg.add( this.id );
-		listMsg.add( selector );
-		args.do({ arg x;
-			if( x.respondsTo( \id ), {
-				listMsg.addAll([ '[', '/ref', x.id, ']' ]);
-			}, {
-				listMsg.addAll( x.asSwingArg );
-			});
-		});
-		^listMsg;
-	}
+	
+	prSetJavaObject { arg o; javaObject = o }
 }
 
 JSCPlugContainerView : JSCContainerView {
+	var <javaObject;
+
 	// ----------------- constructor -----------------
 
 	*new { arg parent, bounds, javaObject;
 		var basic;
 		
 		basic = super.prBasicNew;
-//		basic.prSetJavaClass( javaClass );
+		basic.prSetJavaObject( javaObject );
 		^basic.init( parent, bounds, javaObject.id );
 	}
 	
 	// ----------------- private instance methods -----------------
 
-//	prSetJavaClass { arg class;
-//		javaClass = class;
-//	}
-
-//	prSCViewNew {
-//		^super.prSCViewNew([
-//			[ '/local', this.id, '[', '/new', javaClass, ']' ]
-//		]);
-//	}
-
-	// from JavaObject.sc
-
-	doesNotUnderstand { arg selector ... args;
-		server.sendMsg( *this.prMethodCall( selector, args ));
+	doesNotUnderstand { arg ... args;
+		javaObject.doesNotUnderstand( *args );
 	}
-
-	prMethodCall { arg selector, args;
-		var listMsg = List.new;
-		listMsg.add( '/method' );
-		listMsg.add( this.id );
-		listMsg.add( selector );
-		args.do({ arg x;
-			if( x.respondsTo( \id ), {
-				listMsg.addAll([ '[', '/ref', x.id, ']' ]);
-			}, {
-				listMsg.addAll( x.asSwingArg );
-			});
-		});
-		^listMsg;
-	}
+	
+	prSetJavaObject { arg o; javaObject = o }
 }

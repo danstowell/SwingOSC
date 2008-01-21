@@ -45,7 +45,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.57, 13-Jan-08
+ *	@version		0.58, 13-Jan-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not

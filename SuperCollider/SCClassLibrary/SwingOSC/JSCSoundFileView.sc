@@ -33,7 +33,7 @@
  *	Replacement for / enhancement of the (Cocoa) SCSoundFileView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 12-Jan-08
+ *	@version		0.58, 12-Jan-08
  */
 JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	classvar cacheServers;	// IdentitySet whose elements are SwingOSC instances

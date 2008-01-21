@@ -29,7 +29,7 @@
 /**
  *	Replacement for (Cocoa) Speech
  *
- *	@version	0.57, 12-Jan-08
+ *	@version	0.58, 12-Jan-08
  *	@author	Hanns Holger Rutz
  */
 JSpeechChannel{

@@ -28,7 +28,7 @@
 
 /**
  *	@author	Hanns Holger Rutz
- *	@version	0.57, 13-Jan-07
+ *	@version	0.58, 13-Jan-07
  */
 //+ Object {
 //	asSwingArg {

@@ -88,13 +88,13 @@ TD.when {
 </HEAD>
 <BODY>
 <h1>
-SwingOSC <small>-- version 0.56 (built 10-oct-07) --</small>
+SwingOSC <small>-- version 0.58 (built 21-jan-08) --</small>
 </h1>
 <h3>statement</h3>
 <TABLE><TR><TD VALIGN="top"><IMG SRC="application.png" ALT=""></TD><TD><p>
 SwingOSC is an OpenSoundControl (OSC) server intended for scripting Java(tm), such as to create graphical user interfaces with  AWT or Swing classes. It uses the reflection and beans mechanism to dynamically create instances of java classes and control them. A separate set of SuperCollider language classes is included to allow the building of GUIs from within sclang.
 </P><P>
-SwingOSC is (C)opyright 2005&ndash;2007 by Hanns Holger Rutz. All rights reserved. SwingOSC is released under the <A HREF="licenses/SwingOSC-License.txt">GNU General Public License</A> and comes with absolutely no warranties. To contact the author, send an email to <code>contact&nbsp;at&nbsp;sciss.de</code>
+SwingOSC is (C)opyright 2005&ndash;2008 by Hanns Holger Rutz. All rights reserved. SwingOSC is released under the <A HREF="licenses/SwingOSC-License.txt">GNU General Public License</A> and comes with absolutely no warranties. To contact the author, send an email to <code>contact&nbsp;at&nbsp;sciss.de</code>
 </p></TD></TR></TABLE><p>
 For project status, API and current version, visit <a href="http://www.sciss.de/swingOSC/" class="ext">www.sciss.de/swingOSC</a>.
 </p><p>
@@ -122,6 +122,12 @@ The SuperCollider for Windows built maintained by the IEM Graz already comes wit
 <UL>
 <LI><A HREF="http://sourceforge.net/project/showfiles.php?group_id=54622&amp;package_id=133499" CLASS="ext">sourceforge.net/project/showfiles.php?group_id=54622&amp;package_id=133499</A></LI>
 </UL>
+<P>Developers can download the lastest version from <A HREF="http://subversion.tigris.org/">Subversion</A> (SVN):</P>
+<PRE>
+&gt; cd <var>&lt;baseDir&gt;</var>
+&gt; svn co https://swingosc.svn.sourceforge.net/svnroot/swingosc/trunk/ SwingOSC
+</PRE>
+<P>The subversion download comes in source form and needs to be compiled (see the compilation section below). The regular download already includes a precompiled binary.</P>
 <h3>
 requirements / installation
 </h3>
@@ -187,20 +193,28 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <P>To compile <CODE>MovieView.java</CODE>, you will need to have <code>jmf.jar</code> in your classpath (see requirements sections above). If JMF is not installed, the Ant build will skip the compilation of <CODE>MovieView.java</CODE> and you will not be able to use <CODE>JSCMovieView</CODE>.</P>
 <h3>known issues</h3>
 <UL>
-<LI>in TCP mode SuperCollider often crashes when the server quits. try disconnecting the client (<code>SwingOSC.default.disconnect</code>) before quitting the server!</LI>
+<LI>in TCP mode SuperCollider on Mac&nbsp;OS&nbsp;X often crashes when the server quits.<!-- try disconnecting the client (<code>SwingOSC.default.disconnect</code>) before quitting the server! --></LI>
 <LI>with a lot of messages sent en-bloc from sclang &ndash; and even a sparsely populated window setup means a lot of OSC traffic &ndash;, there can be a buffer overflow which results in the last messages being lost when using UDP transport. as a circumvention, you can either<UL>
 <LI>use TCP mode</LI>
 <LI>or put your GUI buidling process in a <code>Routine</code> and place short <code>wait</code> statements in the body until no more message dropping occurs.</LI></UL></LI>
-<!-- <LI>scope view doesn't work when scsynth runs in TCP mode (will be fixed)</LI> -->
-<!-- <LI>the <code>-h</code> option is incompatible with TCP mode. instead ways of using &quot;bonjour&quot; should be evaluated for a next version.</LI> -->
 </UL>
 <h3>to-do list</h3>
 <UL>
 <LI>password protection in TCP mode?</LI>
 <LI>text file or similar with a restriction list of allowed classes to instantiate?</LI>
-<LI>add some nice stuff like meter bar, tree view ...</LI>
+<LI>complete peakmeterview, add some nice stuff like tree view ...</LI>
 </UL>
 <h3>change history</h3>
+<h4>v0.58 (jan 2008 - SVN rev. 46)</h4>
+<UL>
+<LI>sc classes: SwingOSC (aliveThread has longer timeout, improved isLocal detection), JavaObject (added print, isNull, notNull methods), extSwingOSC (fixed asSwingArg implementations, removed jinspect, jplot, jmakeWindow, jscope, jbrowse)</LI>
+<LI>sc gui classes: JSCWindow (added resizable_, redefined drawHook refresh policy, cocoa-bounds translation look-and-feel independant, added scroll argument to contructor), JSCNumberBox (drag'n'drop fixed), JSCTextField (drag'n'drop fixed), JSCUserView (added mousePosition, clearOnRefresh_ methods), JSCPlug(Container)View (improved doesNotUnderstand), JSCView (proper layout manager validation with bounds_ and visible_, added addAction and removeAction methods), SwingGUI (added tabletView, scrollView), extCocoaCompat (removed methods that have been added to the standard library), JSCTextView (fixed property changes when document is empty), removed JSCScrollPane, JStartRow, added JSCScrollView, JSCScrollTopView, JSCTabletView</LI>
+<LI>sc helper classes improvements: Collapse (function call error protection), Insets (added leftTop method), added UpdateListener</LI>
+<LI>sc help files: completed, partly reformatted</LI>
+<LI>java classes: SwingOSC (fixed checkMethodArgs type priorities)
+<LI>java gui classes: ActionResponder (bug fix), WindowResponder (bounds-to-cocoa translation), ColliderLayout (to work with scrollview), MouseResponder and ComponentResponder (to work with relativeOrigin parents), ContentPane (extracted from Frame), DummyTransferHandler (preserve clipboard cut/copy/paste actions), Frame (scroll support, cocoa-bounds translation, setAlpha method), NumberField (String based setNumber method to avoid roundoff errors), Pen (fixed stroke shape transform when shearing, support for relativeOrigin, bug fixes), RangeSlider (more pretty knob scaling)</LI>
+<LI>java helper classes: AudioFile (added retrieveType method)</LI>
+</UL>
 <h4>v0.56 (oct 2007)</h4>
 <UL>
 <LI>sc and java classes: bug fixes (alpha tranparency, FlowView support)</LI>
@@ -323,6 +337,6 @@ windows is one of microsoft corp<br>
 jever is a trademark of some west german beer factory
 </p>
 <p>
-lastmod: 10-oct-07
+lastmod: 21-jan-08
 </p>
 </BODY></HTML>

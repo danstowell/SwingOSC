@@ -28,7 +28,7 @@
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version		0.57, 10-Dec-07
+ *	@version		0.58, 10-Dec-07
  */
 JEZSlider 
 {
