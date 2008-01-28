@@ -24,6 +24,7 @@
  *
  *
  *	Changelog:
+ *		26-Jan-08  added double underscore syntax
  */
 
 /**
@@ -32,7 +33,7 @@
  *	we exploit this behaviour to create an easy wrapper
  *	class for Java object control in SwingOSC.
  *
- *	@version	0.58, 12-Jan-08
+ *	@version	0.59, 26-Jan-08
  *	@author	Hanns Holger Rutz
  */
 JavaObject {
@@ -155,17 +156,28 @@ JavaObject {
 		msg.add( ']' );
 		server.listSendMsg( msg );
 	}
+	
+	prRemove {
+		allObjects.remove( this );
+	}
 		
 	doesNotUnderstand { arg selector ... args;
 		var selStr;
 		
 		selStr = selector.asString;
 		if( selStr.last === $_, {
-			if( thisThread.isKindOf( Routine ), {
-				^this.prMethodCallAsync( selStr.copyFromStart( selStr.size - 2 ), args );
+			if( selStr.at( selStr.size - 2 ) === $_, { // shortcut for *newFrom
+				selector = selStr.copyFromStart( selStr.size - 3 );
+				^this.class.newFrom( this, selector, *args );
 			}, {
-				"JavaObject : asynchronous call outside routine".warn;
-				{ ("RESULT: " ++ this.prMethodCallAsync( selStr.copyFromStart( selStr.size - 2 ), args )).postln; }.fork( SwingOSC.clock );
+				selector = selStr.copyFromStart( selStr.size - 2 );
+				if( thisThread.isKindOf( Routine ), {
+					^this.prMethodCallAsync( selector, args );
+				}, {
+					"JavaObject : asynchronous call outside routine".warn;
+					{ ("RESULT: " ++ this.prMethodCallAsync( selector,
+						args )).postln; }.fork( SwingOSC.clock );
+				});
 			});
 		}, {
 			server.listSendMsg( this.prMethodCall( nil, selector, args ));

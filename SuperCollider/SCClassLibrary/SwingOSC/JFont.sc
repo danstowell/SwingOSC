@@ -30,7 +30,7 @@
  *	Replacement for the cocoa font class.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 21-Jan-08
+ *	@version		0.59, 28-Jan-08
  */
 JFont {
 	classvar <>verbose = false;
@@ -47,26 +47,24 @@ JFont {
 //	}
 //	
 //	*prCreateDefaults {
-		if( thisProcess.respondsTo( \platform ), {
-			switch( thisProcess.platform.name,
-			\osx, {
-				default			= JFont( "LucidaGrande", 11 );
-				defaultSansFace	= "LucidaGrande";
-				defaultSerifFace	= "Times";
-				defaultMonoFace	= "Monaco";
-			},
-			\linux, {
-				default			= JFont( "Bitstream Vera Sans", 12 );
-				defaultSansFace	= "Bitstream Vera Sans";
-				defaultSerifFace	= "Bitstream Vera Serif";
-				defaultMonoFace	= "Bitstream Vera Sans Mono";
-			// ??? what to use on windows ???
-			}, {
-				default			= JFont( "SansSerif", 12 );
-				defaultSansFace	= "SansSerif";
-				defaultSerifFace	= "Serif";
-				defaultMonoFace	= "Monospaced";
-			});
+		switch( thisProcess.platform.name,
+		\osx, {
+			default			= JFont( "LucidaGrande", 11 );
+			defaultSansFace	= "LucidaGrande";
+			defaultSerifFace	= "Times";
+			defaultMonoFace	= "Monaco";
+		},
+		\linux, {
+			default			= JFont( "Bitstream Vera Sans", 12 );
+			defaultSansFace	= "Bitstream Vera Sans";
+			defaultSerifFace	= "Bitstream Vera Serif";
+			defaultMonoFace	= "Bitstream Vera Sans Mono";
+		}, 
+		\windows, {
+			default			= JFont( "Tahoma", 11 );
+			defaultSansFace	= "Tahoma";
+			defaultSerifFace	= "Serif";
+			defaultMonoFace	= "Monospaced";
 		}, {
 			default			= JFont( "SansSerif", 12 );
 			defaultSansFace	= "SansSerif";

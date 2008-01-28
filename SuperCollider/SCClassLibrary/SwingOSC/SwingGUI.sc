@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 17-Jan-08
+ *	@version		0.59, 28-Jan-08
  */
 SwingGUI {
 	classvar extraClasses;
@@ -88,8 +88,8 @@ SwingGUI {
 	*textView { ^JSCTextView }
 //	*quartzComposerView { ^JSCQuartzComposerView }
 	*scrollView { ^JSCScrollView }
-	*ezSlider { ^JEZSlider }
-	*ezNumber { ^JEZNumber }
+	*ezSlider { ^EZSlider }		// cross-platform now!
+	*ezNumber { ^EZNumber }		// cross-platform now!
 	
 	*font { ^JFont }
 	*pen { ^JPen }

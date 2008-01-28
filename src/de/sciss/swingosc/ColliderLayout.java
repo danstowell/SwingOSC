@@ -26,6 +26,7 @@
  *  Changelog:
  *		02-Jan-07	created
  *		14-Jan-08	calls calcSizes again and applies preferred dim to work with JSCScrollTopView
+ *		27-Jan-08	conforms with java 1.4
  */
 package de.sciss.swingosc;
 
@@ -44,7 +45,7 @@ import javax.swing.JComponent;
  *	SuperCollider cocoa GUI's SCCompositeView (resize property).
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.57, 14-Jan-08
+ *  @version	0.59, 27-Jan-08
  *  
  *  @todo		calcSizes : should rather read minWidth / minHeight etc. client properties
  */
@@ -140,7 +141,7 @@ implements LayoutManager
     public void layoutContainer( Container parent )
     {
 //		if( sizeUnknown ) {
-			parent.setPreferredSize( preferredLayoutSize( parent ));
+			((JComponent) parent).setPreferredSize( preferredLayoutSize( parent ));
 //		}
 
 //System.out.println( "layoutContainer " + preferredWidth + ", " + preferredHeight );

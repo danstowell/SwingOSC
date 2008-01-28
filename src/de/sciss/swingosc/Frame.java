@@ -27,6 +27,7 @@
  *		03-Feb-07	added acceptsMouseOver
  *		24-Nov-07	added keyboard shortcuts for close and minimize
  *		14-Jan-08	handles sucky cocoa bounds conversion
+ *		27-Jan-08	conforms with java 1.4
  */
 package de.sciss.swingosc;
 
@@ -57,7 +58,7 @@ import javax.swing.KeyStroke;
  *	and whose content pane uses a custom layout manager.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 18-Jan-08
+ *	@version	0.59, 27-Jan-08
  */
 public class Frame
 extends JFrame
@@ -214,11 +215,11 @@ extends JFrame
 	}
 
      private static boolean isMacOs() {
-    	 return System.getProperty( "os.name" ).contains( "Mac" );
+    	 return System.getProperty( "os.name" ).indexOf( "Mac" ) >= 0;
      }
     
      private static boolean isWindows() {
-    	 return System.getProperty( "os.name" ).contains( "Windows" );
+    	 return System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
      }
      
     /**

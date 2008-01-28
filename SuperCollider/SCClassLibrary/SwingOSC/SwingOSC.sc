@@ -28,13 +28,15 @@
  *		11-Jun-06		removed slowOSC stuff (fixed in SC)
  *		01-Oct-06		added SwingOptions and TCP mode
  *		18-Jan-08		added deathBounces to aliveThread
+ *		28-Jan-08		bootServerApp adds -h option again
  */
 
 /**
  *	The client side representation of a SwingOSC server
+ *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 18-Jan-08
+ *	@version		0.59, 28-Jan-08
  */
 SwingOptions
 {
@@ -44,9 +46,21 @@ SwingOptions
 	var <>loopBack	= true;
 	var <>initGUI		= true;
 	var <>oscBufSize	= 65536;
+	var <>javaOptions;	// option string that is passed to the java VM
 
 	*initClass {
-		default = this.new;
+		default = this.new.javaOptions_(
+			switch( thisProcess.platform.name,
+			\osx, {
+				"-Dapple.laf.useScreenMenuBar=true -Xdock:icon=application.icns -Xdock:name=SwingOSC"; // "-Dswing.defaultlaf=apple.laf.AquaLookAndFeel"
+			},
+			\linux, {
+				"-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+			},
+			\windows, {
+				"-Dswing.defaultlaf=com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+			})
+		);
 	}
 	
 	// ----------------- constructor -----------------
@@ -64,7 +78,7 @@ SwingOptions
 	asOptionsString { arg port = 57111;
 		var o;
 		// XXX session-password
-		o = if( protocol === \tcp, " -t ", " -u ");
+		o = if( protocol === \tcp, "-t ", "-u ");
 		o = o ++ port;
 		
 		if( loopBack, { 
@@ -82,14 +96,14 @@ SwingOptions
 
 SwingOSC : Model
 {
-	classvar <>local, <>default, <>named, <>set, <>program, <>clock;
+	classvar <>local, <>default, <>named, <>set, <>java, <>program, <>clock;
 
 	// WARNING: this field might be removed in a future version
 	var <>useDoubles = false;
 
 	// note this is the SC class lib version, not necessarily the
 	// server version (reflected by the instance variable serverVersion)
-	classvar <version = 0.58;
+	classvar <version = 0.59;
 
 	var <name, <addr, <clientID = 0;
 	var <isLocal;
@@ -114,8 +128,9 @@ SwingOSC : Model
 		named		= IdentityDictionary.new;
 		set			= Set.new;
 		clock		= AppClock;
-		default		= local = SwingOSC.new( \localhost, NetAddr( "127.0.0.1", 57111 ));
-		program 		= "java -jar SwingOSC.jar"; // -Dapple.awt.brushMetalLook=true if you like
+		default		= local = SwingOSC( \localhost, NetAddr( "127.0.0.1", 57111 ), SwingOptions.default );
+		java			= "java";
+		program 		= "SwingOSC.jar"; // -Dapple.awt.brushMetalLook=true if you like
 //		CmdPeriod.add( this );
 	}
 
@@ -529,22 +544,13 @@ SwingOSC : Model
 	}
 	
 	bootServerApp {
-		var cmd;
-		// note : the -h option is only necessary when booting the server
-		// independant of sclang (as a cheap "bonjour" means). when booting
-		// the server using the boot method, the aliveThread will take
-		// care of recognizing when the server is responding and will
-		// invoke the doWhenBooted commands, hence forcing the
-		// necessary call of initTree!
-//		cmd = program + "-u" + addr.port + "-i" + "-L"; // + "-h 127.0.0.1:57120";
-		
-		cmd = program ++ options.asOptionsString( addr.port );
+		var cmd, localAddr;
+		// note : the -h option is used again because it significantly speeds
+		// up the connection.
+		localAddr = NetAddr.localAddr;
+		cmd = java + (options.javaOptions ? "") + "-jar" + program + options.asOptionsString( addr.port ) +
+			("-h " ++ localAddr.ip ++ ":" ++ localAddr.port);
 		("booting " ++ cmd).inform;
-//		{
-//			var result;
-//			result = systemCmd( cmd );
-//			("SwingOSC exited (" ++ result ++ ")").postln;
-//		}.fork( clock );
 		unixCmd( cmd );
 	}
 	
@@ -590,9 +596,10 @@ SwingOSC : Model
 
 	quit {
 		this.sendMsg( '/quit' );
-		this.disconnect;	// try to prevent SC crash, this might be too late though ...
+//		this.disconnect;	// try to prevent SC crash, this might be too late though ...
 		"/quit sent\n".inform;
 //		alive			= false;
+		this.stopAliveThread;
 		serverBooting 	= false;
 		this.serverRunning	= false;
 	}
@@ -716,6 +723,7 @@ SwingOSC : Model
 			serverRunning = val;
 			if( serverRunning, {
 				this.initTree({
+					"SwingOSC : server connected.".postln;
 					this.changed( \serverRunning );
 				}, {
 					"SwingOSC.initTree : timeout".error;

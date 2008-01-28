@@ -9,13 +9,13 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>last mod: 19-dec-07 sciss
+<p>last mod: 27-jan-08 sciss
 </p>
 </div>
 <h1>SwingOSC</h1>
 <P>A <code><span class="cl">SwingOSC</span></code> object is the client-side representation of a java GUI server. A lot of the method names are closely modelled after the <A HREF="SC://Server">Server</A> class (the client representation of scsynth), so it&quot;s fairly easy to use.
 </P><P>
-SwingOSC is also the name of the java / OSC based GUI library. For an overview of GUI objects using SwingOSC, please read the help file <A HREF="CocoaVsJava.html">CocoaVsJava</A>.
+SwingOSC is also the name of the java / OSC based GUI library. For an overview of GUI objects using SwingOSC, please read the help file <A HREF="SwingGUI.html">SwingGUI</A>.
 </P>
 <h2>The default server</h2>
 <P>There is always a default Server, which is stored in the class variable <code>default</code>. Any GUI components created without a target will be created on the default server. At startup, a server representation referring to the local machine is created and stored both in the class variables <code>local</code> and <code>default</code>. When you boot SwingOSC manually from a terminal (see below), please note that this default server assumes SwingOSC to listen at TCP port 57111 and to send an initial ping message to sclang (127.0.0.1:57120). If the initial ping is not send, you will have to call <code>initTree</code> manually.
@@ -40,13 +40,19 @@ Note that in this document we will assume that the global variable <code>g</code
 </PRE>
 <p><strong>Note:</strong> this assumes that the file <tt class="file">&quot;SwingOSC.jar&quot;</tt> has been copied into the main SuperCollider folder. If you want to use a different install location, set the class variable <code>program</code> appropriately:</p>
 <PRE>
-        <span class="cl">SwingOSC</span>.program = <span class="st">&quot;java -jar <var>&lt;completePathToAndIncludingSwingOSC.jar&gt;</var>&quot;</span>;
+        <span class="cl">SwingOSC</span>.program = <span class="st">&quot;<var>&lt;completePathToAndIncludingSwingOSC.jar&gt;</var>&quot;</span>;
        
 </PRE>
 <P>Here's for example, what my <tt class="file">&quot;~/scwork/startup.rtf&quot;</tt> reads:</P>
 <PRE>
-        <span class="cl">SwingOSC</span>.program    = <span class="st">&quot;java -Xdock:icon=/Users/rutz/Documents/workspace/SwingOSC/application.icns -Xdock:name=SwingOSC -jar /Users/rutz/Documents/workspace/SwingOSC/build/SwingOSC.jar&quot;</span>;
-        g               = <span class="cl">SwingOSC</span>.default;
+        <span class="cl">SwingOptions</span>.default.javaOptions = <span class="cl">SwingOptions</span>.default.javaOptions + <span class="st">&quot;-Xdock:icon=/Users/rutz/Documents/workspace/SwingOSC/application.icns&quot;</span>;
+        <span class="cl">SwingOSC</span>.program                 = <span class="st">&quot;/Users/rutz/Documents/workspace/SwingOSC/build/SwingOSC.jar&quot;</span>;
+        g                                = <span class="cl">SwingOSC</span>.default;
+
+</PRE>
+<P>If you want to use a specific <code>java</code> program, you can set the class field <code>java</code>, e.g. to force SwingOSC to boot with a Java 1.4 version on Mac OS X:</P>
+<PRE>
+        <span class="cl">SwingOSC</span>.java = <span class="st">&quot;/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java&quot;</span>;
 
 </PRE>
 <P>You can register a custom function to be executed when the server has been booted. For example:</P>

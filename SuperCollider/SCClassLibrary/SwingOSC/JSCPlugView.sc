@@ -24,6 +24,7 @@
  *
  *
  *	Changelog:
+ *		26-Jan-08  calls javaObject.prRemove upon close
  */
 
 /*
@@ -31,7 +32,7 @@
  *	JComponent (using JSCPlugView) or JPanel (using JSCPlugContainerView)
  *	with other JSCView classes.
  *
- *	@version		0.58, 21-Jan-08
+ *	@version		0.59, 26-Jan-08
  *	@author		Hanns Holger Rutz
  */
 JSCPlugView : JSCView {
@@ -62,6 +63,11 @@ JSCPlugView : JSCView {
 	}
 	
 	prSetJavaObject { arg o; javaObject = o }
+
+	prClose { arg preMsg, postMsg;
+		javaObject.prRemove;	// because super.prClose frees the ref!
+		^super.prClose( preMsg, postMsg );
+	}
 }
 
 JSCPlugContainerView : JSCContainerView {
@@ -84,4 +90,9 @@ JSCPlugContainerView : JSCContainerView {
 	}
 	
 	prSetJavaObject { arg o; javaObject = o }
+
+	prClose { arg preMsg, postMsg;
+		javaObject.prRemove;	// because super.prClose frees the ref!
+		^super.prClose( preMsg, postMsg );
+	}
 }
