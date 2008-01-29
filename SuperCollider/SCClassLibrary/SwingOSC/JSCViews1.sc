@@ -1339,11 +1339,11 @@ JSCPopUpMenu : JSCControlView {
 	value { ^this.getProperty( \value )}
 	
 	value_ { arg val;
-		this.setProperty(\value, this.prFixValue( val ));
+		this.setProperty( \value, this.prFixValue( val ));
 	}
 		
 	valueAction_ { arg val;
-		this.setPropertyWithAction(\value, this.prFixValue( val ));
+		this.setPropertyWithAction( \value, this.prFixValue( val ));
 	}
 	
 	font { ^this.getProperty( \font )}
@@ -1463,31 +1463,45 @@ JSCPopUpMenu : JSCControlView {
 //	}
 
 	prSetItems { arg items;
-		var sizes, dataSize, startIdx;
+		var sizes, dataSize, startIdx, bndl, val;
 
-		sizes = items.collect({ arg item; ((item.size + 4) & -4) + 1 });
+		sizes	= items.collect({ arg item; ((item.size + 4) & -4) + 1 });
+		val		= this.value;
+		if( val >= items.size, { val = -1 });
 //("sum = "++sizes.sum).postln;
 		if( (sizes.sum + 70) < server.options.oscBufSize, {
-			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ items ++
-											[ ']', this.value ]);
+			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ items ++ [ ']', val ]);
 		}, {	// need to split it up
 			startIdx = 0;
-			dataSize	= 45;
-			server.sendMsg( '/method', this.id, \beginDataUpdate );
+//			dataSize	= 45;
+//			server.sendMsg( '/method', this.id, \beginDataUpdate );
+			dataSize	= 171; // 139 (there seems to be a limit below 64K)
+			bndl		= Array( 3 );
+			bndl.add([ '/method', this.id, \beginDataUpdate ]);
 			sizes.do({ arg size, idx;
 				if( (dataSize + size) > server.options.oscBufSize, {
-//("sending : "++dataSize).postln;
-					server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
+("sending : "++dataSize).postln;
+//					server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
+//						items.copyRange( startIdx, idx - 1 ) ++ [ ']' ]);
+					bndl.add([ '/method', this.id, \addData, '[', '/array', ] ++
 						items.copyRange( startIdx, idx - 1 ) ++ [ ']' ]);
-					dataSize	= 45;
+					server.listSendBundle( nil, bndl );
+//					dataSize	= 45;
 					startIdx	= idx;
+					bndl		= Array( 2 );
+					dataSize	= 135; // 103 (there seems to be a limit below 64K)
 				}, {
 					dataSize = dataSize + size;
 				});
 			});
-			server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
+//			server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
+//					items.copyRange( startIdx, items.size - 1 ) ++ [ ']' ]);
+//			server.sendMsg( '/method', this.id, \endDataUpdate, this.value );
+			bndl.add([ '/method', this.id, \addData, '[', '/array', ] ++
 					items.copyRange( startIdx, items.size - 1 ) ++ [ ']' ]);
-			server.sendMsg( '/method', this.id, \endDataUpdate, this.value );
+			bndl.add([ '/method', this.id, \endDataUpdate, val ]);
+			server.listSendBundle( nil, bndl );
+			([ "sending : " ]++ bndl).postcs;
 		});
 	}
 }

@@ -25,6 +25,7 @@
  *
  *  Changelog:
  *		26-Dec-06	created
+ *		29-Jan-08	wrapping data in UniqueObject so no multiple items are checkmarked
  */
 package de.sciss.swingosc;
 
@@ -45,7 +46,7 @@ import javax.swing.ComboBoxModel;
  *	and <code>endDataUpdate</code> statements.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.51, 04-Apr-07
+ *	@version	0.59, 29-Jan-08
  */
 public class PopUpView
 extends JComboBox
@@ -118,7 +119,7 @@ extends JComboBox
 		for( int i = 0; i < updateBlocks.size(); i++ ) {
 			block = (Object[]) updateBlocks.get( i );
 			for( int j = 0; j < block.length; j++ ) {
-				addItem( block[ j ]);
+				addItem( new UniqueObject( block[ j ]));
 			}
 		}
 //		numUpdateItems = 0;
@@ -129,7 +130,7 @@ extends JComboBox
 	{
 		removeAllItems();
 		for( int j = 0; j < data.length; j++ ) {
-			addItem( data[ j ]);
+			addItem( new UniqueObject( data[ j ]));
 		}
 	}
 
@@ -157,5 +158,18 @@ extends JComboBox
 		finally {
 			for( int i = 0; i < al.length; i++ ) addActionListener( al[ i ]);
 		}
+	}
+	
+	// equals returns true only when a === b
+	private static class UniqueObject
+	{
+		private final Object value;
+		
+		private UniqueObject( Object value )
+		{
+			this.value = value;
+		}
+		
+		public String toString() { return value.toString(); }
 	}
 }
