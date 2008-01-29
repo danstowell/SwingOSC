@@ -26,6 +26,7 @@
  *  Changelog:
  *		26-Dec-06	created
  *		29-Jan-08	wrapping data in UniqueObject so no multiple items are checkmarked
+ *					; added setValue
  */
 package de.sciss.swingosc;
 
@@ -76,6 +77,23 @@ extends JComboBox
 	{
 		super( listData );
 		init();
+	}
+	
+	// sets index without action firing
+	public void setValue( int idx )
+	{
+		final ActionListener[] l = this.getActionListeners();
+		for( int i = 0; i < l.length; i++ ) {
+			removeActionListener( l[ i ]);
+		}
+		try {
+			this.setSelectedIndex( idx );
+		}
+		finally {
+			for( int i = 0; i < l.length; i++ ) {
+				addActionListener( l[ i ]);
+			}
+		}
 	}
 	
 	private void init()

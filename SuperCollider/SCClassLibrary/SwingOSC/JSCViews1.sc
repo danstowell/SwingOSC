@@ -1432,9 +1432,9 @@ JSCPopUpMenu : JSCControlView {
 
 		// fix keys
 		case { key === \value }
-		{
-			key = \selectedIndex;
-		}
+//		{
+//			key = \selectedIndex;
+//		}
 		{ key === \items }
 		{
 			this.prSetItems( value.performUnaryOp( \asString ));
@@ -1783,11 +1783,11 @@ JSCListView : JSCControlView {
 			value = value ? -1;
 			if( value >= 0, {
 				server.sendBundle( nil,
-					[ '/set', this.id, \selectedIndex, value ],
+					[ '/set', this.id, \value, value ],
 					[ '/method', this.id, \ensureIndexIsVisible, value ]
 				);
 			}, {
-				server.sendMsg( '/set', this.id, \selectedIndex, value );
+				server.sendMsg( '/set', this.id, \value, value );
 			});
 			^nil;
 		}

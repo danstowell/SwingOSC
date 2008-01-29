@@ -25,6 +25,7 @@
  *
  *  Changelog:
  *		26-Dec-06	created
+ *		29-Jan-08	added setValue
  */
 package de.sciss.swingosc;
 
@@ -44,7 +45,7 @@ import javax.swing.event.ListSelectionListener;
  *	and <code>endDataUpdate</code> statements.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.51, 04-Apr-07
+ *	@version	0.59, 29-Jan-08
  */
 public class ListView
 extends JList
@@ -70,6 +71,23 @@ extends JList
 	public ListView( Vector listData )
 	{
 		super( listData );
+	}
+	
+	// sets index without action firing
+	public void setValue( int idx )
+	{
+		final ListSelectionListener[] l = this.getListSelectionListeners();
+		for( int i = 0; i < l.length; i++ ) {
+			removeListSelectionListener( l[ i ]);
+		}
+		try {
+			this.setSelectedIndex( idx );
+		}
+		finally {
+			for( int i = 0; i < l.length; i++ ) {
+				addListSelectionListener( l[ i ]);
+			}
+		}
 	}
 	
 	public void beginDataUpdate()
