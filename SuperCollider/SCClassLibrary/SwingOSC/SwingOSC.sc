@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.59, 28-Jan-08
+ *	@version		0.59, 29-Jan-08
  */
 SwingOptions
 {
@@ -460,6 +460,7 @@ SwingOSC : Model
 	}
 
 	bootSync { arg condition;
+		if( condition.isNil, { condition = Condition.new });
 		condition.test = false;
 		this.waitForBoot({
 			// Setting func to true indicates that our condition has become true and we can go when signaled.

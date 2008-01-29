@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.58, 21-Jan-07
+ *	@version		0.58, 29-Jan-07
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -2395,7 +2395,7 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 	}
 
 	valueAction_ { arg val;
-		this.size = val.size;	
+		size = val.size;	
 		this.setPropertyWithAction( \value, val.copy );
 	}
 	
