@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.58, 29-Jan-07
+ *	@version		0.59, 30-Jan-07
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -1431,7 +1431,8 @@ JSCPopUpMenu : JSCControlView {
 		key	= key.asSymbol;
 
 		// fix keys
-		case { key === \value }
+		case
+//		{ key === \value }
 //		{
 //			key = \selectedIndex;
 //		}
@@ -1779,7 +1780,6 @@ JSCListView : JSCControlView {
 		// fix keys
 		case { key === \value }
 		{
-			key = \selectedIndex;
 			value = value ? -1;
 			if( value >= 0, {
 				server.sendBundle( nil,
@@ -1894,7 +1894,7 @@ JSCDragSource : JSCDragView {
 JSCDragSink : JSCDragView {
 	// ----------------- public instance methods -----------------
 
-	defaultCanReceiveDrag { ^true;	}
+	defaultCanReceiveDrag { ^true }
 
 	defaultReceiveDrag {
 		this.object = currentDrag;

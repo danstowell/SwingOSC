@@ -1,4 +1,4 @@
-// converted to SwingOSC compatibility ; last mod : 06-jan-07 sciss
+// converted to SwingOSC compatibility
 
 // SCFreqScope and FreqScope
 // by Lance Putnam
@@ -8,17 +8,17 @@
 // and refers to the SwingOSC instance
 // ; the original server class variable was
 // renamed to audioServer !!
+//
+//	@version	0.59, 30-Jan-08
 JSCFreqScope : JSCScope {
 
-	classvar <audioServer;
+	classvar audioServer;
 	var <scopebuf, <fftbuf;
 	var <active, <node, <inBus, <dbRange, dbFactor, rate, <freqMode;
 	var <bufSize;	// size of FFT
 	
 	*viewClass { ^JSCScope }
 	
-// JJJ
-//	*initClass { server = Server.internal }
 	*initClass {
 		Class.initClassTree( Server );
 		audioServer = Server.default;
@@ -28,14 +28,19 @@ JSCFreqScope : JSCScope {
 		^super.new(parent, bounds).initSCFreqScope
 	}
 	
+	*audioServer {
+		^audioServer ?? {ÊaudioServer = JStethoscope.defaultServer };
+	}
+	
 	initSCFreqScope {
-		active=false;
-		inBus=0;
-		dbRange = 96;
+		this.class.audioServer;	// lazy init
+		active	= false;
+		inBus	= 0;
+		dbRange	= 96;
 		dbFactor = 2/dbRange;
-		rate = 4;
-		freqMode = 0;
-		bufSize = 2048;
+		rate		= 4;
+		freqMode	= 0;
+		bufSize	= 2048;
 		
 // JJJ start allocates node!
 //		node = audioServer.nextNodeID;
@@ -93,7 +98,7 @@ JSCFreqScope : JSCScope {
 //			ScopeOut.ar( ((BufRd.ar(1, fftbufnum, phasor, 1) * mul).ampdb * dbFactor) + 1, scopebufnum);
 //		}).send(audioServer);
 
-		"SCFreqScope: SynthDefs sent".postln;
+		"JSCFreqScope: SynthDefs sent".postln;
 	}
 	
 	allocBuffers {
@@ -103,7 +108,7 @@ JSCFreqScope : JSCScope {
 				this.bufnum = sbuf.bufnum;
 				fftbuf = Buffer.alloc(audioServer, bufSize, 1,
 				{ arg fbuf;
-					("SCFreqScope: Buffers allocated (" 
+					("JSCFreqScope: Buffers allocated (" 
 						++ sbuf.bufnum.asString ++ ", "
 						++ fbuf.bufnum.asString ++ ")").postln;
 				});
@@ -112,7 +117,7 @@ JSCFreqScope : JSCScope {
 	
 	freeBuffers {
 		if( scopebuf.notNil && fftbuf.notNil, {
-			("SCFreqScope: Buffers freed (" 
+			("JSCFreqScope: Buffers freed (" 
 				++ scopebuf.bufnum.asString ++ ", "
 				++ fftbuf.bufnum.asString ++ ")").postln;
 			scopebuf.free; scopebuf = nil;

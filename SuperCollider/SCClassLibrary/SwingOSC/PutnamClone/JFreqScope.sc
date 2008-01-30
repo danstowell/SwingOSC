@@ -6,7 +6,7 @@
 // by Lance Putnam
 // lance@uwalumni.com
 
-// lastmod: 03-feb-07 sciss
+//	@version	0.59, 30-Jan-08
 JFreqScope {
 	
 	var <scope, <window;
@@ -27,9 +27,8 @@ JFreqScope {
 		dbLabel = Array.newClear(17);
 		dbLabelDist = rect.height/(dbLabel.size-1);
 		
-// JJJ
-//		nyquistKHz = Server.internal.sampleRate;
-		nyquistKHz = Server.default.sampleRate;
+//		nyquistKHz = Server.default.sampleRate;
+		nyquistKHz = JSCFreqScope.audioServer.sampleRate;
 		if( (nyquistKHz == 0) || nyquistKHz.isNil, {
 			nyquistKHz = 22.05 // best guess?
 		},{
@@ -64,9 +63,10 @@ JFreqScope {
 			});
 		};
 
-// JJJ too small
-//		window = JSCWindow("Freq Analyzer", rect.resizeBy(pad[0] + pad[1] + 4, pad[2] + pad[3] + 4), false);
 		window = JSCWindow("Freq Analyzer", rect.resizeBy(pad[0] + pad[1] + 24, pad[2] + pad[3] + 4), false);
+
+		scope = JSCFreqScope(window, rect.moveBy(pad[0], pad[2]));
+		scope.opaque = false;	// ... so the grid shines through (don't know why we need this)
 		
 		freqLabel.size.do({ arg i;
 			freqLabel[i] = JSCStaticText(window, Rect(pad[0] - (freqLabelDist*0.5) + (i*freqLabelDist), pad[2] - 10, freqLabelDist, 10))
@@ -80,27 +80,24 @@ JFreqScope {
 		});
 		
 		dbLabel.size.do({ arg i;
-// JJJ
-//			dbLabel[i] = JSCStaticText(window, Rect(0, pad[2] + (i*dbLabelDist), pad[0], 10))
-			dbLabel[i] = JSCStaticText(window, Rect(0, pad[2] + (i*dbLabelDist), pad[0] - 2, 10))
+			dbLabel[i] = JSCStaticText(window, Rect(0, pad[2] + (i*dbLabelDist) - 4, pad[0] - 2, 10))
 				.font_(font)
 				.align_(1)
 			;
-			JSCStaticText(window, Rect(pad[0], dbLabel[i].bounds.top, rect.width, 1))
+			JSCStaticText(window, Rect(pad[0], dbLabel[i].bounds.top + 4, rect.width, 1))
 				.string_("")
 				.background_(scopeColor.alpha_(0.25))
 			;		
 		});
 		
-		scope = JSCFreqScope(window, rect.moveBy(pad[0], pad[2]));
-		scope.opaque = false;	// YYY so the grid shines through
+//		scope = JSCFreqScope(window, rect.moveBy(pad[0], pad[2]));
+//		scope.opaque = false;
 		scope.xZoom_((scope.bufSize*0.25) / width);
 		
 		setFreqLabelVals.value(scope.freqMode, 2048);
 		setDBLabelVals.value(scope.dbRange);
 
-// JJJ
-rect = rect.resizeBy( 4, 0 );
+		rect = rect.resizeBy( 4, 0 );
 
 		JSCButton(window, Rect(pad[0] + rect.width, pad[2], pad[1], 16))
 			.states_([["Power", Color.white, Color.green(0.5)], ["Power", Color.white, Color.red(0.5)]])
@@ -115,19 +112,13 @@ rect = rect.resizeBy( 4, 0 );
 			.canFocus_(false)
 		;
 		
-// JJJ too small with aqua
-//		JSCStaticText(window, Rect(pad[0] + rect.width, pad[2]+20, pad[1], 10))
 		JSCStaticText(window, Rect(pad[0] + rect.width, pad[2]+20, pad[1] + 20, 10))
 			.string_("BusIn")
 			.font_(font)
 		;
 
-// JJJ
-//		JSCNumberBox(window, Rect(pad[0] + rect.width, pad[2]+30, pad[1], 14))
 		JSCNumberBox(window, Rect(pad[0] + rect.width, pad[2]+30, pad[1], 18))
 			.action_({ arg view;
-// JJJ
-//				view.value_(view.value.asInteger.clip(0, Server.internal.options.numAudioBusChannels));
 				view.value_(view.value.asInteger.clip(0, Server.default.options.numAudioBusChannels));
 				scope.inBus_(view.value);
 			})
@@ -135,14 +126,10 @@ rect = rect.resizeBy( 4, 0 );
 			.font_(font)
 		;
 
-// JJJ too small with aqua
-//		JSCStaticText(window, Rect(pad[0] + rect.width, pad[2]+48, pad[1], 10))
 		JSCStaticText(window, Rect(pad[0] + rect.width, pad[2]+54, pad[1] + 20, 10))
 			.string_("FrqScl")
 			.font_(font)
 		;
-// JJJ too small with aqua
-//		JSCPopUpMenu(window, Rect(pad[0] + rect.width, pad[2]+58, pad[1], 16))
 		JSCPopUpMenu(window, Rect(pad[0] + rect.width, pad[2]+68, pad[1] + 20, 22))
 			.items_(["lin", "log"])
 			.action_({ arg view;
@@ -153,14 +140,10 @@ rect = rect.resizeBy( 4, 0 );
 			.font_(font)
 		;
 		
-// JJJ too small with aqua
-//		JSCStaticText(window, Rect(pad[0] + rect.width, pad[2]+76, pad[1], 10))
 		JSCStaticText(window, Rect(pad[0] + rect.width, pad[2]+98, pad[1] + 20, 10))
 			.string_("dbCut")
 			.font_(font)
 		;
-// JJJ too small with aqua
-//		JSCPopUpMenu(window, Rect(pad[0] + rect.width, pad[2]+86, pad[1], 16))
 		JSCPopUpMenu(window, Rect(pad[0] + rect.width, pad[2]+112, pad[1] + 20, 22))
 			.items_(Array.series(12, 12, 12).collect({ arg item; item.asString }))
 			.action_({ arg view;

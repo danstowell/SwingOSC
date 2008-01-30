@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCDragSource / SCDragSink / SCDragBoth. last mod: 30-jul-07 sciss
+<p>This class is meant as an emulation of SCDragSource / SCDragSink / SCDragBoth. last mod: 30-jan-08 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -18,8 +18,6 @@
 <tr><td class="oscTabKey">string compilation</td><td class="oscTabValue">the compilation of a string dragged from an external application happens at the end of the dnd gesture ; in cocoa gui, the string is compiled as soon as the mouse is moved over a gui component.</td></tr>
 <tr><td colspan="2" class="oscTabSection">extended functionality</td></tr>
 <tr><td class="oscTabKey">string compilation</td><td class="oscTabValue">string compilation can be switched off by calling interpretDroppedStrings_( false ).</td></tr>
-<tr><td colspan="2" class="oscTabSection">known issues / todo</td></tr>
-<tr><td class="oscTabKey">file drag</td><td class="oscTabValue">should enable dragging files from the finder (could result in a PathName object)</td></tr>
 </table>
 </div>
 <P>&nbsp;</P>
@@ -66,6 +64,8 @@ z.object = <span class="st">&quot;Haschimoto&quot;</span>;
 <UL>
 <LI>dragging from SwingOSC to an external application will export the transferable object as a string (<CODE>currentDrag.asString</CODE>).</LI>
 <LI>dragging a string from an external application to SwingOSC will compile that string and save the result in <code>currentDrag</code>.</LI>
+<LI>dragging a file or folder from the Finder / desktop manager to SwingOSC will store a <A HREF="SC://PathName">PathName</A> in <code>currentDrag</code>.</LI>
+<LI>dragging several files or folders from the Finder / desktop manager to SwingOSC will store an <A HREF="SC://Array">Array</A> of <A HREF="SC://PathName">PathName</A>s in <code>currentDrag</code>.</LI>
 </UL>
 <P><br>Example: boot the local server, select the following code snipped and drag it onto the drag sink in the window created above:</P>
 <PRE>

@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.58, 18-Jan-08
+ *	@version		0.59, 30-Jan-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -375,7 +375,7 @@ JSCView {  // abstract class
 		dndResp = OSCpathResponder( server.addr, [ '/transfer', this.id ], { arg time, resp, msg;
 			var state;
 			
-			state = msg[2].asSymbol;
+			state = msg[2];
 			case { state === \export }
 			{
 				this.beginDrag;
@@ -387,10 +387,19 @@ JSCView {  // abstract class
 			}
 			{ state === \import }
 			{
-				if( msg[3].asSymbol === \string, {
+				case { msg[3] === \string }
+				{
 					currentDrag = msg[4].asString;
 					this.prImportDrag;	// compile it just as in cocoa sc
-				});
+				}
+				{ msg[3] === \files }
+				{
+					if( (msg.size - 4) == 1, {
+						currentDrag = PathName( msg[4].asString );
+					}, {
+						currentDrag = msg.drop(4).collect({ arg path; PathName( path.asString )});
+					});
+				};
 				if( this.canReceiveDrag, {
 					this.receiveDrag;
 				});

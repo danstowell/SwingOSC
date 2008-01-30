@@ -27,6 +27,7 @@
  *		25-Dec-05	created
  *		25-Mar-06	uses OSCClient
  *		15-Jan-08	handles cut/copy/paste from/to clipboard
+ *		30-Jan-08	adds file-list import
  */
 
 package de.sciss.swingosc;
@@ -37,7 +38,9 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -92,7 +95,7 @@ import de.sciss.net.OSCMessage;
  *	<code>stringData</code> to a value will always effect the ongoing drag-and-drop!
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 15-Jan-08
+ *	@version	0.59, 30-Jan-08
  */
 public class DummyTransferHandler
 extends TransferHandler
@@ -100,7 +103,8 @@ implements Transferable, MouseInputListener
 {
 	private static final DataFlavor 	dummyFlavor 	= new DataFlavor( Object.class, "Dummy" );
 	private static final Object			dummy			= new Object();
-	private static final DataFlavor[]	flavors	 		= new DataFlavor[] { dummyFlavor, DataFlavor.stringFlavor };
+	private static final DataFlavor[]	flavors	 		= new DataFlavor[] {
+		dummyFlavor, DataFlavor.stringFlavor, DataFlavor.javaFileListFlavor };
 	
 	// "Meta" key modifier is only available on Mac OS X
 //	private static final boolean		isMac			= System.getProperty( "os.name" ).indexOf( "Mac OS" ) >= 0;
@@ -230,9 +234,24 @@ implements Transferable, MouseInputListener
 				importStringArgs[ 3 ] = t.getTransferData( DataFlavor.stringFlavor );
 				client.reply( new OSCMessage( getOSCCommand(), importStringArgs ));
 				return true;
-			} else {
-				return oldHandler == null ? super.importData( c, t ) : oldHandler.importData( c, t );
+			} else if( t.isDataFlavorSupported( DataFlavor.javaFileListFlavor )) {
+				final List fileList = (List) t.getTransferData( DataFlavor.javaFileListFlavor );
+//System.out.println( "fileList.size() = " + fileList.size() );
+				if( !fileList.isEmpty() ) {
+					final Object[] importFilesArgs = new Object[ fileList.size() + 3 ];
+					importFilesArgs[ 0 ] = importStringArgs[ 0 ];
+					importFilesArgs[ 1 ] = importStringArgs[ 1 ];
+					importFilesArgs[ 2 ] = "files";
+					for( int i = 0, j = 3; i < fileList.size(); i++, j++ ) {
+						importFilesArgs[ j ] = ((File) fileList.get( i )).getAbsolutePath();
+					}
+//System.out.println( "replying..." );
+					client.reply( new OSCMessage( getOSCCommand(), importFilesArgs ));
+					return true;
+				}
 			}
+//System.out.println( "...none" );
+			return oldHandler == null ? super.importData( c, t ) : oldHandler.importData( c, t );
 		}
 		catch( IOException ex ) {
 			SwingOSC.printException( ex, getOSCCommand() );
@@ -245,11 +264,14 @@ implements Transferable, MouseInputListener
 	
 	public boolean canImport( JComponent c, DataFlavor[] f )
 	{
+//System.out.println( "canImport" );
 		for( int i = 0; i < f.length; i++ ) {
+//System.out.println( "  " +  f[ i ]);
 			for( int j = 0; j < flavors.length; j++ ) {
 				if( f[ i ].equals( flavors[ j ])) return true;
 			}
 		}
+//System.out.println( "... no!" );
 		return oldHandler == null ? super.canImport( c, f ) : oldHandler.canImport( c, f );
 	}
 
