@@ -163,7 +163,9 @@ implements LayoutManager
     // 4. do( for all elastic : if maxExtent < normElasticExtent : width = maxExtent, numElastic--, totalElasticExtent -= maxExtent;  else break )
     public void layoutContainer( Container parent )
     {
-        final int 		nComps 				= parent.getComponentCount();
+//		((JComponent) parent).setPreferredSize( preferredLayoutSize( parent ));
+
+		final int 		nComps 				= parent.getComponentCount();
         final Set		elastic				= new HashSet( nComps );
         final Insets	parentInsets		= parent.getInsets();
         final int		parentWidth			= parent.getWidth() - (margin.left + margin.right + parentInsets.left + parentInsets.right);
@@ -180,7 +182,7 @@ implements LayoutManager
         int				offY				= margin.top + parentInsets.top;
         int				numElastic			= 0;
         int				numDiv, elasticLeft;
-       
+
 checkElastic:
 		for( int i = 0; i < nComps; i++ ) {
             c = parent.getComponent( i );
@@ -292,6 +294,9 @@ checkElastic:
 	            	offX += c.getWidth() - (insets.left + insets.right) + spacing;
 	            }
 			}
+
+			((JComponent) parent).setPreferredSize( new Dimension( offX, offY + fill ));
+
 		} else {  // --- vertical ---
 			for( int i = 0; i < nComps; i++ ) {
 	            c = parent.getComponent( i );
@@ -326,6 +331,8 @@ checkElastic:
 	            	offY += c.getHeight() - (insets.top + insets.bottom) + spacing;
               	}
             }
+			
+			((JComponent) parent).setPreferredSize( new Dimension( offX + fill, offY ));
 		}
     }
 }

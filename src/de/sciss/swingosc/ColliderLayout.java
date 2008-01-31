@@ -27,6 +27,7 @@
  *		02-Jan-07	created
  *		14-Jan-08	calls calcSizes again and applies preferred dim to work with JSCScrollTopView
  *		27-Jan-08	conforms with java 1.4
+ *		31-Jan-08	special handling for Panel in preferredSize calcluation
  */
 package de.sciss.swingosc;
 
@@ -45,7 +46,7 @@ import javax.swing.JComponent;
  *	SuperCollider cocoa GUI's SCCompositeView (resize property).
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.59, 27-Jan-08
+ *  @version	0.59, 31-Jan-08
  *  
  *  @todo		calcSizes : should rather read minWidth / minHeight etc. client properties
  */
@@ -78,10 +79,10 @@ implements LayoutManager
 
     private void calcSizes( Container parent )
     {
-//    	System.out.println( "calcSizes" );
+//    	System.out.println( "ColliderLayout for " + parent + " : calcSizes" );
 
     	final int	nComps = parent.getComponentCount();
-//      Dimension	d;
+     	Dimension	d;
         Component	c;
 //      Point		p;
         Rectangle	r;
@@ -98,25 +99,33 @@ implements LayoutManager
                 r	= c.getBounds();
 // 	            p	= c.getLocation();
                 
-                // note: we don't really deal with preferred sizes yet.
+                // note: we don't really deal with preferred sizes yet
+                // except for Panel (which needs to adjust to children
+                // being added or removed). otherwise,
                 // we assume the sc client has explicitly set bounds,
                 // so in order to determine "preferred" container dimensions,
                 // we use the current gadgets' bounds
-                preferredWidth	= Math.max( preferredWidth, r.x + r.width );
-                preferredHeight	= Math.max( preferredHeight, r.y + r.height );
+//                if( c instanceof Panel ) {
+//                	d				= c.getPreferredSize();
+//                	preferredWidth	= Math.max( preferredWidth, r.x + d.width );
+//                	preferredHeight	= Math.max( preferredHeight, r.y + d.height );
+//                } else {
+                	preferredWidth	= Math.max( preferredWidth, r.x + r.width );
+                	preferredHeight	= Math.max( preferredHeight, r.y + r.height );
+//                }
                 minWidth		= Math.max( minWidth, r.x + c.getMinimumSize().width );
                 minHeight		= Math.max( minHeight, r.y + c.getMinimumSize().width );
             }
         }
 //       sizeUnknown = false;
         
-//        System.out.println( "preferredWidth  " + preferredWidth );
-//        System.out.println( "preferredHeight " + preferredHeight );
+//       System.out.println( "preferredWidth  " + preferredWidth );
+//       System.out.println( "preferredHeight " + preferredHeight );
     }
 
     public Dimension preferredLayoutSize( Container parent )
     {
-//    	System.out.println( "preferredLayoutSize" );
+//    	System.out.println( "ColliderLayout for " + parent + " : preferredLayoutSize" );
 
     	calcSizes( parent );
 
@@ -144,7 +153,7 @@ implements LayoutManager
 			((JComponent) parent).setPreferredSize( preferredLayoutSize( parent ));
 //		}
 
-//System.out.println( "layoutContainer " + preferredWidth + ", " + preferredHeight );
+//System.out.println( "layoutContainer for " + parent + " : prefSize = " + preferredWidth + ", " + preferredHeight );
     	if( !resizeActive ) return;
     	
 //      final Insets	insets 	= parent.getInsets();
