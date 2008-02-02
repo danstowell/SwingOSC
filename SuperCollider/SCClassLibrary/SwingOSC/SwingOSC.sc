@@ -109,6 +109,7 @@ SwingOSC : Model
 	var <isLocal;
 	var <serverRunning = false, <serverBooting = false, <serverVersion;
 	var <dumpMode = 0, <dumpModeR = 0;
+	var tempRunning = false;
 
 	var <>options; // , <>latency = 0.2, <notified=true;
 	var <nodeAllocator;
@@ -131,7 +132,7 @@ SwingOSC : Model
 		default		= local = SwingOSC( \localhost, NetAddr( "127.0.0.1", 57111 ), SwingOptions.default );
 		java			= "java";
 		program 		= "SwingOSC.jar"; // -Dapple.awt.brushMetalLook=true if you like
-//		CmdPeriod.add( this );
+		CmdPeriod.add( this );
 	}
 
 	// ----------------- constructor -----------------
@@ -157,13 +158,13 @@ SwingOSC : Model
 		this.default.retrieveScreenBounds;
 	}
 		
-	*resumeThreads {
-		"SwingOSC.resumeThreads...".postln;
-		set.do({ arg server;
-			server.stopAliveThread;
-			server.startAliveThread( 0.7 );
-		});
-	}
+//	*resumeThreads {
+//		"SwingOSC.resumeThreads...".postln;
+//		set.do({ arg server;
+//			server.stopAliveThread;
+//			server.startAliveThread( 0.7 );
+//		});
+//	}
 	
 	// ----------------- public instance methods -----------------
 	
@@ -443,14 +444,14 @@ SwingOSC : Model
 		var cancel, upd;
 		
 		if( serverRunning.not, {
-			upd		= Updater( this, {
+			upd = UpdateListener.newFor( this, {
 				if( serverRunning, {
 					cancel.stop;
 					upd.remove;
 					onComplete.value;
-				});
+				}, \serverRunning );
 			});
-			cancel	= {
+			cancel = {
 				timeout.wait;
 				upd.remove;
 				"SwingOSC server failed to start".error;
@@ -476,6 +477,7 @@ SwingOSC : Model
 			statusWatcher = OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
 				lives = deathBounces;
 //				alive = true;
+//				"----- from /info".postln;
 				this.serverRunning = true;
 			}).add;	
 			aliveThread = {
@@ -486,10 +488,11 @@ SwingOSC : Model
 						try { this.connect };
 					}, {
 						this.status;
+						lives = lives - 1;
 					});
-					lives = lives - 1;
 					period.wait;
 					if( lives <= 0, {
+//						"----- from lives <=0".postln;
 						this.serverRunning = false;
 					});
 				};
@@ -643,6 +646,10 @@ SwingOSC : Model
 		};
 	}
 
+	*cmdPeriod {
+		set.do({ arg server; server.prResumeThreads });
+	}
+
 	// ----------------- private instance methods -----------------
 
 	init { arg argName, argAddr, argOptions, argClientID;
@@ -687,12 +694,22 @@ SwingOSC : Model
 //("pingAddr : "++pingAddr++"; req.addr "++addr).postln;
 			if( pingAddr == addr and: { protocol == options.protocol }, {
 //				this.initTree;
-				this.serverRunning_( false );
-				this.serverRunning_( true );	// invokes initTree
+//				this.serverRunning_( false );
+//				"----- from /swing, \\hello".postln;
+				if( statusWatcher.notNil, {
+					statusWatcher.action.value;	// resets 'lives'
+				}, {
+					this.serverRunning_( true );	// invokes initTree if necessary
+				});
 			});
 		}).add;
 		
-		this.initTree({ serverRunning = true; this.changed( \serverRunning )});
+		this.initTree({
+			if( serverRunning.notNil, {
+				serverRunning = true;
+				this.changed( \serverRunning );
+			});
+		});
 	}
 
 //	addStatusWatcher {
@@ -720,18 +737,36 @@ SwingOSC : Model
 	}
 
 	serverRunning_ { arg val;
-		if( val != serverRunning, {
-			serverRunning = val;
-			if( serverRunning, {
+		if( val != tempRunning, {
+//			[ "serverRunning_", serverRunning, val ].postln;
+//			thisMethod.dumpBackTrace;
+			tempRunning = val;
+//			serverRunning = val;
+			if( tempRunning, {
 				this.initTree({
-					"SwingOSC : server connected.".postln;
-					this.changed( \serverRunning );
+					if( tempRunning, {
+						"SwingOSC : server connected.".postln;
+						serverRunning = true;
+						this.changed( \serverRunning );
+					});
 				}, {
 					"SwingOSC.initTree : timeout".error;
 				});			
 			}, {
-				{ this.changed( \serverRunning ); }.defer;
+				clock.sched( 0, {
+					if( tempRunning.not, {
+						serverRunning = false;
+						this.changed( \serverRunning );
+					});
+				});
 			});
+		});
+	}
+
+	prResumeThreads {
+		if( aliveThread.notNil, {
+			this.stopAliveThread;
+			this.startAliveThread( 0.7 );
 		});
 	}
 }

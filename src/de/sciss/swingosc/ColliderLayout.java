@@ -82,7 +82,7 @@ implements LayoutManager
 //    	System.out.println( "ColliderLayout for " + parent + " : calcSizes" );
 
     	final int	nComps = parent.getComponentCount();
-     	Dimension	d;
+//     	Dimension	d;
         Component	c;
 //      Point		p;
         Rectangle	r;
