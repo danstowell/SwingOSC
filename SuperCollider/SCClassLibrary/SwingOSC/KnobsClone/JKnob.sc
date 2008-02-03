@@ -1,234 +1,232 @@
-// adapted for SwingOSC ; last mod : 11-dec-07 sciss
+// blackrain at realizedsound dot net - 05/2006
+//	fix key modifiers bug by Stephan Wittwer 08/2006 - thanks!
+//	Knob updates only on value changes - 10/2006
+//	GUI.cocoa changes by Sciss - 07/2007
+//	03-Feb-08 : works both with CocoaGUI and SwingGUI
 
-// blackrain - 1105
+// NOTE: this is essentially GUI independant and will removed in
+// favour if Knob if the latter is merged with this code.
+// (just remove the GUI.useID( ... ) wrapper!)
 JKnob {
-	var <knob, <>action, <>color, <>mouseOverAction, <>keyDownFunc, value, <>step, 
-		hit, <>keystep, isCentered = false, <>mode;
+	classvar <>defaultMode;
+	var <>color, <value, last, <>step, hit, <>keystep, <>mode, isCentered = false;
+	
+	var <view, gui, modDrag, modVert;
+	var <>mouseOverAction;
 	
 	*new { arg parent, bounds;
-		^super.new.initKnob(parent, bounds)
+		GUI.useID( \swing, { ^super.new.prInit( parent, bounds )});
+	}
+	
+	*viewClass { ^GUI.userView }
+
+	*initClass {
+		defaultMode = \round; // early so this can be changed in startup
+//		StartUp.add({ var kit;
+//			kit = GUI.schemes[ \cocoa ];
+//			if( kit.notNil, { kit.knob = Knob });
+//			kit = GUI.schemes[ \swing ];
+//			if( kit.notNil, { kit.knob = JKnob });
+//		});
 	}
 
-	initKnob { arg parent, bounds;
-		var knobFunc;
-
-		mode = \round;
-		keystep = 0.01;
-		step = 0.01;
-		value = 0.0;
+	*paletteExample { arg parent, bounds;
+		^Knob.new( parent, bounds );
+	}
+	
+	remove {
+		view.remove;
+	}
+	
+	bounds {
+		^view.bounds;
+	}
+	
+	bounds_ { arg value;
+		view.bounds_( value );
+	}
 		
-		color = [Color.blue(0.7, 0.5), Color.green(0.8, 0.8), Color.black.alpha_(0.3),
-			Color.black.alpha_(0.7)];
-
-		knob = JSCUserView.new(parent, bounds)
-			.focusVisible_( false )
-			.keyDownAction_({arg me, key, modifiers, unicode;
-				keyDownFunc.value(key, modifiers, unicode);
-			})
-			.mouseOverAction_({arg v, x, y; this.mouseOverAction.value(this, x, y); })
-			.mouseDownAction_({arg v, x, y, modifiers;
-				hit = Point(x,y);
-				knobFunc.value(v, x, y, modifiers);
-			})
-			.mouseTrackFunc_({arg v, x, y, modifiers;
-				knobFunc.value(v, x, y, modifiers);
-			})
-			.drawFunc_({ arg knob; // JJJ arg knob because knob not yet assigned !
-				var startAngle, arcAngle, size;
-				size = knob.bounds.width;
-				
-//				color[2].set;
-				JPen.color = color[2];
-				JPen.addAnnularWedge(
-					knob.bounds.center, 
-					(knob.bounds.width * 0.5) - (0.08 * size), 
-					knob.bounds.width * 0.5, 	
-					0.25pi, 
-					-1.5pi
-				);
-				JPen.perform(\fill);
+	prInit { arg parent, bounds;
+		gui		= GUI.current;
+		mode		= defaultMode;
+		keystep	= 0.01;
+		step		= 0.01;
+		value	= 0.0;
+		color	= [ Color.blue( 0.7, 0.5 ), Color.green( 0.8, 0.8 ), Color.black.alpha_( 0.3 ), Color.black.alpha_( 0.7 )];
+		if( gui.id === \cocoa, {
+			modDrag	= 0x00100000;	// cmd key
+			modVert	= 0x00040000;	// ctrl key
+		}, {
+			modDrag	= 0x00040000;	// ctrl key
+			modVert	= 0x00020000;	// shift key
+		});
+		view		= gui.userView.new( parent, bounds )
+			.relativeOrigin_( true )
+			.drawFunc_({ arg view; this.prDraw( view )})
+			.keyDownAction_({ arg ... args; this.prKeyDown( *args )})
+			.mouseDownAction_({ arg ... args; this.prMouseDown( *args )})
+			.mouseMoveAction_({ arg ... args; this.prMouseMove( *args )})
+			.mouseOverAction_({ arg view ... args; mouseOverAction.value( this, *args )})
+			.canReceiveDragHandler_({ this.prCanReceiveDrag })
+			.receiveDragHandler_({ this.prReceiveDrag })
+			.beginDragAction_({ this.prGetDrag });
+	}
+	
+	prDraw { arg view;
+		var startAngle, arcAngle, size, widthDiv2, aw, bounds, center, pen;
 		
-				if (isCentered == false, {
-					startAngle = 0.75pi; 
-					arcAngle = 1.5pi * value;
-				}, {
-					startAngle = -0.5pi; 
-					arcAngle = 1.5pi * (value - 0.5);
+		bounds	= view.bounds.moveTo( 0, 0 );
+		center	= bounds.center;
+		size		= bounds.width;
+		widthDiv2 = size * 0.5;
+		
+		pen		= gui.pen;
+		
+		pen.fillColor = color[2];
+		pen.addAnnularWedge(
+			center, 
+			widthDiv2 - (0.08 * size), 
+			widthDiv2, 	
+			0.25pi, 
+			-1.5pi
+		);
+		pen.fill;
+
+		if (isCentered.not, {
+			startAngle = 0.75pi; 
+			arcAngle = 1.5pi * value;
+		}, {
+			startAngle = -0.5pi; 
+			arcAngle = 1.5pi * (value - 0.5);
+		});
+
+		pen.fillColor = color[1];
+		pen.addAnnularWedge(
+			center, 
+			widthDiv2 - (0.12 * size), 
+			widthDiv2, 	
+			startAngle, 
+			arcAngle
+		);
+		pen.fill;
+
+		pen.fillColor = color[0];
+		aw = widthDiv2 - (0.14 * size);
+		pen.addWedge( center, aw, 0, 2pi );
+		pen.fill;
+
+		pen.strokeColor = color[3];
+		pen.width = (0.08 * size);
+		pen.moveTo( center );
+		pen.lineTo( Polar( aw, 0.75pi + (1.5pi * value) ).asPoint + center );
+		pen.stroke;
+	}
+
+	prMouseDown { arg view, x, y, modifiers, buttonNumber, clickCount;
+		hit = view.mousePosition;
+		this.prMouseMove( view, x, y, modifiers );
+	}
+	
+	prMouseMove { arg view, x, y, modifiers;
+		var pt, angle, newHit, inc;
+
+		if (modifiers & modDrag != modDrag, { // we are not dragging out - apple key
+		
+			newHit	= view.mousePosition;
+			x		= newHit.x;
+			y		= newHit.y;
+			
+//			[ hit, newHit ].postln;
+		
+			case
+			{ (mode == \vert) || (modifiers & modVert == modVert) } { // Control
+				inc = (hit.y - y) * step;
+//				if ( hit.y > y, {
+//					inc = step;
+//				}, {
+//					if ( hit.y < y, {
+//						inc = step.neg;
+//					});
+//				});
+				value = (value + inc).clip(0.0, 1.0);
+				if (last != value) {
+					view.action.value( this, x, y, modifiers );
+					last = value;
+					view.refresh;
+				}
+			}
+			{ (mode == \horiz) || (modifiers & 0x00080000 == 0x00080000) } { // Option
+				inc = (x - hit.x) * step;
+//				if ( hit.x > x, {
+//					inc = step.neg;
+//				}, {
+//					if ( hit.x < x, {
+//						inc = step;
+//					});
+//				});
+				value = (value + inc).clip(0.0, 1.0);
+				if (last != value) {
+					view.action.value( this, x, y, modifiers );
+					last = value;
+					view.refresh;
+				}
+			}
+			{ mode == \round } {
+				pt = view.bounds.moveTo( 0, 0 ).center - newHit;
+				angle = Point( pt.y, pt.x.neg ).theta;
+				if ((angle >= -0.80pi) && (angle <= 0.80pi), {
+					value = [-0.75pi, 0.75pi].asSpec.unmap(angle);
+					if (last != value) {
+						view.action.value( this, x, y, modifiers );
+						last = value;
+						view.refresh;
+					}
 				});
 
-//				color[1].set;
-				JPen.color = color[1];
-				JPen.addAnnularWedge(
-					knob.bounds.center, 
-					(knob.bounds.width * 0.5) - (0.12 * size), 
-					knob.bounds.width * 0.5, 	
-					startAngle, 
-					arcAngle
-				);
-				JPen.perform(\fill);
-		
-//				color[0].set;
-				JPen.color = color[0];
-				JPen.addWedge(knob.bounds.center, (knob.bounds.width * 0.5) - (0.14 * size),
-					0, 2pi);
-				JPen.perform(\fill);
-
-//				color[3].set;
-				JPen.color = color[3];
-				JPen.width = (0.08 * size);
-				JPen.moveTo(knob.bounds.center);
-				JPen.lineTo(Polar.new((knob.bounds.width * 0.5) - (0.14 * size),
-					0.75pi + (1.5pi * value)).asPoint + knob.bounds.center);
-				JPen.stroke;
-			})
-			.canReceiveDragHandler_({
-				JSCView.currentDrag.isFloat
-			})
-			.receiveDragHandler_({
-				this.valueAction = JSCView.currentDrag.clip(0.0, 1.0);
-			})
-			.beginDragAction_({ arg v;  this.value.asFloat;  });
-		//	.onClose_({ knob = nil; });
-
-		knobFunc = {arg v, x, y, modifiers;
-			var pt, angle, inc = 0;
-
-// JJJ
-//			if (modifiers != 1048576, { // this is not a drag - apple key (is this portable?)
-			if (modifiers != 262144, { // this is not a drag - apple key (is this portable?)
-				case
-// JJJ
-//					{ (mode == \vert) || (modifiers == 262144) } { // or Control
-					{ (mode == \vert) || (modifiers == 131072) } { // or Shift
-						if ( hit.y > y, {
-							inc = step;
-						}, {
-							if ( hit.y < y, {
-								inc = step.neg;
-							});
-						});
-						value = (value + inc).clip(0.0, 1.0);
-						hit = Point(x,y);
-						action.value(this, x, y, modifiers);
-						v.refresh;
-					}
-					{ (mode == \horiz) || (modifiers == 524288) } { // or Option
-						if ( hit.x > x, {
-							inc = step.neg;
-						}, {
-							if ( hit.x < x, {
-								inc = step;
-							});
-						});
-						value = (value + inc).clip(0.0, 1.0);
-						hit = Point(x,y);
-						action.value(this, x, y, modifiers);
-						v.refresh;
-					}
-					{ mode == \round } {
-						pt = v.bounds.center - Point(x,y);
-						angle = Point(pt.y, pt.x.neg).theta;
-						if ((angle >= -0.80pi) && (angle <= 0.80pi), {
-							value = [-0.75pi, 0.75pi].asSpec.unmap(angle);
-							action.value(this, x, y, modifiers);
-							v.refresh;
-						});
-
-					}
-			});
-		};
-
-		keyDownFunc = {arg key, modifiers, unicode;
-			this.defaultKeyDownAction(key, modifiers, unicode);
-		}
-	}
-
-	value_ {arg val;
-		value = val.clip(0.0, 1.0);
-		knob.refresh;
-		^value;
-	}
-
-	value {
-		^value;
+			};
+			
+			hit = newHit;
+		});
 	}
 	
-	valueAction_ {arg val;
-		value = val.clip(0.0, 1.0);
-		action.value(this);
-		knob.refresh;
-		^value
-	}
-	
-	canFocus_ { arg state = false;
-		knob.canFocus_(state);
-		^this
+	value_ { arg val;
+		value = val.clip( 0.0, 1.0 );
+		view.refresh;
 	}
 
-	canFocus {
-		^knob.canFocus;
+	valueAction_ { arg val;
+		value = val.clip( 0.0, 1.0 );
+		view.action.value( this );
+		view.refresh;
 	}
 
-	visible_ { arg bool;
-		knob.visible_(bool)
-	}
-
-	visible {
-		^knob.visible
-	}
-	
-	enabled_{ arg bool;
-		knob.enabled_(bool)
-	}
-	
-	enabled {
-		^knob.enabled
-	}
-	
-	refresh {
-		knob.refresh;
-		^this
-	}
-	
 	centered_ { arg bool;
 		isCentered = bool;
-		knob.refresh;
-		^this
+		view.refresh;
 	}
 	
 	centered {
 		^isCentered
 	}
-
-	properties {
-		^knob.properties;
-	}
-
-	canReceiveDragHandler_ { arg f;
-		knob.canReceiveDragHandler_(f);
-	}
 	
-	canReceiveDragHandler {
-		^knob.canReceiveDragHandler;
-	}
+	action { ^view.action }
+	action_ { arg func; view.action_( func )}
 	
-	receiveDragHandler_ { arg f;
-		knob.receiveDragHandler_(f);
-	}
+	visible { ^view.visible }
+	visible_ { arg bool; view.visible_( bool )}
 	
-	receiveDragHandler {
-		^knob.receiveDragHandler;
-	}
+	enabled { ^view.enabled }
+	enabled_ { arg bool; view.enabled_( bool )}
 	
-	beginDragAction_ { arg f;  knob.beginDragAction_(f);  }
+	canFocus { ^view.canFocus }
+	canFocus_ { arg bool; view.canFocus_( bool )}
 
-	beginDragAction {  ^knob.beginDragAction;  }
-
-	// rip from slider
 	increment { ^this.valueAction = (this.value + keystep).min(1) }
 	decrement { ^this.valueAction = (this.value - keystep).max(0) }
+	
+	refresh { view.refresh }
 
-	defaultKeyDownAction { arg char, modifiers, unicode,keycode;
+	prKeyDown { arg view, char, modifiers, unicode, keycode;
 		// standard keydown
 		if (char == $r, { this.valueAction = 1.0.rand; });
 		if (char == $n, { this.valueAction = 0.0; });
@@ -242,5 +240,22 @@ JKnob {
 		if (unicode == 16rF702, { this.decrement; ^this });
 	}
 
+	prReceiveDrag {
+		this.valueAction_( gui.view.currentDrag );
+	}
+	
+	prGetDrag { 
+		^value;
+	}
+	
+	prCanReceiveDrag {
+		^gui.view.currentDrag.isFloat;
+	}
+	
+	canReceiveDragHandler { ^view.canReceiveDragHandler }
+	canReceiveDragHandler_ { arg func; view.canReceiveDragHandler_( func )}
+	receiveDragHandler { ^view.receiveDragHandler }
+	receiveDragHandler_ { arg func; view.receiveDragHandler_( func )}
+	beginDragAction { ^view.beginDragAction }
+	beginDragAction_ { arg func; view.beginDragAction_( func )}
 }
-

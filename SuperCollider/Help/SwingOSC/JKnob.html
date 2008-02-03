@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<P>This class is meant as an emulation of the Knob class by blackrain. last mod: 14-apr-07 sciss<br>Also refer to <A HREF="JSCView.html">JSCView</A> and <A HREF="JSCUserView.html">JSCUserView</A>.
+<P>This class is meant as an emulation of the Knob class by blackrain. last mod: 03-feb-08 sciss<br>Also refer to <A HREF="JSCView.html">JSCView</A> and <A HREF="JSCUserView.html">JSCUserView</A>.
 </p>
 <table>
 <!-- <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -161,7 +161,7 @@ k.mouseOverAction = {<span class="kw">|v|</span> txt.string_(<span class="st">&q
 
 j = <span class="cl">JKnob</span>(w, size @ size);
 j.action = {<span class="kw">arg</span> v,x,y;  j.value.postln; txt.string_(<span class="st">&quot;value: &quot;</span> ++ v.value); };
-j.knob.mouseOverAction = { txt.string_(<span class="st">&quot;value: &quot;</span> ++ j.value); };
+j.mouseOverAction = { txt.string_(<span class="st">&quot;value: &quot;</span> ++ j.value); };
 
 n = <span class="cl">JSCNumberBox</span>(w, 100 @ 20);
 <span class="cm">//n.setProperty(\boxColor,Color.grey(alpha:0.0));</span>
