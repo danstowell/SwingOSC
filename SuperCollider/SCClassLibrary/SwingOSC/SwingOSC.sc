@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.59, 29-Jan-08
+ *	@version		0.59, 02-Feb-08
  */
 SwingOptions
 {
@@ -170,7 +170,7 @@ SwingOSC : Model
 	
 	connect {
 		if( options.protocol === \tcp, {
-			addr.connect;
+			addr.connect({ this.serverRunning = false });
 		});
 	}
 	
