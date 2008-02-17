@@ -33,7 +33,7 @@
  *	Replacement for / enhancement of the (Cocoa) SCSoundFileView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 12-Jan-08
+ *	@version		0.59, 17-Feb-08
  */
 JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	classvar cacheServers;	// IdentitySet whose elements are SwingOSC instances
@@ -44,7 +44,7 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 
 	var <soundfile;
 	var <>metaAction, <elasticMode, <drawsWaveForm = true, <readProgress;
-	var <startFrame, <numFrames;
+	var <startFrame;
 
 	var <viewFrames = 0, <>block=64;
 	
@@ -52,7 +52,7 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	var selections;
 	
 	var viewResp, asyncResp, asyncID;
-	var numFrames = 0, numChannels = 1, <sampleRate = 44100;
+	var <numFrames = 0, numChannels = 1, <sampleRate = 44100;
 	
 	// ----------------- public class methods -----------------
 	

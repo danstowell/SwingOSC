@@ -2,7 +2,7 @@
  *  NumberField.java
  *  de.sciss.gui package
  *
- *  Copyright (c) 2004-2006 Hanns Holger Rutz. All rights reserved.
+ *  Copyright (c) 2004-2008 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -48,15 +48,12 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -115,12 +112,9 @@ implements EventManager.Processor //, PropertyChangeListener
 	private final NumberFormatter			numberFormatter	= new NumberFormatter();
 	private final TimeFormatter				timeFormatter	= new TimeFormatter();
 	
-	private final NumberField				enc_this		= this;
-	private final AbstractAction			actionLooseFocus;
-
 	private static final DataFlavor			numberFlavor	= new DataFlavor( Number.class, Number.class.getName() );
 	private static final DataFlavor[]		supportedFlavors= { numberFlavor, DataFlavor.stringFlavor };
-
+	
 	/**
 	 *  Create a new <code>NumberField</code> for
 	 *  a given space. the initial value of the 
@@ -170,10 +164,7 @@ implements EventManager.Processor //, PropertyChangeListener
 			}
 		});
 		
-		actionLooseFocus	= new actionLooseFocusClass();
-		key					= "lost";
-		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), key );
-		amap.put( key, actionLooseFocus );
+		new LooseFocusAction( this );
 		
 // we don't need cut
 //		action				= TransferHandler.getCutAction();
@@ -194,7 +185,6 @@ implements EventManager.Processor //, PropertyChangeListener
 
 		setTransferHandler( new NumberTransferHandler() );
 	}
-	
 	
 	public NumberField( NumberSpace space )
 	{
@@ -412,18 +402,6 @@ implements EventManager.Processor //, PropertyChangeListener
 		if( elm != null ) {
 			elm.dispatchEvent( new NumberEvent( this, NumberEvent.CHANGED,
 				System.currentTimeMillis(), value, false ));
-		}
-	}
-
-// ----------- internal action classes -----------
-	
-	private class actionLooseFocusClass
-	extends AbstractAction
-	{
-		public void actionPerformed( ActionEvent e )
-		{
-			final JRootPane rp = SwingUtilities.getRootPane( enc_this );
-			if( rp != null ) rp.requestFocus();
 		}
 	}
 

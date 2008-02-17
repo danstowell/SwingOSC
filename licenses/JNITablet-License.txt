@@ -18,5 +18,5 @@ limitations under the License.
 
 /*
  *	Extended functionality and/or slight adjustments by Hanns Holger Rutz
- *	(C)opyright 2007
+ *	(C)opyright 2007-2008
  */

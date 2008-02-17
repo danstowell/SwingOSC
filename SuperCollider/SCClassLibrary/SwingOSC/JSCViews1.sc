@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.59, 30-Jan-07
+ *	@version		0.59, 17-Feb-08
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -700,7 +700,7 @@ JSCSliderBase : JSCControlView {
 
 JSCSlider : JSCSliderBase
 {
-	var acResp, keyResp;	// OSCpathResponder for action listening
+	var acResp;	// OSCpathResponder for action listening
 	var orientation;	// 0 for horiz, 1 for vert
 	var clpse;
 

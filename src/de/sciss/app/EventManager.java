@@ -2,7 +2,7 @@
  *  EventManager.java
  *  de.sciss.app package
  *
- *  Copyright (c) 2004-2006 Hanns Holger Rutz. All rights reserved.
+ *  Copyright (c) 2004-2008 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ import de.sciss.util.Disposable;
  *  predictable and easily synchronizable.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.15, 15-Sep-05
+ *  @version	0.16, 17-Oct-06
  */
 public class EventManager
 implements Runnable, Disposable
@@ -214,9 +214,9 @@ implements Runnable, Disposable
 	 */
 	public void dispatchEvent( BasicEvent e )
 	{
-		int		i;
-		Object  o;
-		boolean invoke;
+		final int		i;
+		final boolean	invoke;
+		final Object	o;
 
 sync:	synchronized( this ) {
 			invoke  = !paused;

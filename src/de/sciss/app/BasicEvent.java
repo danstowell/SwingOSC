@@ -2,7 +2,7 @@
  *  BasicEvent.java
  *  de.sciss.app package
  *
- *  Copyright (c) 2004-2006 Hanns Holger Rutz. All rights reserved.
+ *  Copyright (c) 2004-2008 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -53,14 +53,14 @@ import java.util.EventObject;
  *  queue by fusing events of the same type.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.61, 09-Aug-04
+ *  @version	0.62, 17-Oct-06
  *
  *  @see	EventManager
  */
 public abstract class BasicEvent
 extends EventObject
 {
-	private final int	ID;
+	private final int	id;
 	private final long	when;
 
 	/**
@@ -72,18 +72,18 @@ extends EventObject
 	 *					the superclass and can be queried with <code>getSource()</code>.
 	 *					The <code>source</code> describes the object that
 	 *					originated an action.
-	 *  @param  ID		type of action depending on the concrete
-	 *					subclass. Generally the <code>ID</code> is used to
+	 *  @param  id		type of action depending on the concrete
+	 *					subclass. Generally the <code>id</code> is used to
 	 *					distinguish between different method calls
 	 *					on the registered listeners, hence will be
 	 *					usually ignored by the listeners themselves.
 	 *  @param  when	When the event was generated. See <code>getWhen()</code>.
 	 */
-	public BasicEvent( Object source, int ID, long when )
+	public BasicEvent( Object source, int id, long when )
 	{
 		super( source );
 	
-		this.ID		= ID;
+		this.id		= id;
 		this.when   = when;
 	}
 	
@@ -95,7 +95,7 @@ extends EventObject
 	 */
 	public int getID()
 	{
-		return ID;
+		return id;
 	}
 
 	/**

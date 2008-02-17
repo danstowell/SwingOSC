@@ -37,7 +37,7 @@ import java.io.IOException;
 
 /**
  *  @author		Hanns Holger Rutz
- *  @version	0.35, 28-Jul-07
+ *  @version	0.70, 26-Sep-07
  */
 public class AudioFileCacheInfo
 {
@@ -82,6 +82,16 @@ public class AudioFileCacheInfo
 		catch( IOException e1 ) {
 			return null;
 		}
+	}
+	
+	public long getNumFrames()
+	{
+		return numFrames;
+	}
+	
+	public long getNumChannels()
+	{
+		return numChannels;
 	}
 	
 	public boolean equals( Object o )
