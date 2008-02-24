@@ -11,27 +11,27 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px Helvetica; color: #bf0000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
 p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #23429c}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #284599}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #9d281b}
 span.s1 {text-decoration: underline}
-span.s2 {color: #0024b5}
+span.s2 {color: #062cb0}
 span.s3 {color: #000000}
 span.s4 {color: #606060}
 span.s5 {font: 11.0px Helvetica}
 span.s6 {font: 12.0px Helvetica; color: #000000}
 span.s7 {font: 10.0px Monaco}
-span.s8 {font: 9.0px Monaco; color: #23429c}
+span.s8 {font: 9.0px Monaco; color: #284599}
 span.s9 {font: 9.0px Monaco}
-span.s10 {color: #0019ba}
-span.s11 {font: 10.0px Monaco; color: #0019ba}
-span.s12 {color: #ad1d13}
+span.s10 {color: #0024b5}
+span.s11 {font: 10.0px Monaco; color: #0024b5}
+span.s12 {color: #9d281b}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -42,25 +42,29 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p4"><b>superclass: JSCAbstractUserView (!!)</b></p>
 <p class="p3"><br></p>
-<p class="p5">An empty view that receives extended wacom tablet data.<span class="Apple-converted-space">  </span>It can also be used with a normal mouse but with less resolution.</p>
+<p class="p4">An empty view that receives extended wacom tablet data.<span class="Apple-converted-space">  </span>It can also be used with a normal mouse but with less resolution.</p>
 <p class="p3"><br></p>
-<p class="p6"><b>NOTE</b> : Currently Mac OS X only</p>
-<p class="p6">to use, install the jni library:</p>
+<p class="p5"><b>NOTE</b> : Currently Mac OS X only</p>
+<p class="p4"><span class="Apple-tab-span">	</span>to use, install the jni library:</p>
 <p class="p3"><br></p>
-<p class="p5">$ cp build/libJNITablet.jnilib /Library/Java/Extensions/</p>
+<p class="p6"><span class="Apple-tab-span">	</span>$ cp JNITablet/build/libJNITablet.jnilib /Library/Java/Extensions/</p>
+<p class="p3"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>or make a symbolic link</p>
+<p class="p3"><br></p>
+<p class="p6"><span class="Apple-tab-span">	</span>$ ln -s &lt;absolutePathToSwingOSC&gt;/JNITablet/build/libJNITablet.jnilib /Library/Java/Extensions/</p>
 <p class="p3"><br></p>
 <p class="p3"><br></p>
 <p class="p4"><b>action - </b>dragging the mouse inside the view</p>
-<p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
-<p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p6"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
+<p class="p6"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
 <p class="p7"><br></p>
 <p class="p4"><b>mouseDownAction</b></p>
-<p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
-<p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p6"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
+<p class="p6"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
 <p class="p3"><span class="Apple-converted-space">                 </span></p>
 <p class="p4"><b>mouseUpAction</b></p>
-<p class="p5"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
-<p class="p5"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
+<p class="p6"><span class="Apple-tab-span">	</span>args: view, x, y, pressure, tiltx, tilty, deviceID, buttonNumber, clickCount, absoluteZ, rotation,</p>
+<p class="p6"><span class="Apple-converted-space">                 </span>absoluteX, absoluteY, buttonMask, tanPressure;</p>
 <p class="p7"><br></p>
 <p class="p4">Each of the three actions are passed the following wacom tablet values:</p>
 <p class="p7"><br></p>
@@ -98,7 +102,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p7"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><br></p>
-<p class="p5">(</p>
+<p class="p6">(</p>
 <p class="p9"><span class="Apple-tab-span">	</span>w = <span class="s2">JSCWindow</span>.new;</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t = <span class="s2">JSCTabletView</span>(w,<span class="s2">Rect</span>(40,40,300,300));</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t.background = <span class="s2">Color</span>.white;</p>
@@ -117,12 +121,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span>t.action<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= { <span class="s2">arg</span> view ... params; f.value( <span class="s4">"drag"</span>, *params )};</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t.mouseUpAction<span class="Apple-tab-span">	</span>= { <span class="s2">arg</span> view ... params; f.value( <span class="s4">"up<span class="Apple-converted-space">  </span>"</span>, *params )};</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t.mouseOverAction<span class="Apple-tab-span">	</span>= { <span class="s2">arg</span> view ... params; f.value( <span class="s4">"over"</span>, *params )};</p>
-<p class="p5">)</p>
+<p class="p6">)</p>
 <p class="p3"><br></p>
 <p class="p7"><br></p>
 <p class="p8"><b>Detecting Proximity</b><span class="s5"><b> (SwingOSC only)</b></span></p>
 <p class="p3"><br></p>
-<p class="p5">proximityAction_( func )</p>
+<p class="p6">proximityAction_( func )</p>
 <p class="p12"><span class="s3"><span class="Apple-tab-span">	</span></span>func<span class="s6"> will be called with the arguments </span>view<span class="s6">, </span>entering<span class="s6">, </span>deviceID<span class="s6">, </span>pointingDeviceType<span class="s6">, </span>systemTabletID<span class="s6">, </span>pointingDeviceID<span class="s6">, </span>tabletID<span class="s6">, </span>uniqueID<span class="s6">:</span></p>
 <p class="p3"><br></p>
 <p class="p9"><span class="Apple-tab-span">	</span>view</p>
@@ -157,7 +161,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="s7"><span class="Apple-tab-span">	</span></span><span class="Apple-tab-span">	</span>Also known as tool ID, this is a unique number recorded in the chip inside every pointing device.</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>The unique ID makes it possible to assign a specific pointing device to a specific tablet.</p>
 <p class="p7"><span class="Apple-tab-span">	</span></p>
-<p class="p5">(</p>
+<p class="p6">(</p>
 <p class="p9"><span class="Apple-tab-span">	</span>w = <span class="s2">JSCWindow</span>.new;</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t = <span class="s2">JSCTabletView</span>(w,<span class="s2">Rect</span>(40,40,300,300));</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t.background = <span class="s2">Color</span>.white;</p>
@@ -169,12 +173,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</span>"%: deviceID %<span class="Apple-converted-space">  </span>pointingDeviceType %<span class="Apple-converted-space">  </span>systemTabletID %<span class="Apple-converted-space">  </span>pointingDeviceID %<span class="Apple-converted-space">  </span>tabletID %<span class="Apple-converted-space">  </span>uniqueID %\n"<span class="s3">).postf(</span></p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>what, deviceID, pointingDeviceType, systemTabletID, pointingDeviceID, tabletID, uniqueID );</p>
 <p class="p9"><span class="Apple-tab-span">	</span>};</p>
-<p class="p5">)</p>
+<p class="p6">)</p>
 <p class="p3"><br></p>
 <p class="p3"><br></p>
 <p class="p8"><b>JSCTabletView is a also a user view...</b><span class="s5"><b> (SwingOSC only)</b></span></p>
 <p class="p7"><br></p>
-<p class="p5">(</p>
+<p class="p6">(</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s10">var</span> x = 150, y = 150, pressure = 0, tiltx = 0, tilty = 0, rota = 0, colr = <span class="s10">Color</span>.white;</p>
 <p class="p10"><span class="Apple-tab-span">	</span></p>
 <p class="p9"><span class="Apple-tab-span">	</span>w = <span class="s10">JSCWindow</span>.new;</p>
@@ -209,11 +213,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>colr = if( entering, { <span class="s10">Color</span>.hsv( pointingDeviceType / 4, 0.5, 1.0 )}, <span class="s10">Color</span>.white );</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>view.refresh;</p>
 <p class="p9"><span class="Apple-tab-span">	</span>};</p>
-<p class="p5">)</p>
+<p class="p6">)</p>
 <p class="p3"><br></p>
 <p class="p4">Here's a variation: make the above example respond only to a particular pen tools. For this, you need a pen that fires proximity actions and you need to know the pen's <span class="s11">uniqueID</span> (see above "Detecting Proximity"). For example, my Art Marker has ID <span class="s11">127926421</span>:</p>
 <p class="p3"><br></p>
-<p class="p5">(</p>
+<p class="p6">(</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s10">var</span> filterUniqueID = 127926421;<span class="Apple-tab-span">	</span><span class="s12">// put your own ID here</span></p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s10">var</span> filterDeviceID = -1;</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s10">var</span> fProx, fAction;</p>
@@ -236,6 +240,6 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span>t.mouseDownAction = f;</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t.action = f;</p>
 <p class="p9"><span class="Apple-tab-span">	</span>t.mouseUpAction = f;</p>
-<p class="p5">)</p>
+<p class="p6">)</p>
 </body>
 </html>

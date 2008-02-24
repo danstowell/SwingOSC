@@ -1,4 +1,4 @@
-JNITablet (java library JNIWrapper.jar, native library libJNIlibJNITablet.jnilib)
+JNITablet (java library TabletWrapper.jar, native library libJNITablet.jnilib)
 
 /*
 Copyright 2006 Jerry Huxtable
