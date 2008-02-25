@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *	SuperCollider cocoa GUI's SCHLayoutView.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.45, 21-Jan-07
+ *  @version	0.59, 25-Feb-08
  */
 public class ColliderAxisLayout
 implements LayoutManager
@@ -100,12 +100,16 @@ implements LayoutManager
 		this.spacing = spacing;
 	}
 	
-    /* Required by LayoutManager. */
-    public void addLayoutComponent(String name, Component comp) {
+    // Required by LayoutManager
+    public void addLayoutComponent( String name, Component comp )
+    {
+    	/* empty */
     }
 
-    /* Required by LayoutManager. */
-    public void removeLayoutComponent(Component comp) {
+    // Required by LayoutManager
+    public void removeLayoutComponent( Component comp )
+    {
+    	/* empty */
     }
 
     private void calcSizes( Container parent )

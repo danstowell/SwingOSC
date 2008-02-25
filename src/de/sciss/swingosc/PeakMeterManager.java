@@ -49,7 +49,7 @@ import de.sciss.net.OSCListener;
 import de.sciss.net.OSCMessage;
 
 /**
- *	@version	0.57, 20-Dec-07
+ *	@version	0.59, 25-Feb-08
  *	@author		Hanns Holger Rutz
  */
 public class PeakMeterManager
@@ -358,15 +358,15 @@ implements OSCListener, ActionListener
 
 	private static class Client
 	{
-		private final float[]			peakRMSPairs;
-		private final PeakMeterGroup	pmg;
-		private final int				nodeID;
-		private final int				numChannels;
-		private boolean					active;
-		private boolean					task;
+		protected final float[]			peakRMSPairs;
+		protected final PeakMeterGroup	pmg;
+		protected final int				nodeID;
+		protected final int				numChannels;
+		protected boolean				active;
+		protected boolean				task;
 		
 //		private MeterClient( Listener ml, int[] channels, boolean task )
-		private Client( PeakMeterGroup pmg, int nodeID, int numChannels, boolean active )
+		protected Client( PeakMeterGroup pmg, int nodeID, int numChannels, boolean active )
 		{
 //			this.ml				= ml;
 			this.pmg			= pmg;

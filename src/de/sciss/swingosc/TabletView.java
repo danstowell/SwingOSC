@@ -44,18 +44,18 @@ import com.jhlabs.jnitablet.TabletWrapper;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 12-Dec-07
+ *	@version	0.59, 25-Feb-08
  */
 public class TabletView
 extends UserView
 implements DynamicListening, TabletListener
 {
 	private boolean 				added			= false;
-	private boolean 				inside			= false;
-	private boolean 				pressed			= false;
+	protected boolean 				inside			= false;
+	protected boolean 				pressed			= false;
 	private final List				listeners		= new ArrayList();
-	private TabletProximityEvent	lastEnterEvent;
-	private boolean					dispatchExit	= false;
+	protected TabletProximityEvent	lastEnterEvent;
+	protected boolean				dispatchExit	= false;
 	
 	public TabletView()
 	{
@@ -191,7 +191,7 @@ implements DynamicListening, TabletListener
 //		System.out.println();
 	}
 
-	private void dispatch( TabletProximityEvent e )
+	protected void dispatch( TabletProximityEvent e )
 	{
 		for( Iterator iter = listeners.iterator(); iter.hasNext(); ) {
 			((TabletListener) iter.next()).tabletProximity( e );

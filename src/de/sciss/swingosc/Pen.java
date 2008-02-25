@@ -79,7 +79,7 @@ import javax.swing.JComponent;
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.57, 18-Jan-08
+ *	@version	0.59, 25-Feb-08
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -91,21 +91,21 @@ implements Icon
 //	private Paint						pntDraw		= null;
 //	private Paint						pntFill		= null;
 	private Cmd[] 						cmds		= new Cmd[ 0 ];
-	private final Stack 				context		= new Stack();
+	protected final Stack 				context		= new Stack();
 	
-	private final List					recCmds		= new ArrayList();
+	protected final List				recCmds		= new ArrayList();
 	private final Map					mapConstr	= new HashMap();
 	
-	private final float[]				pt			= new float[ 8 ];
+	protected final float[]				pt			= new float[ 8 ];
 	
 	private static final float			kRad2Deg	= (float) (180.0 / Math.PI);
 	private static final float			kRad2DegM	= (float) (-180.0 / Math.PI);
 	
-	private static final BasicStroke	strkDefault	= new BasicStroke( 1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER );
-	private static final Font			fntDefault	= new Font( "SansSerif", Font.PLAIN, 11 );
+	protected static final BasicStroke	strkDefault	= new BasicStroke( 1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER );
+	protected static final Font			fntDefault	= new Font( "SansSerif", Font.PLAIN, 11 );
 	
-	private final FontRenderContext		frc;
-	private GraphicsContext				gc;
+	protected final FontRenderContext	frc;
+	protected GraphicsContext			gc;
 	
 	private boolean						absCoords;
 	
@@ -294,17 +294,17 @@ implements Icon
 
 	private static class GraphicsContext
 	{
-		private Paint					pntDraw;
-		private Paint					pntFill;
-		private BasicStroke				strk;
-		private final AffineTransform	at;
-		private Shape					clip;
+		protected Paint					pntDraw;
+		protected Paint					pntFill;
+		protected BasicStroke			strk;
+		protected final AffineTransform	at;
+		protected Shape					clip;
 //		private final GeneralPath		gp;
-		private GeneralPath				gp;
-		private Font					fnt;
-		private RenderingHints			hints;
+		protected GeneralPath			gp;
+		protected Font					fnt;
+		protected RenderingHints		hints;
 		
-		private GraphicsContext()
+		protected GraphicsContext()
 		{
 			pntDraw	= Color.black;
 			pntFill	= Color.black;
@@ -316,7 +316,7 @@ implements Icon
 			hints	= new RenderingHints( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 		}
 		
-		private GraphicsContext( GraphicsContext orig )
+		protected GraphicsContext( GraphicsContext orig )
 		{
 			pntDraw	= orig.pntDraw;
 			pntFill	= orig.pntFill;
@@ -328,7 +328,7 @@ implements Icon
 			hints	= orig.hints;
 		}
 		
-		private void restore( Graphics2D g2 )
+		protected void restore( Graphics2D g2 )
 		{
 			g2.setClip( clip );
 			g2.setRenderingHints( hints );
@@ -337,6 +337,7 @@ implements Icon
 	
 	private abstract class Cmd
 	{
+		protected Cmd() { /* empty */ }
 		protected abstract void perform( Graphics2D g2 );
 	}
 
@@ -344,12 +345,12 @@ implements Icon
 	extends Cmd
 	{
 		private final Shape 	shp;
-		private final Paint	pnt;
+		private final Paint		pnt;
 		
-		private CmdFill( Shape shp )
+		protected CmdFill( Shape shp )
 		{
 			this.shp	= shp;
-			pnt		= gc.pntFill;
+			pnt			= gc.pntFill;
 		}
 		
 //		private CmdFill( Shape shp, Paint pnt )
@@ -373,7 +374,7 @@ implements Icon
 		private final Stroke			strk;
 		private final AffineTransform	at;
 		
-		private CmdDraw( Shape shp )
+		protected CmdDraw( Shape shp )
 		{
 			pnt			= gc.pntDraw;
 			
@@ -440,7 +441,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	{
 		private final Shape 	shp;
 
-		private CmdClip( Shape shp )
+		protected CmdClip( Shape shp )
 		{
 			this.shp 	= shp;
 		}
@@ -455,16 +456,16 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class CmdRestore
 	extends Cmd
 	{
-		private final GraphicsContext gc;
+		private final GraphicsContext gcOld;
 
-		private CmdRestore( GraphicsContext gc )
+		protected CmdRestore( GraphicsContext gc )
 		{
-			this.gc = gc;
+			gcOld = gc;
 		}
 		
 		protected void perform( Graphics2D g2 )
 		{
-			gc.restore( g2 );
+			gcOld.restore( g2 );
 		}
 	}
 
@@ -474,7 +475,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		private final RenderingHints.Key key;
 		private final Object value;
 
-		private CmdHint( RenderingHints.Key key, Object value )
+		protected CmdHint( RenderingHints.Key key, Object value )
 		{
 			this.key 	= key;
 			this.value 	= value;
@@ -488,6 +489,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 	private abstract class Constr
 	{
+		protected Constr() { /* empty */ }
+
 		protected abstract int constr( Object[] cmd, int off );
 		
 		protected final int transform( Object[] cmd, int off, int num )
@@ -522,6 +525,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrDrawColor
 	extends Constr
 	{
+		protected ConstrDrawColor() { /* empty */ }
+		
 		protected int constr( Object[] cmd, int off )
 		{
 			gc.pntDraw = getColor( cmd, off );
@@ -532,6 +537,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrFillColor
 	extends Constr
 	{
+		protected ConstrFillColor() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			gc.pntFill = getColor( cmd, off );
@@ -542,6 +549,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrFont
 	extends Constr
 	{
+		protected ConstrFont() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			final String 	fntName;
@@ -558,6 +567,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrMoveTo
 	extends Constr
 	{
+		protected ConstrMoveTo() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 1 );
@@ -569,6 +580,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrLineTo
 	extends Constr
 	{
+		protected ConstrLineTo() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 1 );
@@ -580,6 +593,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrQuadTo
 	extends Constr
 	{
+		protected ConstrQuadTo() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 2 );
@@ -591,6 +606,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrCurveTo
 	extends Constr
 	{
+		protected ConstrCurveTo() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 3 );
@@ -602,6 +619,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrReset
 	extends Constr
 	{
+		protected ConstrReset() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			gc.gp.reset();
@@ -612,6 +631,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrDraw
 	extends Constr
 	{
+		protected ConstrDraw() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			recCmds.add( new CmdDraw( gc.gp ));
@@ -624,6 +645,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrFill
 	extends Constr
 	{
+		protected ConstrFill() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 //			recCmds.add( new CmdFill( new GeneralPath( gc.gp )));
@@ -637,6 +660,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrClip
 	extends Constr
 	{
+		protected ConstrClip() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			recCmds.add( new CmdClip( gc.gp ));
@@ -649,6 +674,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrTranslate
 	extends Constr
 	{
+		protected ConstrTranslate() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			gc.at.translate( ((Number) cmd[ off++ ]).doubleValue(), ((Number) cmd[ off++ ]).doubleValue() );
@@ -659,6 +686,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrScale
 	extends Constr
 	{
+		protected ConstrScale() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			gc.at.scale( ((Number) cmd[ off++ ]).doubleValue(), ((Number) cmd[ off++ ]).doubleValue() );
@@ -669,6 +698,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrRotate
 	extends Constr
 	{
+		protected ConstrRotate() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			gc.at.rotate( ((Number) cmd[ off++ ]).doubleValue(), 
@@ -680,6 +711,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrShear
 	extends Constr
 	{
+		protected ConstrShear() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			gc.at.shear( ((Number) cmd[ off++ ]).doubleValue(), ((Number) cmd[ off++ ]).doubleValue() );
@@ -691,6 +724,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrMatrix
 	extends Constr
 	{
+		protected ConstrMatrix() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			final double sx		= ((Number) cmd[ off++ ]).doubleValue();
@@ -709,6 +744,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrStroke
 	extends Constr
 	{
+		protected ConstrStroke() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			final float width = ((Number) cmd[ off++ ]).floatValue();
@@ -722,6 +759,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrFillRect
 	extends Constr
 	{
+		protected ConstrFillRect() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
@@ -734,6 +773,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrDrawRect
 	extends Constr
 	{
+		protected ConstrDrawRect() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
@@ -748,6 +789,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrFillOval
 	extends Constr
 	{
+		protected ConstrFillOval() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
@@ -760,6 +803,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrDrawOval
 	extends Constr
 	{
+		protected ConstrDrawOval() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
@@ -778,6 +823,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrAddRect
 	extends Constr
 	{
+		protected ConstrAddRect() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
@@ -792,7 +839,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	{
 		private int type;
 		
-		private ConstrAddArc( int type )
+		protected ConstrAddArc( int type )
 		{
 			this.type = type;
 		}
@@ -811,6 +858,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrAddCylSector
 	extends Constr
 	{
+		protected ConstrAddCylSector() { /* empty */ }
+		
 		// 0: cx, 1: cy, 2: ri, 3: ro, 4: angSt, 5, angExt
 		protected int constr( Object[] cmd, int off )
 		{
@@ -834,6 +883,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrStringAtPoint
 	extends Constr
 	{
+		protected ConstrStringAtPoint() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			final String		str;
@@ -871,6 +922,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrStringInRect
 	extends Constr
 	{
+		protected ConstrStringInRect() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			final String		str;
@@ -915,6 +968,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrPush
 	extends Constr
 	{
+		protected ConstrPush() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			context.push( gc );
@@ -926,6 +981,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrPop
 	extends Constr
 	{
+		protected ConstrPop() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			gc = (GraphicsContext) context.pop();
@@ -938,6 +995,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrSmooth
 	extends Constr
 	{
+		protected ConstrSmooth() { /* empty */ }
+
 		protected int constr( Object[] cmd, int off )
 		{
 			final boolean	onOff;
@@ -945,7 +1004,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			onOff		= ((Number) cmd[ off++ ]).intValue() != 0;
 			value		= onOff ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF;
 			recCmds.add( new CmdHint( RenderingHints.KEY_ANTIALIASING, value ));
-			gc.hints	= new RenderingHints( (Map) gc.hints );
+			gc.hints	= new RenderingHints( gc.hints );
 			gc.hints.put( RenderingHints.KEY_ANTIALIASING, value );
 			return off;
 		}

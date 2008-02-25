@@ -43,7 +43,7 @@ import de.sciss.net.OSCMessage;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.53, 02-Jul-07
+ *	@version	0.59, 25-Feb-08
  */
 public class DocumentResponder
 extends AbstractResponder
@@ -146,8 +146,10 @@ implements DocumentListener, CaretListener
 		replyShort( "remove", e );
 	}
 	
-	// not transmitted right now
-	public void changedUpdate( DocumentEvent e ) {}
+	public void changedUpdate( DocumentEvent e )
+	{
+		// not transmitted right now
+	}
 
 	// -------- CaretListener interface --------
 

@@ -69,17 +69,17 @@ import de.sciss.app.PreferenceEntrySync;
  *  for common Swing / GUI operations
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.36, 10-Dec-07
+ *  @version	0.37, 25-Feb-08
  */
 public class GUIUtil
 {
-	private static final double VERSION	= 0.36;
+	private static final double VERSION	= 0.37;
 	private static final ResourceBundle resBundle = ResourceBundle.getBundle( "GUIUtilStrings" );
 	private static final Preferences prefs = Preferences.userNodeForPackage( GUIUtil.class );
 
 	private static Icon icnNoWrite = null;
 	
-    private GUIUtil() {}
+    private GUIUtil() { /* empty */ }
 
 	public static final Preferences getUserPrefs()
 	{
@@ -127,7 +127,7 @@ public class GUIUtil
 		String[]						options = { GUIUtil.getResourceString( "buttonOk" ),
 													GUIUtil.getResourceString( "optionDlgStack" )};
 	
-		if( message == null ) message = exception.getClass().getName();
+//		if( message == null ) message = exception.getClass().getName();
 		tok = new StringTokenizer( message );
 		strBuf.append( ":\n" );
 		while( tok.hasMoreTokens() ) {

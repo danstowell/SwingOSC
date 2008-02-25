@@ -83,7 +83,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.59, 26-Jan-08
+ *  @version	0.59, 25-Feb-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -95,21 +95,21 @@ implements OSCListener, OSCProcessor, Runnable
 {
 	public static final double		VERSION			= 0.59;
 
-	private OSCServer				serv			= null;
+	protected OSCServer				serv			= null;
 	
 	private final List				collMessages	= Collections.synchronizedList( new ArrayList() );	// elements = IncomingMessage instances
 
 	private final Map				mapClients		= new HashMap();	// SocketAddr to Client
-	private final Map				globals			= new HashMap();	// objectID to value
+	protected final Map				globals			= new HashMap();	// objectID to value
 	private final Map				constants		= new HashMap();	// objectID to value
 	
 	private static SwingOSC			instance;
 	private SwingClient				currentClient	= null;
 	
-	private final Map				oscCmds			= new HashMap();	// OSC-command-name to OSCProcessor
+	protected final Map				oscCmds			= new HashMap( 20 );	// OSC-command-name to OSCProcessor
 
 //	private final DynamicURLClassLoader classLoaderMgr;
-	private final URLClassLoaderManager classLoaderMgr;
+	protected final URLClassLoaderManager classLoaderMgr;
 	
     public static void main( String args[] )
 	{
@@ -386,7 +386,7 @@ implements OSCListener, OSCProcessor, Runnable
 		System.out.println( opName + " : " + e.getClass().getName() + " : " + e.getLocalizedMessage() );
 	}
 
-	private static void printException( Throwable e, OSCMessage msg )
+	protected static void printException( Throwable e, OSCMessage msg )
 	{
 		printException( e, msg.getName() );
 	}
@@ -396,22 +396,22 @@ implements OSCListener, OSCProcessor, Runnable
 		System.out.println( "WARNING " + msg.getName() + " " + text );
 	}
 
-	private static void printFailed( OSCMessage msg, String text )
+	protected static void printFailed( OSCMessage msg, String text )
 	{
 		System.out.println( "FAILURE " + msg.getName() + " " + text );
 	}
 
-	private static void printArgMismatch( OSCMessage msg )
+	protected static void printArgMismatch( OSCMessage msg )
 	{
 		printFailed( msg, "Argument mismatch" );
 	}
 
-	private static void printWrongArgCount( OSCMessage msg )
+	protected static void printWrongArgCount( OSCMessage msg )
 	{
 		printWarning( msg, "Called with illegal arg count" );
 	}
 
-	private static void printNotFound( OSCMessage msg, Object id )
+	protected static void printNotFound( OSCMessage msg, Object id )
 	{
 		printFailed( msg, "Object not found : " + id );
 	}
@@ -440,7 +440,7 @@ implements OSCListener, OSCProcessor, Runnable
 		}
 	}
 
-	private Object[] decodeMessageArgs( OSCMessage msg, SwingClient c )
+	protected Object[] decodeMessageArgs( OSCMessage msg, SwingClient c )
 	throws IOException
 	{
 		final Object[] result = new Object[ msg.getArgCount() ];
@@ -463,7 +463,7 @@ implements OSCListener, OSCProcessor, Runnable
 		return result;
 	}
 
-	private Object decodeMessageArg( OSCMessage msg, SwingClient c, int idx )
+	protected Object decodeMessageArg( OSCMessage msg, SwingClient c, int idx )
 	throws IOException
 	{
 		Object			o;
@@ -483,7 +483,7 @@ implements OSCListener, OSCProcessor, Runnable
 	}
 
 	// best possible match : numArgs * 4
-	private static int checkMethodArgs( Class[] signature, Object[] msgArgs, int msgArgOff, Object[] result )
+	protected static int checkMethodArgs( Class[] signature, Object[] msgArgs, int msgArgOff, Object[] result )
 	{
 		Class	type;
 		Object	msgArg;
@@ -617,7 +617,7 @@ implements OSCListener, OSCProcessor, Runnable
 		return result;
 	}
 
-	private Object setProperty( OSCMessage msg, String propName, Object propValue, Object root )
+	protected Object setProperty( OSCMessage msg, String propName, Object propValue, Object root )
 	throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
 	{
 		final int		subIdx			= propName.indexOf( '.' );
@@ -714,7 +714,7 @@ implements OSCListener, OSCProcessor, Runnable
 		}
 	}
 
-	private Object getProperty( String propName, Object root )
+	protected Object getProperty( String propName, Object root )
 	throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
 	{
 		final int		subIdx			= propName.indexOf( '.' );
@@ -761,7 +761,7 @@ implements OSCListener, OSCProcessor, Runnable
 		return result;
 	}
 
-	private Object invokeField( OSCMessage msg, Object o, String name )
+	protected Object invokeField( OSCMessage msg, Object o, String name )
 	{
 		final Class c = o instanceof Class ? (Class) o : o.getClass();
 
@@ -874,7 +874,7 @@ implements OSCListener, OSCProcessor, Runnable
 		return method.invoke( o, methodCArgs );
 	}
 	
-	private Object invokeMethod( OSCMessage msg, Object o, String methodName, Object[] msgArgs )
+	protected Object invokeMethod( OSCMessage msg, Object o, String methodName, Object[] msgArgs )
 	{
 		try {
 			return invokeMethod( o, methodName, msgArgs );
@@ -947,10 +947,10 @@ implements OSCListener, OSCProcessor, Runnable
 
 	private static class IncomingMessage
 	{
-		private final OSCMessage		msg;
-		private final SocketAddress	addr;
+		protected final OSCMessage		msg;
+		protected final SocketAddress	addr;
 		
-		private IncomingMessage( OSCMessage msg, SocketAddress addr )
+		protected IncomingMessage( OSCMessage msg, SocketAddress addr )
 		{
 			this.msg 	= resolveMessage( msg );
 			this.addr	= addr;
@@ -1023,7 +1023,7 @@ implements OSCListener, OSCProcessor, Runnable
 	{
 		private final Object sync;
 		
-		private CmdQuit( Object sync )
+		protected CmdQuit( Object sync )
 		{
 			super( "/quit" );
 			this.sync = sync;
@@ -1045,7 +1045,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdNew
 	extends BasicCmd
 	{
-		private CmdNew()
+		protected CmdNew()
 		{
 			super( "/new" );
 		}
@@ -1156,7 +1156,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdRef
 	extends BasicCmd
 	{
-		private CmdRef()
+		protected CmdRef()
 		{
 			super( "/ref" );
 		}
@@ -1184,7 +1184,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdLocal
 	extends BasicCmd
 	{
-		private CmdLocal()
+		protected CmdLocal()
 		{
 			super( "/local" );
 		}
@@ -1226,7 +1226,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdGlobal
 	extends BasicCmd
 	{
-		private CmdGlobal()
+		protected CmdGlobal()
 		{
 			super( "/global" );
 		}
@@ -1268,7 +1268,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdSet
 	extends BasicCmd
 	{
-		private CmdSet()
+		protected CmdSet()
 		{
 			super( "/set" );
 		}
@@ -1349,7 +1349,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdGet
 	extends BasicCmd
 	{
-		private CmdGet()
+		protected CmdGet()
 		{
 			super( "/get" );
 		}
@@ -1425,7 +1425,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdMethod
 	extends BasicCmd
 	{
-		private CmdMethod()
+		protected CmdMethod()
 		{
 			super( "/method" );
 		}
@@ -1476,7 +1476,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdMethodR
 	extends BasicCmd
 	{
-		private CmdMethodR()
+		protected CmdMethodR()
 		{
 			super( "/methodr" );
 		}
@@ -1525,7 +1525,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdField
 	extends BasicCmd
 	{
-		private CmdField()
+		protected CmdField()
 		{
 			super( "/field" );
 		}
@@ -1570,7 +1570,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdFieldR
 	extends BasicCmd
 	{
-		private CmdFieldR()
+		protected CmdFieldR()
 		{
 			super( "/fieldr" );
 		}
@@ -1613,7 +1613,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdFree
 	extends BasicCmd
 	{
-		private CmdFree()
+		protected CmdFree()
 		{
 			super( "/free" );
 		}
@@ -1658,7 +1658,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdArray
 	extends BasicCmd
 	{
-		private CmdArray()
+		protected CmdArray()
 		{
 			super( "/array" );
 		}
@@ -1681,7 +1681,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdQuery
 	extends BasicCmd
 	{
-		private CmdQuery()
+		protected CmdQuery()
 		{
 			super( "/query" );
 		}
@@ -1713,7 +1713,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdPrint
 	extends BasicCmd
 	{
-		private CmdPrint()
+		protected CmdPrint()
 		{
 			super( "/print" );
 		}
@@ -1748,7 +1748,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdDumpOSC
 	extends BasicCmd
 	{
-		private CmdDumpOSC()
+		protected CmdDumpOSC()
 		{
 			super( "/dumpOSC" );
 		}
@@ -1783,7 +1783,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private class CmdClasses
 	extends BasicCmd
 	{
-		private CmdClasses()
+		protected CmdClasses()
 		{
 			super( "/classes" );
 		}

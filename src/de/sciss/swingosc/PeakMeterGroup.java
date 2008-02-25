@@ -47,15 +47,15 @@ import de.sciss.gui.PeakMeter;
 import de.sciss.gui.PeakMeterCaption;
 
 /**
- *	@version	0.57, 21-Dec-07
+ *	@version	0.59, 25-Feb-08
  *	@author		Hanns Holger Rutz
  */
 public class PeakMeterGroup
 extends JPanel
 implements SwingConstants
 {
-	private PeakMeter[]			meters			= new PeakMeter[ 0 ];
-	private PeakMeterCaption	caption;
+	protected PeakMeter[]		meters			= new PeakMeter[ 0 ];
+	protected PeakMeterCaption	caption;
 	private int					captionPosition	= LEFT;
 	private int					captionAlign	= RIGHT;
 	private boolean				captionVisible	= true;

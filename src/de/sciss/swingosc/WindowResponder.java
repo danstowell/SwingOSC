@@ -53,7 +53,7 @@ import de.sciss.net.OSCMessage;
  *	in he constructor.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.53, 02-Jul-07
+ *	@version	0.59, 25-Feb-08
  */
 public class WindowResponder
 extends AbstractResponder
@@ -196,6 +196,6 @@ implements ComponentListener, WindowListener, WindowFocusListener
 		reply( "moved", e );
 	}
 	
-	public void componentShown( ComponentEvent e ) {}
-	public void componentHidden( ComponentEvent e ) {}
+	public void componentShown( ComponentEvent e ) { /* ignored */ }
+	public void componentHidden( ComponentEvent e ) { /* ignored */ }
 }

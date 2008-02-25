@@ -47,7 +47,7 @@ import javax.swing.event.MouseInputAdapter;
  *	0 = bottom margin).
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.45, 02-Feb-07
+ *	@version	0.59, 25-Feb-08
  */
 public abstract class MonoSlider
 extends SliderBase
@@ -57,18 +57,10 @@ extends SliderBase
 	protected float	knobWidth	= 0.0f;
 	protected float	knobHeight	= 0.0f;
 
-	private boolean	hsEnabled;
-	private boolean	vsEnabled;
-	private boolean	hrEnabled;
-	private boolean	vrEnabled;
-
-	protected static final Color	colrBdT		= new Color( 0, 0, 0, 0x55 );
-	protected static final Color	colrBdTSh1	= new Color( 0, 0, 0, 0x23 );
-	protected static final Color	colrBdTSh2	= new Color( 0, 0, 0, 0x0F );
-	protected static final Color	colrBdLR	= new Color( 0, 0, 0, 0x2E );
-	protected static final Color	colrBdLRSh	= new Color( 0, 0, 0, 0x10 );
-	protected static final Color	colrBdB		= new Color( 0, 0, 0, 0x19 );
-	protected static final Color	colrBg		= new Color( 0, 0, 0, 0x0A );
+	private boolean		hsEnabled;
+	private boolean		vsEnabled;
+	protected boolean	hrEnabled;
+	protected boolean	vrEnabled;
 	
 	protected static final MultiplyImageFilter fltKnobD =
 		new MultiplyImageFilter( 0xFF, 0xFF, 0xFF, 0x7F );
@@ -319,7 +311,7 @@ extends SliderBase
 		return vrEnabled;
 	}
 	
-	private void setKnobTo( Point2D p )
+	protected void setKnobTo( Point2D p )
 	{
 		final float x, y;
 		
@@ -346,7 +338,7 @@ extends SliderBase
 		}
 	}
 	
-	private void resizeKnobTo( Point2D p, float fixX, float fixY )
+	protected void resizeKnobTo( Point2D p, float fixX, float fixY )
 	{
 		final float resizeX, resizeY;
 		final float newKnobX, newKnobY, newKnobW, newKnobH;
@@ -381,7 +373,7 @@ extends SliderBase
 		}
 	}
 	
-	private void moveKnobTo( float x, float y )
+	protected void moveKnobTo( float x, float y )
 	{
 		if( hsEnabled ) {
 			x = snap( Math.max( 0f, Math.min( 1.0f - knobWidth, x )));
@@ -404,7 +396,7 @@ extends SliderBase
 		
 	protected abstract Insets getValueInsets();
 	
-	private Point2D screenToVirtual( Point p )
+	protected Point2D screenToVirtual( Point p )
 	{
 		final Insets ins = getValueInsets();
 		
@@ -412,7 +404,7 @@ extends SliderBase
 								 1.0f - (float) (p.y - ins.top) / (getHeight() - ins.top - ins.bottom) );
 	}
 	
-	private boolean knobContains( Point2D p )
+	protected boolean knobContains( Point2D p )
 	{
 		return( (!hsEnabled || ((p.getX() >= knobX) && (p.getX() < knobX + knobWidth))) &&
 			    (!vsEnabled || ((p.getY() >= knobY) && (p.getY() < knobY + knobHeight)))
@@ -425,7 +417,7 @@ extends SliderBase
 		mt.addImage( img, 0 );
 		try {
 			mt.waitForAll();
-		} catch( InterruptedException e1 ) {}
+		} catch( InterruptedException e1 ) { /* ignored */ }
 	}
 
 //	 ---------------- internal classes ----------------
@@ -437,6 +429,8 @@ extends SliderBase
 		private boolean 	moving		= false;
 		private float		dragFixX;
 		private float		dragFixY;
+		
+		protected MouseAdapter() { /* empty */ }
 		
 		public void mousePressed( MouseEvent e )
 		{

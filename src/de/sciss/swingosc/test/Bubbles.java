@@ -133,7 +133,7 @@ public void stop() {
 
 public void run() {
   while (artist != null) {
-    try {Thread.sleep(20);} catch (InterruptedException e){}
+    try {Thread.sleep(20);} catch (InterruptedException e){ /* ignored */ }
     repaint();
   }
   artist = null;

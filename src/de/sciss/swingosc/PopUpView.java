@@ -47,7 +47,7 @@ import javax.swing.ComboBoxModel;
  *	and <code>endDataUpdate</code> statements.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.59, 29-Jan-08
+ *	@version	0.59, 25-Feb-08
  */
 public class PopUpView
 extends JComboBox
@@ -183,7 +183,7 @@ extends JComboBox
 	{
 		private final Object value;
 		
-		private UniqueObject( Object value )
+		protected UniqueObject( Object value )
 		{
 			this.value = value;
 		}

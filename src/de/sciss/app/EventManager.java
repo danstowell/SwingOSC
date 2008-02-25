@@ -53,7 +53,7 @@ import de.sciss.util.Disposable;
  *  predictable and easily synchronizable.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.16, 17-Oct-06
+ *  @version	0.17, 25-Feb-08
  */
 public class EventManager
 implements Runnable, Disposable
@@ -71,7 +71,7 @@ implements Runnable, Disposable
 		this.eventProcessor = eventProcessor;
 	}
 	
-	protected EventManager() {}
+	protected EventManager() { /* empty */ }
 	
 	public void dispose()
 	{
@@ -290,10 +290,10 @@ sync:	synchronized( this ) {
 
 	private class PostponedAction
 	{
-		private final Object   listener;
-		private final boolean  state;
+		protected final Object	listener;
+		protected final boolean	state;
 		
-		private PostponedAction( Object listener, boolean state )
+		protected PostponedAction( Object listener, boolean state )
 		{
 			this.listener   = listener;
 			this.state		= state;

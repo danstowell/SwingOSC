@@ -46,7 +46,7 @@ import javax.swing.JComponent;
  *	SuperCollider cocoa GUI's SCCompositeView (resize property).
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.59, 31-Jan-08
+ *  @version	0.59, 25-Feb-08
  *  
  *  @todo		calcSizes : should rather read minWidth / minHeight etc. client properties
  */
@@ -72,10 +72,16 @@ implements LayoutManager
     }
 
 	// Required by LayoutManager
-    public void addLayoutComponent( String name, Component comp ) {}
+    public void addLayoutComponent( String name, Component comp )
+    {
+    	/* empty */
+    }
 
     // Required by LayoutManager
-    public void removeLayoutComponent( Component comp ) {}
+    public void removeLayoutComponent( Component comp )
+    {
+    	/* empty */
+    }
 
     private void calcSizes( Container parent )
     {

@@ -95,7 +95,7 @@ import de.sciss.net.OSCMessage;
  *	<code>stringData</code> to a value will always effect the ongoing drag-and-drop!
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.59, 30-Jan-08
+ *	@version	0.59, 25-Feb-08
  */
 public class DummyTransferHandler
 extends TransferHandler
@@ -114,7 +114,7 @@ implements Transferable, MouseInputListener
 	private TransferHandler			oldHandler		= null;
 	private final JComponent		object;
 	private final SwingClient		client;
-	private boolean					isListening		= false;
+	protected boolean				isListening		= false;
 	private final int				modifiers;
 
 	private MouseEvent				dndFirstEvent	= null;
@@ -391,9 +391,8 @@ implements Transferable, MouseInputListener
 		}
 	}
 
-	public void mouseEntered( MouseEvent e ) {}
-	
-	public void mouseExited( MouseEvent e ) {}
+	public void mouseEntered( MouseEvent e ) { /* ignored */ }
+	public void mouseExited( MouseEvent e ){  /* ignored */ }
 	
 	public void mouseMoved( MouseEvent e )
 	{
@@ -430,7 +429,7 @@ implements Transferable, MouseInputListener
 	{
 		private final Action superBehavior;
 		
-		private ActionSuperBehavior( Action superBehavior )
+		protected ActionSuperBehavior( Action superBehavior )
 		{
 			super();
 			this.superBehavior = superBehavior;

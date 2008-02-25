@@ -61,7 +61,7 @@ import de.sciss.net.OSCMessage;
  *	successive clicks.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 12-Dec-07
+ *	@version	0.59, 25-Feb-08
  */
 public class MouseResponder
 extends AbstractMouseResponder
@@ -142,7 +142,7 @@ implements MouseListener, MouseMotionListener
 		
 	// -------- MouseListener interface --------
 
-	public void mouseClicked( MouseEvent e ) {}
+	public void mouseClicked( MouseEvent e ) { /* ignored */ }
 	
 	public void mousePressed( MouseEvent e )
 	{

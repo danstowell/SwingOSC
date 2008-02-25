@@ -56,7 +56,7 @@ import de.sciss.gui.AquaFocusBorder;
  *	and drag-view like borders.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.45, 31-Jan-07
+ *	@version	0.59, 25-Feb-08
  */
 public class DragView
 extends JLabel
@@ -125,7 +125,7 @@ implements FocusListener, MouseListener
 				mt.addImage( dragImg, 0 );
 				mt.waitForAll();
 			}
-			catch( InterruptedException e1 ) {}
+			catch( InterruptedException e1 ) { /* ignored */ }
 			catch( NullPointerException e1 ) { System.out.println( e1 );}
 		}
 //		setBackground( new Color( 0, 0, 0, 0 ));
@@ -208,8 +208,8 @@ implements FocusListener, MouseListener
 		if( isFocusable() && isEnabled() ) requestFocus();
 	}
 	
-	public void mouseReleased( MouseEvent e ) {}
-	public void mouseClicked( MouseEvent e ) {}
-	public void mouseEntered( MouseEvent e ) {}
-	public void mouseExited( MouseEvent e ) {}
+	public void mouseReleased( MouseEvent e ) { /* ignored */ }
+	public void mouseClicked( MouseEvent e ) { /* ignored */ }
+	public void mouseEntered( MouseEvent e ) { /* ignored */ }
+	public void mouseExited( MouseEvent e ) { /* ignored */ }
 }

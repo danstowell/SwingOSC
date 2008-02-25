@@ -82,7 +82,7 @@ import de.sciss.util.MutableInt;
 import de.sciss.util.MutableLong;
 
 /**
- *	@version	0.55, 11-Aug-07
+ *	@version	0.59, 25-Feb-08
  *	@author		Hanns Holger Rutz
  */
 public class SoundFileView
@@ -104,7 +104,7 @@ implements FocusListener
 	private int 					recentWidth			= -1;
 	private int 					recentHeight		= -1;
 //	private float					xZoom				= 1.0f;
-	private Span					viewSpan			= new Span();
+	protected Span					viewSpan			= new Span();
 	private float					yZoom				= 1.0f;
 	private boolean					overlay				= false;
 	private boolean					lissajou			= false;
@@ -115,9 +115,9 @@ implements FocusListener
 	private Color					colrGrid			= Color.blue;
 	private long					gridOffset			= 0;
 	private float					gridResolution		= 1.0f;
-	private boolean					timeCursorOn		= false;
+	protected boolean				timeCursorOn		= false;
 	private Color					colrTimeCursor		= Color.blue;
-	private long					timeCursorPos		= 0;
+	protected long					timeCursorPos		= 0;
 	private boolean					waveOn				= true;
 	private double					sampleRate			= 44100.0;
 //	private int						decimation			= 64;
@@ -128,25 +128,25 @@ implements FocusListener
 	// ------- borrowing from Eisenkraut -------
 	
 	private final int[]				decimations			= { 8, 12, 16 };
-	private final DecimationHelp[]	decimHelps;
+	protected final DecimationHelp[] decimHelps;
 	private final int				SUBNUM;
 	private final int				MAXSHIFT;
-	private final int				MAXCOARSE;
+	protected final int				MAXCOARSE;
 	private final long				MAXMASK;
 	private final int				MAXCEILADD;
 	private final Decimator			decimator;
 	private final Object			fileSync			= new Object();
-	private EventManager			asyncManager		= null;
-	private final Object			bufSync				= new Object();
-	private Thread					threadAsync			= null;
-	private boolean					keepAsyncRunning	= false;
+	protected EventManager			asyncManager		= null;
+	protected final Object			bufSync				= new Object();
+	protected Thread				threadAsync			= null;
+	protected boolean				keepAsyncRunning	= false;
     private AudioFile[]				tempFAsync			= null;	// lazy
 
-	private float[][]				tmpBuf				= null;	// lazy
+    protected float[][]				tmpBuf				= null;	// lazy
 	private final int				tmpBufSize;
-	private float[][]				tmpBuf2				= null;	// lazy
+	protected float[][]				tmpBuf2				= null;	// lazy
 	private final int				tmpBufSize2;
-	private int						fullChannels;
+	protected int					fullChannels;
 
 	private final List				busyList			= new ArrayList();
 	private final int				model;
@@ -160,7 +160,7 @@ implements FocusListener
 //	private static final Stroke		strkLine			= new BasicStroke( 2.0f );
 	private static final Stroke		strkLine			= new BasicStroke( 4f );
 
-	private AudioFile				fullScale			= null;
+	protected AudioFile				fullScale			= null;
 	private boolean					deleteFullScale		= false;
 	private DecimatedStake			decimatedStake		= null;
 	
@@ -168,24 +168,24 @@ implements FocusListener
 	private int						vGap				= 1;
 	private Rectangle				r					= new Rectangle();
 
-	private volatile float			readProgress		= 0f;
+	protected volatile float		readProgress		= 0f;
 	
 	// selecting
-	private final Selection[]		selections			= new Selection[ 64 ];
-	private int						selectionIndex		= 0;
-	private final Color				colrSelection		= new Color( 0x00, 0x00, 0xFF, 0x7F );
+	protected final Selection[]		selections			= new Selection[ 64 ];
+	protected int					selectionIndex		= 0;
+	protected final Color			colrSelection		= new Color( 0x00, 0x00, 0xFF, 0x7F );
 	
 	// cached waveform snapshot
-	private boolean					needsImageUpdate	= true;
+	protected boolean				needsImageUpdate	= true;
 //	private Image					img					= null;
 //	private VolatileImage			img					= null;
 	private BufferedImage			img					= null;
 	
-	private Span					totalSpan			= new Span();
+	protected Span					totalSpan			= new Span();
 	
 	private final List				listeners			= new ArrayList();
 	
-	private CacheManager			cm;
+	protected CacheManager			cm;
 	
 	static {
 		BufferedImage img;
@@ -290,7 +290,7 @@ implements FocusListener
 		selections[ idx ].editableSize	= editableSize;
 	}
 		
-	private void ensureSelection( int idx )
+	protected void ensureSelection( int idx )
 	{
 		if( (idx < 0) || (idx >= selections.length) )
 			throw new IllegalArgumentException( String.valueOf( idx ));
@@ -472,7 +472,7 @@ implements FocusListener
 		this.cm	= cm;
 	}
 
-	private void subsampleWrite( float[][] inBuf, float[][] outBuf, DecimatedStake das, int len, AudioFile cacheAF )
+	protected void subsampleWrite( float[][] inBuf, float[][] outBuf, DecimatedStake das, int len, AudioFile cacheAF )
 	throws IOException
 	{
 		int	decim;
@@ -503,7 +503,7 @@ implements FocusListener
 	}
 
 	// same as subsampleWrite but input is already at first decim stage
-	private void subsampleWrite2( float[][] buf, DecimatedStake das, int len )
+	protected void subsampleWrite2( float[][] buf, DecimatedStake das, int len )
 	throws IOException
 	{
 		int	decim;
@@ -949,7 +949,7 @@ if( decimatedStake != null ) {
 		}
 	}
 
-	private File createCacheFileName()
+	protected File createCacheFileName()
     {
     	if( (cm == null) || !cm.isActive() ) return null;
     	
@@ -1450,7 +1450,7 @@ if( decimatedStake != null ) {
 		return info;
 	}
 	
-	private void efficientRepaint( Span dirty )
+	protected void efficientRepaint( Span dirty )
 	{	
 		final double 	hScale;
 		final Insets	ins	= getInsets();
@@ -1490,7 +1490,7 @@ if( decimatedStake != null ) {
 			img = new BufferedImage( w, h, BufferedImage.TYPE_INT_ARGB );
 		}
 //		final Graphics2D g2 = (Graphics2D) img.getGraphics();
-		final Graphics2D g2 = (Graphics2D) img.createGraphics();
+		final Graphics2D g2 = img.createGraphics();
 //g2.setColor( getBackground() );
 //g2.setColor( new Color( 0, 0, 0, 0 ));
 //g2.setColor( Color.green );
@@ -1624,14 +1624,14 @@ g2.setComposite( cmpOrig );
 		listeners.remove( l );
 	}
 
-	private void dispatchCursorChange()
+	protected void dispatchCursorChange()
 	{
 		for( int i = 0; i < listeners.size(); i++ ) {
 			((Listener) listeners.get( i )).cursorChanged( this, timeCursorPos );
 		}
 	}
 
-	private void dispatchSelectionChange()
+	protected void dispatchSelectionChange()
 	{
 		final Selection sel = selections[ selectionIndex ];
 		for( int i = 0; i < listeners.size(); i++ ) {
@@ -1666,6 +1666,8 @@ g2.setComposite( cmpOrig );
 		private long startPos;
 		private int startX;
 		private long dragOffset;
+		
+		protected MouseAdapter() { /* empty */ }
 		
 		public void mousePressed( MouseEvent e )
 		{
@@ -1882,6 +1884,7 @@ g2.setComposite( cmpOrig );
 
 	private abstract class Decimator
 	{
+		protected Decimator() { /* empty */ }
 		protected abstract void decimate( float[][] inBuf, float[][] outBuf, int outOff, int len, int decim );
 		protected abstract void decimatePCM( float[][] inBuf, float[][] outBuf, int outOff, int len, int decim );
 //		protected abstract void decimatePCMFast( float[][] inBuf, float[][] outBuf, int outOff, int len, int decim );
@@ -1890,6 +1893,8 @@ g2.setComposite( cmpOrig );
 	private class HalfPeakRMSDecimator
 	extends Decimator
 	{
+		protected HalfPeakRMSDecimator() { /* empty */ }
+
 		protected void decimate( float[][] inBuf, float[][] outBuf, int outOff, int len, int decim )
 		{
 			int		stop, j, k, m, ch, ch2;
@@ -1981,6 +1986,8 @@ g2.setComposite( cmpOrig );
 	private class FullPeakRMSDecimator
 	extends Decimator
 	{
+		protected FullPeakRMSDecimator() { /* empty */ }
+		
 		protected void decimate( float[][] inBuf, float[][] outBuf, int outOff, int len, int decim )
 		{
 			int		stop, j, k, m, ch, ch2;
@@ -2313,5 +2320,7 @@ g2.setComposite( cmpOrig );
 		protected boolean	editableStart	= true;
 		protected boolean	editableSize	= true;
 		protected Color		colr			= colrSelection;
+		
+		protected Selection() { /* empty */ }
 	}
 }

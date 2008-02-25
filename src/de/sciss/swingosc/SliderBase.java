@@ -52,7 +52,7 @@ import de.sciss.gui.AquaFocusBorder;
  *	0 = bottom margin).
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.54, 30-Jul-07
+ *	@version	0.59, 25-Feb-08
  */
 public abstract class SliderBase
 extends JComponent
@@ -104,7 +104,7 @@ implements FocusListener
 	 */
 	public void dispose()
 	{
-		
+		 /* empty */ 
 	}
 	
 	/**

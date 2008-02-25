@@ -56,7 +56,7 @@ import de.sciss.util.Disposable;
  *	for a smooth look.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.70, 22-Nov-07
+ *  @version	0.70, 25-Feb-08
  *
  *	@todo	allow linear display (now it's hard coded logarithmic)
  *	@todo	add optional horizontal orientation
@@ -351,7 +351,7 @@ implements Disposable
 //		}
 //	}
 
-	private void recalcPrefSize()
+	protected void recalcPrefSize()
 	{
 		insets = getInsets();
 		final int w = 10 + insets.left + insets.right;

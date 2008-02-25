@@ -160,7 +160,7 @@ extends JFrame
 		amap.put( "minimize", new AbstractAction() {
 			public void actionPerformed( ActionEvent e )
 			{
-				setExtendedState( Frame.ICONIFIED );
+				setExtendedState( java.awt.Frame.ICONIFIED );
 			}
 		});
 		

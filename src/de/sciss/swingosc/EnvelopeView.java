@@ -55,7 +55,7 @@ import de.sciss.net.OSCMessage;
  *	Swing implementation and extension of SCEnvelopeView by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.54, 26-Jul-07
+ *	@version	0.59, 25-Feb-08
  */
 public class EnvelopeView
 extends AbstractMultiSlider
@@ -74,29 +74,29 @@ extends AbstractMultiSlider
 	 */
 	public static final int			HEDIT_RELAY			= 2;
 	
-	private Node[] 					nodes			= new Node[ 0 ];
+	protected Node[] 				nodes			= new Node[ 0 ];
 	// when setValues is called and the number of values
 	// increases, the new nodes are created from the prototype
 	// (thumb size + colour)
 	private final Node				protoNode		= new Node( -1 );
 	
-	private boolean 				clipThumbs;
+	protected boolean 				clipThumbs;
 	
 	private Color					selectionColor	= Color.black;
-	private int						recentWidth		= -1;
-	private int						recentHeight	= -1;
+	protected int					recentWidth		= -1;
+	protected int					recentHeight	= -1;
 	
 	private int						index 			= -1;
 	
 	private boolean					connectionsUsed = false;
-	private int						horizEditMode	= HEDIT_FREE;
-	private boolean					lockBounds		= false;
+	protected int					horizEditMode	= HEDIT_FREE;
+	protected boolean				lockBounds		= false;
 	
 //	private boolean					shiftMode		= false;
 	
 	private static final Stroke[]	strkRubber;
 	private int						strkRubberIdx	= 0;
-	private final Rectangle			rubberRect		= new Rectangle();
+	protected final Rectangle		rubberRect		= new Rectangle();
 	private static final Color		colrRubber		= new Color( 0x40, 0x40, 0x40 );
 	
 	// helper constants for shape calculation
@@ -105,7 +105,7 @@ extends AbstractMultiSlider
 
 	private Node[] 					dirtyNodes		= new Node[ 0 ];
 	private int						numDirty		= 0;
-	private int						lastIndex		= -1;
+	protected int					lastIndex		= -1;
 		
 	static {
 		final float[] dash = new float[] { 4f, 4f };
@@ -770,7 +770,7 @@ extends AbstractMultiSlider
 		numDirty = 0;
 	}
 
-	private void dirty( Node n )
+	protected void dirty( Node n )
 	{
 		if( !n.dirty ) {
 			n.dirty = true;
@@ -788,6 +788,8 @@ extends AbstractMultiSlider
 		private boolean			dragRubber;
 		private final Rectangle	oldRubberRect	= new Rectangle();
 		private final Rectangle	mouseRect		= new Rectangle(); // e.g. rect around mouse for easier nav
+
+		protected MouseAdapter() { /* empty */ }
 		
 		private Point insetMouse( MouseEvent e )
 		{
@@ -914,8 +916,8 @@ extends AbstractMultiSlider
 					dx = (float) (dragCurrentPt.x - dragFirstPt.x) / recentWidth;
 					dy = (float) (dragFirstPt.y - dragCurrentPt.y) / recentHeight;
 				} else {
-					dx = (float) (dragCurrentPt.x - dragFirstPt.x);
-					dy = (float) (dragFirstPt.y - dragCurrentPt.y);
+					dx = dragCurrentPt.x - dragFirstPt.x;
+					dy = dragFirstPt.y - dragCurrentPt.y;
 				}
 //				if( dx >= 0f ) {
 //					idxStart = 0;
@@ -1030,35 +1032,35 @@ extends AbstractMultiSlider
 		private static final int		SHP_SQUARED		= 6;
 		private static final int		SHP_CUBED		= 7;
 		
-		private float					x				= 0f;
-		private float					y				= 0f;
-		private int						shape			= SHP_LINEAR;
-		private float					curve			= 0f;
-		private Color					fillColor 		= Color.black;
-		private float					thumbWidth 		= 12f;
-		private float					thumbHeight		= 12f;
+		protected float					x				= 0f;
+		protected float					y				= 0f;
+		protected int					shape			= SHP_LINEAR;
+		protected float					curve			= 0f;
+		protected Color					fillColor 		= Color.black;
+		protected float					thumbWidth 		= 12f;
+		protected float					thumbHeight		= 12f;
 		
-		private boolean					readOnly		= false;
-		private boolean					selected		= false;
-		private Node[]					connections		= NO_CONNECTIONS;
-		private String					label			= null;
-		private final Rectangle2D		r				= new Rectangle2D.Float();
-		private final RoundRectangle2D	rr				= new RoundRectangle2D.Float( 0f, 0f, 0f, 0f, 2f, 2f );
-		private boolean					invalid			= true;
-		private float					cx, cy, tx, ty;
+		protected boolean				readOnly		= false;
+		protected boolean				selected		= false;
+		protected Node[]				connections		= NO_CONNECTIONS;
+		protected String				label			= null;
+		protected final Rectangle2D		r				= new Rectangle2D.Float();
+		protected final RoundRectangle2D rr				= new RoundRectangle2D.Float( 0f, 0f, 0f, 0f, 2f, 2f );
+		protected boolean				invalid			= true;
+		protected float					cx, cy, tx, ty;
 		
 		// dnd
-		private boolean					dirty			= false;
-		private float					oldX, oldY;
+		protected boolean				dirty			= false;
+		protected float					oldX, oldY;
 		
-		private final int				idx;
+		protected final int				idx;
 		
-		private Node( int idx )
+		protected Node( int idx )
 		{
 			this.idx	= idx;
 		}
 		
-		private Node( int idx, Node orig )
+		protected Node( int idx, Node orig )
 		{
 			this.fillColor		= orig.fillColor;
 			this.thumbWidth		= orig.thumbWidth;

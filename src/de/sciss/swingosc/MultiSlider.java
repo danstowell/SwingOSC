@@ -48,32 +48,32 @@ import de.sciss.net.OSCMessage;
  *	Swing implementation of SCMultiSliderView by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.53, 02-Jul-07
+ *	@version	0.59, 25-Feb-08
  */
 public class MultiSlider
 extends AbstractMultiSlider
 {
-	private float		thumbWidth 		= 12f;
-	private float		thumbHeight		= 12f;
+	protected float		thumbWidth 		= 12f;
+	protected float		thumbHeight		= 12f;
 	private Color		fillColor 		= Color.black;
 	private Color		indexColor 		= new Color( 0x00, 0x00, 0x00, 0x55 );
 	private boolean 	hasFill			= true;
 	private float		xOffset			= 1f;
-	private float		xStep			= 13f;
-	private boolean		showIndex		= false;
-	private boolean		isFilled		= false;
-	private boolean		horizontal		= true;
-	private boolean		readOnly		= false;
+	protected float		xStep			= 13f;
+	protected boolean	showIndex		= false;
+	protected boolean	isFilled		= false;
+	protected boolean	horizontal		= true;
+	protected boolean	readOnly		= false;
 	
-	private float[]		values			= new float[ 0 ];
-	private int			startIndex		= 0;
+	protected float[]	values			= new float[ 0 ];
+	protected int		startIndex		= 0;
 	private float[][]	drawValues		= new float[][] { values };
 	
-	private int			dirtyStart		= -1;
-	private int			dirtyStop		= -1;
+	protected int		dirtyStart		= -1;
+	protected int		dirtyStop		= -1;
 
-	private int			selectedIndex	= -1;
-	private int			selectionSize	= 1;
+	protected int		selectedIndex	= -1;
+	protected int		selectionSize	= 1;
 
 	private static final double	PIH = Math.PI / 2;
 	
@@ -472,6 +472,8 @@ extends AbstractMultiSlider
 		private int		lastDragIdx		= -1;
 		private boolean	dragExtendDir	= false;
 
+		protected MouseAdapter() { /* empty */ }
+		
 		private void processMouse( MouseEvent e, boolean init )
 		{
 			if( values.length == 0 ) return;
