@@ -48,6 +48,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -85,7 +86,7 @@ import de.sciss.gui.GUIUtil;
 public class Pen
 implements Icon
 {
-	private Component 					c			= null;
+	protected Component 				c			= null;
 //	private final GeneralPath			gp			= new GeneralPath();
 //	private final AffineTransform		at			= new AffineTransform();
 //	private Paint						pntDraw		= null;
@@ -94,7 +95,7 @@ implements Icon
 	protected final Stack 				context		= new Stack();
 	
 	protected final List				recCmds		= new ArrayList();
-	private final Map					mapConstr	= new HashMap();
+	private final Map					mapConstr	= new HashMap( 32 );
 	
 	protected final float[]				pt			= new float[ 8 ];
 	
@@ -111,6 +112,18 @@ implements Icon
 	
 	private Component					lastComp	= null;
 	private Component					lastRef		= null;
+	
+	protected final static Map			antiAliasOn;
+	protected final static Map			antiAliasOff;
+	
+	static {
+		antiAliasOn		= new RenderingHints( null );
+		antiAliasOff	= new RenderingHints( null );
+		antiAliasOn.put( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+		antiAliasOff.put( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF );
+		antiAliasOn.put( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC );
+		antiAliasOff.put( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR );
+	}
 
 	public Pen()
 	{
@@ -149,6 +162,8 @@ implements Icon
 		mapConstr.put( "pop", new ConstrPop() );
 		mapConstr.put( "clp", new ConstrClip() );
 		mapConstr.put( "ali", new ConstrSmooth() );
+		mapConstr.put( "img", new ConstrImage() );
+		mapConstr.put( "imc", new ConstrCroppedImage() );
 		
 		frc = new FontRenderContext( GraphicsEnvironment.
 				getLocalGraphicsEnvironment().
@@ -249,7 +264,8 @@ implements Icon
 		final Stroke			strkOrig	= g2.getStroke();
 		final Shape				clipOrig	= g2.getClip();
 		
-		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+//		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+		g2.addRenderingHints( antiAliasOn );
 		if( absCoords ) {
 //			final Component ref		= SwingUtilities.getRootPane( c ).getContentPane();
 			final Point		ptCorr;
@@ -302,7 +318,7 @@ implements Icon
 //		private final GeneralPath		gp;
 		protected GeneralPath			gp;
 		protected Font					fnt;
-		protected RenderingHints		hints;
+		protected Map					hints;
 		
 		protected GraphicsContext()
 		{
@@ -313,7 +329,7 @@ implements Icon
 			clip	= null;
 			gp		= new GeneralPath();
 			fnt		= fntDefault;
-			hints	= new RenderingHints( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+			hints	= antiAliasOn;
 		}
 		
 		protected GraphicsContext( GraphicsContext orig )
@@ -331,7 +347,7 @@ implements Icon
 		protected void restore( Graphics2D g2 )
 		{
 			g2.setClip( clip );
-			g2.setRenderingHints( hints );
+			g2.addRenderingHints( hints );
 		}
 	}
 	
@@ -425,7 +441,9 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			final AffineTransform atOrig = g2.getTransform();
 			if( at != null ) {
 //System.out.println( "E" );
+//				final Map hints = g2.getRenderingHints();
 				g2.transform( at );
+//				g2.setRenderingHints( hints );
 			} else {
 				g2.translate( -0.5, -0.5 );
 			}
@@ -469,21 +487,69 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		}
 	}
 
-	private class CmdHint
+	private class CmdHints
 	extends Cmd
 	{
-		private final RenderingHints.Key key;
-		private final Object value;
+//		private final RenderingHints.Key key;
+//		private final Object value;
+		private final Map hints;
 
-		protected CmdHint( RenderingHints.Key key, Object value )
+		protected CmdHints( RenderingHints.Key key, Object value )
 		{
-			this.key 	= key;
-			this.value 	= value;
+//			this.key 	= key;
+//			this.value 	= value;
+			hints 		= new RenderingHints( key, value );
+		}
+		
+		protected CmdHints( Map hints )
+		{
+			this.hints	= hints;
 		}
 		
 		protected void perform( Graphics2D g2 )
 		{
-			g2.setRenderingHint( key, value );
+//			g2.setRenderingHint( key, value );
+			g2.addRenderingHints( hints );
+		}
+	}
+
+	private class CmdImage
+	extends Cmd
+	{
+		private final Image				img;
+		private final AffineTransform	at;
+		private final Shape				clip;
+//		private final Map				hints;
+		
+		protected CmdImage( Image img, float tx, float ty )
+		{
+			this.img	= img;
+			at			= new AffineTransform( gc.at );
+			at.translate( tx, ty );
+			clip		= null;
+//			hints		= gc.hints;
+		}
+		
+		protected CmdImage( Image img, float tx, float ty, float sx, float sy, float w, float h )
+		{
+			this.img	= img;
+			at			= new AffineTransform( gc.at );
+			at.translate( tx - sx, ty - sy );
+			clip		= at.createTransformedShape( new Rectangle2D.Float( sx, sy, w, h ));
+//			hints		= gc.hints;
+		}
+		
+		protected void perform( Graphics2D g2 )
+		{
+//			g2.addRenderingHints( hints );
+			if( clip != null ) {
+				final Shape clipOrig = g2.getClip();
+				g2.clip( clip );
+				g2.drawImage( img, at, c );
+				g2.setClip( clipOrig );
+			} else { 
+				g2.drawImage( img, at, c );
+			}
 		}
 	}
 
@@ -999,13 +1065,97 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 		protected int constr( Object[] cmd, int off )
 		{
-			final boolean	onOff;
-			final Object	value;
-			onOff		= ((Number) cmd[ off++ ]).intValue() != 0;
-			value		= onOff ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF;
-			recCmds.add( new CmdHint( RenderingHints.KEY_ANTIALIASING, value ));
-			gc.hints	= new RenderingHints( gc.hints );
-			gc.hints.put( RenderingHints.KEY_ANTIALIASING, value );
+//			final boolean	onOff;
+			final Map		hints;
+
+			if( ((Number) cmd[ off++ ]).intValue() != 0 ) {
+				hints	= antiAliasOn;
+			} else {
+				hints	= antiAliasOff;
+			}
+			
+			gc.hints	= hints;
+//			key			= RenderingHints.KEY_RENDERING;
+//			value		= onOff ? RenderingHints.VALUE_RENDER_QUALITY : RenderingHints.VALUE_RENDER_SPEED;
+//			key			= RenderingHints.KEY_DITHERING;
+//			value		= onOff ? RenderingHints.VALUE_DITHER_ENABLE : RenderingHints.VALUE_DITHER_DISABLE;
+//			key			= RenderingHints.KEY_COLOR_RENDERING;
+//			value		= onOff ? RenderingHints.VALUE_COLOR_RENDER_QUALITY : RenderingHints.VALUE_COLOR_RENDER_SPEED;
+			recCmds.add( new CmdHints( hints ));
+			return off;
+		}
+	}
+
+	private abstract class ConstrAbstractImage
+	extends Constr
+	{
+		protected ConstrAbstractImage() { /* empty */ }
+
+		protected Image getImage( Object id )
+		{
+			final Object		img;
+			final SwingOSC		osc;
+			final SwingClient	client;
+
+			osc		= SwingOSC.getInstance();
+			client	= osc.getCurrentClient();
+			img		= client.getObject( id );
+			if( (img == null) || !(img instanceof Image) ) {
+				System.out.println( "ERROR: Pen: image '" + id + "' not found" );
+				return null;
+			}
+			return (Image) img;
+		}
+	}
+
+	// 0: id, 1: x, 2: y
+	private class ConstrImage
+	extends ConstrAbstractImage
+	{
+		protected ConstrImage() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			final Object 		id;
+			final float			x, y;
+			final Image			img;
+			
+			id		= cmd[ off++ ];
+			off		= decode( cmd, off, 2 );
+			x		= pt[ 0 ];
+			y		= pt[ 1 ];
+			img		= getImage( id );
+			if( img != null ) {
+				recCmds.add( new CmdImage( img, x, y ));
+			}
+			return off;
+		}
+	}
+
+	// 0: id, 1: dx, 2: dy, 3: sx, 4: sy, 5: w, 6: h
+	private class ConstrCroppedImage
+	extends ConstrAbstractImage
+	{
+		protected ConstrCroppedImage() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			final Object 		id;
+			final float			dx, dy, sx, sy, w, h;
+			final Image			img;
+			
+			id		= cmd[ off++ ];
+			off		= decode( cmd, off, 6 );
+			dx		= pt[ 0 ];
+			dy		= pt[ 1 ]; 
+			sx		= pt[ 2 ];
+			sy		= pt[ 3 ];
+			w		= pt[ 4 ];
+			h		= pt[ 5 ];
+			img		= getImage( id );
+			if( img != null ) {
+				recCmds.add( new CmdImage( img, dx, dy, sx, sy, w, h ));
+			}
 			return off;
 		}
 	}

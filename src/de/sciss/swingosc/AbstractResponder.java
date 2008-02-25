@@ -92,7 +92,6 @@ public abstract class AbstractResponder
 		client				= osc.getCurrentClient();
 		object				= client.getObject( objectID );
 	
-
 		addMethods			= new Method[ listenerClasses.length ];
 		removeMethods		= new Method[ listenerClasses.length ];
 		for( int i = 0; i < listenerClasses.length; i++ ) {

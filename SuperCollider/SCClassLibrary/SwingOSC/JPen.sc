@@ -28,6 +28,7 @@
  *				removed in string methods!!
  *	- 01-Jan-07	bundle size increased to 8K again
  *				; fixes missing List -> asSwingArg ; setSmoothing
+ *	- 25-Feb-08	added image methods
  */
 
 /**
@@ -45,7 +46,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.58, 13-Jan-08
+ *	@version		0.60, 25-Feb-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not
@@ -86,17 +87,13 @@ JPen {
 
 // ------------- color and stroke customization (setter methods) -------------
 
-	// JJJ begin
 	*strokeColor_ { arg color;
 		cmds = cmds.add([ "dco", color.red, color.green, color.blue, color.alpha ]);
 	}
-	// JJJ end
 
-	// JJJ begin
 	*fillColor_ { arg color;
 		cmds = cmds.add([ "fco", color.red, color.green, color.blue, color.alpha ]);
 	}
-	// JJJ end
 	
 	*color_ { arg color;
 		this.strokeColor_( color );
@@ -107,11 +104,13 @@ JPen {
 		cmds = cmds.add([ "stk", width ]);
 	}
 
-	// JJJ begin
 	*font_ { arg font;
 		cmds = cmds.add([ "fnt", font.name, font.size, font.style ]);
 	}
-	// JJJ end
+
+	*setSmoothing { arg flag=true;
+		cmds = cmds.add([ "ali", flag.binaryValue ]);
+	}
 
 // ------------- path composition -------------
 
@@ -199,9 +198,7 @@ JPen {
 //		(thisMethod.name ++ " not implemented").warn;
 //	}
 
-	*setSmoothing { arg flag=true;
-		cmds.add([ "ali", flag.binaryValue ]);
-	}
+// ------------- string commands -------------
 
 	*string { arg str;
 		this.stringAtPoint( str, Point( 0, 0 ));
@@ -226,23 +223,36 @@ JPen {
 	*stringRightJustIn { arg str, rect;
 		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 1, 0.5 ]);
 	}
-
 	
+// ------------- image commands THESE ARE EXPERIMENTAL AND SUBJECT TO CHANGES!!! -------------
+
+	*image { arg img;
+		this.imageAtPoint( img, Point( 0, 0 ));
+	}
+	
+	*imageAtPoint { arg img, point;
+		cmds = cmds.add([ "img", img.id, point.x, point.y ]);
+	}
+	
+	*imageSlice { arg img, point, rect;
+		cmds = cmds.add([ "imc", img.id, point.x, point.y, rect.left, rect.top, rect.width, rect.height ]);
+	}
+
 // ------------ from extPlot2D (swiki) ------------
 
-	*addField { arg array, bounds, selector=\fillRect, colorFunc=Color.grey(_), legato=1.0;
+	*addField { arg array, bounds, selector = \fillRect, colorFunc = Color.grey(_), legato = 1.0;
 		var rows, cols, width, height, y, l;
-		if(array.rank != 2) { Error("array not a 2D matrix").throw };
+		if( array.rank != 2, { Error( "array not a 2D matrix" ).throw });
 		#rows, cols = array.shape;
 		height = bounds.height;
 		width = bounds.width;
-		this.use {
-			rows.do { |i|
-				cols.do { |j|
-					var y = array[i][j];
-					this.color = colorFunc.(y);
-					l = legato.(y);
-					this.perform(selector,
+		this.use({
+			rows.do({ arg i;
+				cols.do({ arg j;
+					var y = array[ i ][ j ];
+					this.color = colorFunc.( y );
+					l = legato.( y );
+					this.perform( selector,
 						Rect(
 							width / cols * j, 
 							height / rows * i, 
@@ -250,9 +260,9 @@ JPen {
 							height / rows * l + 1
 						)
 					);
-				}
-			}
-		};
+				});
+			});
+		});
 	}
 
 // ------------ private ------------
