@@ -836,15 +836,15 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         [ -200.0, 200.0 ].asSpec
     ];
     name = #[ zoomX, shearingY, shearingX, zoomY, translateX, translateY ];
-    6.do { <span class="kw">arg</span> i;
-        <span class="cl">JEZSlider</span>( controlWindow, 300 @ 22, name[i], spex[i], { <span class="kw">arg</span> ez; <span class="kw">var</span> val;
+    <span class="cl">GUI</span>.useID( <span class="sy">\swing</span>, { 6.do { <span class="kw">arg</span> i;
+        <span class="cl">EZSlider</span>( controlWindow, 300 @ 22, name[i], spex[i], { <span class="kw">arg</span> ez; <span class="kw">var</span> val;
                 val = ez.value;
                 [ i, val.round(10e-4) ].postln;
                 matrix[ i ] = val;
                 w.refresh; <span class="cm">// reevaluate drawHook function</span>
         }, matrix[ i ]);
         sliders.nextLine;
-    };
+    }});
 )
 </pre>
 <P>&nbsp;</P>

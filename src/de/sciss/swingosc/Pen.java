@@ -37,6 +37,7 @@
  *  				; clip and matrix are concatenating
  *  	24-Nov-07	stroke is transformed according to current AffineTransform
  *  				at draw statement (behaves like cocoa counterpart)
+ *  	25-Feb-08	image suppport
  */
  
 package de.sciss.swingosc;
@@ -95,7 +96,7 @@ implements Icon
 	protected final Stack 				context		= new Stack();
 	
 	protected final List				recCmds		= new ArrayList();
-	private final Map					mapConstr	= new HashMap( 32 );
+	private final Map					mapConstr	= new HashMap( 33 );
 	
 	protected final float[]				pt			= new float[ 8 ];
 	
@@ -164,6 +165,7 @@ implements Icon
 		mapConstr.put( "ali", new ConstrSmooth() );
 		mapConstr.put( "img", new ConstrImage() );
 		mapConstr.put( "imc", new ConstrCroppedImage() );
+		mapConstr.put( "pnt", new ConstrPaint() );
 		
 		frc = new FontRenderContext( GraphicsEnvironment.
 				getLocalGraphicsEnvironment().
@@ -360,6 +362,55 @@ implements Icon
 	private class CmdFill
 	extends Cmd
 	{
+		private final Shape 			shp;
+		private final Paint				pnt;
+		private final AffineTransform	at;
+		
+		protected CmdFill( Shape shp )
+		{
+			pnt		= gc.pntFill;
+			
+//			test:		if( (pnt.getClass() == Color.class) || 
+//					((gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
+//					 (gc.at.getScaleX() == 1.0) && (gc.at.getScaleY() == 1.0)) ) {
+test:		if( pnt.getClass() == Color.class ) {
+				this.shp	= shp;
+				at			= null;
+			} else {
+				final AffineTransform atInv;
+				try {
+					atInv		= gc.at.createInverse();
+				} catch( NoninvertibleTransformException e1 ) {
+					System.err.println( "Pen->CmdFill : NoninvertibleTransformException" );
+					// ... what can we do ...
+					at			= null;
+					this.shp	= shp;
+					break test;
+				}
+				this.shp	= atInv.createTransformedShape( shp );
+				at			= new AffineTransform( gc.at );
+			}
+		}
+		
+		protected void perform( Graphics2D g2 )
+		{
+			if( at == null ) {
+				g2.setPaint( pnt );
+				g2.fill( shp );
+			} else {
+				final AffineTransform atOrig = g2.getTransform();
+				g2.transform( at );
+				g2.setPaint( pnt );
+				g2.fill( shp );
+				g2.setTransform( atOrig );
+			}
+		}
+	}
+
+/*
+	private class CmdFill
+	extends Cmd
+	{
 		private final Shape 	shp;
 		private final Paint		pnt;
 		
@@ -381,7 +432,7 @@ implements Icon
 			g2.fill( shp );
 		}
 	}
-
+*/
 	private class CmdDraw
 	extends Cmd
 	{
@@ -392,9 +443,7 @@ implements Icon
 		
 		protected CmdDraw( Shape shp )
 		{
-			pnt			= gc.pntDraw;
-			
-			final AffineTransform atInv;
+			pnt = gc.pntDraw;
 			
 test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 				(gc.at.getScaleX() == gc.at.getScaleY()) ) {
@@ -411,6 +460,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 					at		= null;
 				}
 			} else {
+				final AffineTransform atInv;
 				strk = gc.strk;
 				try {
 					atInv		= gc.at.createInverse();
@@ -428,22 +478,12 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 //System.out.println( "B" );
 			}
 		}
-		
-//		private CmdDraw( Shape shp, Paint pnt )
-//		{
-//			this.shp	= shp;
-//			this.pnt	= pnt;
-//			strk		= gc.strk;
-//		}
-		
+				
 		protected void perform( Graphics2D g2 )
 		{
 			final AffineTransform atOrig = g2.getTransform();
 			if( at != null ) {
-//System.out.println( "E" );
-//				final Map hints = g2.getRenderingHints();
 				g2.transform( at );
-//				g2.setRenderingHints( hints );
 			} else {
 				g2.translate( -0.5, -0.5 );
 			}
@@ -1155,6 +1195,31 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			img		= getImage( id );
 			if( img != null ) {
 				recCmds.add( new CmdImage( img, dx, dy, sx, sy, w, h ));
+			}
+			return off;
+		}
+	}
+
+	// 0: id
+	private class ConstrPaint
+	extends Constr
+	{
+		protected ConstrPaint() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			final Object		id, pnt;
+			final SwingOSC		osc;
+			final SwingClient	client;
+
+			osc		= SwingOSC.getInstance();
+			client	= osc.getCurrentClient();
+			id		= cmd[ off++ ];
+			pnt		= client.getObject( id );
+			if( (pnt == null) || !(pnt instanceof Paint) ) {
+				System.out.println( "ERROR: Pen: paint '" + id + "' not found" );
+			} else {
+				gc.pntFill = (Paint) pnt;
 			}
 			return off;
 		}

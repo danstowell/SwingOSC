@@ -4,9 +4,12 @@
  */
 // THIS IS EXPERIMENTAL AND SUBJECT TO CHANGES!!!
 JImage : JavaObject {
-	*load { arg path, server;
-		var img;
-		img		= JavaObject.newFrom( JavaObject.basicNew( \toolkit, server ?? { SwingOSC.default }), \createImage, path );
+	*load { arg url, server;
+		var jURL, img;
+		server	= server ?? { SwingOSC.default };
+		jURL		= JavaObject( "java.net.URL", server, url );
+		img		= this.newFrom( JavaObject.basicNew( \toolkit, server ), \createImage, jURL );
+		jURL.destroy;
 		^img;
 	}
 	

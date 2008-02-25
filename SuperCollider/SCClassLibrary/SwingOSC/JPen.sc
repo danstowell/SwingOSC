@@ -108,8 +108,12 @@ JPen {
 		cmds = cmds.add([ "fnt", font.name, font.size, font.style ]);
 	}
 
-	*setSmoothing { arg flag=true;
+	*setSmoothing { arg flag = true;
 		cmds = cmds.add([ "ali", flag.binaryValue ]);
+	}
+	
+	*paint_ { arg paint;
+		cmds = cmds.add([ "pnt", paint.id ]);
 	}
 
 // ------------- path composition -------------
