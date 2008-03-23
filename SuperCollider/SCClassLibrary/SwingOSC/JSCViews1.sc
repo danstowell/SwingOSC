@@ -2254,6 +2254,11 @@ JSCTextView : JSCView {
 		// XXX update client send string rep.
 	}
 
+	open{ arg path;
+		path = path.replace( ' ', '%20' );
+		this.openURL( "file://"++path );
+	}
+
 	defaultKeyDownAction { arg key, modifiers, unicode;
 		// check for 'ctrl+enter' = interprete
 		if( (unicode == 0x0D) and: { ((modifiers & 0x40000) != 0) && enterInterpretsSelection }, {
