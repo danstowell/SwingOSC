@@ -36,7 +36,7 @@ import javax.swing.JPanel;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 18-Jan-08
+ *	@version	0.60, 26-Feb-08
  */
 public class ContentPane
 extends JPanel // JComponent
@@ -74,6 +74,11 @@ extends JPanel // JComponent
 		if( icon != null ) {
 			icon.paintIcon( this, g, 0, 0 );
 		}
+	}
+	
+	public void repaintIcon()
+	{
+		repaint();
 	}
 
 	public void setBackground( Color c )

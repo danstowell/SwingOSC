@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.59, 02-Feb-08
+ *	@version		0.60, 24-Mar-08
  */
 SwingOptions
 {
@@ -103,7 +103,7 @@ SwingOSC : Model
 
 	// note this is the SC class lib version, not necessarily the
 	// server version (reflected by the instance variable serverVersion)
-	classvar <version = 0.59;
+	classvar <version = 0.60;
 
 	var <name, <addr, <clientID = 0;
 	var <isLocal;

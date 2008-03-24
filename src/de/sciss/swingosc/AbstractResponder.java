@@ -57,6 +57,7 @@ public abstract class AbstractResponder
 	protected final Object[]		replyArgs;
 	private final Method[]			addMethods, removeMethods;
 	private boolean					isListening	= false;
+	private boolean					methodsInit = false;
 	
 	private final Object[]			addRemoveArgs = new Object[] { this };
 	
@@ -82,23 +83,21 @@ public abstract class AbstractResponder
 	}
 	
 	protected AbstractResponder( Object objectID, int numReplyArgs )
-	throws NoSuchMethodException
+//	throws NoSuchMethodException
 	{
-		final Class[] listenerClasses		= getListenerClasses();
-		final String[] listenerNames		= getListenerNames();
-		Class[] types;
+		final String[] listenerNames = getListenerNames();
 	
 		osc					= SwingOSC.getInstance();
 		client				= osc.getCurrentClient();
 		object				= client.getObject( objectID );
 	
-		addMethods			= new Method[ listenerClasses.length ];
-		removeMethods		= new Method[ listenerClasses.length ];
-		for( int i = 0; i < listenerClasses.length; i++ ) {
-			types				= new Class[] { listenerClasses[ i ]};
-			addMethods[ i ]		= object.getClass().getMethod( "add" + listenerNames[ i ], types );
-			removeMethods[ i ]	= object.getClass().getMethod( "remove" + listenerNames[ i ], types );
-		}
+		addMethods			= new Method[ listenerNames.length ];
+		removeMethods		= new Method[ listenerNames.length ];
+//		for( int i = 0; i < listenerClasses.length; i++ ) {
+//			types				= new Class[] { listenerClasses[ i ]};
+//			addMethods[ i ]		= object.getClass().getMethod( "add" + listenerNames[ i ], types );
+//			removeMethods[ i ]	= object.getClass().getMethod( "remove" + listenerNames[ i ], types );
+//		}
 		
 		replyArgs			= new Object[ numReplyArgs ];
 		replyArgs[ 0 ]		= objectID;
@@ -108,12 +107,30 @@ public abstract class AbstractResponder
 	protected abstract String[] getListenerNames();
 	protected abstract String getOSCCommand();
 	
+	protected Object getObjectForListener( int index )
+	{
+		return object;
+	}
+
 	public void add()
-	throws IllegalAccessException, InvocationTargetException
+	throws IllegalAccessException, InvocationTargetException, NoSuchMethodException
 	{
 		if( !isListening ) {
+			if( !methodsInit ) {
+				final Class[] listenerClasses	= getListenerClasses();
+				final String[] listenerNames	= getListenerNames();
+				Class[] types;
+				Object o;
+				for( int i = 0; i < listenerClasses.length; i++ ) {
+					types = new Class[] { listenerClasses[ i ]};
+					o = getObjectForListener( i );
+					addMethods[ i ]		= o.getClass().getMethod( "add" + listenerNames[ i ], types );
+					removeMethods[ i ]	= o.getClass().getMethod( "remove" + listenerNames[ i ], types );
+				}
+				methodsInit = true;
+			}
 			for( int i = 0; i < addMethods.length; i++ ) {
-				addMethods[ i ].invoke( object, addRemoveArgs );
+				addMethods[ i ].invoke( getObjectForListener( i ), addRemoveArgs );
 			}
 			isListening = true;
 		}
@@ -124,7 +141,7 @@ public abstract class AbstractResponder
 	{
 		if( isListening ) {
 			for( int i = 0; i < removeMethods.length; i++ ) {
-				removeMethods[ i ].invoke( object, addRemoveArgs );
+				removeMethods[ i ].invoke( getObjectForListener( i ), addRemoveArgs );
 			}
 			isListening = false;
 		}

@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.59, 30-Jan-08
+ *	@version		0.60, 24-Mar-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -536,13 +536,16 @@ JSCView {  // abstract class
 	prBoundsUpdated {}
 
 	prCreateCompResponder { arg bndl;
-		var msg;
+		var msg, id, cnID, cmpID;
 	
 		if( cmpResp.notNil, {
 			"JSCView.prCreateCompResponder : already created!".warn;
 			^nil;
 		});
-		cmpResp = OSCpathResponder( server.addr, [ '/component', this.id ], { arg time, resp, msg;
+		id    = this.id;
+		cnID  = this.prContainerID;
+		cmpID = "cmp" ++ id;
+		cmpResp = OSCpathResponder( server.addr, [ '/component', id ], { arg time, resp, msg;
 			var state, x, y, w, h, dx, dy, dw, dh, temp;
 //			var scBounds;
 		
@@ -594,7 +597,11 @@ JSCView {  // abstract class
 			});
 		});
 		cmpResp.add;
-		msg = [ '/local', "cmp" ++ this.id, '[', '/new', "de.sciss.swingosc.ComponentResponder", this.id, ']' ];
+		msg = if( id == cnID, {
+			[ '/local', cmpID, '[', '/new', "de.sciss.swingosc.ComponentResponder", id, ']' ];
+		}, {
+			[ '/local', cmpID, '[', '/new', "de.sciss.swingosc.ComponentResponder", id, cnID, ']' ];
+		});
 		if( bndl.notNil, {
 			bndl.add( msg );
 		}, {

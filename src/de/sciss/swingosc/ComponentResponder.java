@@ -25,6 +25,7 @@
  *
  *  Changelog:
  *		16-Apr-05	created
+ *		24-Mar-08	optionally different objects for focus and bounds
  */
  
 package de.sciss.swingosc;
@@ -60,7 +61,7 @@ import de.sciss.net.OSCMessage;
  *	and for state = resized|moved the new bounds.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 10-Dec-07
+ *	@version	0.60, 24-Mar-08
  */
 public class ComponentResponder
 extends AbstractResponder
@@ -73,29 +74,50 @@ implements ComponentListener, FocusListener
 	private final Object[]	shortReplyArgs = new Object[ 2 ];
 //	private final Insets	in;
 	
+	private final Object	bObject;
+
 	public ComponentResponder( Object objectID )
 	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
 	{
 		this( objectID, false );
 	}
 	
-	// absCoords: if true, coordinates send
-	// are transformed from component to component's window's
-	// content pane topleft
+	public ComponentResponder( Object focusID, Object boundsID )
+	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
+	{
+		this( focusID, boundsID, false );
+	}
+
 	public ComponentResponder( Object objectID, boolean absCoords )
 	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
 	{
-		super( objectID, 6 );
-		add();
+		this( objectID, objectID, absCoords );
+	}
+	
+	// absCoords: if true, coordinates send
+	// are transformed from component to component's window's
+	// content pane topleft
+	public ComponentResponder( Object focusID, Object boundsID, boolean absCoords )
+	throws IllegalAccessException, NoSuchMethodException, InvocationTargetException
+	{
+		super( focusID, 6 );
 		
 		this.absCoords = absCoords;
 		shortReplyArgs[ 0 ]	= replyArgs[ 0 ];
 		
+		bObject	= focusID.equals( boundsID ) ? object : client.getObject( boundsID );
+
+		add();
 //		if( object instanceof JComponent ) {
 //			in = (Insets) ((JComponent) object).getClientProperty( "insets" );
 //		} else {
 //			in = new Insets( 0, 0, 0, 0 );
 //		}
+	}
+
+	protected Object getObjectForListener( int index )
+	{
+		return index == 0 ? bObject : object;
 	}
 
 	protected Class[] getListenerClasses()

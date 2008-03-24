@@ -46,7 +46,7 @@ import de.sciss.gui.AquaFocusBorder;
  *	added support for focus border
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 27-Nov-07
+ *	@version	0.60, 26-Feb-08
  */
 public class UserView
 extends JComponent
@@ -98,7 +98,16 @@ implements FocusListener
 		setOpaque( !clear );
 	}
 	
-//	public void setBackground( Color c )
+	public void repaintIcon()
+	{
+		if( clear ) {
+			repaint();
+		} else {
+			paintImmediately( 0, 0, getWidth(), getHeight() );
+		}
+	}
+
+	//	public void setBackground( Color c )
 //	{
 ////		setOpaque( (c != null) && (c.getAlpha() == 0xFF) );
 //		super.setBackground( c );

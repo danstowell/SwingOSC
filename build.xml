@@ -13,7 +13,7 @@
     <property name="main-class"		value="de.sciss.swingosc.SwingOSC"/>
 	<property name="lib.dir"		value="libraries"/>
 	<property name="libraries"		value="${lib.dir}/NetUtil.jar:JNITablet/build/TabletWrapper.jar"/>
-    <property name="version"		value="0.59"/>
+    <property name="version"		value="0.60"/>
     <property name="debug"			value="false"/>
 	
 	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
