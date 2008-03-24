@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.59, 28-Jan-08
+ *	@version		0.60, 24-Mar-08
  */
 SwingGUI {
 	classvar extraClasses;
@@ -119,7 +119,7 @@ SwingGUI {
 	// ----------------- private class methods -----------------
 
 	*doesNotUnderstand { arg selector ... args;
-		^extraClasses.performList( selector, *args );
+		^extraClasses.perform( selector, *args );
 	}
 
 		// width in Helvetica approx = string size * font size * 0.52146
