@@ -119,6 +119,14 @@ SwingGUI {
 	// ----------------- private class methods -----------------
 
 	*doesNotUnderstand { arg selector ... args;
-		^extraClasses.perform( selector, *args );
+		^extraClasses.performList( selector, *args );
+	}
+
+		// width in Helvetica approx = string size * font size * 0.52146
+		// 0.52146 is average of all 32-127 ascii characters widths
+		// this is a bad hack... there may be a way to measure this automatically
+		// later...
+	*stringBounds { |string, font|
+		^Rect(0, 0, string.size * font.size * 0.52146, font.size * 1.25)
 	}
 }
