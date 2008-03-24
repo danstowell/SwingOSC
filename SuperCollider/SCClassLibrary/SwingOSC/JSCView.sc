@@ -161,6 +161,10 @@ JSCView {  // abstract class
 			this.prGetWindow.view.focus;
 		});
 	}
+	
+		// implemented in CocoaGUI but not in Swing - Swing should politely ignore the calls
+	focusColor { ^this.background }
+	focusColor_ {}
 
 //	id { ^this.getProperty( \id )}
 //
