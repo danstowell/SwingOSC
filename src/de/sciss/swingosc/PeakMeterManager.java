@@ -109,7 +109,8 @@ implements OSCListener, ActionListener
 			index			= newBusIndex;
 			numChannels	   += pmg.getNumChannels();
 			mc				= new Client( pmg, nodeID, pmgChannels, false );
-			pmg.setSync( sync );
+// XXX
+//			pmg.setSync( sync );
 			collClients.add( mc );
 			mapClients.put( pmg, mc );
 			resortClients();

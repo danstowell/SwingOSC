@@ -25,6 +25,7 @@
  *
  *  Changelog:
  *		20-Dec-07	created
+ *		05-Feb-08	copied from SwingOSC
  */
 package de.sciss.swingosc;
 
@@ -47,7 +48,7 @@ import de.sciss.gui.PeakMeter;
 import de.sciss.gui.PeakMeterCaption;
 
 /**
- *	@version	0.59, 25-Feb-08
+ *	@version	0.58, 20-Mar-08
  *	@author		Hanns Holger Rutz
  */
 public class PeakMeterGroup
@@ -61,7 +62,7 @@ implements SwingConstants
 	private boolean				captionVisible	= true;
 	private boolean				captionLabels	= true;
 	private int					numChannels		= 0;
-	private Object				sync			= new Object();
+//	private Object				sync			= new Object();
 	private boolean				border			= false;
 	
 	private boolean				rmsPainted		= true;
@@ -87,7 +88,13 @@ implements SwingConstants
 			}
 		});
 	}
-	
+
+	// XXX UGLY
+	public PeakMeter[] getMeters()
+	{
+		return meters;
+	}
+
 	public void setBorder( boolean onOff )
 	{
 		if( border == onOff ) return;
@@ -181,11 +188,11 @@ implements SwingConstants
 		if( rmsPainted == onOff ) return;
 		
 		rmsPainted = onOff;
-		synchronized( sync ) {
+//		synchronized( sync ) {
 			for( int i = 0; i < meters.length; i++ ) {
 				meters[ i ].setRMSPainted( onOff );
 			}
-		}
+//		}
 	}
 
 	public void setHoldPainted( boolean onOff )
@@ -193,20 +200,20 @@ implements SwingConstants
 		if( holdPainted == onOff ) return;
 		
 		holdPainted = onOff;
-		synchronized( sync ) {
+//		synchronized( sync ) {
 			for( int i = 0; i < meters.length; i++ ) {
 				meters[ i ].setHoldPainted( onOff );
 			}
-		}
+//		}
 	}
 	
-	public void setSync( Object sync )
-	{
-		this.sync	= sync;
-		for( int i = 0; i < meters.length; i++ ) {
-			meters[ i ].setSync( sync );
-		}
-	}
+//	public void setSync( Object sync )
+//	{
+//		this.sync	= sync;
+//		for( int i = 0; i < meters.length; i++ ) {
+//			meters[ i ].setSync( sync );
+//		}
+//	}
 
 	public boolean meterUpdate( float[] peakRMSPairs )
 	{
@@ -217,12 +224,12 @@ implements SwingConstants
 
 //		System.out.println( "meterUpdate " + numMeters );
 		
-		synchronized( sync ) {
+//		synchronized( sync ) {
 			for( int i = 0, j = 0; i < numMeters; i++ ) {
 //				System.out.println( "  " + peakRMSPairs[ j ]);
 				if( meters[ i ].setPeakAndRMS( peakRMSPairs[ j++ ], peakRMSPairs[ j++ ], now )) dirty++;
 			}
-		}
+//		}
 		
 		return( dirty > 0 );
 //		return( !(task && (dirty == 0)) );
@@ -260,7 +267,7 @@ implements SwingConstants
 		meters	= new PeakMeter[ numChannels ];
 		for( int ch = 0; ch < numChannels; ch++ ) {
 			meters[ ch ] = new PeakMeter();
-			meters[ ch ].setSync( sync );
+//			meters[ ch ].setSync( sync );
 			meters[ ch ].setRefreshParent( true );
 			meters[ ch ].setRMSPainted( rmsPainted );
 			meters[ ch ].setHoldPainted( holdPainted );

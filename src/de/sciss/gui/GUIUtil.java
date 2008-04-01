@@ -38,10 +38,13 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -58,10 +61,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 
-//import de.sciss.app.AbstractApplication;
 import de.sciss.app.AncestorAdapter;
-//import de.sciss.app.Application;
-//import de.sciss.app.GraphicsHandler;
 import de.sciss.app.PreferenceEntrySync;
 
 /**
@@ -69,7 +69,7 @@ import de.sciss.app.PreferenceEntrySync;
  *  for common Swing / GUI operations
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.37, 25-Feb-08
+ *  @version	0.37, 19-Mar-08
  */
 public class GUIUtil
 {
@@ -127,7 +127,7 @@ public class GUIUtil
 		String[]						options = { GUIUtil.getResourceString( "buttonOk" ),
 													GUIUtil.getResourceString( "optionDlgStack" )};
 	
-//		if( message == null ) message = exception.getClass().getName();
+		if( message == null ) message = exception.getClass().getName();
 		tok = new StringTokenizer( message );
 		strBuf.append( ":\n" );
 		while( tok.hasMoreTokens() ) {
@@ -267,8 +267,9 @@ public class GUIUtil
 		SpringLayout.Constraints	cons;
         SpringLayout.Constraints	lastCons		= null;
         SpringLayout.Constraints	lastRowCons		= null;
-		int							i;
 		int							max				= rows * cols;
+		
+		if( max == 0 ) return;
 		
         try {
             layout = (SpringLayout) parent.getLayout();
@@ -286,7 +287,7 @@ public class GUIUtil
         // cells have the same size.
         maxWidthSpring  = layout.getConstraints( parent.getComponent( 0 )).getWidth();
         maxHeightSpring = layout.getConstraints( parent.getComponent( 0 )).getWidth();
-        for( i = 1; i < max; i++ ) {
+        for( int i = 1; i < max; i++ ) {
             cons			= layout.getConstraints( parent.getComponent( i ));
             maxWidthSpring  = Spring.max( maxWidthSpring, cons.getWidth() );
             maxHeightSpring = Spring.max( maxHeightSpring, cons.getHeight() );
@@ -294,37 +295,37 @@ public class GUIUtil
 
         // Apply the new width/height Spring. This forces all the
         // components to have the same size.
-        for( i = 0; i < max; i++ ) {
+        for( int i = 0; i < max; i++ ) {
             cons = layout.getConstraints( parent.getComponent( i ));
             cons.setWidth( maxWidthSpring );
             cons.setHeight( maxHeightSpring );
         }
 
-        // Then adjust the x/y constraints of all the cells so that they
-        // are aligned in a grid.
-        for( i = 0; i < max; i++ ) {
-            cons = layout.getConstraints( parent.getComponent( i ));
-            if( i % cols == 0 ) {   // start of new row
-                lastRowCons = lastCons;
-                cons.setX( initialXSpring );
-            } else {				// x position depends on previous component
-                cons.setX( Spring.sum( lastCons.getConstraint( SpringLayout.EAST ), xPadSpring ));
-            }
+    	// Then adjust the x/y constraints of all the cells so that they
+    	// are aligned in a grid.
+        for( int i = 0; i < max; i++ ) {
+        	cons = layout.getConstraints( parent.getComponent( i ));
+        	if( i % cols == 0 ) {   // start of new row
+        		lastRowCons = lastCons;
+        		cons.setX( initialXSpring );
+        	} else {				// x position depends on previous component
+        		cons.setX( Spring.sum( lastCons.getConstraint( SpringLayout.EAST ), xPadSpring ));
+        	}
 
-            if( i / cols == 0 ) {   // first row
-                cons.setY( initialYSpring );
-            } else {				// y position depends on previous row
-                cons.setY( Spring.sum( lastRowCons.getConstraint( SpringLayout.SOUTH ), yPadSpring ));
-            }
-            lastCons = cons;
+        	if( i / cols == 0 ) {   // first row
+        		cons.setY( initialYSpring );
+        	} else {				// y position depends on previous row
+        		cons.setY( Spring.sum( lastRowCons.getConstraint( SpringLayout.SOUTH ), yPadSpring ));
+        	}
+        	lastCons = cons;
         }
 
-		// Set the parent's size.
-		cons = layout.getConstraints( parent );
-		cons.setConstraint( SpringLayout.SOUTH, Spring.sum( Spring.constant( yPad ),
-							lastCons.getConstraint( SpringLayout.SOUTH )));
+        // Set the parent's size.
+        cons = layout.getConstraints( parent );
+        cons.setConstraint( SpringLayout.SOUTH, Spring.sum( Spring.constant( yPad ),
+                            lastCons.getConstraint( SpringLayout.SOUTH )));
         cons.setConstraint( SpringLayout.EAST, Spring.sum( Spring.constant( xPad ),
-							lastCons.getConstraint( SpringLayout.EAST )));
+                            lastCons.getConstraint( SpringLayout.EAST )));
     }
 
     /**
@@ -488,6 +489,33 @@ public class GUIUtil
 		c.setMaximumSize( d );
 		c.setPreferredSize( d );
 	}
+	
+	public static void wrapWindowBounds( Rectangle wr, Rectangle sr )
+	{
+		if( sr == null ) {
+			sr = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		}
+//		if( i == null ) {
+//			final boolean isMacOS = System.getProperty( "os.name" ).indexOf( "Mac OS" ) >= 0;
+////			final boolean isWindows = System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
+//			i = new Insets( isMacOS ? 61 : 42, 42, 42, 42 );
+//			// XXX should take dock size and position into account
+//			// $ defaults read com.apple.dock tilesize
+//			// $ defaults read com.apple.dock orientation
+//		}
+//		sr.x		+= i.left;
+//		sr.y		+= i.top;
+//		sr.width	-= (i.left + i.right);
+//		sr.height	-= (i.top + i.bottom);
+		if( (wr.x < sr.x) || ((wr.x + wr.width) > (sr.x + sr.width)) ) {
+			wr.x		= sr.x;
+			if( wr.width > sr.width ) wr.width = sr.width;
+		}
+		if( (wr.y < sr.y) || ((wr.y + wr.height) > (sr.y + sr.height)) ) {
+			wr.y		= sr.y;
+			if( wr.height > sr.height ) wr.height = sr.height;
+		}
+	}
 
 	/**
 	 *	Passes keyboard focus to a given component when
@@ -507,6 +535,44 @@ public class GUIUtil
 				c.removeAncestorListener( this );
 			}
 		});
+	}
+	
+	public static boolean setAlwaysOnTop( Component c, boolean b )
+	{
+		// setAlwaysOnTop doesn't exist in Java 1.4
+		try {
+			final Method m = c.getClass().getMethod( "setAlwaysOnTop", new Class[] { Boolean.TYPE });
+			m.invoke( c, new Object[] { new Boolean( b )});
+			return true;
+		}
+		catch( NoSuchMethodException e1 ) { /* ingore */ }
+		catch( NullPointerException e1 ) { /* ingore */ }
+		catch( SecurityException e1 ) { /* ingore */ }
+		catch( IllegalAccessException e1 ) { /* ingore */ }
+		catch( IllegalArgumentException e1 ) { /* ingore */ }
+		catch( InvocationTargetException e1 ) { /* ingore */ }
+		catch( ExceptionInInitializerError e1 ) { /* ingore */ }
+		return false;
+	}
+
+	public static boolean isAlwaysOnTop( Component c )
+	{
+		// setAlwaysOnTop doesn't exist in Java 1.4
+		try {
+			final Method m = c.getClass().getMethod( "isAlwaysOnTop", null );
+			final Object result = m.invoke( c, null );
+			if( result instanceof Boolean ) {
+				return ((Boolean) result).booleanValue();
+			}
+		}
+		catch( NoSuchMethodException e1 ) { /* ingore */ }
+		catch( NullPointerException e1 ) { /* ingore */ }
+		catch( SecurityException e1 ) { /* ingore */ }
+		catch( IllegalAccessException e1 ) { /* ingore */ }
+		catch( IllegalArgumentException e1 ) { /* ingore */ }
+		catch( InvocationTargetException e1 ) { /* ingore */ }
+		catch( ExceptionInInitializerError e1 ) { /* ingore */ }
+		return false;
 	}
 
 	/**
