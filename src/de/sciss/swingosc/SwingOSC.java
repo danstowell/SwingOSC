@@ -83,7 +83,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.60, 24-Mar-08
+ *  @version	0.60, 01-Apr-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -117,7 +117,7 @@ implements OSCListener, OSCProcessor, Runnable
 		int						port		= 0;
 		boolean					loopBack	= false;
 		boolean					initSwing	= false;
-		SocketAddress			hello		= null;
+		InetSocketAddress		hello		= null;
 		int						bufSize		= 65536;
 		String					protocol	= OSCChannel.UDP;
 		int						i, j;
@@ -335,7 +335,7 @@ implements OSCListener, OSCProcessor, Runnable
 	}
 	
 	public void start( String protocol, int port, boolean loopBack, int bufSize,
-					   boolean initSwing, SocketAddress helloAddr )
+					   boolean initSwing, InetSocketAddress helloAddr )
 	throws IOException
 	{
 		final InetSocketAddress	ourAddress;
@@ -368,7 +368,8 @@ implements OSCListener, OSCProcessor, Runnable
 //					hello );
 			final OSCMessage helloMsg = new OSCMessage( "/swing", new Object[] {
 				"hello", ourHost, new Integer( ourPort ), protocol });
-			final OSCTransmitter helloTrns = OSCTransmitter.newUsing( OSCChannel.UDP );
+//			final OSCTransmitter helloTrns = OSCTransmitter.newUsing( OSCChannel.UDP );
+			final OSCTransmitter helloTrns = OSCTransmitter.newUsing( OSCChannel.UDP, 0, helloAddr.getAddress().isLoopbackAddress() );
 			helloTrns.connect();
 			helloTrns.send( helloMsg, helloAddr );
 			helloTrns.dispose();
