@@ -67,6 +67,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ import javax.swing.JComponent;
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.59, 25-Feb-08
+ *	@version	0.60, 03-Apr-08
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -100,7 +101,7 @@ implements Icon
 	
 	protected final float[]				pt			= new float[ 8 ];
 	
-	private static final float			kRad2Deg	= (float) (180.0 / Math.PI);
+//	private static final float			kRad2Deg	= (float) (180.0 / Math.PI);
 	private static final float			kRad2DegM	= (float) (-180.0 / Math.PI);
 	
 	protected static final BasicStroke	strkDefault	= new BasicStroke( 1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER );
@@ -116,6 +117,8 @@ implements Icon
 	
 	protected final static Map			antiAliasOn;
 	protected final static Map			antiAliasOff;
+	
+	private final Point					ptOrigin	= new Point();
 	
 	static {
 		antiAliasOn		= new RenderingHints( null );
@@ -141,8 +144,8 @@ implements Icon
 		mapConstr.put( "qua", new ConstrQuadTo() );
 		mapConstr.put( "cub", new ConstrCurveTo() );
 		mapConstr.put( "rec", new ConstrAddRect() );
-		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN ));
-		mapConstr.put( "pie", new ConstrAddArc( Arc2D.PIE ) );
+		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN, true ));
+		mapConstr.put( "pie", new ConstrAddArc( Arc2D.PIE, false ));
 		mapConstr.put( "cyl", new ConstrAddCylSector() );
 		mapConstr.put( "rst", new ConstrReset() );
 		mapConstr.put( "trn", new ConstrTranslate() );
@@ -282,7 +285,8 @@ implements Icon
 				}
 				lastComp = c;
 			}
-			ptCorr = GUIUtil.convertPoint( lastRef, new Point( x, y ), c );
+			ptOrigin.setLocation( x, y );
+			ptCorr = GUIUtil.convertPoint( lastRef, ptOrigin, c );
 			
 //			System.out.println( "translate " + x + ", " + y );
 			
@@ -865,12 +869,15 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrFillRect
 	extends Constr
 	{
+		private final RectangularShape shp = new Rectangle2D.Float();
+		
 		protected ConstrFillRect() { /* empty */ }
 
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
-			final Shape shp = new Rectangle2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+//			final Shape shp = new Rectangle2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+			shp.setFrame( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			recCmds.add( new CmdFill( gc.at.createTransformedShape( shp )));
 			return off;
 		}
@@ -879,15 +886,16 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrDrawRect
 	extends Constr
 	{
+		private final RectangularShape shp = new Rectangle2D.Float();
+
 		protected ConstrDrawRect() { /* empty */ }
 
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
-			final Shape shp = new Rectangle2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+//			final Shape shp = new Rectangle2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+			shp.setFrame( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			recCmds.add( new CmdDraw( gc.at.createTransformedShape( shp )));
-//			recCmds.add( new CmdFill( gc.at.createTransformedShape(
-//					gc.strk.createStrokedShape( shp )), gc.pntDraw ));
 			return off;
 		}
 	}
@@ -895,12 +903,15 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrFillOval
 	extends Constr
 	{
+		private final RectangularShape shp = new Ellipse2D.Float();
+		
 		protected ConstrFillOval() { /* empty */ }
 
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
-			final Shape shp = new Ellipse2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+//			final Shape shp = new Ellipse2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+			shp.setFrame( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			recCmds.add( new CmdFill( gc.at.createTransformedShape( shp )));
 			return off;
 		}
@@ -909,18 +920,15 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrDrawOval
 	extends Constr
 	{
+		private final RectangularShape shp = new Ellipse2D.Float();
+
 		protected ConstrDrawOval() { /* empty */ }
 
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
-			final Shape shp = new Ellipse2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
-//final double[] mm = new double[ 6 ];
-//gc.at.getMatrix( mm );
-//for( int k = 0; k < mm.length; k++ ) System.out.print( mm[ k ] + ", " );
-//System.out.println();
-//final AffineTransform atTest = new AffineTransform( gc.at );
-//recCmds.add( new CmdDraw( atTest.createTransformedShape( shp )));
+//			final Shape shp = new Ellipse2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+			shp.setFrame( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			recCmds.add( new CmdDraw( gc.at.createTransformedShape( shp )));
 			return off;
 		}
@@ -929,12 +937,15 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrAddRect
 	extends Constr
 	{
+		private final RectangularShape shp = new Rectangle2D.Float();
+
 		protected ConstrAddRect() { /* empty */ }
 
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
-			final Shape shp = new Rectangle2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+//			final Shape shp = new Rectangle2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+			shp.setFrame( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			gc.gp.append( gc.at.createTransformedShape( shp ), false );
 			return off;
 		}
@@ -943,20 +954,29 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrAddArc
 	extends Constr
 	{
-		private int type;
+		private final Arc2D		arc = new Arc2D.Float();
+		private final int		type;
+		private final boolean	connect;
 		
-		protected ConstrAddArc( int type )
+		protected ConstrAddArc( int type, boolean connect )
 		{
-			this.type = type;
+			this.type		= type;
+			this.connect	= connect;
 		}
 		
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 5 );
-			final Arc2D arc = new Arc2D.Float();
+//			final Arc2D arc = new Arc2D.Float();
+//			arc.setArcByCenter( pt[ 0 ], pt[ 1 ], pt[ 2 ],
+//							    (pt[ 3 ] + pt[ 4 ]) * kRad2DegM, pt[ 4 ] * kRad2Deg, type );
 			arc.setArcByCenter( pt[ 0 ], pt[ 1 ], pt[ 2 ],
-							    (pt[ 3 ] + pt[ 4 ]) * kRad2DegM, pt[ 4 ] * kRad2Deg, type );
-			gc.gp.append( gc.at.createTransformedShape( arc ), false );
+							    pt[ 3 ] * kRad2DegM, pt[ 4 ] * kRad2DegM, type );
+//			gc.gp.append( gc.at.createTransformedShape( arc ), false );
+			gc.gp.append( gc.at.createTransformedShape( arc ), connect );
+			if( type == Arc2D.PIE ) {
+				gc.gp.moveTo( pt[ 0 ], pt[ 1 ]);	// behave like cocoa
+			}
 			return off;
 		}
 	}
@@ -964,22 +984,28 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrAddCylSector
 	extends Constr
 	{
+		private final Arc2D		pie = new Arc2D.Float();
+		private final Ellipse2D cyl = new Ellipse2D.Float();
+
 		protected ConstrAddCylSector() { /* empty */ }
 		
 		// 0: cx, 1: cy, 2: ri, 3: ro, 4: angSt, 5, angExt
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 6 );
-			final Arc2D pie = new Arc2D.Float();
+//			final Arc2D pie = new Arc2D.Float();
 			final float innerDiam = pt[ 2 ] * 2;
 			pie.setArcByCenter( pt[ 0 ], pt[ 1 ], pt[ 3 ],
-							   		  (pt[ 4 ] + pt[ 5 ]) * kRad2DegM, pt[ 5 ] * kRad2Deg, Arc2D.PIE );
-			final Ellipse2D cyl = new Ellipse2D.Float(
-					pt[ 0 ] - pt[ 2 ], pt[ 1 ] - pt[ 2 ], innerDiam, innerDiam );
+							    pt[ 4 ] * kRad2DegM, pt[ 5 ] * kRad2DegM, Arc2D.PIE );
+//			final Ellipse2D cyl = new Ellipse2D.Float(
+//			                      					pt[ 0 ] - pt[ 2 ], pt[ 1 ] - pt[ 2 ], innerDiam, innerDiam );
+			cyl.setFrame( pt[ 0 ] - pt[ 2 ], pt[ 1 ] - pt[ 2 ], innerDiam, innerDiam );
 
 			final Area shp = new Area( pie );
 			shp.subtract( new Area( cyl ));
 			gc.gp.append( gc.at.createTransformedShape( shp ), false );
+			gc.gp.moveTo( pt[ 0 ] + (float) Math.cos( pt[ 4 ]) * pt[ 2 ],
+			              pt[ 1 ] + (float) Math.sin( pt[ 4 ]) * pt[ 2 ]);	// behave like cocoa 
 			return off;
 		}
 	}
@@ -1028,6 +1054,9 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrStringInRect
 	extends Constr
 	{
+		private final GeneralPath		gp		= new GeneralPath();
+		private final AffineTransform	atPos	= new AffineTransform();
+		
 		protected ConstrStringInRect() { /* empty */ }
 
 		protected int constr( Object[] cmd, int off )
@@ -1045,12 +1074,13 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			final float yStop = y + pt[ 3 ];
 			final float halign = pt[ 4 ];
 			final float valign = pt[ 5 ];
-			final GeneralPath gp = new GeneralPath();
-			final AffineTransform atPos = new AffineTransform();
+//			final GeneralPath gp = new GeneralPath();
+//			final AffineTransform atPos = new AffineTransform();
 			final float dy;
 			float dx;
 			TextLayout txtLay;
 		    
+			gp.reset();
 			while( lbm.getPosition() < styledText.getEndIndex() ) {
 		         txtLay	= lbm.nextLayout( w );
 		         y  	   += txtLay.getAscent();

@@ -350,7 +350,8 @@ implements OSCListener, OSCProcessor, Runnable
 		ourPort		= ourAddress.getPort();
 		serv.addOSCListener( this );
 	
-		System.out.println( "SwingOSC v" + VERSION +". receiving " + protocol.toUpperCase() +
+		final String vStr = String.valueOf( VERSION + 0.001 ); // use double prec!
+		System.out.println( "SwingOSC v" + vStr.substring( 0, vStr.length() - 1 ) +". receiving " + protocol.toUpperCase() +
 							" at address " + ourHost + ":" + ourPort );
 //		serv.dumpIncomingOSC( 3, System.out );
 		serv.getCodec().setSupportMode( (OSCPacketCodec.MODE_GRACEFUL & ~OSCPacketCodec.MODE_WRITE_DOUBLE_AS_FLOAT) | OSCPacketCodec.MODE_WRITE_DOUBLE );
