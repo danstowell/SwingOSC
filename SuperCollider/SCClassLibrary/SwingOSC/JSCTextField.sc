@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCTextField.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 12-Jan-08
+ *	@version		0.60, 03-Apr-08
  */
 JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 
@@ -43,39 +43,7 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 	
 	// ----------------- public instance methods -----------------
 
-//	defaultKeyDownAction { arg key, modifiers, unicode;
-//		if(unicode == 0,{ ^this });
-//		// standard keydown
-//		if ((key == 3.asAscii) || (key == $\r) || (key == $\n), { // enter key
-//			if (keyString.notNil,{ // no error on repeated enter
-//				this.valueAction_(string);
-//				keyString = nil;// restart editing
-//			});
-//			^this
-//		});
-//		if (key == 127.asAscii, { // delete key
-//			if(keyString.notNil,{
-//				if(keyString.size > 1,{
-//					keyString = keyString.copyRange(0,keyString.size - 2);
-//				},{
-//					keyString = String.new;
-//				});
-//				this.string = keyString;
-//				this.stringColor = typingColor;
-//			},{
-//				keyString = String.new;
-//				this.string = keyString;
-//				this.stringColor = typingColor;
-//			});
-//			^this
-//		});
-//		if (keyString.isNil, { 
-//			keyString = this.string;
-//			this.stringColor = typingColor;
-//		});
-//		keyString = keyString.add(key);
-//		this.string = keyString;
-//	}
+	defaultKeyDownAction { arg key, modifiers, unicode; ^this } // swallow all
 
 	string_ { arg s; super.string = s.as(String); }
 

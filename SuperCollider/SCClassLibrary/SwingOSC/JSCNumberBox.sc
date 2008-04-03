@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCNumberBox.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 12-Jan-08
+ *	@version		0.60, 03-Apr-08
  */
 JSCNumberBox : JSCTextEditBase {
 
@@ -52,34 +52,14 @@ JSCNumberBox : JSCTextEditBase {
 	decrement { this.valueAction = this.value - step; }
 	
 	defaultKeyDownAction { arg char, modifiers, unicode;
-		// standard chardown
-		if (unicode == 16rF700, { this.increment; ^this });
-// JJJ mostly handled by java
-//		if (unicode == 16rF703, { this.increment; ^this });
-		if (unicode == 16rF701, { this.decrement; ^this });
-//		if (unicode == 16rF702, { this.decrement; ^this });
-//		if ((char == 3.asAscii) || (char == $\r) || (char == $\n), { // enter key
-//			if (keyString.notNil,{ // no error on repeated enter
-//				this.valueAction_(keyString.asFloat);
-//			});
-//			^this
-//		});
-//		if (char == 127.asAscii, { // delete key
-//			keyString = nil;
-//			this.string = object.asString;
-//			this.stringColor = normalColor;
-//			^this
-//		});
-//		if (char.isDecDigit || "+-.eE".includes(char), {
-//			if (keyString.isNil, { 
-//				keyString = String.new;
-//				this.stringColor = typingColor;
-//			});
-//			keyString = keyString.add(char);
-//			this.string = keyString;
-//			^this
-//		});
-		^nil		// bubble if it's an invalid key	}
+		if( unicode == 0xF700, { this.increment; ^this });
+		if( unicode == 0xF703, { ^this });
+		if( unicode == 0xF701, { this.decrement; ^this });
+		if( unicode == 0xF702, { ^this });
+		if( (char == $\r) || (char == $\n), { ^this }); // enter key
+		if( char.isDecDigit or: { "+-.eE".includes( char )}, { ^this });
+		^nil;	// bubble if it's an invalid key
+	}
 
 	defaultGetDrag { ^object.asFloat }
 	defaultCanReceiveDrag { ^currentDrag.isNumber }

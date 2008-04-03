@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.60, 24-Mar-08
+ *	@version		0.60, 03-Apr-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -502,11 +502,16 @@ JSCView {  // abstract class
 	handleKeyDownBubbling { arg view, char, modifiers, unicode, keycode;
 		var result;
 		// nil from keyDownAction --> pass it on
-		if( keyDownAction.isNil, {
-			this.defaultKeyDownAction( char,modifiers,unicode,keycode );
-			result = nil;
+//		if( keyDownAction.isNil, {
+//			this.defaultKeyDownAction( char,modifiers,unicode,keycode );
+//			result = nil;
+//		}, {
+//			result = keyDownAction.value( view, char, modifiers, unicode, keycode );
+//		});
+		result =Êif( keyDownAction.isNil, {
+			this.defaultKeyDownAction( char, modifiers, unicode, keycode );
 		}, {
-			result = keyDownAction.value( view, char, modifiers, unicode, keycode );
+			keyDownAction.value( view, char, modifiers, unicode, keycode );
 		});
 		if( result.isNil, {  
 			// call keydown action of parent view
