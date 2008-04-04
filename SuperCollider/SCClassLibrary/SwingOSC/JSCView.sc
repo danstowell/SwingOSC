@@ -522,11 +522,10 @@ JSCView {  // abstract class
 	handleKeyUpBubbling { arg view, char, modifiers, unicode, keycode;
 		var result;
 		// nil from keyDownAction --> pass it on
-		if( keyUpAction.isNil, {
+		result = if( keyUpAction.isNil, {
 			this.defaultKeyUpAction( char,modifiers,unicode,keycode );
-			result = nil;
 		}, {
-			result = keyUpAction.value( view, char, modifiers, unicode, keycode );
+			keyUpAction.value( view, char, modifiers, unicode, keycode );
 		});
 		if( result.isNil, {  
 			// call keydown action of parent view
