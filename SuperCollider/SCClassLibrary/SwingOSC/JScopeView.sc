@@ -2,7 +2,7 @@
  *	JScopeView
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2008 Hanns Holger Rutz, Marije Baalman. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -29,18 +29,18 @@
 /**
  *	Replacement for the (Cocoa) SCScope class.
  *
- *	@author		Hanns Holger Rutz
- *	@version		0.58, 12-Jan-08
+ *	@author		Hanns Holger Rutz, Marije Baalman
+ *	@version		0.60, 24-Apr-08
  */
 JScopeOut : UGen {
 	// ----------------- quasi-constructors -----------------
 
-	*ar { arg inputArray, bufnum = 0;
-		^RecordBuf.ar( inputArray, bufnum );
+	*ar { arg inputArray, bufnum = 0, run=1;
+		^RecordBuf.ar( inputArray, bufnum, run: run );
 	}
 	
-	*kr { arg inputArray, bufnum = 0;
-		^RecordBuf.ar( K2A.ar( inputArray ), bufnum );
+	*kr { arg inputArray, bufnum = 0, run=1;
+		^RecordBuf.kr( inputArray, bufnum, run: run );
 	}
 }
 

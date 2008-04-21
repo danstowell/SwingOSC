@@ -2,7 +2,7 @@
  *	JStethoscope
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2008 Hanns Holger Rutz, Marije Baalman. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -29,11 +29,12 @@
 /**
  *	A replacement for (Cocoa) Stethoscope.
  *
- *	@author		Hanns Holger Rutz
- *	@version		0.58, 12-Jan-08
+ *	@author		Hanns Holger Rutz, Marije Baalman
+ *	@version		0.60, 21-Apr-08
  */
 JStethoscope {
-	classvar ugenScopes;	var <server, <numChannels, <rate,  <index;
+	classvar ugenScopes;
+	var <server, <numChannels, <rate,  <index;
 	var <bufsize, buffer, <window, synth;
 	var n, c, d, sl, style = 0, sizeToggle = 0, zx, zy, ai = 0, ki = 0, audiospec, controlspec;
 	
@@ -96,8 +97,9 @@ JStethoscope {
 		if( synth.isPlaying.not, {
 			synth = SynthDef( "jscope" ++ numChannels, { arg in, switch, bufnum;
 				var z;
-				z = Select.ar( switch, [ In.ar( in, numChannels ), K2A.ar( In.kr( in, numChannels ))]); 
-				JScopeOut.ar( z, bufnum );
+				//	Select.ar( switch, 
+				JScopeOut.ar( In.ar( in, numChannels ), bufnum, 1-switch ); 
+				JScopeOut.kr( In.kr( in, numChannels ), bufnum, switch ); 
 
 			}).play( RootNode( server ), [ \bufnum, buffer.bufnum, \in, index, \switch ] 
 				++ if( rate === 'audio', 0, 1 ), \addToTail );
