@@ -127,7 +127,7 @@ public class GUIUtil
 		String[]						options = { GUIUtil.getResourceString( "buttonOk" ),
 													GUIUtil.getResourceString( "optionDlgStack" )};
 	
-		if( message == null ) message = exception.getClass().getName();
+//		if( message == null ) message = exception.getClass().getName();
 		tok = new StringTokenizer( message );
 		strBuf.append( ":\n" );
 		while( tok.hasMoreTokens() ) {

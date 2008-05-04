@@ -63,6 +63,7 @@ public class SwingClient
 	public void reply( OSCPacket p )
 	throws IOException
 	{
+//		System.out.println( "sending to " + replyAddr );
 		osc.send( p, replyAddr );
 	}
 	

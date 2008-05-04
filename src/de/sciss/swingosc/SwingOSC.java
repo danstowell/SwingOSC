@@ -51,6 +51,7 @@
  
 package de.sciss.swingosc;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -60,11 +61,13 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
+//import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.sciss.app.BasicEvent;
+import de.sciss.app.EventManager;
 import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCChannel;
 import de.sciss.net.OSCListener;
@@ -83,7 +86,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.60, 01-Apr-08
+ *  @version	0.60, 04-Apr-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -91,13 +94,13 @@ import de.sciss.util.URLClassLoaderManager;
  *	@todo		/import !!!check ImportText.xcodeproj!!! XXX
  */
 public class SwingOSC
-implements OSCListener, OSCProcessor, Runnable
+implements OSCListener, OSCProcessor, EventManager.Processor
 {
 	public static final double		VERSION			= 0.60;
 
 	protected OSCServer				serv			= null;
 	
-	private final List				collMessages	= Collections.synchronizedList( new ArrayList() );	// elements = IncomingMessage instances
+//	private final List				collMessages	= Collections.synchronizedList( new ArrayList() );	// elements = IncomingMessage instances
 
 	private final Map				mapClients		= new HashMap();	// SocketAddr to Client
 	protected final Map				globals			= new HashMap();	// objectID to value
@@ -107,6 +110,7 @@ implements OSCListener, OSCProcessor, Runnable
 	private SwingClient				currentClient	= null;
 	
 	protected final Map				oscCmds			= new HashMap( 20 );	// OSC-command-name to OSCProcessor
+	private final EventManager		elm;
 
 //	private final DynamicURLClassLoader classLoaderMgr;
 	protected final URLClassLoaderManager classLoaderMgr;
@@ -281,6 +285,8 @@ implements OSCListener, OSCProcessor, Runnable
 //		catch( Exception e ) {
 //			System.out.println( e );
 //		}
+		
+		elm = new EventManager( this );
 	}
 	
 	public static int notNull( Object o )
@@ -361,7 +367,7 @@ implements OSCListener, OSCProcessor, Runnable
 			// a GUI app and hence launch the screen menu bar and put an icon in the dock
 			// ; since this takes a moment it can be useful to do it at startup
 			// and not lazily when the first OSC message comes in
-			java.awt.EventQueue.invokeLater( this );
+			EventQueue.invokeLater( new Runnable() { public void run() { /* empty */ }});
 		}
 		if( helloAddr != null ) {
 //			serv.send( new OSCMessage( "/swing", new Object[] {
@@ -420,26 +426,24 @@ implements OSCListener, OSCProcessor, Runnable
 
 	public void messageReceived( OSCMessage msg, SocketAddress addr, long when )
 	{
-		collMessages.add( new IncomingMessage( msg, addr ));
-		java.awt.EventQueue.invokeLater( this );
+//		collMessages.add( new IncomingMessage( msg, addr, when ));
+//		EventQueue.invokeLater( this );
+		elm.dispatchEvent( new IncomingMessage( msg, addr, when ));
 	}
 
 	// called from the event thread
 	// when new messages have been queued
-	public void run()
+	public void processEvent( BasicEvent e )
 	{
-		IncomingMessage	imsg;
-		SwingClient		c;
+		final IncomingMessage	imsg = (IncomingMessage) e;
+		SwingClient				c;
 	
-		while( !collMessages.isEmpty() ) {
-			imsg	= (IncomingMessage) collMessages.remove( 0 );
-			c	= (SwingClient) mapClients.get( imsg.addr );
-			if( c == null ) {
-				c = new SwingClient( this, imsg.addr );
-				mapClients.put( imsg.addr, c );
-			}
-			processMessage( imsg.msg, c );
+		c		= (SwingClient) mapClients.get( imsg.addr );
+		if( c == null ) {
+			c = new SwingClient( this, imsg.addr );
+			mapClients.put( imsg.addr, c );
 		}
+		processMessage( imsg.msg, c );
 	}
 
 	protected Object[] decodeMessageArgs( OSCMessage msg, SwingClient c )
@@ -948,15 +952,19 @@ implements OSCListener, OSCProcessor, Runnable
 // ------------------- internal classes  -------------------
 
 	private static class IncomingMessage
+	extends BasicEvent
 	{
 		protected final OSCMessage		msg;
 		protected final SocketAddress	addr;
 		
-		protected IncomingMessage( OSCMessage msg, SocketAddress addr )
+		protected IncomingMessage( OSCMessage msg, SocketAddress addr, long when )
 		{
+			super( addr, 0, when );
 			this.msg 	= resolveMessage( msg );
 			this.addr	= addr;
 		}
+		
+		public boolean incorporate( BasicEvent e ) { return false; }
 
 		private static OSCMessage resolveMessage( OSCMessage msg )
 		{
