@@ -138,14 +138,3 @@
 		this.sendMsg( '/n_trace', 0 );
 	}
 }
-
-// don't blame me for this hackery
-+ SCViewHolder {
-//	prIsInsideContainer { ^false }
-//	prSetScBounds {}
-	prInvalidateBounds {}
-	prInvalidateAllVisible {}
-	prVisibilityChange {}
-	protDraw {}
-	id { ^nil }	// this is detected by JSCContainerView!
-}
