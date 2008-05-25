@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.60, 24-Mar-08
+ *	@version		0.60, 25-May-08
  */
 SwingOptions
 {
@@ -552,7 +552,7 @@ SwingOSC : Model
 		// note : the -h option is used again because it significantly speeds
 		// up the connection.
 		localAddr = NetAddr.localAddr;
-		cmd = java + (options.javaOptions ? "") + "-jar" + program + options.asOptionsString( addr.port ) +
+		cmd = java + (options.javaOptions ? "") + "-jar \"" ++ program ++ "\" " ++ options.asOptionsString( addr.port ) +
 			("-h " ++ localAddr.ip ++ ":" ++ localAddr.port);
 		("booting " ++ cmd).inform;
 		unixCmd( cmd );

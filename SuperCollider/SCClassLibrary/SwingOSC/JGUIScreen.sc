@@ -80,7 +80,7 @@ JSCWindow : Object
 		var list;
 		list = allWindows.copy;
 		allWindows = Array.new( 8 );
-		list.do({ arg window; window.close });
+		list.do( _.close );
 	}
 		
 	*screenBounds { arg server;
