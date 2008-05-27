@@ -2222,7 +2222,7 @@ JSCTextView : JSCView {
 	
 	enterInterpretsSelection_ { arg bool;
 		enterInterpretsSelection = bool;
-		this.setProperty( \enterExecutesSelection, bool );
+//		this.setProperty( \enterExecutesSelection, bool );
 	}
 	
 	autohidesScrollers_ { arg bool;
