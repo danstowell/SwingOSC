@@ -9,7 +9,7 @@
 </head>
 <body>
 <h1>SwingOSC - Hands-On (SuperCollider Symposium 2007)</h1>
-<p><small>last mod: 25-sep-07 sciss (This is a slightly updated version of the script from the symposium)</small></P>
+<p><small>last mod: 27-may-08 sciss (This is a slightly updated version of the script from the symposium)</small></P>
 <h2>I. Prerequisites</h2>
 <P>
 What is SwingOSC?<small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Swing ... OSC ...</small></P>
@@ -142,9 +142,6 @@ Child components can be buttons, sliders, popup-menus, envelope-views etc. Each 
 <pre>
     <span class="cm">// creates and adds a 2D-Slider inside the window w:</span>
     x = <span class="cl">JSC2DSlider</span>.new( w, <span class="cl">Rect</span>( 10, 10, 160, 160 ));
-    <span class="cm">// whenever the window was already made visible, we need to refresh it to</span>
-    <span class="cm">// actually show the newly added component:</span>
-    x.refresh;
 
 </pre>
 <P>
@@ -165,7 +162,7 @@ There are more specialized action functions that can be assigned: Actions for ke
 </P>
 <PRE>
     <span class="cm">// first create a second slider component</span>
-    y = <span class="cl">JSC2DSlider</span>.new( w, <span class="cl">Rect</span>( 200, 10, 160, 160 )); y.refresh;
+    y = <span class="cl">JSC2DSlider</span>.new( w, <span class="cl">Rect</span>( 200, 10, 160, 160 ));
 
 <span class="cm">// a copy+paste logic: pressing 'c' copies the x and y value, 'v' pastes</span>
 <span class="cm">// the values (try to copy from the left to the newly created right view!)</span>
@@ -364,8 +361,8 @@ My suggested way of implementing a MCV like structure in SC is to use a very bas
     ~model          = <span class="cl">Dictionary</span>.new;
     ~ctrlSet        = { <span class="kw">arg</span> key, value; ~model.put( key, value ); ~model.changed( key, value )};
     w               = <span class="cl">GUI</span>.window.new.front;
-    ~viewA          = <span class="cl">GUI</span>.slider.new( w, <span class="cl">Rect</span>( 4, 4, 380, 26 )); w.refresh;
-    ~viewB          = <span class="cl">GUI</span>.slider.new( w, <span class="cl">Rect</span>( 4, 34, 380, 26 )); w.refresh;
+    ~viewA          = <span class="cl">GUI</span>.slider.new( w, <span class="cl">Rect</span>( 4, 4, 380, 26 ));
+    ~viewB          = <span class="cl">GUI</span>.slider.new( w, <span class="cl">Rect</span>( 4, 34, 380, 26 ));
     ~ctrlA1         = { <span class="kw">arg</span> view; ~ctrlSet.value( <span class="sy">\a</span>, view.value )};
     ~viewA.action   = ~ctrlA1;
     ~viewA.onClose  = { ~ctrlA2.remove };
