@@ -885,13 +885,16 @@ extends AbstractMultiSlider
 			}
 		}
 		
+//private boolean korrupt = false;
+		
 		public void mouseDragged( MouseEvent e )
 		{
+//if( korrupt ) return;
 			if( !isEnabled() || (dragFirstPt == null) ) return;
 			
 			final Point dragCurrentPt = insetMouse( e );
 //			final int idxStart, idxInc;
-			Node n, n2, nPrev = null, nSucc;
+			Node n, n2, nPred = null, nSucc;
 			boolean repaint	= false;
 			boolean action	= false;
 			boolean reallyNotLocked;
@@ -926,87 +929,158 @@ extends AbstractMultiSlider
 //					idxStart = nodes.length - 1;
 //					idxInc   = -1;
 //				}
+				final Node[] nodesBak = new Node[ nodes.length ];
+				for( int i = 0; i < nodes.length; i++ ) {
+					nodes[ i ].done = false;
+					nodesBak[ i ] = new Node( nodes[ i ].idx, nodes[ i ]);
+					nodesBak[ i ].x = nodes[ i ].x;
+					nodesBak[ i ].y = nodes[ i ].y;
+					nodesBak[ i ].selected = nodes[ i ].selected;
+				}
 				for( int i = 0; i < nodes.length; i++ ) {
 					n = nodes[ i ];
-					if( n.selected && !n.readOnly ) {
-						reallyNotLocked = !lockBounds || ((i > 0) && (i < nodes.length - 1));
-						if( clipThumbs ) {
-							if( reallyNotLocked ) {
-								x	= snap( Math.max( 0f, Math.min( 1f, n.oldX + dx )));
-							} else {
-								x	= n.x;
-							}
-							y		= snap( Math.max( 0f, Math.min( 1f, n.oldY + dy )));
-						} else {
-							if( reallyNotLocked ) {
-								x	= snap( Math.max( 0f, Math.min( 1f, n.oldX +
-										dx / Math.max( 1, recentWidth - n.thumbWidth ))));
-							} else {
-								x	= n.x;
-							}
-							y		= snap( Math.max( 0f, Math.min( 1f, n.oldY +
-										dy / Math.max( 1, recentHeight - n.thumbHeight ))));
-						}
-						n2 = n;
+					if( !n.selected || n.done || n.readOnly ) {
+						n.done = true;
+						continue;
+					}
+
+					reallyNotLocked = !lockBounds || ((i > 0) && (i < nodes.length - 1));
+					if( clipThumbs ) {
 						if( reallyNotLocked ) {
-							if( horizEditMode != HEDIT_FREE ) {
-								nSucc = null;
-								for( int j = i + 1; j < nodes.length; j++ ) {
-									if( !nodes[ j ].selected || nodes[ j ].readOnly ) {
-										nSucc = nodes[ j ];
+							x	= snap( Math.max( 0f, Math.min( 1f, n.oldX + dx )));
+						} else {
+							x	= n.x;
+						}
+						y		= snap( Math.max( 0f, Math.min( 1f, n.oldY + dy )));
+					} else {
+						if( reallyNotLocked ) {
+							x	= snap( Math.max( 0f, Math.min( 1f, n.oldX +
+									dx / Math.max( 1, recentWidth - n.thumbWidth ))));
+						} else {
+							x	= n.x;
+						}
+						y		= snap( Math.max( 0f, Math.min( 1f, n.oldY +
+									dy / Math.max( 1, recentHeight - n.thumbHeight ))));
+					}
+					n2 = n;
+					if( reallyNotLocked && (horizEditMode != HEDIT_FREE) ) {
+						if( horizEditMode == HEDIT_CLAMP ) {	///////////////////
+							if( x < n.x ) {
+								for( int j = i - 1; j >= 0; j-- ) {
+									if( !nodes[ j ].selected ) {
+										nPred	= nodes[ j ];
+										x = Math.max( x, nPred.x );
 										break;
 									}
 								}
-								if( horizEditMode == HEDIT_CLAMP ) {
-									if( nPrev != null ) {
-										x = Math.max( x, nPrev.x );
+							} else if( x > n.x ) {
+								for( int j = i + 1; j < nodes.length; j++ ) {
+									if( !nodes[ j ].selected ) {
+										nSucc	= nodes[ j ];
+										x		= Math.min( x, nSucc.x );
+										break;
 									}
-									if( nSucc != null ) {
-										x = Math.min( x, nSucc.x );
+								}
+							} // else nothing (no x change)
+							
+						} else if( horizEditMode == HEDIT_RELAY ) {	////////////////
+							int pos = i;
+							for( int j = i + 1; j < nodes.length; j++ ) {
+								if( !nodes[ j ].selected || nodes[ j ].readOnly ) {
+									if( nodes[ j ].x >= x ) break;
+									pos = j;
+								}
+							}
+							if( pos > i ) {	// shift left
+								nPred = n;
+								final float oldX = n.oldX;
+								final float oldY = n.oldY;
+								for( int j = i + 1; j <= pos; j++ ) {
+									nSucc 		= nodes[ j ];
+									nPred.x		= nSucc.x;
+									nPred.y		= nSucc.y;
+									nPred.selected = nSucc.selected;
+									nPred.oldX	= nSucc.oldX;
+									nPred.oldY	= nSucc.oldY;
+									dirty( nPred );
+									nPred.invalid	= true;
+									nPred		= nSucc;
+								}
+								nPred.x			= x;
+								nPred.y			= y;
+								nPred.selected	= true;
+								nPred.oldX		= oldX;
+								nPred.oldY		= oldY;
+								nPred.done		= true;
+								dirty( nPred );
+								nPred.invalid	= true;
+								repaint			= true;
+								action			= true;
+								n2				= nPred;
+								
+							} else { // check backwards
+								for( int j = i - 1; j >= 0; j-- ) {
+									if( !nodes[ j ].selected || nodes[ j ].readOnly ) {
+										if( nodes[ j ].x <= x ) break;
+										pos = j;
 									}
-								} else if( horizEditMode == HEDIT_RELAY ) {
-									if( (nPrev != null) && (nPrev.x > x) ) {
-										n2 			= nPrev;
-										n.x			= nPrev.x;
-										n.y			= nPrev.y;
-										n2.oldX		= n.oldX;
-										n2.oldY		= n.oldY;
-										n2.selected	= true;
-										n.selected	= false;
-										dirty( n );
-										dirty( n2 );
-										n.invalid	= true;
-										repaint		= true;
-										action		= true;
-									} else if( (nSucc != null) && (nSucc.x < x) ) {
-										n2 			= nSucc;
-										i++;
-										n.x			= nSucc.x;
-										n.y			= nSucc.y;
-										n2.oldX		= n.oldX;
-										n2.oldY		= n.oldY;
-										n2.selected	= true;
-										n.selected	= false;
-										dirty( n );
-										dirty( n2 );
-										n.invalid	= true;
-										repaint		= true;
-										action		= true;
+								}
+								if( pos < i ) {	// shift right
+									nSucc = n;
+									final float oldX = n.oldX;
+									final float oldY = n.oldY;
+									for( int j = i - 1; j >= pos; j-- ) {
+										nPred 		= nodes[ j ];
+										nSucc.x		= nPred.x;
+										nSucc.y		= nPred.y;
+										nSucc.selected = nPred.selected;
+										nSucc.oldX	= nPred.oldX;
+										nSucc.oldY	= nPred.oldY;
+										dirty( nSucc );
+										nSucc.invalid	= true;
+										nSucc		= nPred;
 									}
+									nSucc.x			= x;
+									nSucc.y			= y;
+									nSucc.selected	= true;
+									nSucc.oldX		= oldX;
+									nSucc.oldY		= oldY;
+									nSucc.done		= true;
+									dirty( nSucc );
+									nSucc.invalid	= true;
+									repaint			= true;
+									action			= true;
+									n2				= nSucc;
 								}
 							}
 						}
-						if( (x != n2.x) || (y != n2.y) ) {
-							n2.x		= x;
-							n2.y		= y;
-							dirty( n2 );
-							n2.invalid	= true;
-							repaint		= true;
-							action		= true;
-						}
 					}
-					nPrev = n;
+					if( (x != n2.x) || (y != n2.y) ) {
+						n2.x		= x;
+						n2.y		= y;
+						dirty( n2 );
+						n2.invalid	= true;
+						repaint		= true;
+						action		= true;
+					}
 				}
+
+//				if( !korrupt ) {
+//					for( int ii = 1; ii < nodes.length; ii++ ) {
+//						if( nodes[ ii ].x < nodes[ ii - 1 ].x ) {
+//							System.out.println( "KORRUPT. Bak = " );
+//							korrupt = true;
+//							for( int jj = 0; jj < nodes.length; jj++ ) {
+//								System.out.println( "" + jj + " (" + nodesBak[ jj ].x + ", " + nodesBak[ jj ].y + ") " + nodesBak[ jj ].selected );
+//							}
+//							System.out.println( "         New = " );
+//							for( int jj = 0; jj < nodes.length; jj++ ) {
+//								System.out.println( "" + jj + " (" + nodes[ jj ].x + ", " + nodes[ jj ].y + ")" + nodes[ jj ].selected );
+//							}
+//						}
+//					}
+//				}
+
 			}
 
 			if( repaint ) repaint();
@@ -1047,6 +1121,7 @@ extends AbstractMultiSlider
 		protected final Rectangle2D		r				= new Rectangle2D.Float();
 		protected final RoundRectangle2D rr				= new RoundRectangle2D.Float( 0f, 0f, 0f, 0f, 2f, 2f );
 		protected boolean				invalid			= true;
+		protected boolean				done;	// for dnd
 		protected float					cx, cy, tx, ty;
 		
 		// dnd
