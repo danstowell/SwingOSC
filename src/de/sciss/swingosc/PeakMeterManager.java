@@ -222,7 +222,8 @@ implements OSCListener, ActionListener
 					mc.peakRMSPairs[ k++ ] = ((Number) msg.getArg( off++ )).floatValue();
 					mc.peakRMSPairs[ k++ ] = ((Number) msg.getArg( off++ )).floatValue();
 				}
-				if( mc.pmg.meterUpdate( mc.peakRMSPairs ) || mc.active ) {
+//				if( mc.pmg.meterUpdate( mc.peakRMSPairs ) || mc.active ) {
+				if( mc.pmg.meterUpdate( mc.peakRMSPairs, 0, System.currentTimeMillis() ) || mc.active ) {
 					numTask++;
 				} else {
 					mc.task = false;
