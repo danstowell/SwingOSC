@@ -1,6 +1,6 @@
 /*
  *  PeakMeterGroup.java
- *  SwingOSC
+ *  (de.sciss.gui package)
  *
  *  Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
  *
@@ -26,10 +26,9 @@
  *  Changelog:
  *		20-Dec-07	created
  *		05-Feb-08	copied from SwingOSC
+ *		03-Jul-08	copied from EisK
  */
-package de.sciss.swingosc;
-
-//import java.awt.Color;
+package de.sciss.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -44,11 +43,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import de.sciss.gui.PeakMeter;
-import de.sciss.gui.PeakMeterCaption;
-
 /**
- *	@version	0.58, 20-Mar-08
+ *	@version	0.59, 03-Jul-08
  *	@author		Hanns Holger Rutz
  */
 public class PeakMeterGroup
@@ -62,7 +58,6 @@ implements SwingConstants
 	private boolean				captionVisible	= true;
 	private boolean				captionLabels	= true;
 	private int					numChannels		= 0;
-//	private Object				sync			= new Object();
 	private boolean				border			= false;
 	
 	private boolean				rmsPainted		= true;
@@ -72,7 +67,6 @@ implements SwingConstants
 	{
 		super();
 		setLayout( new BoxLayout( this, BoxLayout.X_AXIS ));
-//		setBackground( Color.black );
 
 		setFont( new Font( "SansSerif", Font.PLAIN, 12 ));
 		addPropertyChangeListener( "font", new PropertyChangeListener() {
@@ -111,7 +105,6 @@ implements SwingConstants
 		if( onOff ) {
 			caption	= new PeakMeterCaption();
 			caption.setFont( getFont() );
-//			caption.setBorder( BorderFactory.createEmptyBorder( 0, 1, 0, 0 ));
 			caption.setVisible( captionVisible );
 			caption.setHorizontalAlignment( captionAlign );
 			caption.setPaintLabels( captionLabels );
@@ -141,7 +134,6 @@ implements SwingConstants
 		captionPosition		= pos;
 		
 		if( caption != null ) {
-//System.out.println( "caption.setHorizontalAlignment( " + captionAlign + " )" );
 			caption.setHorizontalAlignment( captionAlign );
 			rebuildMeters();
 		}
@@ -154,7 +146,6 @@ implements SwingConstants
 		captionLabels = onOff;
 		if( caption != null ) {
 			caption.setPaintLabels( captionLabels );
-//			revalidate();
 		}
 	}
 	
@@ -166,7 +157,6 @@ implements SwingConstants
 		if( caption != null ) {
 			caption.setVisible( captionVisible );
 			updateBorders();
-//			revalidate();
 		}
 	}
 	
@@ -188,11 +178,9 @@ implements SwingConstants
 		if( rmsPainted == onOff ) return;
 		
 		rmsPainted = onOff;
-//		synchronized( sync ) {
-			for( int i = 0; i < meters.length; i++ ) {
-				meters[ i ].setRMSPainted( onOff );
-			}
-//		}
+		for( int i = 0; i < meters.length; i++ ) {
+			meters[ i ].setRMSPainted( onOff );
+		}
 	}
 
 	public void setHoldPainted( boolean onOff )
@@ -200,42 +188,23 @@ implements SwingConstants
 		if( holdPainted == onOff ) return;
 		
 		holdPainted = onOff;
-//		synchronized( sync ) {
-			for( int i = 0; i < meters.length; i++ ) {
-				meters[ i ].setHoldPainted( onOff );
-			}
-//		}
+		for( int i = 0; i < meters.length; i++ ) {
+			meters[ i ].setHoldPainted( onOff );
+		}
 	}
 	
-//	public void setSync( Object sync )
-//	{
-//		this.sync	= sync;
-//		for( int i = 0; i < meters.length; i++ ) {
-//			meters[ i ].setSync( sync );
-//		}
-//	}
-
 	public boolean meterUpdate( float[] peakRMSPairs )
 	{
-		final PeakMeter[]	meters		= this.meters;	// = easy synchronization
-		final int			numMeters	= Math.min( meters.length, peakRMSPairs.length >> 1 );
+		final PeakMeter[]	metersCopy	= meters;	// = easy synchronization
+		final int			numMeters	= Math.min( metersCopy.length, peakRMSPairs.length >> 1 );
 		final long			now			= System.currentTimeMillis();
 		int					dirty		= 0;
 
-//		System.out.println( "meterUpdate " + numMeters );
-		
-//		synchronized( sync ) {
-			for( int i = 0, j = 0; i < numMeters; i++ ) {
-//				System.out.println( "  " + peakRMSPairs[ j ]);
-				if( meters[ i ].setPeakAndRMS( peakRMSPairs[ j++ ], peakRMSPairs[ j++ ], now )) dirty++;
-			}
-//		}
+		for( int i = 0, j = 0; i < numMeters; i++ ) {
+			if( metersCopy[ i ].setPeakAndRMS( peakRMSPairs[ j++ ], peakRMSPairs[ j++ ], now )) dirty++;
+		}
 		
 		return( dirty > 0 );
-//		return( !(task && (dirty == 0)) );
-//		if( !task && (dirty == 0) ) {
-//			EventQueue.invokeLater( runStopTasking );
-//		}
 	}
 
 	public void paintComponent( Graphics g )
@@ -256,7 +225,7 @@ implements SwingConstants
 	{
 		removeAll();
 		
-		final PeakMeter[]	meters;
+		final PeakMeter[]	newMeters;
 		final Border		b1		= caption == null ? null : BorderFactory.createEmptyBorder( caption.getAscent(), 1, caption.getDescent(), 1 );
 		final Border		b2		= caption == null ? BorderFactory.createEmptyBorder( 1, 1, 1, 0 ) : BorderFactory.createEmptyBorder( caption.getAscent(), 1, caption.getDescent(), 0 );
 		final int			schnuck1, schnuck2;
@@ -264,20 +233,19 @@ implements SwingConstants
 		schnuck1 = (!border || (captionVisible && (captionPosition == RIGHT))) ? numChannels - 1 : -1;
 		schnuck2 = (captionVisible && (captionPosition == CENTER)) ? (numChannels >> 1) : -1;
 		
-		meters	= new PeakMeter[ numChannels ];
+		newMeters	= new PeakMeter[ numChannels ];
 		for( int ch = 0; ch < numChannels; ch++ ) {
-			meters[ ch ] = new PeakMeter();
-//			meters[ ch ].setSync( sync );
-			meters[ ch ].setRefreshParent( true );
-			meters[ ch ].setRMSPainted( rmsPainted );
-			meters[ ch ].setHoldPainted( holdPainted );
+			newMeters[ ch ] = new PeakMeter();
+			newMeters[ ch ].setRefreshParent( true );
+			newMeters[ ch ].setRMSPainted( rmsPainted );
+			newMeters[ ch ].setHoldPainted( holdPainted );
 			if( (ch == schnuck1) || (ch == schnuck2) ) {
-				if( b1 != null ) meters[ ch ].setBorder( b1 );
+				if( b1 != null ) newMeters[ ch ].setBorder( b1 );
 			} else {
-				meters[ ch ].setBorder( b2 );
+				newMeters[ ch ].setBorder( b2 );
 			}
-			meters[ ch ].setTicks( 101 );
-			add( meters[ ch ]);
+			newMeters[ ch ].setTicks( 101 );
+			add( newMeters[ ch ]);
 		}
 		if( caption != null ) {
 			switch( captionPosition ) {
@@ -294,8 +262,7 @@ implements SwingConstants
 				assert false : captionPosition;
 			}
 		}
-		this.meters = meters;
-//		lmm.setMeters( masterMeters );
+		meters = newMeters;
 		revalidate();
 		repaint();
 	}

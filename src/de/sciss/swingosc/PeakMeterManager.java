@@ -43,6 +43,7 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
+import de.sciss.gui.PeakMeterGroup;
 import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCClient;
 import de.sciss.net.OSCListener;
