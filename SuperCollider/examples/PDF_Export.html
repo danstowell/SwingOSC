@@ -11,11 +11,13 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 span.s1 {color: #0000bf}
 span.s2 {color: #000000}
 span.s3 {color: #007300}
 span.s4 {color: #606060}
 span.s5 {color: #bf0000}
+span.s6 {color: #0019ba}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -98,6 +100,20 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">// this actually creates the file</p>
 <p class="p1">// (make sure to use a proper file name!)</p>
-<p class="p3"><span class="s2">~createPDF.( ~func, </span>"/Users/rutz/Desktop/test2.pdf"<span class="s2">, h, v );</span></p>
+<p class="p3"><span class="s2">~createPDF.( ~func, </span>"/Users/rutz/Desktop/test.pdf"<span class="s2">, h, v );</span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">// here's another one</p>
+<p class="p4">(</p>
+<p class="p5">~func = {</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s6">JPen</span>.width = 2;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>80.do {</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">JPen</span>.width = rrand(0,4) + 0.5;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">JPen</span>.moveTo(<span class="s6">Point</span>(h.rand, v.rand));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">JPen</span>.lineTo(<span class="s6">Point</span>(h.rand, v.rand));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">JPen</span>.stroke;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>};</p>
+<p class="p5">};</p>
+<p class="p5">)</p>
 </body>
 </html>
