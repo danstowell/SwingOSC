@@ -114,7 +114,7 @@ JSCWindow : Object
 			item.paletteExample( w, Rect( 0, 0, 140, 24 ));
 		});
 		
-		w.front;
+		^w.front;
 	}
 
 	// ----------------- public instance methods -----------------
