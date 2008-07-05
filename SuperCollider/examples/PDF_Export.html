@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+span.s1 {color: #0000bf}
+span.s2 {color: #000000}
+span.s3 {color: #007300}
+span.s4 {color: #606060}
+span.s5 {color: #bf0000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space"> </span>*<span class="Apple-tab-span">	</span>SwingOSC proves very powerful in providing a bridge to any other third party java library.</p>
+<p class="p1"><span class="Apple-converted-space"> </span>*</p>
+<p class="p1"><span class="Apple-converted-space"> </span>*<span class="Apple-tab-span">	</span>Here we demonstrate how to utilize the iText PDF library to export a drawing designed</p>
+<p class="p1"><span class="Apple-converted-space"> </span>*<span class="Apple-tab-span">	</span>for JPen as a PDF document</p>
+<p class="p1"><span class="Apple-converted-space"> </span>*/</p>
+<p class="p2"><br></p>
+<p class="p1">// first download iText from here: http://www.lowagie.com/iText/download.html</p>
+<p class="p1">// --&gt; the plain compiled iText core "iText-2.1.2u.jar" should be sufficent</p>
+<p class="p2"><br></p>
+<p class="p1">// add the library to the classpath</p>
+<p class="p1">// (do this only once after booting SwingOSC)</p>
+<p class="p1">// (make sure to use the correct URL!)</p>
+<p class="p3"><span class="s1">SwingOSC</span><span class="s2">.default.addClasses( </span>"file:///Users/rutz/Desktop/iText-2.1.2u.jar"<span class="s2"> );</span></p>
+<p class="p2"><br></p>
+<p class="p1">// paper size</p>
+<p class="p1"><span class="s2">h = 595; v = 842;<span class="Apple-tab-span">	</span></span>// this is A4 with 72 dpi (iText standard)</p>
+<p class="p2"><br></p>
+<p class="p1">// define a JPen function</p>
+<p class="p4">(</p>
+<p class="p4">~func = {</p>
+<p class="p1">// the translate / scale / rotate don't seem to work ATM ;-C</p>
+<p class="p1">// <span class="Apple-converted-space">    </span>JPen.translate( h / 2, v / 2 );</p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span></span><span class="s1">thisThread</span><span class="s2">.randSeed = 0;<span class="Apple-converted-space">  </span></span>// so we can really compare the screen and pdf</p>
+<p class="p4"><span class="Apple-tab-span">	</span>500.do {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">JPen</span>.color = <span class="s1">Color</span>.green( rrand( 0.0, 1 ), rrand( 0.0, 0.5 ));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">JPen</span>.addAnnularWedge(</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(h/2).rand @ (v/2).rand,</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rrand( h/20, h/4 ),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rrand( h/4, h/2 ),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>2pi.rand,</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>2pi.rand</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">JPen</span>.perform([ <span class="s3">\stroke</span>, <span class="s3">\fill</span> ].choose );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>};</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">JPen</span>.font = <span class="s1">JFont</span>( <span class="s4">"Helvetica"</span>, 36 );</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">JPen</span>.fillColor = <span class="s1">Color</span>.white;</p>
+<p class="p4"><span class="Apple-converted-space">     </span><span class="s1">JPen</span>.stringAtPoint( <span class="s4">"PDF Example"</span>, (h/4) @ (v/4) );</p>
+<p class="p4"><span class="Apple-converted-space">    </span>};</p>
+<p class="p4">)</p>
+<p class="p2"><br></p>
+<p class="p1">// lets see the graphics in a regular window</p>
+<p class="p4">(</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s1">JSCWindow</span>( <span class="s4">"Graphics"</span>, <span class="s1">Rect</span>( 400, 400, h, v ), resizable: <span class="s1">false</span> );</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w.view.background_( <span class="s1">Color</span>.white );</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w.drawHook = ~func;</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w.front;</p>
+<p class="p4">)</p>
+<p class="p2"><br></p>
+<p class="p1">// a function that creates a pdf</p>
+<p class="p4">(</p>
+<p class="p4">~createPDF = { <span class="s1">arg</span> drawFunc, fileName, width = 595, height = 842;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">var</span> g, pageSize, doc, writerC, stream, writer, cb, tp, g2, pen;</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>g<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">SwingOSC</span>.default;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>pageSize<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.lowagie.text.Rectangle"</span>, g, 0, 0, width, height );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>doc<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.lowagie.text.Document"</span>, g, pageSize, 80, 60, 60, 60 ); <span class="s5">// margins don't matter</span></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>writerC<span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">.getClass( </span>"com.lowagie.text.pdf.PdfWriter"<span class="s2">, g );</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>stream<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"java.io.FileOutputStream"</span>, g, fileName );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>writer<span class="Apple-tab-span">	</span>= writerC.getInstance__( doc, stream );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>doc.open;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>cb<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= writer.getDirectContent__;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>tp<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= cb.createTemplate__( width, height );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>g2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= tp.createGraphics__( width, height );</p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>pen<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">( </span>"de.sciss.swingosc.Pen"<span class="s2">, g, </span><span class="s1">nil</span><span class="s2"> );</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">JPen</span>.protRefresh( drawFunc, <span class="s1">nil</span>, g, pen.id );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>pen.paintIcon( <span class="s1">nil</span>, g2, 0, 0 );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>g2.dispose;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>cb.addTemplate( tp, 0, 0 );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>doc.close;</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>doc.destroy; cb.destroy; g2.destroy; pen.destroy; tp.destroy;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>writer.destroy; stream.destroy; writerC.destroy; pageSize.destroy;</p>
+<p class="p4">};</p>
+<p class="p4">)</p>
+<p class="p2"><br></p>
+<p class="p1">// this actually creates the file</p>
+<p class="p1">// (make sure to use a proper file name!)</p>
+<p class="p3"><span class="s2">~createPDF.( ~func, </span>"/Users/rutz/Desktop/test2.pdf"<span class="s2">, h, v );</span></p>
+</body>
+</html>
