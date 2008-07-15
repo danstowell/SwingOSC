@@ -44,6 +44,8 @@ import java.util.Map;
 import javax.swing.Timer;
 
 import de.sciss.gui.PeakMeterGroup;
+import de.sciss.gui.PeakMeterPanel;
+import de.sciss.gui.PeakMeterView;
 import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCClient;
 import de.sciss.net.OSCListener;
@@ -101,19 +103,19 @@ implements OSCListener, ActionListener
 		}
 	}
 
-	public void addAndSetBus( PeakMeterGroup pmg, int nodeID, int newBusIndex )
+	public void addAndSetBus( PeakMeterView view, int nodeID, int newBusIndex )
 	{
-		final int		pmgChannels	= pmg.getNumChannels();
+		final int		pmgChannels	= view.getNumChannels();
 		final Client	mc;
 		
 		synchronized( sync ) {
 			index			= newBusIndex;
-			numChannels	   += pmg.getNumChannels();
-			mc				= new Client( pmg, nodeID, pmgChannels, false );
+			numChannels	   += view.getNumChannels();
+			mc				= new Client( view, nodeID, pmgChannels, false );
 // XXX
 //			pmg.setSync( sync );
 			collClients.add( mc );
-			mapClients.put( pmg, mc );
+			mapClients.put( view, mc );
 			resortClients();
 		}
 	}
@@ -131,12 +133,17 @@ implements OSCListener, ActionListener
 		}
 	}
 	
-	public void setActive( PeakMeterGroup pmg, boolean active )
+//	public void setActive( PeakMeterPanel view, boolean active )
+//	{
+//		setActive( view, active );
+//	}
+	
+	public void setActive( PeakMeterView view, boolean active )
 	{
-		final Client	mc;
+		final Client mc;
 
 		synchronized( sync ) {
-			mc	= (Client) mapClients.get( pmg );
+			mc	= (Client) mapClients.get( view );
 			if( mc.active != active ) {
 				mc.active = active;
 				if( active ) {
@@ -208,12 +215,12 @@ implements OSCListener, ActionListener
 				return;
 			}
 			
-//			System.out.println( "here " + collClients.size() );
+			System.out.println( "here " + collClients.size() );
 
 			numTask = 0;
 			for( int i = 0, off = index + 2; i < collClients.size(); i++ ) {
 				mc	= (Client) collClients.get( i );
-//				System.out.println( "i " + i + "; mc.task " + mc.task );
+				System.out.println( "i " + i + "; mc.task " + mc.task );
 				if( !mc.task ) {
 					off += 2;
 					continue;
@@ -223,13 +230,13 @@ implements OSCListener, ActionListener
 					mc.peakRMSPairs[ k++ ] = ((Number) msg.getArg( off++ )).floatValue();
 				}
 //				if( mc.pmg.meterUpdate( mc.peakRMSPairs ) || mc.active ) {
-				if( mc.pmg.meterUpdate( mc.peakRMSPairs, 0, System.currentTimeMillis() ) || mc.active ) {
+				if( mc.view.meterUpdate( mc.peakRMSPairs, 0, System.currentTimeMillis() ) || mc.active ) {
 					numTask++;
 				} else {
 					mc.task = false;
 				}
 			}
-//			System.out.println( "numTask now " + numTask );
+			System.out.println( "numTask now " + numTask );
 			if( numTask == 0 ) {
 				timer.stop();
 			}
@@ -362,17 +369,17 @@ implements OSCListener, ActionListener
 	private static class Client
 	{
 		protected final float[]			peakRMSPairs;
-		protected final PeakMeterGroup	pmg;
+		protected final PeakMeterView	view;
 		protected final int				nodeID;
 		protected final int				numChannels;
 		protected boolean				active;
 		protected boolean				task;
 		
 //		private MeterClient( Listener ml, int[] channels, boolean task )
-		protected Client( PeakMeterGroup pmg, int nodeID, int numChannels, boolean active )
+		protected Client( PeakMeterView view, int nodeID, int numChannels, boolean active )
 		{
 //			this.ml				= ml;
-			this.pmg			= pmg;
+			this.view			= view;
 			this.nodeID			= nodeID;
 			this.numChannels	= numChannels;
 			this.active			= active;
