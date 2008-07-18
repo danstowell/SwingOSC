@@ -117,6 +117,10 @@ SwingOSC : Model
 	var <screenWidth, <screenHeight;
 	
 	var booting = false, aliveThread, statusWatcher;
+		// number of times the server is allowed to fail to respond to /status
+		// before the client assumes the server died
+		// 8 is sufficient for most systems but Windows needs more
+	var <>deathBounces = 8;
 
 	var helloResp;
 
@@ -471,7 +475,7 @@ SwingOSC : Model
 		condition.wait;
 	}
 
-	startAliveThread { arg delay = 2.0, period = 0.7, deathBounces = 4;
+	startAliveThread { arg delay = 2.0, period = 0.7;
 		var lives = deathBounces;
 		^aliveThread ?? {
 			statusWatcher = OSCpathResponder( addr, [ '/info', \status ], { arg time, resp, msg;
