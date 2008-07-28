@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class AbstractMouseResponder
 extends AbstractResponder
 {
-	private final Frame		f;
+	private final FrameOLD		f;
 	protected boolean		acceptsMouseOver;
 	
 	protected AbstractMouseResponder( Object objectID, int numReplyArgs, Object frameID  )
@@ -13,7 +13,7 @@ extends AbstractResponder
 	{
 		super( objectID, numReplyArgs );
 
-		this.f	= frameID == null ? null : (Frame) client.getObject( frameID );
+		this.f	= frameID == null ? null : (FrameOLD) client.getObject( frameID );
 		if( f != null ) {
 			f.registerMouseResponder( this );
 			acceptsMouseOver = f.getAcceptMouseOver();

@@ -24,6 +24,7 @@
  *
  *
  *	Changelog:
+ *		- 27-Jul-08	using new java Frame class (de.sciss.common.AppWindow)
  */
 
 /**
@@ -37,12 +38,11 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 18-Jan-08
+ *	@version		0.61, 27-Jul-08
  */
 JSCWindow : Object
 {
 	classvar <>verbose = false;
-
 	classvar <>allWindows;
 	
 	var dataptr, <name, <>onClose, <view, <userCanClose = true;
@@ -124,7 +124,7 @@ JSCWindow : Object
 			if( func.notNil, {
 				penID	= server.nextNodeID;
 				server.sendBundle( nil,
-					[ '/local', penID, '[', '/new', 'de.sciss.swingosc.Pen', '[', '/ref', this.id, ']', ']' ],
+					[ '/local', penID, '[', '/new', 'de.sciss.swingosc.Pen', '[', '/method', this.id, \getWindow, ']', ']' ],
 					[ '/set', this.view.id, \icon, '[', '/ref', penID, ']' ]
 				);
 			}, {
@@ -255,11 +255,13 @@ JSCWindow : Object
 	
 	minimize {
 		// java.awt.Frame.ICONIFIED
-		server.sendMsg( '/set', this.id, \extendedState, 1 );
+//		server.sendMsg( '/set', this.id, \extendedState, 1 );
+		server.sendMsg( '/method', this.id, \minimize );
 	}
 
 	unminimize {
-		server.sendMsg( '/set', this.id, \extendedState, 0 );
+//		server.sendMsg( '/set', this.id, \extendedState, 0 );
+		server.sendMsg( '/method', this.id, \unminimize );
 	}
 
 	alpha_ { arg alpha;
@@ -449,6 +451,7 @@ JSCWindow : Object
 //				viewID, '[', '/method', this.id, "getContentPane", ']' ]
 //		);
 		bndl = Array( 3 );
+		server.protEnsureApplication;
 		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ argBounds.asSwingArg ++ [ border.not.binaryValue | (scroll.binaryValue << 1) |Ê(resizable.not.binaryValue << 2), ']', ]);
 //		if( resizable.not, { bndl.add([ '/set', this.id, \resizable, 0 ])});
 		bndl.add([ '/local', "ac" ++ this.id,

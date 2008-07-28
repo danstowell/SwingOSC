@@ -44,7 +44,6 @@ import java.util.Map;
 import javax.swing.Timer;
 
 import de.sciss.gui.PeakMeterGroup;
-import de.sciss.gui.PeakMeterPanel;
 import de.sciss.gui.PeakMeterView;
 import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCClient;

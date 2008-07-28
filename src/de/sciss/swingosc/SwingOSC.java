@@ -86,7 +86,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.60, 04-Apr-08
+ *  @version	0.61, 04-Apr-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -96,7 +96,7 @@ import de.sciss.util.URLClassLoaderManager;
 public class SwingOSC
 implements OSCListener, OSCProcessor, EventManager.Processor
 {
-	public static final double		VERSION			= 0.60;
+	public static final double		VERSION			= 0.61;
 
 	protected OSCServer				serv			= null;
 	
@@ -115,8 +115,20 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 //	private final DynamicURLClassLoader classLoaderMgr;
 	protected final URLClassLoaderManager classLoaderMgr;
 	
-    public static void main( String args[] )
+    public static void main( String[] args )
 	{
+    	System.exit( launch( args ));
+	}
+    
+    /**
+     * 	Launches the server with given command line options.
+     * 
+     *	@param	args	the array of command line options, e.g.
+     * 					<code>-t 57111</code>.
+     *	@return			the return code (0 for success, 1 for failure)
+     */
+    public static int launch( String[] args )
+    {
 		String					arg;
 		int						port		= 0;
 		boolean					loopBack	= false;
@@ -208,7 +220,7 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 									"                   i.e. create menubar and dock icon on mac os\n"+
 									"   -h <host:port>  send /swing hello message to specified address" );
 				
-				System.exit( 0 );
+				return 0;
 				
 			} else {
 				System.out.println( "Ignoring unknown option " + args[ i ] +
@@ -238,7 +250,7 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 		catch( IOException e1 ) {
 			printException( e1, instance.getClass().getName() );
 		}
-		System.exit( 1 );
+		return 1;
 	}
 
 	/*
@@ -392,6 +404,13 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 	protected static void printException( Throwable e, String opName )
 	{
 		System.out.println( opName + " : " + e.getClass().getName() + " : " + e.getLocalizedMessage() );
+        final StackTraceElement[] trace = e.getStackTrace();
+        for( int i = 0; i < Math.min( 3, trace.length ); i++ ) {
+            System.out.println( "\tat " + trace[ i ]);
+        }
+        if( trace.length > 3 ) {
+            System.out.println( "\t..." );
+        }
 	}
 
 	protected static void printException( Throwable e, OSCMessage msg )

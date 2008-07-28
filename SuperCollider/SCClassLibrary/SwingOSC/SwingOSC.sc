@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.60, 25-May-08
+ *	@version		0.61, 27-Jul-08
  */
 SwingOptions
 {
@@ -103,13 +103,13 @@ SwingOSC : Model
 
 	// note this is the SC class lib version, not necessarily the
 	// server version (reflected by the instance variable serverVersion)
-	classvar <version = 0.60;
+	classvar <version = 0.61;
 
 	var <name, <addr, <clientID = 0;
 	var <isLocal;
 	var <serverRunning = false, <serverBooting = false, <serverVersion;
 	var <dumpMode = 0, <dumpModeR = 0;
-	var tempRunning = false;
+	var <tempRunning = false;
 
 	var <>options; // , <>latency = 0.2, <notified=true;
 	var <nodeAllocator;
@@ -123,6 +123,7 @@ SwingOSC : Model
 	var <>deathBounces = 8;
 
 	var helloResp;
+	var application = false;
 
 	*initClass {
 		Class.initClassTree( NetAddr );
@@ -187,6 +188,7 @@ SwingOSC : Model
 	initTree { arg onComplete, onFailure;
 		var result;
 		this.newAllocators;
+		application = false;
 		try {
 			this.connect;
 			{
@@ -757,7 +759,9 @@ SwingOSC : Model
 					"SwingOSC.initTree : timeout".error;
 				});			
 			}, {
+//			[ "KIEKA" ].postln;
 				clock.sched( 0, {
+//			[ "KUUKA", tempRunning ].postln;
 					if( tempRunning.not, {
 						serverRunning = false;
 						this.changed( \serverRunning );
@@ -771,6 +775,13 @@ SwingOSC : Model
 		if( aliveThread.notNil, {
 			this.stopAliveThread;
 			this.startAliveThread( 0.7 );
+		});
+	}
+	
+	protEnsureApplication {
+		if( application.not, {
+			this.sendMsg( '/method', "de.sciss.swingosc.Application", \ensure );
+			application = true;
 		});
 	}
 }

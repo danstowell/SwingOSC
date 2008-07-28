@@ -27,6 +27,7 @@
  *	- 31-Mar-06	former defer method is renamed to listDefer, former defer2 method becomes defer !
  *	- 16-Jun-06	added cancel + reschedule methods
  *	- 30-Jan-07	removed TypeSafe calls ; added instantaneous ; uses thisThread.seconds
+ *	- 26-Jul-08	added rescheduleWith
  */
 
 /**
@@ -109,7 +110,7 @@ Collapse : Object
 		collapseFunc	= {
 			var now;
 			if( cancelled.not, {
-				now = Main.elapsedTime;
+				now = thisThread.seconds; // Main.elapsedTime;
 				if( now < execTime, {	// too early, reschedule
 //					clock.sched( execTime - now + 0.01, collapseFunc );
 					execTime - now; // + 0.001; why was this extra delay originally needed? XXX
@@ -148,12 +149,29 @@ Collapse : Object
 	 *	The cancel status is cleared.
 	 */
 	reschedule {
-		execTime	= Main.elapsedTime + delta;
-		if( started.not, {
-			started		= true;
-			cancelled		= false;
-			clock.sched( delta, collapseFunc );
+		var newExecTime;
+		newExecTime = thisThread.seconds + delta; // Main.elapsedTime + delta;
+		if( started.not or: { newExecTime >= execTime }, {
+			execTime = newExecTime;
+			if( started.not, {
+				started		= true;
+				cancelled		= false;
+				clock.sched( delta, collapseFunc );
+			});
+		}, {
+			execTime = newExecTime;
+			"Cannot reduce execution time of already scheduled Collapse!".warn;
 		});
+	}
+
+	/**
+	 *	Resets the scheduling delay to a new given delta.
+	 *	If the collapse was not yet scheduled, this method will do it.
+	 *	The cancel status is cleared.
+	 */
+	rescheduleWith { arg newDelta;
+		delta = newDelta;
+		this.reschedule;
 	}
 
 	/**

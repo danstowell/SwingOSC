@@ -266,7 +266,7 @@ JSCPeakMeterView : JSCControlView {
 //			{ this.doAction; }.defer;
 //		}).add;
 		^super.prSCViewNew([
-			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.PeakMeterGroup", ']' ]
+			[ '/local', this.id, '[', '/new', "de.sciss.gui.PeakMeterPanel", ']' ]
 		]);
 	}
 	

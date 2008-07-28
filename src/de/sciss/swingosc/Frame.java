@@ -24,204 +24,273 @@
  *
  *
  *  Changelog:
- *		03-Feb-07	added acceptsMouseOver
- *		24-Nov-07	added keyboard shortcuts for close and minimize
- *		14-Jan-08	handles sucky cocoa bounds conversion
- *		27-Jan-08	conforms with java 1.4
+ *		14-Oct-06	created
+ *		27-Jul-08	copied from de.sciss.eisenkraut.net.PlugInWindow
  */
+
 package de.sciss.swingosc;
 
 import java.awt.Component;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
+import java.beans.PropertyVetoException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.Action;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
+import javax.swing.JInternalFrame;
+import javax.swing.WindowConstants;
+import javax.swing.event.InternalFrameEvent;
 
-/**
- *	A simple <code>JFrame</code> subclass which adds
- *	support for an icon view (i.e. user draw func)
- *	and whose content pane uses a custom layout manager.
- *
- *	@author		Hanns Holger Rutz
- *	@version	0.59, 27-Jan-08
- */
+import de.sciss.app.AbstractApplication;
+import de.sciss.common.AppWindow;
+import de.sciss.common.BasicApplication;
+import de.sciss.common.BasicMenuFactory;
+import de.sciss.common.ShowWindowAction;
+import de.sciss.gui.GUIUtil;
+import de.sciss.gui.MenuAction;
+
 public class Frame
-extends JFrame
+extends AppWindow
 {
 	public static final int	FLAG_UNDECORATED	= 0x01;
 	public static final int	FLAG_SCROLLPANE		= 0x02;
 	public static final int	FLAG_NORESIZE		= 0x04;
+
+	private final ShowWindowAction	actionShowWindow;
+	private final BasicMenuFactory	mf;
 	
-	private List		collMouseResp		= null;
-	
-	private boolean 	acceptsMouseOver	= false;
-	
-	private JComponent	topView;
-	private JScrollPane	scrollPane;
-	
-//	public Frame( boolean hasScroll )
-//	{
-//		super();
-//		init( hasScroll );
-//	}
-//	
-//	public Frame()
-//	{
-//		this( false );
-//	}
-//	
-//	public Frame( GraphicsConfiguration gc, boolean hasScroll )
-//	{
-//		super( gc );
-//		init( hasScroll );
-//	}
-//
-//	public Frame( GraphicsConfiguration gc )
-//	{
-//		this( gc, false );
-//	}
-	
+	private final Map				winL		= new HashMap();
+	private final JComponent		topView;
+	private final MenuAction		actionClose;
+
+    private static boolean isMacOs() {
+   	 	return System.getProperty( "os.name" ).indexOf( "Mac" ) >= 0;
+    }
+   
+    private static boolean isWindows() {
+    	return System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
+    }
+    
 	public Frame( String title, Rectangle cocoaBounds, int flags )
 	{
-		super( title );
-		init( cocoaBounds, flags );
-	}
+		super( REGULAR );
+		actionShowWindow = new ShowWindowAction( this );
+		final BasicApplication app = (BasicApplication) AbstractApplication.getApplication(); 
+		mf = app.getMenuFactory();
+		mf.addToWindowMenu( actionShowWindow );	// MUST BE BEFORE INIT()!!
+		
+		actionClose = new ActionClose();
+		mf.putMimic( "file.close", this, actionClose );
+//		action.setEnabled( true );
+//		action = new ActionMinimize();
+		mf.putMimic( "window.minimize", this, new ActionMinimize() );
+		
+		init();
+		setTitle( title );	// needs to be after init. WHY?
 
-//	public Frame( String title )
-//	{
-//		this( title, false );
-//	}
-//
-//	public Frame( String title, GraphicsConfiguration gc, boolean hasScroll )
-//	{
-//		super( title, gc );
-//		init( hasScroll );
-//	}
-//
-//	public Frame( String title, GraphicsConfiguration gc )
-//	{
-//		this( title, gc, false );
-//	}
-	
-	public JComponent getTopView()
-	{
-		return topView;
-	}
-	
-	private void init( Rectangle cocoaBounds, int flags )
-	{
-		if( (flags & FLAG_UNDECORATED) != 0 ) {
-			setUndecorated( true );
-		}
+//		if( (flags & FLAG_UNDECORATED) != 0 ) {
+//			setUndecorated( true );
+//		}
 		if( (flags & FLAG_NORESIZE) != 0 ) {
 			setResizable( false );
 		}
-		if( (flags & FLAG_SCROLLPANE) != 0 ) {
-			topView		= new ContentPane( false );
-			scrollPane	= new ScrollPane( topView ); // ...SCROLLBAR_AS_NEEDED
-//			scrollPane.setViewportBorder( null );
-//			scrollPane.setBorder( null );
-			setContentPane( scrollPane );
-		} else {
-			topView		= new ContentPane( true );
-			setContentPane( topView );
+		try {
+//			final ClassLoader cl = OSCRoot.getInstance().getGUI().getSwingOSC().getClass().getClassLoader();
+			final ClassLoader cl = getClass().getClassLoader();
+			topView		= (JComponent) Class.forName( "de.sciss.swingosc.ContentPane", true, cl ).getConstructor( new Class[] { Boolean.TYPE }).newInstance( new Object[] { new Boolean( (flags & FLAG_SCROLLPANE) == 0) });
+			if( (flags & FLAG_SCROLLPANE) != 0 ) {
+				final JComponent scrollPane = (JComponent) Class.forName( "de.sciss.swingosc.ScrollPane", true, cl ).getConstructor( new Class[] { Component.class }).newInstance( new Object[] { topView });
+				setContentPane( scrollPane );
+			} else {
+				setContentPane( topView );
+			}
 		}
-		final JRootPane	rp		= getRootPane();
-		final ActionMap	amap	= rp.getActionMap();
-		final InputMap	imap	= rp.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW );
-		final int		menuMod	= Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-		final Window	w		= this;
-		
-		// assign Cmd+W and Cmd+M to trigger window closing and minimization
-		// (as in SuperCollider.app)
-		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_W, menuMod ), "close" );
-		amap.put( "close", new AbstractAction() {
-			public void actionPerformed( ActionEvent e )
-			{
-				dispatchEvent( new WindowEvent( w, WindowEvent.WINDOW_CLOSING ));
-			}
-		});
-		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_M, menuMod ), "minimize" );
-		amap.put( "minimize", new AbstractAction() {
-			public void actionPerformed( ActionEvent e )
-			{
-				setExtendedState( java.awt.Frame.ICONIFIED );
-			}
-		});
-		
+		catch( Exception e ) {
+			mf.removeFromWindowMenu( actionShowWindow );
+			e.printStackTrace();
+			throw new IllegalStateException();
+		}
+
 		topView.setPreferredSize( cocoaBounds.getSize() );
 		pack();	// frame is made displayable
-		final Rectangle screenBounds = getGraphicsConfiguration().getBounds();
-//		System.out.println( "screenBounds = " + screenBounds );
-//		final Dimension size = getSize();
+		final Rectangle screenBounds = getWindow().getGraphicsConfiguration().getBounds();
 		final Insets insets = getInsets();
-//		System.out.println( "insets = " + insets );
-//		System.out.println( "size = " + size );
-		setLocation( screenBounds.x + cocoaBounds.x - insets.left,
-		             (screenBounds.y + screenBounds.height) - (cocoaBounds.y + cocoaBounds.height) - insets.top );
+		setLocation( new Point(
+		    screenBounds.x + cocoaBounds.x - insets.left,
+		    (screenBounds.y + screenBounds.height) - (cocoaBounds.y + cocoaBounds.height) - insets.top ));
 	}
 	
-	public void setCocoaBounds( Rectangle r )
-	{
-		final Rectangle	screenBounds	= getGraphicsConfiguration().getBounds();
-		final Insets	insets			= getInsets();
-		
-		setBounds( screenBounds.x + r.x - insets.left,
-		           (screenBounds.y + screenBounds.height) - (r.y + r.height) - insets.top,
-		           r.width + (insets.left + insets.right), r.height + (insets.top + insets.bottom) );
-	}
+//	public JComponent getTopView()
+//	{
+//		return topView;
+//	}
 	
-	public void registerMouseResponder( AbstractMouseResponder r )
+	public void setDefaultCloseOperation( int mode )
 	{
-		if( collMouseResp == null ) collMouseResp = new ArrayList();
-		collMouseResp.add( r );
+		super.setDefaultCloseOperation( mode );
+		actionClose.setEnabled( mode != WindowConstants.DO_NOTHING_ON_CLOSE );
 	}
 
-	public void unregisterMouseResponder( AbstractMouseResponder r )
+	public void setCocoaBounds( Rectangle r )
 	{
-		collMouseResp.remove( r );
+		final Rectangle	screenBounds	= getWindow().getGraphicsConfiguration().getBounds();
+		final Insets	insets			= getInsets();
+		
+		setBounds( new Rectangle(
+		    screenBounds.x + r.x - insets.left,
+		    (screenBounds.y + screenBounds.height) - (r.y + r.height) - insets.top,
+		    r.width + (insets.left + insets.right),
+		    r.height + (insets.top + insets.bottom) ));
 	}
 	
-	public void setAcceptMouseOver( boolean onOff )
+	public void addComponentListener( ComponentListener l )
 	{
-		if( acceptsMouseOver != onOff ) {
-			acceptsMouseOver = onOff;
-			if( collMouseResp != null ) {
-				for( int i = 0; i < collMouseResp.size(); i++ ) {
-					((AbstractMouseResponder) collMouseResp.get( i )).setAcceptMouseOver( onOff );
-				}
+		getWindow().addComponentListener( l );
+	}
+	
+	public void removeComponentListener( ComponentListener l )
+	{
+		getWindow().removeComponentListener( l );
+	}
+
+	protected boolean alwaysPackSize()
+	{
+		return false;
+	}
+	
+	public void setTitle( String title )
+	{
+		super.setTitle( title );
+		actionShowWindow.putValue( Action.NAME, title );
+	}
+
+	public void dispose()
+	{
+		mf.removeFromWindowMenu( actionShowWindow );
+		actionShowWindow.dispose();
+		super.dispose();
+	}
+	
+	protected WindowEvent windowEvent( Event e )
+	{
+//		return new WindowEvent( e.getWindow(), e.getID() );
+// THROWS NULL SOURCE:
+//		return new WindowEvent( null, e.getID() );	// dirty
+
+		return null;	// extra cheesy
+	}
+	
+	public void addWindowListener( final WindowListener wl )
+	{
+		final Listener l;
+		
+		l = new Adapter() {
+			public void windowOpened( Event e )
+			{
+				wl.windowOpened( windowEvent( e ));
 			}
+
+			public void windowClosing( Event e )
+			{
+				wl.windowClosing( windowEvent( e ));
+			}
+
+			public void windowClosed( Event e )
+			{
+				wl.windowClosed( windowEvent( e ));
+			}
+
+			public void windowIconified( Event e )
+			{
+				wl.windowIconified( windowEvent( e ));
+			}
+			
+			public void windowDeiconified( Event e )
+			{
+				wl.windowIconified( windowEvent( e ));
+			}
+
+			public void windowActivated( Event e )
+			{
+				wl.windowIconified( windowEvent( e ));
+			}
+
+			public void windowDeactivated( Event e )
+			{
+				wl.windowIconified( windowEvent( e ));
+			}
+		};
+		
+		addListener( l );
+		winL.put( wl, l );
+	}
+	
+	public void removeWindowListener( WindowListener wl )
+	{
+		final Listener l = (Listener) winL.remove( wl );
+		removeListener( l );
+	}
+	
+	public void addWindowFocusListener( WindowFocusListener l )
+	{
+		// XXX nothing
+	}
+
+	public void removeWindowFocusListener( WindowFocusListener l )
+	{
+		// XXX nothing
+	}
+	
+	public void setAlwaysOnTop( boolean onTop )
+	{
+		GUIUtil.setAlwaysOnTop( getWindow(), onTop );
+	}
+	
+	public void repaint()
+	{
+		getWindow().repaint();
+	}
+	
+	public void minimize()
+	{
+		final Component c = getWindow();
+		if( c instanceof java.awt.Frame ) {
+			((java.awt.Frame) c).setExtendedState( java.awt.Frame.ICONIFIED );
+		} else if( c instanceof JInternalFrame ) {
+			try {
+				((JInternalFrame) c).setIcon( true );
+			}
+			catch( PropertyVetoException pve ) { /* well... */ }
+		} else {
+			assert false : c.getClass();
 		}
 	}
 
-	public boolean getAcceptMouseOver()
+	public void unminimize()
 	{
-		return acceptsMouseOver;
+		final Component c = getWindow();
+		if( c instanceof java.awt.Frame ) {
+			((java.awt.Frame) c).setExtendedState( java.awt.Frame.NORMAL );
+		} else if( c instanceof JInternalFrame ) {
+			try {
+				((JInternalFrame) c).setIcon( false );
+			}
+			catch( PropertyVetoException pve ) { /* well... */ }
+		} else {
+			assert false : c.getClass();
+		}
 	}
-
-     private static boolean isMacOs() {
-    	 return System.getProperty( "os.name" ).indexOf( "Mac" ) >= 0;
-     }
-    
-     private static boolean isWindows() {
-    	 return System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
-     }
-     
+	
     /**
      *	A slightly modified version of what was published here
      *	http://www.beatniksoftware.com/jujitsu/svn/trunk/src/e/util/GuiUtilities.java
@@ -231,7 +300,7 @@ extends JFrame
     	try {
 	    	final Field peerField = Component.class.getDeclaredField( "peer" );
 	    	peerField.setAccessible( true );
-	    	final Object peer = peerField.get( this );
+	    	final Object peer = peerField.get( getWindow() );
 	    	if( peer == null ) {
 //	    		System.err.println( "peer == null" );
 	    		return;
@@ -264,12 +333,40 @@ extends JFrame
         }
     }
     
-//    public void setCocoaBounds( Rectangle r )
-//    {
-//    	
-//		screenBounds 	= JSCWindow.screenBounds( server );
-//		cocoaHeight	= java.height - 22;
-//
-//		^Rect.new( java.left, screenBounds.height - java.top - 22 - cocoaHeight, java.width, cocoaHeight );
-//    }
+    private class ActionClose
+	extends MenuAction
+	{
+		protected ActionClose()
+		{
+			super();
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			final Component c = getWindow();
+			if( c instanceof Window ) {
+//				dispatchEvent( new AbstractWindow.Event( Frame.this,
+//					                         			    AbstractWindow.Event.WINDOW_CLOSING )
+				c.dispatchEvent( new WindowEvent( (Window) c, WindowEvent.WINDOW_CLOSING ));
+			} else if( c instanceof JInternalFrame ) {
+				c.dispatchEvent( new InternalFrameEvent( (JInternalFrame) c, InternalFrameEvent.INTERNAL_FRAME_CLOSING ));
+			} else {
+				assert false : c.getClass();
+			}
+		}
+	}
+
+	private class ActionMinimize
+	extends MenuAction
+	{
+		protected ActionMinimize()
+		{
+			super();
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			minimize();
+		}
+	}
 }
