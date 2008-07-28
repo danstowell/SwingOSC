@@ -13,6 +13,7 @@ extends AbstractResponder
 	{
 		super( objectID, numReplyArgs );
 
+//System.out.println( "is a " + client.getObject( frameID ).getClass() );
 		this.f	= frameID == null ? null : (Frame) client.getObject( frameID );
 		if( f != null ) {
 			f.registerMouseResponder( this );

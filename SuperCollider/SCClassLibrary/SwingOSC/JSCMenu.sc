@@ -92,7 +92,7 @@ JSCMenuSeparator : JSCMenuNode {
 		parent.prAddChild( this );
 		
 		bndl		= Array( 2 );
-		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.gui.MenuSeparator", this.id, ']' ]);
+		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.gui.MenuSeparator", ']' ]);
 		if( index.isNil, {
 			bndl.add([ '/method', parent.id, \add, '[', '/ref', this.id, ']' ]);
 		}, {
