@@ -43,7 +43,9 @@ import java.awt.event.WindowListener;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -73,7 +75,10 @@ extends AppWindow
 	private final JComponent		topView;
 	private final MenuAction		actionClose;
 
-    private static boolean isMacOs() {
+	private List		collMouseResp		= null;
+	private boolean 	acceptsMouseOver	= false;
+
+	private static boolean isMacOs() {
    	 	return System.getProperty( "os.name" ).indexOf( "Mac" ) >= 0;
     }
    
@@ -151,6 +156,34 @@ extends AppWindow
 		    (screenBounds.y + screenBounds.height) - (r.y + r.height) - insets.top,
 		    r.width + (insets.left + insets.right),
 		    r.height + (insets.top + insets.bottom) ));
+	}
+	
+	public void registerMouseResponder( AbstractMouseResponder r )
+	{
+		if( collMouseResp == null ) collMouseResp = new ArrayList();
+		collMouseResp.add( r );
+	}
+
+	public void unregisterMouseResponder( AbstractMouseResponder r )
+	{
+		collMouseResp.remove( r );
+	}
+	
+	public void setAcceptMouseOver( boolean onOff )
+	{
+		if( acceptsMouseOver != onOff ) {
+			acceptsMouseOver = onOff;
+			if( collMouseResp != null ) {
+				for( int i = 0; i < collMouseResp.size(); i++ ) {
+					((AbstractMouseResponder) collMouseResp.get( i )).setAcceptMouseOver( onOff );
+				}
+			}
+		}
+	}
+
+	public boolean getAcceptMouseOver()
+	{
+		return acceptsMouseOver;
 	}
 	
 	public void addComponentListener( ComponentListener l )
