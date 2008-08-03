@@ -49,6 +49,8 @@ extends JPanel // JComponent
 		super( new ColliderLayout( resizeActive ));
 		setOpaque( true );
 		this.putClientProperty( "origin", Boolean.TRUE ); // detected by Pen
+//		System.out.println( "isFocusable? " + this.isFocusable() );
+//		setFocusable( true );
 	}
 
 	public void setIcon( Icon icon )

@@ -28,7 +28,7 @@
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 27-Jul-08
+ *	@version		0.61, 01-Aug-08
  */
 JSCMenuNode {
 	var <server;
@@ -84,7 +84,7 @@ JSCMenuSeparator : JSCMenuNode {
 		^super.new( parent ).prInitItem( index );
 	}
 
-	prInitItem { arg name, index;
+	prInitItem { arg index;
 		var bndl;
 		
 		server	= parent.server;
@@ -107,24 +107,23 @@ JSCMenuItem : JSCMenuNode {
 	var <enabled = true;
 	var <>action;
 	var acResp;
+	var <shortcut;
 
 	*new { arg parent, name, index;
 		^super.new( parent ).prInitItem( name, index );
 	}
 	
 	prInitItem { arg name, index;
-		var bndl;
+		var bndl, acVal;
 		
 		server	= parent.server;
 		id		= server.nextNodeID;
 		parent.prAddChild( this );
-		acResp	= OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
-			{ this.doAction }.defer;
-		}).add;
+		acVal	= this.protCreateActionResponder;
 		
 		bndl		= Array( 2 );
 		bndl.add([ '/local', this.id, '[', '/new', this.protJClass, this.id, name, ']',
-			"ac" ++ this.id, '[', '/new', "de.sciss.swingosc.ActionResponder", this.id, ']' ]);
+			"ac" ++ this.id, '[', '/new', "de.sciss.swingosc.ActionResponder", this.id ] ++ acVal ++ [ ']' ]);
 		if( index.isNil, {
 			bndl.add([ '/method', parent.id, \add, '[', '/ref', this.id, ']' ]);
 		}, {
@@ -137,18 +136,15 @@ JSCMenuItem : JSCMenuNode {
 	 *	Sets the shortcut key for the item.
 	 *
 	 *	@param	shortcut	the shortcut to use. this is a string either comprised of
-	 *					a single character such as "M", or a descriptive string
+	 *					a space separated modifiers, such as "meta" or "shift",
+	 *					and a single character such as "M", or a descriptive string
 	 *					such as "NUMPAD1".
-	 *	@modifiers		bitmask of modifiers:
-	 *					0x01	is shift,
-	 *					0x02 is meta2 (on OS X the control key, on Windows and
-	 *					and Linux a combination of control and alt)
-	 *					0x04 is meta (on OS X the command key, on Windows and
-	 *					Linux the control key),
-	 *					0x08 is alt
 	 */
-	setShortCut { arg shortcut, modifiers = 4;
-		server.sendMsg( '/method', this.id, \setShortCut, shortcut.asString, modifiers );
+	shortcut_ { arg descr;
+		if( descr != shortcut, {
+			shortcut = descr;
+			server.sendMsg( '/set', this.id, \shortCut, descr );
+		});
 	}
 
 	doAction { action.value( this )}
@@ -168,6 +164,34 @@ JSCMenuItem : JSCMenuNode {
 	}
 	
 	protJClass { ^"de.sciss.swingosc.SwingMenuItem" }
+	
+	protCreateActionResponder {
+		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
+			{ this.doAction }.defer;
+		}).add;
+		^nil;
+	}
+}
+
+JSCMenuCheckItem : JSCMenuItem {
+	var <selected = false;
+	
+	selected_ { arg bool;
+		if( bool != selected, {
+			selected = bool;
+			server.sendMsg( '/set', this.id, \selected, bool );
+		});
+	}
+	
+	protJClass { ^"de.sciss.swingosc.SwingMenuCheckItem" }
+
+	protCreateActionResponder {
+		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
+			selected = msg[ 4 ] != 0;
+			{ this.doAction }.defer;
+		}).add;
+		^[ \selected ];
+	}
 }
 
 JSCMenuGroup : JSCMenuItem {
@@ -194,7 +218,7 @@ JSCMenuGroup : JSCMenuItem {
 
 	prRemoveChild { arg child;
 		children.remove( child );
-		server.sendMsg( '/method', parent.id, \remove, '[', '/ref', child.id, ']' );
+		server.sendMsg( '/method', this.id, \remove, '[', '/ref', child.id, ']' );
 	}
 
 	removeAll {
@@ -217,6 +241,9 @@ JSCMenuRoot : JSCMenuNode {
 		server = server ?? { SwingOSC.default };
 		result = all.at( server );
 		if( result.notNil, { ^result });
+		if( server.serverRunning.not, {
+			MethodError( "SwingOSC server not running", thisMethod ).throw;
+		});
 		^super.new( nil ).prInitRoot( server );
 	}
 	
@@ -229,7 +256,7 @@ JSCMenuRoot : JSCMenuNode {
 	
 	prDispose {
 		all.removeAt( server );
-		("DISPOSING. children = " ++ children).postln;
+//		("DISPOSING. children = " ++ children).postln;
 		this.removeAll;
 	}
 

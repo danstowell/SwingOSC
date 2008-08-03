@@ -38,10 +38,14 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 27-Jul-08
+ *	@version		0.61, 01-Aug-08
  */
 JSCWindow : Object
 {
+	classvar <>nativeDecoration = true;
+	classvar <>internalFrames	= false;
+//	classvar <>floatingPalettes	= false;
+	
 	classvar <>verbose = false;
 	classvar <>allWindows;
 	
@@ -63,6 +67,7 @@ JSCWindow : Object
 //	var pendingAlpha;	// alpha can only be set when window was made visible, so this is a lazy storage
 	var pendingDraw = false;
 	var wasOpened = false;
+	var updServer;
 	
 	*initClass {
 		UI.registerForShutdown({ this.closeAll });
@@ -71,6 +76,10 @@ JSCWindow : Object
 	// ----------------- constructor -----------------
 
 	*new { arg name = "panel", bounds, resizable = true, border = true, server, scroll = false;
+ 		server = server ?? { SwingOSC.default };
+ 		if( server.serverRunning.not, {
+			MethodError( "SwingOSC server not running", thisMethod ).throw;
+		});
 		^super.new.initSCWindow( name, bounds, resizable, border, scroll, server );
 	}
 	
@@ -239,7 +248,9 @@ JSCWindow : Object
 	resizable_ { arg bool;
 		if( resizable != bool, {
 			resizable = bool;
-			server.sendMsg( '/set', this.id, \resizable, resizable );
+			if( border, {
+				server.sendMsg( '/set', this.id, \resizable, resizable );
+			});
 		});
 	}
 	
@@ -375,14 +386,14 @@ JSCWindow : Object
 		border		= argBorder;
 		resizable		= argResizable;
 		argBounds		= argBounds ?? { Rect.new( 128, 64, 400, 400 )};
-		server		= argServer ?? { SwingOSC.default; };
+		server		= argServer;
 		allWindows	= allWindows.add( this );
 		id			= server.nextNodeID;
 		dataptr		= this.id;
 								// parent, bounds
 //		view			= JSCTopView( nil, argBounds.moveTo( 0, 0 ), server );
 //		id			= view.id;
-		this.prInit( name, argBounds, resizable, border, scroll ); // , view );
+		this.prInit( name, argBounds, resizable && border, border, scroll ); // , view );
 	}
 
 //	prBoundsToJava { arg cocoa;
@@ -464,11 +475,16 @@ JSCWindow : Object
 		}, {
 			JSCTopView( this, argBounds.moveTo( 0, 0 ), viewID );
 		});
+		
+		updServer = UpdateListener.newFor( server, { arg upd, s;
+			if( s.serverRunning.not, { this.close });
+		}, \serverRunning );
 	}
 	
 	prClose {
 		if( dataptr.notNil, {
 			acResp.remove;
+			updServer.remove;
 			this.drawHook_( nil );
 			server.sendBundle( nil,
 				[ '/method', "ac" ++ this.id, \remove ],

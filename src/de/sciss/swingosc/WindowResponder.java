@@ -33,9 +33,13 @@ package de.sciss.swingosc;
 import java.awt.Container;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 
 import de.sciss.net.OSCMessage;
 
@@ -144,6 +148,7 @@ implements ComponentListener, WindowListener, WindowFocusListener
 
 	public void windowClosing( WindowEvent e )
 	{
+//System.out.println( "GOT CLOSING" );		
 		replyShort( "closing" );
 	}
 	

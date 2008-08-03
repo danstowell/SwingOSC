@@ -74,7 +74,7 @@ import de.sciss.gui.WindowListenerWrapper;
 
 /**
  *  @author		Hanns Holger Rutz
- *  @version	0.72, 13-Jul-08
+ *  @version	0.73, 01-Aug-08
  */
 public class BasicWindowHandler
 extends AbstractWindowHandler
@@ -118,24 +118,35 @@ extends AbstractWindowHandler
 	private AbstractWindow					defaultBorrower			= null;		// when no doc frame active (usually the main log window)
 
 	private final Action					actionCollect;
-	private final boolean					autoCollect;
+	private boolean							autoCollect				= false;
 	
 	private final BasicApplication			root;
 
 	public BasicWindowHandler( BasicApplication root )
 	{
-		super();
+		this( root,
+		      root.getUserPrefs().getBoolean( KEY_LAFDECORATION, false ),
+		      root.getUserPrefs().getBoolean( KEY_INTERNALFRAMES, false ),
+		      root.getUserPrefs().getBoolean( BasicWindowHandler.KEY_FLOATINGPALETTES, false ));
 		
 		final Preferences	prefs	= root.getUserPrefs();
-		final boolean		lafDeco = prefs.getBoolean( KEY_LAFDECORATION, false );
 		final Rectangle		oScreen	= stringToRectangle( prefs.get( KEY_SCREENSPACE, null ));
-		final Rectangle		nScreen;
+		final Rectangle		nScreen	= calcOuterBounds();
+		autoCollect	= !nScreen.equals( oScreen );
+		prefs.put( KEY_SCREENSPACE, rectangleToString( nScreen ));
+	}
+	
+	public BasicWindowHandler( BasicApplication root, boolean lafDeco,
+							   boolean internalFrames, boolean floating )
+	{
+		super();
+		
 		JFrame.setDefaultLookAndFeelDecorated( lafDeco );
 		
-		this.root		= root;
-		internalFrames	= prefs.getBoolean( KEY_INTERNALFRAMES, false );
-		floating		= prefs.getBoolean( BasicWindowHandler.KEY_FLOATINGPALETTES, false );
-		fph				= FloatingPaletteHandler.getInstance();
+		this.root			= root;
+		this.internalFrames	= internalFrames;
+		this.floating		= floating;
+		fph					= FloatingPaletteHandler.getInstance();
 
 		if( internalFrames ) {
 			masterFrame = new MasterFrame();
@@ -157,9 +168,6 @@ extends AbstractWindowHandler
 //			}
 		}
 		
-		nScreen		= calcOuterBounds();
-		autoCollect	= !nScreen.equals( oScreen );
-		prefs.put( KEY_SCREENSPACE, rectangleToString( nScreen ));
 		actionCollect = new ActionCollect( root.getResourceString( "menuCollectWindows" ));
 //System.out.println( "autoCollect = " + autoCollect );
 		
@@ -460,14 +468,13 @@ extends AbstractWindowHandler
 	{
 		final StringBuffer	strBuf  = new StringBuffer( GUIUtil.getResourceString( "errException" ));
 		final JOptionPane	op;
-		String				message = exception.getClass().getName() + " - " + exception.getLocalizedMessage();
+		String				message = exception == null ? "null" : (exception.getClass().getName() + " - " + exception.getLocalizedMessage());
 		StringTokenizer		tok;
 		int					lineLen = 0;
 		String				word;
 		String[]			options = { GUIUtil.getResourceString( "buttonOk" ),
 										GUIUtil.getResourceString( "optionDlgStack" )};
 	
-		if( message == null ) message = exception.getClass().getName();
 		tok = new StringTokenizer( message );
 		strBuf.append( ":\n" );
 		while( tok.hasMoreTokens() ) {

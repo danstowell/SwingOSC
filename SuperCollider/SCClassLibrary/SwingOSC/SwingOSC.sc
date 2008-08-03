@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 27-Jul-08
+ *	@version		0.61, 01-Aug-08
  */
 SwingOptions
 {
@@ -97,6 +97,7 @@ SwingOptions
 SwingOSC : Model
 {
 	classvar <>local, <>default, <>named, <>set, <>java, <>program, <>clock;
+	var <>gaga;
 
 	// WARNING: this field might be removed in a future version
 	var <>useDoubles = false;
@@ -195,7 +196,7 @@ SwingOSC : Model
 				this.listSendMsg([ '/local', \font ] ++ JFont.default.asSwingArg );
 				this.prRetrieveScreenBounds;
 				this.dumpOSC( dumpMode, dumpModeR );
-//						this.sendMsg( '/query', \status, '[', '/field', 'de.sciss.swingosc.SwingOSC', \VERSION, ']' );
+//				this.sendMsg( '/query', \status, '[', '/field', 'de.sciss.swingosc.SwingOSC', \VERSION, ']' );
 				result = this.sendMsgSync([ '/query', \version, '[', '/field', 'de.sciss.swingosc.SwingOSC', \VERSION, ']' ],
 					[ '/info', \version ]);
 				if( result.notNil, {
@@ -710,12 +711,15 @@ SwingOSC : Model
 			});
 		}).add;
 		
-		this.initTree({
-			if( serverRunning.notNil, {
-				serverRunning = true;
-				this.changed( \serverRunning );
-			});
-		});
+		try {
+			this.connect;
+			{
+				if( this.sendMsgSync([ '/query', \version, '[', '/field', 'de.sciss.swingosc.SwingOSC', \VERSION, ']' ],
+					[ '/info', \version ]).notNil, {
+					this.serverRunning_( true );
+				});
+			}.fork( clock );
+		};
 	}
 
 //	addStatusWatcher {
@@ -741,8 +745,9 @@ SwingOSC : Model
 			});
 		});			
 	}
-
+	
 	serverRunning_ { arg val;
+		gaga = gaga.add([ Main.elapsedTime, val ]);
 		if( val != tempRunning, {
 //			[ "serverRunning_", serverRunning, val ].postln;
 //			thisMethod.dumpBackTrace;
@@ -760,8 +765,9 @@ SwingOSC : Model
 				});			
 			}, {
 //			[ "KIEKA" ].postln;
-				clock.sched( 0, {
+				clock.sched( 0.0, {
 //			[ "KUUKA", tempRunning ].postln;
+//					"".post;	// is totally weird XXX
 					if( tempRunning.not, {
 						serverRunning = false;
 						this.changed( \serverRunning );
@@ -780,7 +786,8 @@ SwingOSC : Model
 	
 	protEnsureApplication {
 		if( application.not, {
-			this.sendMsg( '/method', "de.sciss.swingosc.Application", \ensure );
+			this.sendMsg( '/method', "de.sciss.swingosc.Application", \ensure,
+				JSCWindow.nativeDecoration.not, JSCWindow.internalFrames, false );
 			application = true;
 		});
 	}

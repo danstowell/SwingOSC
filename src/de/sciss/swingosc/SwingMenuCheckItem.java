@@ -1,5 +1,5 @@
 /*
- *  SwingMenuGroup.java
+ *  SwingMenuCheckItem.java
  *  SwingOSC
  *
  *  Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
@@ -28,23 +28,27 @@
  */
 package de.sciss.swingosc;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import de.sciss.gui.MenuGroup;
+import javax.swing.AbstractButton;
+
+import de.sciss.gui.MenuCheckItem;
 
 /**
  *	@author		Hanns Holger Rutz
  *	@version	0.10, 01-Aug-08
  */
-public class SwingMenuGroup
-extends MenuGroup
+public class SwingMenuCheckItem
+extends MenuCheckItem
 {
-	private final DispatchAction action;
+	private final Action action;
 	
-	public SwingMenuGroup( String id, String text )
+	public SwingMenuCheckItem( String id, String text )
 	{
-		super( id, new DispatchAction( text ));
-		action = (DispatchAction) this.getAction();
+		super( id, new Action( text ));
+		action = (Action) this.getAction();
+		action.setCheckItem( this );
 	}
 	
 	public void addActionListener( ActionListener l )
@@ -65,5 +69,30 @@ extends MenuGroup
 	public void setShortCut( String cut )
 	{
 		SwingMenuItem.setShortCut( this, cut );
+	}
+	
+	private static class Action
+	extends DispatchAction
+	{
+		private MenuCheckItem mci;
+		
+		protected Action( String name )
+		{
+			super( name );
+		}
+		
+		protected void setCheckItem( MenuCheckItem mci )
+		{
+			this.mci = mci;
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			boolean state = ((AbstractButton) e.getSource()).isSelected();
+
+			if( mci != null ) mci.setSelected( state );
+			
+			super.actionPerformed( e );
+		}
 	}
 }

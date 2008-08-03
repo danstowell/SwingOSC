@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.59, 17-Feb-08
+ *	@version		0.61, 03-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -2127,8 +2127,9 @@ JSCTextView : JSCView {
 	var <autohidesScrollers = false, <hasHorizontalScroller = false, <hasVerticalScroller = false;
 	var <usesTabToFocusNextView = true, <enterInterpretsSelection = true;
 //	var <textBounds;
+	var <linkAction;
 
-	var txResp;
+	var txResp, hyResp;
 	
 	var <string = "";
 	var selStart = 0, selStop = 0;
@@ -2215,6 +2216,17 @@ JSCTextView : JSCView {
 		server.sendMsg( '/set', this.id, \editable, bool );
 	}
 	
+	linkAction_ { arg func;
+		linkAction = func;
+		if( hyResp.isNil, {
+			hyResp = OSCpathResponder( server.addr, [ '/hyperlink', this.id ], { arg time, resp, msg;
+				{ÊlinkAction.value( this, msg[2].asString.collect( _.toLower ).asSymbol, msg[3], msg[4] )}.defer;
+			}).add;
+			server.sendMsg( '/local', "hy" ++ this.id,
+				'[', '/new', "de.sciss.swingosc.HyperlinkResponder", this.id, ']' );
+		});
+	}
+	
 	usesTabToFocusNextView_ { arg bool;
 		usesTabToFocusNextView = bool;
 		this.setProperty( \usesTabToFocusNextView, bool );
@@ -2254,7 +2266,7 @@ JSCTextView : JSCView {
 		// XXX update client send string rep.
 	}
 
-	open{ arg path;
+	open { arg path;
 		path = path.replace( ' ', '%20' );
 		this.openURL( "file://"++path );
 	}
@@ -2290,7 +2302,7 @@ JSCTextView : JSCView {
 			{
 //				("insert at "++msg[3]++" len "++msg[4]++" text='"++msg[5]++"'").postln;
 				str = msg[5].asString;
-if( msg[4] != str.size, { ("Yukk. len is "++msg[4]++"; but string got "++str.size).postln });
+if( msg[ 4 ] != str.size, { ("JSCTextView discrepancy. SwingOSC sees " ++ msg[ 4 ] ++ " characters, SuperCollider sees " ++ str.size ).postln });
 				string = string.insert( msg[3], str );
 				if( action.notNil, {{ action.value( this, state, msg[3], msg[4], str )}.defer });
 			}
@@ -2313,6 +2325,7 @@ if( msg[4] != str.size, { ("Yukk. len is "++msg[4]++"; but string got "++str.siz
 				if( action.notNil, {{ action.value( this, state, msg[3], msg[4] )}.defer });
 			};
 		}).add;
+		
 		^super.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.TextView", ']',
 				"cn" ++ this.id,				 	// bars : v=never, h=never
@@ -2331,7 +2344,10 @@ if( msg[4] != str.size, { ("Yukk. len is "++msg[4]++"; but string got "++str.siz
 
 	prClose { arg preMsg, postMsg;
 		txResp.remove;
-		^super.prClose( preMsg ++ [[ '/method', "tx" ++ this.id, \remove ]], postMsg );
+		hyResp.remove; // nil.remove is allowed
+		^super.prClose( preMsg ++ [
+			[ '/method', "tx" ++ this.id, \remove ]] ++
+			if( hyResp.notNil, {[[ '/method', "hy" ++ this.id, \remove ]]}), postMsg );
 	}
 
 	prCurrentLine {

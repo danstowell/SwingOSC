@@ -103,18 +103,20 @@ extends AppWindow
 		init();
 		setTitle( title );	// needs to be after init. WHY?
 
-//		if( (flags & FLAG_UNDECORATED) != 0 ) {
-//			setUndecorated( true );
-//		}
+		if( (flags & FLAG_UNDECORATED) != 0 ) {
+			setUndecorated( true );
+		}
 		if( (flags & FLAG_NORESIZE) != 0 ) {
 			setResizable( false );
 		}
 		try {
 //			final ClassLoader cl = OSCRoot.getInstance().getGUI().getSwingOSC().getClass().getClassLoader();
-			final ClassLoader cl = getClass().getClassLoader();
-			topView		= (JComponent) Class.forName( "de.sciss.swingosc.ContentPane", true, cl ).getConstructor( new Class[] { Boolean.TYPE }).newInstance( new Object[] { new Boolean( (flags & FLAG_SCROLLPANE) == 0) });
+//			final ClassLoader cl = getClass().getClassLoader();
+//			topView		= (JComponent) Class.forName( "de.sciss.swingosc.ContentPane", true, cl ).getConstructor( new Class[] { Boolean.TYPE }).newInstance( new Object[] { new Boolean( (flags & FLAG_SCROLLPANE) == 0) });
+			topView = new ContentPane( (flags & FLAG_SCROLLPANE) == 0 );
 			if( (flags & FLAG_SCROLLPANE) != 0 ) {
-				final JComponent scrollPane = (JComponent) Class.forName( "de.sciss.swingosc.ScrollPane", true, cl ).getConstructor( new Class[] { Component.class }).newInstance( new Object[] { topView });
+//				final JComponent scrollPane = (JComponent) Class.forName( "de.sciss.swingosc.ScrollPane", true, cl ).getConstructor( new Class[] { Component.class }).newInstance( new Object[] { topView });
+				final JComponent scrollPane = new ScrollPane( topView );
 				setContentPane( scrollPane );
 			} else {
 				setContentPane( topView );
@@ -133,6 +135,8 @@ extends AppWindow
 		setLocation( new Point(
 		    screenBounds.x + cocoaBounds.x - insets.left,
 		    (screenBounds.y + screenBounds.height) - (cocoaBounds.y + cocoaBounds.height) - insets.top ));
+		
+//		topView.requestFocus();
 	}
 	
 //	public JComponent getTopView()
@@ -250,17 +254,17 @@ extends AppWindow
 			
 			public void windowDeiconified( Event e )
 			{
-				wl.windowIconified( windowEvent( e ));
+				wl.windowDeiconified( windowEvent( e ));
 			}
 
 			public void windowActivated( Event e )
 			{
-				wl.windowIconified( windowEvent( e ));
+				wl.windowActivated( windowEvent( e ));
 			}
 
 			public void windowDeactivated( Event e )
 			{
-				wl.windowIconified( windowEvent( e ));
+				wl.windowDeactivated( windowEvent( e ));
 			}
 		};
 		
@@ -383,6 +387,7 @@ extends AppWindow
 				c.dispatchEvent( new WindowEvent( (Window) c, WindowEvent.WINDOW_CLOSING ));
 			} else if( c instanceof JInternalFrame ) {
 				c.dispatchEvent( new InternalFrameEvent( (JInternalFrame) c, InternalFrameEvent.INTERNAL_FRAME_CLOSING ));
+//				((JInternalFrame) c).dispatchEvent( e )
 			} else {
 				assert false : c.getClass();
 			}

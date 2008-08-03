@@ -61,6 +61,12 @@ extends JTextPane
 	public TextView()
 	{
 		super();
+//		addHyperlinkListener( new HyperlinkListener() {
+//			public void hyperlinkUpdate( HyperlinkEvent e )
+//			{
+//				System.out.println( "RECEIVED : " + e.getEventType() );
+//			}
+//		});
 	}
 
 	public void beginDataUpdate()
@@ -90,6 +96,8 @@ extends JTextPane
 		finally {
 			addAllDocListeners();
 		}
+//System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );
+//System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
 	}
 	
 	public void setPage( URL url )
@@ -102,6 +110,8 @@ extends JTextPane
 		finally {
 			addAllDocListeners();
 		}
+//System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );		
+//System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
 	}
 	
 	private void addAllDocListeners()
@@ -174,6 +184,12 @@ extends JTextPane
 		collDocListeners.add( l );
 		getDocument().addDocumentListener( l );
 	}
+	
+//	public void addHyperlinkListener( HyperlinkListener l )
+//	{
+//		System.out.println( "addHyperlinkListener" );
+//		super.addHyperlinkListener( l );
+//	}
 
 	public void removeDocumentListener( DocumentListener l )
 	{

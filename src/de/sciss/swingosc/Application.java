@@ -19,40 +19,35 @@ import de.sciss.gui.MenuItem;
 public class Application
 extends BasicApplication
 {
-//	private final DocumentHandler	dh;
-//	private final GraphicsHandler	gh;
-//	private final WindowHandler		wh;
+	private final boolean	lafDeco;
+	private final boolean	internalFrames;
+	private final boolean	floating;
 	
 	public Application()
 	{
-		super( Application.class, "SwingOSC" );
-		
-		init();
-//		dh	= createDocumentHandler();
-//		gh	= new BasicGraphicsHandler();
-//		wh	= createWindowHandler();
+		this( false, false, false );
 	}
 	
-//	public DocumentHandler getDocumentHandler()
-//	{
-//		return dh;
-//	}
-//	
-//	public GraphicsHandler getGraphicsHandler()
-//	{
-//		return gh;
-//	}
-//
-//	public WindowHandler getWindowHandler()
-//	{
-//		return wh;
-//	}
+	public Application( boolean lafDeco, boolean internalFrames, boolean floating )
+	{
+		super( Application.class, "SwingOSC" );
+		
+		this.lafDeco		= lafDeco;
+		this.internalFrames	= internalFrames;
+		this.floating		= floating;
+		init();
+	}
 	
 	public static void ensure()
 	{
+		ensure( false, false, false );
+	}
+	
+	public static void ensure( boolean lafDeco, boolean internalFrames, boolean floating )
+	{
 		BasicApplication app = (BasicApplication) AbstractApplication.getApplication(); 
 		if( app == null ) {
-			app = new Application();
+			app = new Application( lafDeco, internalFrames, floating );
 		}
 		SwingOSC.getInstance().getCurrentClient().locals.put(
 			"menuRoot", app.getMenuBarRoot() );
@@ -63,7 +58,7 @@ extends BasicApplication
 	
 	protected BasicWindowHandler createWindowHandler()
 	{
-		return new BasicWindowHandler( this );
+		return new BasicWindowHandler( this, lafDeco, internalFrames, floating );
 	}
 	
 	protected BasicMenuFactory createMenuFactory()
