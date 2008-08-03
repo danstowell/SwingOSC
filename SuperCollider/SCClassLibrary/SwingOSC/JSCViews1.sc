@@ -2122,6 +2122,7 @@ JSCUserView : JSCAbstractUserView {
 }
 
 JSCTextView : JSCView {
+	classvar <>verbose = false;
 
 	var <stringColor, <font, <editable = true;
 	var <autohidesScrollers = false, <hasHorizontalScroller = false, <hasVerticalScroller = false;
@@ -2302,7 +2303,7 @@ JSCTextView : JSCView {
 			{
 //				("insert at "++msg[3]++" len "++msg[4]++" text='"++msg[5]++"'").postln;
 				str = msg[5].asString;
-if( msg[ 4 ] != str.size, { ("JSCTextView discrepancy. SwingOSC sees " ++ msg[ 4 ] ++ " characters, SuperCollider sees " ++ str.size ).postln });
+if( verbose and: { msg[ 4 ] != str.size }, { ("JSCTextView discrepancy. SwingOSC sees " ++ msg[ 4 ] ++ " characters, SuperCollider sees " ++ str.size ).postln });
 				string = string.insert( msg[3], str );
 				if( action.notNil, {{ action.value( this, state, msg[3], msg[4], str )}.defer });
 			}
