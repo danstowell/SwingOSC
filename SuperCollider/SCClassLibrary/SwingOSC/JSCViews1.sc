@@ -2220,7 +2220,7 @@ JSCTextView : JSCView {
 		linkAction = func;
 		if( hyResp.isNil, {
 			hyResp = OSCpathResponder( server.addr, [ '/hyperlink', this.id ], { arg time, resp, msg;
-				{ÊlinkAction.value( this, msg[2].asString.collect( _.toLower ).asSymbol, msg[3], msg[4] )}.defer;
+				{ linkAction.value( this, msg[2].asString.collect( _.toLower ).asSymbol, msg[3].asString, msg[4].asString )}.defer;
 			}).add;
 			server.sendMsg( '/local', "hy" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.HyperlinkResponder", this.id, ']' );
