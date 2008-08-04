@@ -617,8 +617,7 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
     w.drawHook = {
         <span class="kw">var</span> rect, txt;
 
-        <span class="cm">// umlaute and accents don't work at the moment!</span>
-        txt = <span class="st">&quot;Il arrive que la realite soit trop complexe pour la transmission orale.&quot;</span>;
+        txt = <span class="st">&quot;Il arrive que la r&eacute;alit&eacute; soit trop complexe pour la transmission orale.&quot;</span>;
         <span class="cl">JPen</span>.font = <span class="cl">JFont</span>( <span class="st">&quot;SansSerif&quot;</span>, 14 );
         
         <span class="cl">JPen</span>.strokeColor = <span class="cl">Color</span>.blue;
@@ -916,6 +915,73 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
     )
 </pre>
 <P>&nbsp;</P>
+<h3>*lineDash_</h3>
+<pre>
+<span class="cl">JPen</span>.lineDash_( <var>&lt;(FloatArray) pattern&gt;</var> )
+
+</pre>
+<p>When shapes are stroked, a pattern can be used to created dashed outlines. The pattern is specified as a <A HREF="SC://FloatArray">FloatArray</A> where the elements alternatingly represent the opaque and transparent parts of the pattern. So if <code>*width_</code> represents the width of the stroke, <code>*lineDash_</code> represents the lengths of each partial stroke. Both scale according to the affine transform of the graphics context. Example:
+</p>
+<pre>
+    (
+    <span class="kw">var</span> patterns = [ <span class="cl">FloatArray</span>[ 3, 3 ],
+                     <span class="cl">FloatArray</span>[ 3, 2, 5, 2, 7, 2, 5, 2 ],
+                     <span class="cl">FloatArray</span>[ 8, 2, 8, 8, 2, 8 ]];
+    <span class="kw">var</span> width = 0;
+    w = <span class="cl">JSCWindow</span>( <span class="st">&quot;Dash&quot;</span>, <span class="cl">Rect</span>( 100, 100, 920, 500 ), <span class="kw">false</span> ).front;
+    w.view.background = <span class="cl">Color</span>.white;
+    w.drawHook = {
+        <span class="cl">JPen</span>.translate( 0.5, 0.5 );
+        <span class="cl">JPen</span>.width = width;
+        patterns.do({ <span class="kw">arg</span> pat;
+            <span class="cl">JPen</span>.use({ 3.do({
+                <span class="cl">JPen</span>.lineDash = pat;
+                <span class="cl">JPen</span>.addOval( <span class="cl">Rect</span>( 10, 10, 50, 50 ));
+                <span class="cl">JPen</span>.addRect( <span class="cl">Rect</span>( 70, 10, 50, 50 ));
+                <span class="cl">JPen</span>.moveTo( 150 @ 10 );
+                <span class="cl">JPen</span>.lineTo( 130 @ 60 );
+                <span class="cl">JPen</span>.lineTo( 180 @ 10 );
+                <span class="cl">JPen</span>.lineTo( 160 @ 60 );
+                <span class="cl">JPen</span>.stroke;
+                <span class="cl">JPen</span>.translate( 200, 0 );
+                <span class="cl">JPen</span>.scale( 1.5, 1.5 );
+            })});
+            <span class="cl">JPen</span>.translate( 0, 150 );
+        });
+    };
+    r = { <span class="kw">inf</span>.do({ <span class="kw">arg</span> p; width = sin( p / 30 ).squared * 4; w.refresh; 0.03.wait })}.fork( <span class="cl">AppClock</span> );
+    w.onClose = { r.stop };
+    )
+</pre>
+<P>&nbsp;</P>
+<h3>*joinStyle_</h3>
+<pre>
+<span class="cl">JPen</span>.joinStyle_( <var>&lt;(Integer) options&gt;</var> )
+
+</pre>
+<p>When a polygon is stroked, different approaches to draw the joints between line segments are possible: with join option <code>0</code> (&quot;Miter&quot;), the outlines of the stroke a extended until they eventually meet, producing pointed edges (default). With option <code>1</code> (&quot;Round&quot;), the edges become round, and with option <code>2</code> (&quot;Bevel&quot;) they are hard trimmed. Example:
+</p>
+<pre>
+    (
+    w = <span class="cl">JSCWindow</span>( <span class="st">&quot;Join&quot;</span> ).front;
+    w.view.background = <span class="cl">Color</span>.white;
+    w.drawHook = {
+        <span class="cl">JPen</span>.translate( 0.5, 0.5 );
+        <span class="cl">JPen</span>.width = 8;
+        [ <span class="st">&quot;miter&quot;</span>, <span class="st">&quot;round&quot;</span>, <span class="st">&quot;bevel&quot;</span> ].do({ <span class="kw">arg</span> name, i;
+            <span class="cl">JPen</span>.joinStyle = i;
+            <span class="cl">JPen</span>.moveTo( 100 @ 30 );
+            <span class="cl">JPen</span>.lineTo( 60  @ 130 );
+            <span class="cl">JPen</span>.lineTo( 160 @ 30 );
+            <span class="cl">JPen</span>.lineTo( 120 @ 130 );
+            <span class="cl">JPen</span>.stroke;
+            <span class="cl">JPen</span>.stringAtPoint( name, 200 @ 40 );
+            <span class="cl">JPen</span>.translate( 0, 120 );
+        });
+    };
+    )
+</pre>
+<P>&nbsp;</P>
 <h3>*alpha_</h3>
 <pre>
 <span class="cl">JPen</span>.alpha_( <var>&lt;(Float) opacity&gt;</var> )
@@ -1001,7 +1067,7 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
         <span class="cl">JPen</span>.moveTo(    0 @   0 );
         <span class="cl">JPen</span>.lineTo(   50 @ 100 );
         <span class="cl">JPen</span>.lineTo(  100 @ 100 );
-        <span class="cm">// forget what we just drew (the pink lines)</span>
+        <span class="cm">// forget what we just drew (the previous 3 lines)</span>
         <span class="cl">JPen</span>.beginPath;
 
         <span class="cl">JPen</span>.moveTo(  100 @ 100 );

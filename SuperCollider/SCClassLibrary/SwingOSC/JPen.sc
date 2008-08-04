@@ -184,6 +184,10 @@ JPen {
 		cmds = cmds.add([ "rec", rect.left, rect.top, rect.width, rect.height ]);
 	}
 
+	*addOval { arg rect;
+		cmds = cmds.add([ "ova", rect.left, rect.top, rect.width, rect.height ]);
+	}
+
 	*stroke {
 		cmds = cmds.add([ "drw" ]);
 	}

@@ -144,7 +144,8 @@ implements Icon
 		mapConstr.put( "lin", new ConstrLineTo() );
 		mapConstr.put( "qua", new ConstrQuadTo() );
 		mapConstr.put( "cub", new ConstrCurveTo() );
-		mapConstr.put( "rec", new ConstrAddRect() );
+		mapConstr.put( "rec", new ConstrAddRect( new Rectangle2D.Float() ));
+		mapConstr.put( "ova", new ConstrAddRect( new Ellipse2D.Float() ));
 		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN, true ));
 		mapConstr.put( "pie", new ConstrAddArc( Arc2D.PIE, false ));
 		mapConstr.put( "cyl", new ConstrAddCylSector() );
@@ -463,13 +464,25 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 				
 				this.shp	= shp;
 				if( gc.at.getScaleX() == 1.0 ) {
-//System.out.println( "C" );
 					strk	= gc.strk;
 					at		= null;
 				} else {
-//System.out.println( "D" );
-					strk	= new BasicStroke( (float) (gc.strk.getLineWidth() * Math.abs( gc.at.getScaleX() )),
-											   BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER );
+					final float scalex  = (float) Math.abs( gc.at.getScaleX() );
+					final float[] dash  = gc.strk.getDashArray();
+					final float[] dash2;
+					
+					if( dash.length < 2 ) {
+						dash2 = dash;
+					} else {
+						dash2 = new float[ dash.length ];
+						for( int i = 0; i < dash.length; i++ ) {
+							dash2[ i ] = dash[ i ] * scalex;
+						}
+					}
+					strk	= new BasicStroke( gc.strk.getLineWidth() * scalex,
+											   gc.strk.getEndCap(), gc.strk.getLineJoin(),
+											   gc.strk.getMiterLimit() * scalex,
+											   dash2, gc.strk.getDashPhase() * scalex ); 
 					at		= null;
 				}
 			} else {
@@ -477,7 +490,6 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 				strk = gc.strk;
 				try {
 					atInv		= gc.at.createInverse();
-//System.out.println( "A" );
 				} catch( NoninvertibleTransformException e1 ) {
 					System.err.println( "Pen->CmdDraw : NoninvertibleTransformException" );
 					// ... what can we do ...
@@ -488,7 +500,6 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 				this.shp	= atInv.createTransformedShape( shp );
 				at			= new AffineTransform( gc.at );
 				at.translate( -0.5, -0.5 ); 
-//System.out.println( "B" );
 			}
 		}
 				
@@ -1030,17 +1041,20 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		}
 	}
 	
+	// 0: x, 1: y, 2: w, 3: h
 	private class ConstrAddRect
 	extends Constr
 	{
-		private final RectangularShape shp = new Rectangle2D.Float();
+		private final RectangularShape shp;
 
-		protected ConstrAddRect() { /* empty */ }
+		protected ConstrAddRect( RectangularShape shp )
+		{
+			this.shp = shp;
+		}
 
 		protected int constr( Object[] cmd, int off )
 		{
 			off = decode( cmd, off, 4 );
-//			final Shape shp = new Rectangle2D.Float( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			shp.setFrame( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			gc.gp.append( gc.at.createTransformedShape( shp ), false );
 			return off;
