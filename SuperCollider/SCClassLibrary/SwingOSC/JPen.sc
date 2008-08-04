@@ -196,13 +196,13 @@ JPen {
 		cmds = cmds.add([ "clp" ]);
 	}
 
-//	*fillStroke {
-//		this.draw( 4 );
-//	}
-//	
-//	*draw { arg option = 0; // 0 = fill, 1 = eofill, 2 = stroke, 3 = fillstroke, 4 = eofillstroke
-//		cmds = cmds.add([ "fdr", option ]);
-//	}
+	*fillStroke {
+		this.draw( 4 );
+	}
+	
+	*draw { arg option = 0; // 0 = fill, 1 = eofill, 2 = stroke, 3 = fillstroke, 4 = eofillstroke
+		cmds = cmds.add([ "fdr", option ]);
+	}
 
 // ------------- direct drawing commands -------------
 
@@ -267,11 +267,15 @@ JPen {
 		cmds = cmds.add([ "imc", img.id, point.x, point.y, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
-// ------------ gradients ------------
+// ------------ gradients and translucency ------------
 
 //	*fillAxialGradient { arg startPoint, endPoint, color0, color1;
 //		cmds = cmds.add([ "fag", startPoint.x, startPoint.y, endPoint.x, endPoint.y, color0.red, color0.green, color0.blue, color0.alpha, color1.red, color1.green, color1.blue, color1.alpha ]);
 //	}
+
+	*alpha_ { arg opacity;
+		cmds = cmds.add([ "alp", opacity ]);
+	}
 
 // ------------ from extPlot2D (swiki) ------------
 

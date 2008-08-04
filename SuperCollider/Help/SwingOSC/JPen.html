@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of Pen. last mod: 16-jan-08 sciss
+<p>This class is meant as an emulation of Pen. last mod: 04-aug-08 sciss
 </p>
 <table>
 <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -412,6 +412,43 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
     )          
 </pre>
 <P>&nbsp;</P>
+<h3>*draw</h3>
+<pre>
+<span class="cl">JPen</span>.draw( <var>&lt;(Integer) option&gt;</var> )
+
+</pre>
+<P>Fills and/or strokes the previously defined shape. The possible values for <code><var>&lt;option&gt;</var></code> are:</P>
+<UL>
+<LI><code>0</code> : just fill, using the non-zero rule</LI>
+<LI><code>1</code> : just fill, using the even-odd rule</LI>
+<LI><code>2</code> : just stroke</LI>
+<LI><code>3</code> : fill, using the non-zero rule, and stroke</LI>
+<LI><code>4</code> : fill, using the even-odd rule, and stroke</LI>
+</UL>
+<P>&nbsp;</P>
+<P><code><span class="cl">JPen</span>.fillStroke</code> is a synonym for <code><span class="cl">JPen</span>.draw(&nbsp;4&nbsp;)</code>. Example:</p>
+<pre>
+    (
+    w = <span class="cl">JSCWindow</span>.new.front;
+    w.view.background_(<span class="cl">Color</span>.white);
+    w.drawHook = {
+        4.do({ <span class="kw">arg</span> option; <span class="cl">JPen</span>.use({
+            <span class="cl">JPen</span>.translate( (option &amp; 1) * 200, (option &amp; 2) * 100 );
+            <span class="cl">JPen</span>.fillColor = <span class="cl">Color</span>.black;
+            JPen.stringAtPoint( <span class="st">"option = "</span> ++ option, 30 @ 40 );
+            <span class="cl">JPen</span>.fillColor = <span class="cl">Color</span>.red;
+            <span class="cl">JPen</span>.moveTo( 100 @  50);
+            <span class="cl">JPen</span>.lineTo( 100 @ 150);
+            <span class="cl">JPen</span>.lineTo( 150 @  50);
+            <span class="cl">JPen</span>.lineTo(  50 @ 100);
+            <span class="cl">JPen</span>.lineTo( 150 @ 100);
+            <span class="cl">JPen</span>.draw( option );
+        }); });
+    };
+    w.refresh;
+    )
+</pre>
+<P>&nbsp;</P>
 <h2>Basic Shape Drawing Methods</h2>
 <P>The following methods do <strong>not</strong> require separate <code>stroke</code> or <code>fill</code> calls. They directly paint a primitive geometric form.</P>
 <h3>*strokeRect</h3>
@@ -767,7 +804,7 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 <P>&nbsp;</P>
 <h3>*matrix_</h3>
 <pre>
-<span class="cl">JPen</span>.matrix( <var>&lt;(Array) array&gt;</var> )
+<span class="cl">JPen</span>.matrix_( <var>&lt;(Array) array&gt;</var> )
 
 </pre>
 <p>Transforms (<EM>re-sets</EM>) the coordinate system, using the coefficients of an affine-transform matrix.
@@ -782,7 +819,7 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 <LI><code>y</code> : translateY (0.0 = no translation. positive values = move down, negative values = move up)</LI>
 </UL>
 <P>&nbsp;</P>
-<P>Successive calls of <code>*matrix</code> concatenate with the previous matrix. Thus, if you need to undo the transforms, you should make use of the <code>*use</code> method (see below). Example:
+<P>Successive calls of <code>*matrix_</code> concatenate with the previous matrix. Thus, if you need to undo the transforms, you should make use of the <code>*use</code> method (see below). Example:
 </p>
 <pre>
     (
@@ -876,6 +913,29 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 
         <span class="cl">JPen</span>.stroke;
     };
+    )
+</pre>
+<P>&nbsp;</P>
+<h3>*alpha_</h3>
+<pre>
+<span class="cl">JPen</span>.alpha_( <var>&lt;(Float) opacity&gt;</var> )
+
+</pre>
+<p>Sets the alpha value (translucency) of the subsequent drawing operations. This is often easier than scaling all fill- and stroke-colors in their alpha dimension, and besides works with other graphics operations such as image painting, as the following example shows:
+</p>
+<pre>
+    (
+    i = <span class="cl">JImage</span>.load( <span class="st">&quot;http://sciss.de/swingOSC/application.png&quot;</span> );
+    w = <span class="cl">JSCWindow</span>.new.front;
+    w.drawHook = {
+        (1..10).do({ <span class="kw">arg</span> j;
+            <span class="cl">JPen</span>.alpha = j / 10;
+            <span class="cl">JPen</span>.translate( 24 + 4.bilinrand, 24 + 4.bilinrand );
+            <span class="cl">JPen</span>.image( i );
+        });
+    };
+    w.onClose = { i.destroy; r.stop };
+    r = { <span class="kw">inf</span>.do({ w.refresh; 0.02.wait })}.fork( <span class="cl">AppClock</span> );
     )
 </pre>
 <P>&nbsp;</P>
@@ -992,9 +1052,9 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
     )
 </pre>
 <P>&nbsp;</P>
-<h3>*setSmoothing</h3>
+<h3>*smoothing_</h3>
 <pre>
-<span class="cl">JPen</span>.setSmoothing( <var>&lt;(Boolean) flag&gt;</var> )
+<span class="cl">JPen</span>.smoothing_( <var>&lt;(Boolean) flag&gt;</var> )
 
 </pre>
 <p>Turns on/off anti-aliasing. <strong>WARNING:</strong> non-antialiased string drawing currently looks very different in cocoa and swing (much thicker in swing). Example:
@@ -1006,7 +1066,7 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
     w.drawHook = {
         <span class="cl">JPen</span>.width = 2;
         2.do({ <span class="kw">arg</span> i;
-            <span class="cl">JPen</span>.setSmoothing( i == 1 );
+            <span class="cl">JPen</span>.smoothing = i == 1;
             <span class="cl">JPen</span>.strokeOval( <span class="cl">Rect</span>( 100, 100, 50, 50 ));
             <span class="cl">JPen</span>.moveTo( 100 @ 200 );
             <span class="cl">JPen</span>.quadCurveTo( 200 @ 300, 100 @ 300 );

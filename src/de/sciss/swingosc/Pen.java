@@ -42,9 +42,11 @@
  
 package de.sciss.swingosc;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -89,19 +91,14 @@ public class Pen
 implements Icon
 {
 	protected Component 				c			= null;
-//	private final GeneralPath			gp			= new GeneralPath();
-//	private final AffineTransform		at			= new AffineTransform();
-//	private Paint						pntDraw		= null;
-//	private Paint						pntFill		= null;
 	private Cmd[] 						cmds		= new Cmd[ 0 ];
 	protected final Stack 				context		= new Stack();
 	
 	protected final List				recCmds		= new ArrayList();
-	private final Map					mapConstr	= new HashMap( 33 );
+	private final Map					mapConstr	= new HashMap( 37 );
 	
 	protected final float[]				pt			= new float[ 8 ];
 	
-//	private static final float			kRad2Deg	= (float) (180.0 / Math.PI);
 	private static final float			kRad2DegM	= (float) (-180.0 / Math.PI);
 	
 	protected static final BasicStroke	strkDefault	= new BasicStroke( 1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER );
@@ -119,6 +116,7 @@ implements Icon
 	protected final static Map			antiAliasOff;
 	
 	private final Point					ptOrigin	= new Point();
+	protected Composite					compOrig;
 	
 	static {
 		antiAliasOn		= new RenderingHints( null );
@@ -138,6 +136,7 @@ implements Icon
 	{
 		mapConstr.put( "drw", new ConstrDraw() );
 		mapConstr.put( "fll", new ConstrFill() );
+		mapConstr.put( "fdr", new ConstrFillDraw() );
 		mapConstr.put( "stk", new ConstrWidth() );
 		mapConstr.put( "dsh", new ConstrDash() );
 		mapConstr.put( "joi", new ConstrJoin() );
@@ -168,6 +167,7 @@ implements Icon
 		mapConstr.put( "pop", new ConstrPop() );
 		mapConstr.put( "clp", new ConstrClip() );
 		mapConstr.put( "ali", new ConstrSmooth() );
+		mapConstr.put( "alp", new ConstrAlpha() );
 		mapConstr.put( "img", new ConstrImage() );
 		mapConstr.put( "imc", new ConstrCroppedImage() );
 		mapConstr.put( "pnt", new ConstrPaint() );
@@ -271,6 +271,10 @@ implements Icon
 		final Stroke			strkOrig	= g2.getStroke();
 		final Shape				clipOrig	= g2.getClip();
 		
+		compOrig = g2.getComposite();
+
+//System.out.println( "compOrig = " + compOrig );
+		
 //		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 		g2.addRenderingHints( antiAliasOn );
 		if( absCoords ) {
@@ -301,6 +305,7 @@ implements Icon
 		}
 
 //System.out.println( "transform was " + g2.getTransform() + "; orig " + atOrig );
+		g2.setComposite( compOrig );
 		g2.setTransform( atOrig );
 		g2.setStroke( strkOrig );
 		g2.setClip( clipOrig );
@@ -316,7 +321,7 @@ implements Icon
 		return c == null ? 0 : c.getHeight();
 	}
 
-	private static class GraphicsContext
+	private class GraphicsContext
 	{
 		protected Paint					pntDraw;
 		protected Paint					pntFill;
@@ -327,6 +332,7 @@ implements Icon
 		protected GeneralPath			gp;
 		protected Font					fnt;
 		protected Map					hints;
+		protected Composite				comp;
 		
 		protected GraphicsContext()
 		{
@@ -356,6 +362,7 @@ implements Icon
 		{
 			g2.setClip( clip );
 			g2.addRenderingHints( hints );
+			g2.setComposite( comp == null ? compOrig : comp );
 		}
 	}
 	
@@ -536,14 +543,10 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class CmdHints
 	extends Cmd
 	{
-//		private final RenderingHints.Key key;
-//		private final Object value;
 		private final Map hints;
 
 		protected CmdHints( RenderingHints.Key key, Object value )
 		{
-//			this.key 	= key;
-//			this.value 	= value;
 			hints 		= new RenderingHints( key, value );
 		}
 		
@@ -554,8 +557,23 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		
 		protected void perform( Graphics2D g2 )
 		{
-//			g2.setRenderingHint( key, value );
 			g2.addRenderingHints( hints );
+		}
+	}
+
+	private class CmdComposite
+	extends Cmd
+	{
+		private final Composite comp;
+
+		protected CmdComposite( Composite comp )
+		{
+			this.comp = comp;
+		}
+		
+		protected void perform( Graphics2D g2 )
+		{
+			g2.setComposite( comp );
 		}
 	}
 
@@ -748,7 +766,6 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		protected int constr( Object[] cmd, int off )
 		{
 			recCmds.add( new CmdDraw( gc.gp ));
-//			recCmds.add( new CmdFill( gc.strk.createStrokedShape( gc.gp ), gc.pntDraw ));
 			gc.gp = new GeneralPath();
 			return off;
 		}
@@ -761,14 +778,50 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 		protected int constr( Object[] cmd, int off )
 		{
-//			recCmds.add( new CmdFill( new GeneralPath( gc.gp )));
-//			gc.gp.reset();
 			recCmds.add( new CmdFill( gc.gp ));
 			gc.gp = new GeneralPath();
 			return off;
 		}
 	}
 
+	// 0: type
+	private class ConstrFillDraw
+	extends Constr
+	{
+		protected ConstrFillDraw() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			final int type = ((Number) cmd[ off++ ]).intValue();
+			switch( type ) {
+			case 0:	// fill (NON_ZERO)
+				recCmds.add( new CmdFill( gc.gp ));
+				break;
+			case 1:	// fill (EVEN_ODD)
+				gc.gp.setWindingRule( GeneralPath.WIND_EVEN_ODD );
+				recCmds.add( new CmdFill( gc.gp ));
+				break;
+			case 2:	// draw
+				recCmds.add( new CmdDraw( gc.gp ));
+				break;
+			case 3:	// fill (NON_ZERO) and draw
+				recCmds.add( new CmdFill( gc.gp ));
+				recCmds.add( new CmdDraw( gc.gp ));
+				break;
+			case 4:	// fill (EVEN_ODD) and draw
+				gc.gp.setWindingRule( GeneralPath.WIND_EVEN_ODD );
+				recCmds.add( new CmdFill( gc.gp ));
+				recCmds.add( new CmdDraw( gc.gp ));
+				break;
+			default:
+				System.out.println( "JPen.fillDraw illegal type " + type );
+				break;
+			}
+			gc.gp = new GeneralPath();
+			return off;
+		}
+	}
+	
 	private class ConstrClip
 	extends Constr
 	{
@@ -853,6 +906,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		}
 	}
 
+	// 0: width
 	private class ConstrWidth
 	extends Constr
 	{
@@ -869,6 +923,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		}
 	}
 
+	// 0: type
 	private class ConstrJoin
 	extends Constr
 	{
@@ -886,6 +941,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		}
 	}
 
+	// 0: N (num values), 1..N = float values
 	private class ConstrDash
 	extends Constr
 	{
@@ -1192,6 +1248,27 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 //			key			= RenderingHints.KEY_COLOR_RENDERING;
 //			value		= onOff ? RenderingHints.VALUE_COLOR_RENDER_QUALITY : RenderingHints.VALUE_COLOR_RENDER_SPEED;
 			recCmds.add( new CmdHints( hints ));
+			return off;
+		}
+	}
+
+	// 0: opacity
+	private class ConstrAlpha
+	extends Constr
+	{
+		protected ConstrAlpha() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			final float opacity = ((Number) cmd[ off++ ]).floatValue();
+			final Composite c;
+			if( opacity == 1f ) {
+				c = AlphaComposite.SrcOver;
+			} else {
+				c = AlphaComposite.getInstance( AlphaComposite.SRC_OVER, opacity );
+			}
+			gc.comp = c;
+			recCmds.add( new CmdComposite( c ));
 			return off;
 		}
 	}
