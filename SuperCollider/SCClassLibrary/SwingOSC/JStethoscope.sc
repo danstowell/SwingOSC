@@ -24,13 +24,15 @@
  *
  *
  *	Changelog:
+ *	 - 04-Aug-08	reverting to old control-rate scoping, as the new one using
+ *				RecordBuf.kr is obviously broken (lags behind several seconds)
  */
 
 /**
  *	A replacement for (Cocoa) Stethoscope.
  *
  *	@author		Hanns Holger Rutz, Marije Baalman
- *	@version		0.60, 21-Apr-08
+ *	@version		0.61, 04-Aug-08
  */
 JStethoscope {
 	classvar ugenScopes;
@@ -97,12 +99,12 @@ JStethoscope {
 		if( synth.isPlaying.not, {
 			synth = SynthDef( "jscope" ++ numChannels, { arg in, switch, bufnum;
 				var z;
-				//	Select.ar( switch, 
-				JScopeOut.ar( In.ar( in, numChannels ), bufnum, 1-switch ); 
-				JScopeOut.kr( In.kr( in, numChannels ), bufnum, switch ); 
+//				JScopeOut.ar( In.ar( in, numChannels ), bufnum, 1-switch ); 
+//				JScopeOut.kr( In.kr( in, numChannels ), bufnum, switch ); 
+				z = Select.ar(switch, [In.ar(in, numChannels), K2A.ar(In.kr(in, numChannels))]); 
+				JScopeOut.ar(z, bufnum);
 
-			}).play( RootNode( server ), [ \bufnum, buffer.bufnum, \in, index, \switch ] 
-				++ if( rate === 'audio', 0, 1 ), \addToTail );
+			}).play( RootNode( server ), [ \bufnum, buffer.bufnum, \in, index, \switch, (rate === \control).binaryValue ], \addToTail );
 			synth.isPlaying = true;
 			NodeWatcher.register( synth );
 		});
