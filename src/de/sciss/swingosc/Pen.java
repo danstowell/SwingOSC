@@ -82,7 +82,7 @@ import javax.swing.JComponent;
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.60, 03-Apr-08
+ *	@version	0.61, 04-Aug-08
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -138,7 +138,9 @@ implements Icon
 	{
 		mapConstr.put( "drw", new ConstrDraw() );
 		mapConstr.put( "fll", new ConstrFill() );
-		mapConstr.put( "stk", new ConstrStroke() );
+		mapConstr.put( "stk", new ConstrWidth() );
+		mapConstr.put( "dsh", new ConstrDash() );
+		mapConstr.put( "joi", new ConstrJoin() );
 		mapConstr.put( "mov", new ConstrMoveTo() );
 		mapConstr.put( "lin", new ConstrLineTo() );
 		mapConstr.put( "qua", new ConstrQuadTo() );
@@ -851,17 +853,55 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		}
 	}
 
-	private class ConstrStroke
+	private class ConstrWidth
 	extends Constr
 	{
-		protected ConstrStroke() { /* empty */ }
+		protected ConstrWidth() { /* empty */ }
 
 		protected int constr( Object[] cmd, int off )
 		{
 			final float width = ((Number) cmd[ off++ ]).floatValue();
 			gc.strk	 = new BasicStroke( width,
-						BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER ); // JOIN_MITER
-//			recCmds.add( new CmdStroke(  ));
+						BasicStroke.CAP_BUTT, gc.strk.getLineJoin(),
+						gc.strk.getMiterLimit(), gc.strk.getDashArray(),
+						gc.strk.getDashPhase() );
+			return off;
+		}
+	}
+
+	private class ConstrJoin
+	extends Constr
+	{
+		protected ConstrJoin() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			// 0 = miter, 1 = round, 2 = bevel (same as in Java2D!)
+			final int join = ((Number) cmd[ off++ ]).intValue();
+			gc.strk	 = new BasicStroke( gc.strk.getLineWidth(),
+						BasicStroke.CAP_BUTT, join,
+						gc.strk.getMiterLimit(), gc.strk.getDashArray(),
+						gc.strk.getDashPhase() );
+			return off;
+		}
+	}
+
+	private class ConstrDash
+	extends Constr
+	{
+		protected ConstrDash() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			final int	dashNum = ((Number) cmd[ off++ ]).intValue();
+			final float dash[]	= new float[ dashNum ];
+			for( int i = 0; i < dashNum; i++ ) {
+				dash[ i ] = ((Number) cmd[ off++ ]).floatValue();
+			}
+			gc.strk	 = new BasicStroke( gc.strk.getLineWidth(),
+						BasicStroke.CAP_BUTT, gc.strk.getLineJoin(),
+						gc.strk.getMiterLimit(), dash,
+						gc.strk.getDashPhase() );
 			return off;
 		}
 	}

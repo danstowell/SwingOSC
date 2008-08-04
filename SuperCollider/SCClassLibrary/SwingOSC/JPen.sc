@@ -29,6 +29,7 @@
  *	- 01-Jan-07	bundle size increased to 8K again
  *				; fixes missing List -> asSwingArg ; setSmoothing
  *	- 25-Feb-08	added image methods
+ *	- 04-Aug-08	incorporated some of the additions from charles picasso
  */
 
 /**
@@ -46,7 +47,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.60, 25-Feb-08
+ *	@version		0.61, 04-Aug-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not
@@ -108,12 +109,28 @@ JPen {
 		cmds = cmds.add([ "fnt", font.name, font.size, font.style ]);
 	}
 
+	/**
+	 *	@deprecated
+	 */
 	*setSmoothing { arg flag = true;
+		this.deprecated( thisMethod, Meta_JPen.findRespondingMethodFor( \smoothing_ ));
+		this.smoothing = flag;
+	}
+
+	*smoothing_ { arg flag = true;
 		cmds = cmds.add([ "ali", flag.binaryValue ]);
 	}
 	
 	*paint_ { arg paint;
 		cmds = cmds.add([ "pnt", paint.id ]);
+	}
+
+	*joinStyle_ { arg style = 0; // 0 = miter, 1 = round, 2 = bevel
+		cmds = cmds.add([ "joi", style ]);
+	}
+	
+	*lineDash_ { arg pattern; // should be a FloatArray
+		cmds = cmds.add([ "dsh", pattern.size ] ++ pattern );
 	}
 
 // ------------- path composition -------------
@@ -178,7 +195,15 @@ JPen {
 	*clip {
 		cmds = cmds.add([ "clp" ]);
 	}
-	
+
+//	*fillStroke {
+//		this.draw( 4 );
+//	}
+//	
+//	*draw { arg option = 0; // 0 = fill, 1 = eofill, 2 = stroke, 3 = fillstroke, 4 = eofillstroke
+//		cmds = cmds.add([ "fdr", option ]);
+//	}
+
 // ------------- direct drawing commands -------------
 
 	*strokeRect { arg rect;
@@ -241,6 +266,12 @@ JPen {
 	*imageSlice { arg img, point, rect;
 		cmds = cmds.add([ "imc", img.id, point.x, point.y, rect.left, rect.top, rect.width, rect.height ]);
 	}
+
+// ------------ gradients ------------
+
+//	*fillAxialGradient { arg startPoint, endPoint, color0, color1;
+//		cmds = cmds.add([ "fag", startPoint.x, startPoint.y, endPoint.x, endPoint.y, color0.red, color0.green, color0.blue, color0.alpha, color1.red, color1.green, color1.blue, color1.alpha ]);
+//	}
 
 // ------------ from extPlot2D (swiki) ------------
 
