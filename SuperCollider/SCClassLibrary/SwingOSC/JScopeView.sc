@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCScope class.
  *
  *	@author		Hanns Holger Rutz, Marije Baalman
- *	@version		0.60, 24-Apr-08
+ *	@version		0.61, 11-Aug-08
  */
 JScopeOut : UGen {
 	// ----------------- quasi-constructors -----------------
@@ -129,7 +129,7 @@ JSCScope : JSCView {
 //	}
 //	// JJJ end
 
-	prSCViewNew {
+	prInitView {
 		var addr;
 		
 		audioServer	= Server.default;
@@ -142,7 +142,7 @@ JSCScope : JSCView {
 		properties.put( \yZoom, 1.0 );
 		properties.put( \style, 0 );
 //		properties.put( \antiAliasing, true );
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.ScopeView", ']' ],
 			[ '/method', this.id, \setServer, addr.hostname, addr.port, audioServer.options.protocol ],
 			[ '/method', this.id, \startListening ]

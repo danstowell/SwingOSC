@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.58, 12-Jan-08
+ *	@version		0.61, 11-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JPeakMeterManager {
@@ -258,14 +258,14 @@ JSCPeakMeterView : JSCControlView {
 //					   [ '/free', "ac" ++ this.id ]]);
 	}
 
-	prSCViewNew {
+	prInitView {
 //		properties.put( \value, false );
 //		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
 //			// don't call valueAction coz we'd create a loop
 //			properties.put( \value, msg[4] != 0 );
 //			{ this.doAction; }.defer;
 //		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.gui.PeakMeterPanel", ']' ]
 		]);
 	}

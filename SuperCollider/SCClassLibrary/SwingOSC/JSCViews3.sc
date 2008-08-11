@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.58, 12-Jan-08
+ *	@version		0.61, 11-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JSCCheckBox : JSCControlView {
@@ -104,14 +104,14 @@ JSCCheckBox : JSCControlView {
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \value, false );
 		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
 			// don't call valueAction coz we'd create a loop
 			properties.put( \value, msg[4] != 0 );
 			{ this.doAction; }.defer;
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.CheckBox", ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, \selected, ']' ]
@@ -258,7 +258,7 @@ JSCTabbedPane : JSCContainerView {
 		^super.prRemoveChild( child );
 	}
 
-	prSCViewNew {
+	prInitView {
 		tabs = List.new;
 		properties.put( \opaque, false );
 		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
@@ -266,7 +266,7 @@ JSCTabbedPane : JSCContainerView {
 			properties.put( \value, msg[ 4 ]);
 			{ this.doAction; }.defer;
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.TabbedPane", ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, \selectedIndex, ']' ]
@@ -490,7 +490,7 @@ JSCScrollBar : JSCControlView {
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		maxExtent		= 0x3FFFFFFF / 0x40000000;
 		properties.put( \value, 0.0 );
 		properties.put( \extent, 1.0 );
@@ -510,7 +510,7 @@ JSCScrollBar : JSCControlView {
 				clpse.instantaneous;
 			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.ScrollBar", orientation, 0, 0x40000000, 0, 0x40000000, ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, '[', '/array', \value, \valueIsAdjusting, ']', ']' ],

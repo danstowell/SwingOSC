@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCNumberBox.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.60, 03-Apr-08
+ *	@version		0.61, 11-Aug-08
  */
 JSCNumberBox : JSCTextEditBase {
 
@@ -107,7 +107,7 @@ JSCNumberBox : JSCTextEditBase {
 			 [ '/free', "ac" ++ this.id, "tx" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \minDecimals, 0 );
 		properties.put( \maxDecimals, 8 );
 		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
@@ -136,7 +136,7 @@ JSCNumberBox : JSCTextEditBase {
 				object = serverString.asFloat;
 			};
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/set', '[', '/local', this.id,
 				'[', '/new', "de.sciss.swingosc.NumberField", ']', ']',
 				\space, '[', '/new', "de.sciss.util.NumberSpace", inf, -inf, 0.0, 0, 8, ']' ],

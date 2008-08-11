@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCMovieView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.58, 12-Jan-08
+ *	@version		0.61, 11-Aug-08
  */
 JSCMovieView : JSCView{
 	var <rate, <loopMode, <muted, <path, <editable;
@@ -147,14 +147,8 @@ JSCMovieView : JSCView{
 
 	// ----------------- private instance methods -----------------
 
-	prSCViewNew {
-//		properties.put( \bufnum, 0 );
-//		properties.put( \x, 0.0 );
-//		properties.put( \y, 0.0 );
-//		properties.put( \xZoom, 1.0 );
-//		properties.put( \yZoom, 1.0 );
-//		properties.put( \style, 0 );
-		^super.prSCViewNew([
+	prInitView {
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.MovieView", ']' ]		]);
 	}
 

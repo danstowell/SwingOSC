@@ -95,7 +95,7 @@ implements Icon
 	protected final Stack 				context		= new Stack();
 	
 	protected final List				recCmds		= new ArrayList();
-	private final Map					mapConstr	= new HashMap( 37 );
+	private final Map					mapConstr	= new HashMap( 38 );
 	
 	protected final float[]				pt			= new float[ 8 ];
 	

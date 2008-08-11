@@ -28,7 +28,7 @@
 
 /**
  *	@author	Hanns Holger Rutz
- *	@version	0.58, 13-Jan-07
+ *	@version	0.61, 11-Aug-08
  */
 //+ Object {
 //	asSwingArg {
@@ -95,19 +95,19 @@
 
 + Color {
 	asSwingArg {
-		^([ '[', '/new', 'java.awt.Color', this.red.asFloat, this.green.asFloat, this.blue.asFloat, this.alpha.asFloat, ']' ]);
+		^([ '[', '/new', "java.awt.Color", this.red.asFloat, this.green.asFloat, this.blue.asFloat, this.alpha.asFloat, ']' ]);
 	}
 }
 
 + Point {
 	asSwingArg {
-		^([ '[', '/new', 'java.awt.Point', this.x, this.y, ']' ]);
+		^([ '[', '/new', "java.awt.Point", this.x, this.y, ']' ]);
 	}
 }
 
 + Rect {
 	asSwingArg {
-		^([ '[', '/new', 'java.awt.Rectangle', this.left, this.top, this.width, this.height, ']' ]);
+		^([ '[', '/new', "java.awt.Rectangle", this.left, this.top, this.width, this.height, ']' ]);
 	}
 }
 
@@ -115,14 +115,14 @@
 // , at least with Aqua lnf the panels are not painted properly
 + Gradient {
 	asSwingArg {
-		^([ '[', '/new', 'java.awt.GradientPaint', 0.0, 0.0 ] ++ color1.asSwingArg ++ [
+		^([ '[', '/new', "java.awt.GradientPaint", 0.0, 0.0 ] ++ color1.asSwingArg ++ [
 			if( direction == \h, 1.0, 0.0 ), if( direction == \h, 0.0, 1.0 )] ++ color2.asSwingArg ++ [ ']' ]);
 	}
 }
 
 + HiliteGradient {
 	asSwingArg {
-		^([ '[', '/new', 'java.awt.GradientPaint', 0.0, 0.0 ] ++ color1.asSwingArg ++ [
+		^([ '[', '/new', "java.awt.GradientPaint", 0.0, 0.0 ] ++ color1.asSwingArg ++ [
 			if( direction == \h, frac, 0.0 ), if( direction == \h, 0.0, frac )] ++ color2.asSwingArg ++ [ ']' ]);
 	}
 }
@@ -136,5 +136,40 @@
 	 */
 	unblockPipe {
 		this.sendMsg( '/n_trace', 0 );
+	}
+	
+//	asSwingArg {
+//		XXX
+//	}
+}
+
+//+ Synth {
+//	asSwingArg {
+//		^([ '[', '/method', "de.sciss.jcollider.Synth", \basicNew, this.defName ] ++ this.server.asSwingArg ++ [ this.nodeID, ']' ]);
+//	}
+//}
+//
+//+ Group {
+//	asSwingArg {
+//		^([ '[', '/method', "de.sciss.jcollider.Group", \basicNew ] ++ this.server.asSwingArg ++ [ this.nodeID, ']' ]);
+//	}
+//}
+//
+//
+//+ Bus {
+//	asSwingArg {
+//		^([ '[', '/new', "de.sciss.jcollider.Bus" ] ++ this.server.asSwingArg ++ [ this.rate, this.index, this.numChannels, ']' ]);
+//	}
+//}
+//
+//+ Buffer {
+//	asSwingArg {
+//		^([ '[', '/new', "de.sciss.jcollider.Buffer" ] ++ this.server.asSwingArg ++ [ this.numFrames, this.numChannels, this.bufNum, ']' ]);
+//	}
+//}
+
++ NetAddr {
+	asSwingArg {
+		^([ '[', '/new', "java.net.InetSocketAddress", this.hostname, this.port, ']' ]);
 	}
 }

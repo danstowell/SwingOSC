@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 03-Aug-08
+ *	@version		0.61, 11-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -229,9 +229,9 @@ JSCCompositeView : JSCContainerView {
 
 	prChildOrder { ^0 }
 
-	prSCViewNew {
+	prInitView {
 		jinsets = Insets( 3, 3, 3, 3 );  // so focus borders of children are not clipped
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderLayout", ']', ']' ]
 		]);
 	}
@@ -339,6 +339,8 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		server.listSendBundle( nil, bndl );
 	}
 
+	prInitView {Êthis.prSCViewNew }
+
 	prGetWindow { ^window }
 
 	// created by JSCWindow
@@ -442,7 +444,7 @@ JSCScrollTopView : JSCTopView {
 		      [ '/free', "ch" ++ this.id ]], postMsg );
 	}
 	
-	prSCViewNew { arg preMsg, postMsg;
+	prInitView {
 		chResp	= OSCpathResponder( server.addr, [ '/change', this.id ], { arg time, resp, msg;
 			var newVal;
 		
@@ -457,7 +459,7 @@ JSCScrollTopView : JSCTopView {
 			});
 		}).add;
 		vpID = "vp" ++ this.id;
-		^super.prSCViewNew([[ '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']',
+		^this.prSCViewNew([[ '/local', vpID, '[', '/methodr', '[', '/method', this.id, \getViewport, ']', \getView, ']',
 			"ch" ++ this.id,
 			'[', '/new', "de.sciss.swingosc.ChangeResponder", this.id, '[', '/array', \viewX, \viewY, \innerWidth, \innerHeight, ']', ']' ]]);
 	}
@@ -573,7 +575,7 @@ JSCScrollView : JSCContainerView {
 		      [ '/free', "ch" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		chResp	= OSCpathResponder( server.addr, [ '/change', this.id ], { arg time, resp, msg;
 			var newVal;
 		
@@ -588,7 +590,7 @@ JSCScrollView : JSCContainerView {
 			});
 		}).add;
 		vpID = "vp" ++ this.id;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', vpID, '[', '/new', "de.sciss.swingosc.ContentPane", 0, ']',
 			  this.id, '[', '/new', "de.sciss.swingosc.ScrollPane", '[', '/ref', vpID, ']', ']',
  			  "ch" ++ this.id, '[', '/new', "de.sciss.swingosc.ChangeResponder", this.id,
@@ -646,8 +648,8 @@ JSCLayoutView : JSCContainerView {
 JSCHLayoutView : JSCLayoutView {
 	// ----------------- private instance methods -----------------
 
-	prSCViewNew {
-		^super.prSCViewNew([
+	prInitView {
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderAxisLayout", 0, 4, ']', ']' ]
 		]);
 	}
@@ -656,8 +658,8 @@ JSCHLayoutView : JSCLayoutView {
 JSCVLayoutView : JSCLayoutView {
 	// ----------------- private instance methods -----------------
 
-	prSCViewNew {
-		^super.prSCViewNew([
+	prInitView {
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "de.sciss.swingosc.ColliderAxisLayout", 1, 4, ']', ']' ]
 		]);
 	}
@@ -780,7 +782,7 @@ JSCSlider : JSCSliderBase
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \value, 0.0 );
 		properties.put( \step, 0.0 );
 		orientation = if( this.bounds.width > this.bounds.height, 0, 1 );
@@ -796,7 +798,7 @@ JSCSlider : JSCSliderBase
 				clpse.instantaneous;
 			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id,
 				'[', '/new', "de.sciss.swingosc.Slider", orientation, 0, 0x40000000, 0, ']',
 				"ac" ++ this.id,
@@ -972,7 +974,7 @@ JSCRangeSlider : JSCSliderBase {
 			 [ '/method', this.id, \dispose ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \lo, 0.0 );
 		properties.put( \hi, 1.0 );
 		properties.put( \step, 0.0 );
@@ -991,7 +993,7 @@ JSCRangeSlider : JSCSliderBase {
 				clpse.instantaneous;
 			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.RangeSlider", orientation, ']', ']',
 				\knobColor ] ++ Color.blue.asSwingArg,
 			[ '/local', "ac" ++ this.id,
@@ -1106,7 +1108,7 @@ JSC2DSlider : JSCSliderBase {
 			 [ '/method', this.id, \dispose ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \x, 0.0 );
 		properties.put( \y, 0.0 );
 		properties.put( \step, 0.0 );
@@ -1124,7 +1126,7 @@ JSC2DSlider : JSCSliderBase {
 				clpse.instantaneous;
 			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id,
 				'[', '/new', "de.sciss.swingosc.Slider2D", ']',
 				"ac" ++ this.id,
@@ -1266,7 +1268,7 @@ JSCButton : JSCControlView {
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \value, 0 );
 		jinsets = Insets( 3, 3, 3, 3 );
 		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
@@ -1281,7 +1283,7 @@ JSCButton : JSCControlView {
 			properties.put( \value, msg[4] );
 			{ this.doAction( modifiers )}.defer;
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.gui.MultiStateButton", ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, '[', '/array', \selectedIndex, \lastModifiers, ']', ']' ]
@@ -1407,7 +1409,7 @@ JSCPopUpMenu : JSCControlView {
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \value, 0 );
 		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
 			var newVal;
@@ -1419,7 +1421,7 @@ JSCPopUpMenu : JSCControlView {
 				{ this.doAction; }.defer;
 			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.PopUpView", ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, \selectedIndex, ']' ]
@@ -1603,9 +1605,9 @@ JSCStaticText : JSCStaticTextBase {
 
 	// ----------------- private instance methods -----------------
 
-	prSCViewNew {
+	prInitView {
 		properties.put( \canFocus, false );
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Label", ']' ]
 		]);
 	}
@@ -1748,7 +1750,7 @@ JSCListView : JSCControlView {
 
 	prContainerID { ^cnID }
 
-	prSCViewNew {
+	prInitView {
 		cnID = "cn" ++this.id;
 		properties.put( \value, 0 );
 		
@@ -1762,7 +1764,7 @@ JSCListView : JSCControlView {
 				{ this.doAction; }.defer;
 			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.ListView", ']', ']',
 				\selectionMode, 0 ],	// single selection only for compatibility
 			[ '/local', "cn" ++ this.id, 	// bars : v=asNeeded, h=never
@@ -1878,8 +1880,8 @@ JSCDragView : JSCStaticTextBase {
 JSCDragSource : JSCDragView {
 	// ----------------- private instance methods -----------------
 
-	prSCViewNew {
-		^super.prSCViewNew([
+	prInitView {
+		^this.prSCViewNew([
 //			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Label", ']', ']',
 //				\border, '[', '/method', "javax.swing.BorderFactory", \createRaisedBevelBorder, ']'
 //			]
@@ -1903,8 +1905,8 @@ JSCDragSink : JSCDragView {
 
 	// ----------------- private instance methods -----------------
 
-	prSCViewNew {
-		^super.prSCViewNew([
+	prInitView {
+		^this.prSCViewNew([
 //			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Label", ']', ']',
 //				\border, '[', '/method', "javax.swing.BorderFactory", \createLoweredBevelBorder, ']'
 //			]
@@ -1930,8 +1932,8 @@ JSCDragBoth : JSCDragView {		// in SwingOSC not subclass of JSCDragSink
 
 	// ----------------- private instance methods -----------------
 
-	prSCViewNew {
-		^super.prSCViewNew([
+	prInitView {
+		^this.prSCViewNew([
 //			[ '/set', '[', '/local', this.id, '[', '/new', "de.sciss.swingosc.Label", ']', ']',
 //				\border, '[', '/method', "javax.swing.BorderFactory", \createCompoundBorder,
 //					'[', '/method', "javax.swing.BorderFactory", \createRaisedBevelBorder, ']',
@@ -2099,10 +2101,10 @@ JSCUserView : JSCAbstractUserView {
 		^super.mouseOver( x, y, *rest );
 	}
 
-	prSCViewNew {
+	prInitView {
 		relativeOrigin	= false;
 		jinsets			= Insets( 3, 3, 3, 3 );
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.UserView", ']' ]
 		]);
 	}
@@ -2289,7 +2291,7 @@ JSCTextView : JSCView {
 	
 	prContainerID { ^cnID }
 
-	prSCViewNew {
+	prInitView {
 		cnID = "cn" ++this.id;
 //		properties.put( \value, 0 );
 		
@@ -2327,7 +2329,7 @@ if( verbose and: { msg[ 4 ] != str.size }, { ("JSCTextView discrepancy. SwingOSC
 			};
 		}).add;
 		
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.TextView", ']',
 				"cn" ++ this.id,				 	// bars : v=never, h=never
 				'[', '/new', "javax.swing.JScrollPane", '[', '/ref', this.id, ']', 21, 31, ']',
@@ -2552,7 +2554,7 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		var initVal;
 		initVal	= 0 ! 8;
 		properties.put( \value, initVal );
@@ -2593,7 +2595,7 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 				clpse.instantaneous;
 			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.MultiSlider", ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionMessenger",  // ActionResponder
@@ -3045,7 +3047,7 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 			 [ '/free', "ac" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		var initVal;
 //		initVal	= nil ! 8 ! 2;	// pretty stupid
 		initVal	= [[],[]];
@@ -3092,7 +3094,7 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 //				clpse.instantaneous;
 //			});
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.EnvelopeView", false, ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionMessenger",  // ActionResponder

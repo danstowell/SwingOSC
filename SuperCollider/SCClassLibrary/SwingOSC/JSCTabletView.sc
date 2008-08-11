@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.58, 12-Jan-08
+ *	@version		0.61, 11-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JSCTabletView : JSCAbstractUserView {
@@ -65,7 +65,7 @@ JSCTabletView : JSCAbstractUserView {
 			 [ '/free', "tab" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		var bndl;
 		
 		relativeOrigin	= true;
@@ -74,7 +74,7 @@ JSCTabletView : JSCAbstractUserView {
 		bndl				= List.new;
 		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.TabletView", ']' ]);
 		this.prCreateTabletResponder( bndl );
-		^super.prSCViewNew( bndl );
+		^this.prSCViewNew( bndl );
 	}
 
 	prCreateMouseResponder {} // overridden to not create one
@@ -86,8 +86,8 @@ JSCTabletView : JSCAbstractUserView {
 			"JSCTabletView.prCreateTabletResponder : already created!".warn;
 			^nil;
 		});
-		clpseMouseMove	= Collapse({ arg x, y, modifiers; this.mouseOver( x, y, modifiers )});
-		clpseMouseDrag	= Collapse({ arg x, y, modifiers; this.mouseMove( x, y, modifiers )});
+//		clpseMouseMove	= Collapse({ arg x, y, modifiers; this.mouseOver( x, y, modifiers )});
+//		clpseMouseDrag	= Collapse({ arg x, y, modifiers; this.mouseMove( x, y, modifiers )});
 	// [ "/tablet", <componentID>, <state>, <deviceID>, <localX>, <localY>, <pressure>,
 	//   <tiltX>, <tiltY>, <rota>, <tanPressure>, <absX>, <absY>, <absZ>,
 	//   <buttonMask>, <clickCount>

@@ -214,7 +214,7 @@ implements OSCListener, ActionListener
 				return;
 			}
 			
-			System.out.println( "here " + collClients.size() );
+//			System.out.println( "here " + collClients.size() );
 
 			numTask = 0;
 			for( int i = 0, off = index + 2; i < collClients.size(); i++ ) {
@@ -235,7 +235,7 @@ implements OSCListener, ActionListener
 					mc.task = false;
 				}
 			}
-			System.out.println( "numTask now " + numTask );
+//			System.out.println( "numTask now " + numTask );
 			if( numTask == 0 ) {
 				timer.stop();
 			}

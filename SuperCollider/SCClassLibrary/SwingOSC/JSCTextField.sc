@@ -30,7 +30,7 @@
  *	Replacement for the (Cocoa) SCTextField.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.60, 03-Apr-08
+ *	@version		0.61, 11-Aug-08
  */
 JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 
@@ -63,7 +63,7 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 			 [ '/free', "ac" ++ this.id, "tx" ++ this.id ]], postMsg );
 	}
 
-	prSCViewNew {
+	prInitView {
 		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
 			// don't call valueAction coz we'd create a loop
 			object = msg[4].asString;
@@ -88,7 +88,7 @@ if( msg[4] != str.size, { ("Yukk. len is "++msg[4]++"; but string got "++str.siz
 				string = serverString = serverString.keep( msg[3] ) ++ serverString.drop( msg[3] + msg[4] );
 			};
 		}).add;
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.TextField", ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, \text, ']',

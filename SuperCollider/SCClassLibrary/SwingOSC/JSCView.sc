@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.60, 03-Apr-08
+ *	@version		0.61, 11-Aug-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -300,19 +300,17 @@ JSCView {  // abstract class
 	prInit { arg argParent, argBounds, argViewClass, argServer, argID;
 		server		= argServer; // ?? { argParent.server; };
 		properties	= IdentityDictionary.new;
-//		properties.put( \bounds, argBounds );
 		scBounds		= argBounds;
-//		properties.put( \visible, true );
 		properties.put( \enabled, true );
 		properties.put( \canFocus, true );
 		properties.put( \resize, 1 );
-//		this.id		= argID ?? { server.nextNodeID; };
-//		properties.put( \id, argID ?? { server.nextNodeID });
 		id			= argID ?? { server.nextNodeID };
 		dataptr		= id;
 
-		^this.prSCViewNew;
+		^this.prInitView;
 	}
+	
+	prInitView { ^this.subclassResponsibility( thisMethod )}
 	
 	prClose { arg preMsg, postMsg;
 		var bndl, cnID = this.prContainerID;

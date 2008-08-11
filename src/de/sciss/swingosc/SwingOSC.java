@@ -86,7 +86,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.61, 04-Apr-08
+ *  @version	0.61, 11-Aug-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -401,7 +401,7 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 		System.exit( 0 );
 	}
 
-	protected static void printException( Throwable e, String opName )
+	public static void printException( Throwable e, String opName )
 	{
 		System.out.println( opName + " : " + e.getClass().getName() + " : " + e.getLocalizedMessage() );
         final StackTraceElement[] trace = e.getStackTrace();
@@ -413,7 +413,7 @@ implements OSCListener, OSCProcessor, EventManager.Processor
         }
 	}
 
-	protected static void printException( Throwable e, OSCMessage msg )
+	public static void printException( Throwable e, OSCMessage msg )
 	{
 		printException( e, msg.getName() );
 	}

@@ -33,7 +33,7 @@
  *	Replacement for / enhancement of the (Cocoa) SCSoundFileView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.59, 17-Feb-08
+ *	@version		0.61, 11-Aug-08
  */
 JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	classvar cacheServers;	// IdentitySet whose elements are SwingOSC instances
@@ -523,7 +523,7 @@ if( val == 2, { "JSCSoundFileView.style_ : lissajou not yet implemented".error; 
 		soundfile = SoundFile.new;
 	}
 	
-	prSCViewNew {
+	prInitView {
 		cacheServers = cacheServers ?? {
 			UI.registerForShutdown({ cacheServers.do(_.sendMsg( '/free', \cache ))});
 			IdentitySet.new;
@@ -570,7 +570,7 @@ if( val == 2, { "JSCSoundFileView.style_ : lissajou not yet implemented".error; 
 		});
 		viewResp.add;
 
-		^super.prSCViewNew([
+		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.SoundFileView", ']',
 				"vw" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.SoundFileViewResponder", this.id, ']' ],

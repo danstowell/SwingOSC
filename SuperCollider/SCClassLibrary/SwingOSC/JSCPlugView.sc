@@ -32,7 +32,7 @@
  *	JComponent (using JSCPlugView) or JPanel (using JSCPlugContainerView)
  *	with other JSCView classes.
  *
- *	@version		0.59, 26-Jan-08
+ *	@version		0.61, 11-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JSCPlugView : JSCView {
@@ -59,7 +59,8 @@ JSCPlugView : JSCView {
 	// ----------------- private instance methods -----------------
 
 	doesNotUnderstand { arg ... args;
-		javaObject.doesNotUnderstand( *args );
+		var result = javaObject.doesNotUnderstand( *args );
+		^if( result === javaObject, this, result );
 	}
 	
 	prSetJavaObject { arg o; javaObject = o }
