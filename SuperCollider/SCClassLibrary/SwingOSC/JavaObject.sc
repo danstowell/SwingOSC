@@ -25,6 +25,7 @@
  *
  *	Changelog:
  *		26-Jan-08  added double underscore syntax
+ *		12-Aug-08  added JavaObjectD
  */
 
 /**
@@ -33,7 +34,7 @@
  *	we exploit this behaviour to create an easy wrapper
  *	class for Java object control in SwingOSC.
  *
- *	@version	0.59, 26-Jan-08
+ *	@version	0.61, 12-Aug-08
  *	@author	Hanns Holger Rutz
  */
 JavaObject {
@@ -254,4 +255,22 @@ JavaObject {
 	pair { arg ... args; this.doesNotUnderstand( \pair, *args ); }
 	source { arg ... args; this.doesNotUnderstand( \source, *args ); }
 	clear { arg ... args; this.doesNotUnderstand( \clear, *args ); }
+}
+
+/**
+ *	A variant of JavaObject that allows you
+ *	to register a destroyAction that is called
+ *	before the server reference is freed.
+ */
+JavaObjectD : JavaObject {
+	var <>destroyAction;
+	
+	destroy {
+		try {
+			destroyAction.value( this );
+		}Ê{ arg e;
+			e.reportError;
+		};
+		super.destroy;
+	}
 }
