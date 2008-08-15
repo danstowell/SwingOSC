@@ -32,7 +32,7 @@
  *	JComponent (using JSCPlugView) or JPanel (using JSCPlugContainerView)
  *	with other JSCView classes.
  *
- *	@version		0.61, 11-Aug-08
+ *	@version		0.61, 14-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JSCPlugView : JSCView {
@@ -48,11 +48,7 @@ JSCPlugView : JSCView {
 		^basic.init( parent, bounds, javaObject.id );
 	}
 	
-//	prSCViewNew {
-//		^super.prSCViewNew([
-//			[ '/local', this.id, '[', '/new', javaClass, ']' ]
-//		]);
-//	}
+	prInitView { ^this.prSCViewNew }
 
 	// from JavaObject.sc
 
@@ -85,6 +81,8 @@ JSCPlugContainerView : JSCContainerView {
 	}
 	
 	// ----------------- private instance methods -----------------
+
+	prInitView { ^this.prSCViewNew }
 
 	doesNotUnderstand { arg ... args;
 		javaObject.doesNotUnderstand( *args );
