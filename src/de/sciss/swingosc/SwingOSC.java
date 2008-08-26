@@ -86,7 +86,7 @@ import de.sciss.util.URLClassLoaderManager;
  *	state changes.
  *
  *  @author		Hanns Holger Rutz
- *  @version	0.61, 20-Aug-08
+ *  @version	0.61, 26-Aug-08
  *
  *	@todo		rendezvous option (jmDNS)
  *	@todo		[NOT?] /n_notify (sending things like /n_go, n_end)
@@ -111,6 +111,8 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 	
 	protected final Map				oscCmds			= new HashMap( 20 );	// OSC-command-name to OSCProcessor
 	private final EventManager		elm;
+	
+	private static int				numTraceLines	= 3;
 
 //	private final DynamicURLClassLoader classLoaderMgr;
 	protected final URLClassLoaderManager classLoaderMgr;
@@ -300,6 +302,11 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 		
 		elm = new EventManager( this );
 	}
+    
+    public static void setNumTraceLines( int num )
+    {
+    	numTraceLines = num;
+    }
 	
 	public static int notNull( Object o )
 	{
@@ -405,7 +412,7 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 	{
 		System.out.println( opName + " : " + e.getClass().getName() + " : " + e.getLocalizedMessage() );
         final StackTraceElement[] trace = e.getStackTrace();
-        for( int i = 0; i < Math.min( 3, trace.length ); i++ ) {
+        for( int i = 0; i < Math.min( numTraceLines, trace.length ); i++ ) {
             System.out.println( "\tat " + trace[ i ]);
         }
         if( trace.length > 3 ) {

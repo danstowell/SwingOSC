@@ -26,6 +26,7 @@
  *  Changelog:
  *		18-Nov-06	created
  *		28-Jul-07	added cache support
+ *		26-Aug-08	uses java default tmp dir instead of user prefs tmp dir
  */
 package de.sciss.swingosc;
 
@@ -75,14 +76,14 @@ import de.sciss.io.AudioFile;
 import de.sciss.io.AudioFileCacheInfo;
 import de.sciss.io.AudioFileDescr;
 import de.sciss.io.CacheManager;
-import de.sciss.io.IOUtil;
+//import de.sciss.io.IOUtil;
 import de.sciss.io.InterleavedStreamFile;
 import de.sciss.io.Span;
 import de.sciss.util.MutableInt;
 import de.sciss.util.MutableLong;
 
 /**
- *	@version	0.59, 25-Feb-08
+ *	@version	0.61, 26-Aug-08
  *	@author		Hanns Holger Rutz
  */
 public class SoundFileView
@@ -584,7 +585,8 @@ implements FocusListener
 		try {
 			for( int i = 0; i < SUBNUM; i++ ) {
 				afd						= new AudioFileDescr( proto );
-				afd.file				= IOUtil.createTempFile();
+				afd.file				= File.createTempFile( "swing", null, null );
+				afd.file.deleteOnExit();
 				afd.rate				= decimHelps[ i ].rate;
 				tempF[ i ]				= AudioFile.openAsWrite( afd );
 			}
