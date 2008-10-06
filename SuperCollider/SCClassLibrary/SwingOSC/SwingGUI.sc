@@ -139,10 +139,10 @@ SwingGUI {
 	 *	call, measurements be cached by classes that need to use
 	 *	string bounds.
 	 */
-	*stringBounds { arg string, font;
-		var server, msg, id;
+	*stringBounds { arg string, font, server;
+		var msg, id;
 		if( thisThread.isKindOf( Routine ), {
-			server	= SwingOSC.default;
+			if( server.isNil, { server = SwingOSC.default });
 			id		= server.nextNodeID;
 			msg		= server.sendMsgSync([ '/get', '[', '/local', id,
 				'[', '/methodr' ] ++ font.asSwingArg ++ [ \getStringBounds ] ++ string.asSwingArg ++ [
@@ -163,4 +163,6 @@ SwingGUI {
 		// this is a bad hack...
 		^Rect( 0, 0, string.size * font.size * 0.52146, font.size * 1.25 );
 	}
+
+	*defer { arg func; func.value }
 }
