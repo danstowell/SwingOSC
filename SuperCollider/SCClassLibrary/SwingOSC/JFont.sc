@@ -30,7 +30,7 @@
  *	Replacement for the cocoa font class.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.59, 28-Jan-08
+ *	@version		0.61, 06-Oct-08
  */
 JFont {
 	classvar <>verbose = false;
@@ -92,7 +92,8 @@ JFont {
 		
 		// need to fetch names (asynchronous)
 		if( thisThread.isKindOf( Routine ), {
-			^this.prQueryFontNames( server );
+			this.prQueryFontNames( server );
+			^names;
 		}, {
 			"JFont.availableFonts : asynchronous call outside routine".warn;
 			{ this.prQueryFontNames( server )}.fork( SwingOSC.clock );

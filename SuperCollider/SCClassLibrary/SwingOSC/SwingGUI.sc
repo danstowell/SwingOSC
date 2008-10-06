@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.60, 24-Mar-08
+ *	@version		0.61, 06-Oct-08
  */
 SwingGUI {
 	classvar extraClasses;
@@ -122,11 +122,45 @@ SwingGUI {
 		^extraClasses.perform( selector, *args );
 	}
 
+	/**
+	 *	Returns a Rect object describing the logical bounds of
+	 *	a given (String) string as rendered at standard scale using a
+	 *	given (JFont) font.
+	 *
+	 *	This method must be called from within a Routine, otherwise
+	 *	the asynchronous SwingOSC call cannot be made and only a coarse
+	 *	estimation (based on the Helvetica typeface) will be made.
+	 *
+	 *	Note that on Mac OS X, the calculated width is exactly the same
+	 *	as if CocoaGUI was used, however there are variations in the
+	 *	returned height, depending on the typeface.
+	 *
+	 *	It is suggested that due to the asynchronous nature of this
+	 *	call, measurements be cached by classes that need to use
+	 *	string bounds.
+	 */
+	*stringBounds { arg string, font;
+		var server, msg, id;
+		if( thisThread.isKindOf( Routine ), {
+			server	= SwingOSC.default;
+			id		= server.nextNodeID;
+			msg		= server.sendMsgSync([ '/get', '[', '/local', id,
+				'[', '/methodr' ] ++ font.asSwingArg ++ [ \getStringBounds ] ++ string.asSwingArg ++ [
+					'[', '/new', "java.awt.font.FontRenderContext", '[', '/ref', \null, ']', true, true, ']',
+				']', ']', \x, \y, \width, \height ], [ '/set', id ]);
+			server.sendMsg( '/free', id );
+			if( msg.notNil, {
+				^Rect( msg[ 3 ], msg[ 5 ], msg[ 7 ], msg[ 9 ]);
+			});
+			
+			"Meta_SwingGUI:stringBounds : server timeout".warn;
+		}, {
+			"Meta_SwingGUI:stringBounds : should be called inside a Routine".warn;
+		});
+		"Using coarse approximation".postln;
 		// width in Helvetica approx = string size * font size * 0.52146
 		// 0.52146 is average of all 32-127 ascii characters widths
-		// this is a bad hack... there may be a way to measure this automatically
-		// later...
-	*stringBounds { |string, font|
-		^Rect(0, 0, string.size * font.size * 0.52146, font.size * 1.25)
+		// this is a bad hack...
+		^Rect( 0, 0, string.size * font.size * 0.52146, font.size * 1.25 );
 	}
 }

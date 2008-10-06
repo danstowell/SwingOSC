@@ -47,7 +47,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.61, 04-Aug-08
+ *	@version		0.61, 06-Oct-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not
@@ -55,6 +55,7 @@
  */
 JPen {
 	classvar cmds;
+//	classvar currentView;
 		
 	*use { arg function;
 		var res;
@@ -66,19 +67,19 @@ JPen {
 
 // ------------- affine transforms -------------
 
-	*translate { arg x=0, y=0;
+	*translate { arg x = 0, y = 0;
 		cmds = cmds.add([ "trn", x, y ]);
 	}
 
-	*scale { arg x=0, y=0;
+	*scale { arg x = 0, y = 0;
 		cmds = cmds.add([ "scl", x, y ]);
 	}
 
-	*skew { arg x=0, y=0;
+	*skew { arg x = 0, y = 0;
 		cmds = cmds.add([ "shr", x, y ]);
 	}
 
-	*rotate { arg angle=0, x=0, y=0;
+	*rotate { arg angle = 0, x = 0, y = 0;
 		cmds = cmds.add([ "rot", angle, x, y ]);
 	}
 
@@ -310,7 +311,6 @@ JPen {
 
 // ------------ private ------------
 
-	//PRIVATE:
 	*push {
 		cmds = cmds.add([ "psh" ]);
 	}
@@ -324,18 +324,19 @@ JPen {
 		var bndl, off, stop, len, numCmd, nextLen, maxBndlSize, floatSize;
 	
 // this is about 2% faster but won't deal with different draw funcs
-//		cmds 	= Array( cmds.size.max( 8 ));
-		cmds 	= nil;
+//		cmds 		= Array( cmds.size.max( 8 ));
+		cmds 		= nil;
+//		currentView	= view;
 		func.value( view );
-		bndl		= List.new;
+		bndl			= List.new;
 		bndl.add([ '/method', penID, \beginRec ]);
-		off		= 0;
-		len		= 92;	// [ #bundle, [ '/method', int, \beginRec ] (48)
+		off			= 0;
+		len			= 92;	// [ #bundle, [ '/method', int, \beginRec ] (48)
 						// + [ '/method', int, \add, '[', '/array', ']' ]] (44)
-		stop		= off;
-		numCmd	= cmds.size;
-		maxBndlSize = server.options.oscBufSize - 60;	// 8132 = 8192 - 56 (see below) - 4 (max. boundary alignment)
-		floatSize	= if( server.useDoubles, 8, 4 );
+		stop			= off;
+		numCmd		= cmds.size;
+		maxBndlSize	= server.options.oscBufSize - 60;  // 8132 = 8192 - 56 (see below) - 4 (max. boundary alignment)
+		floatSize		= if( server.useDoubles, 8, 4 );
 
 		while({ stop < numCmd }, {
 //			nextLen	= cmds[ stop ].size * 5;
@@ -365,6 +366,7 @@ JPen {
 
 //("FLUSHING FINAL LEN = "++(len+56)).postln;
 		server.listSendBundle( nil, bndl );
-		cmds 	= nil;
+		cmds 		= nil;
+//		currentView	= nil;
 	}
 }
