@@ -146,7 +146,7 @@ implements Icon
 		mapConstr.put( "cub", new ConstrCurveTo() );
 		mapConstr.put( "rec", new ConstrAddRect( new Rectangle2D.Float() ));
 		mapConstr.put( "ova", new ConstrAddRect( new Ellipse2D.Float() ));
-		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN, true ));
+		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN, false ));
 		mapConstr.put( "pie", new ConstrAddArc( Arc2D.PIE, false ));
 		mapConstr.put( "cyl", new ConstrAddCylSector() );
 		mapConstr.put( "rst", new ConstrReset() );
@@ -1082,8 +1082,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 //							    (pt[ 3 ] + pt[ 4 ]) * kRad2DegM, pt[ 4 ] * kRad2Deg, type );
 			arc.setArcByCenter( pt[ 0 ], pt[ 1 ], pt[ 2 ],
 							    pt[ 3 ] * kRad2DegM, pt[ 4 ] * kRad2DegM, type );
-			gc.gp.append( gc.at.createTransformedShape( arc ), false );
-//			gc.gp.append( gc.at.createTransformedShape( arc ), connect );
+//			gc.gp.append( gc.at.createTransformedShape( arc ), false );
+			gc.gp.append( gc.at.createTransformedShape( arc ), connect );
 			if( type == Arc2D.PIE ) {
 				gc.gp.moveTo( pt[ 0 ], pt[ 1 ]);	// behave like cocoa
 			}
