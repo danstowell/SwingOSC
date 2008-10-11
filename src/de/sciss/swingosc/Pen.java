@@ -1082,8 +1082,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 //							    (pt[ 3 ] + pt[ 4 ]) * kRad2DegM, pt[ 4 ] * kRad2Deg, type );
 			arc.setArcByCenter( pt[ 0 ], pt[ 1 ], pt[ 2 ],
 							    pt[ 3 ] * kRad2DegM, pt[ 4 ] * kRad2DegM, type );
-//			gc.gp.append( gc.at.createTransformedShape( arc ), false );
-			gc.gp.append( gc.at.createTransformedShape( arc ), connect );
+			gc.gp.append( gc.at.createTransformedShape( arc ), false );
+//			gc.gp.append( gc.at.createTransformedShape( arc ), connect );
 			if( type == Arc2D.PIE ) {
 				gc.gp.moveTo( pt[ 0 ], pt[ 1 ]);	// behave like cocoa
 			}
