@@ -47,7 +47,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.61, 06-Oct-08
+ *	@version		0.61, 14-Oct-08
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not
@@ -272,7 +272,7 @@ JPen {
 		cmds = cmds.add([ "imc", img.id, point.x, point.y, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
-// ------------ gradients and translucency ------------
+// ------------ gradients, translucency, composites ------------
 
 //	*fillAxialGradient { arg startPoint, endPoint, color0, color1;
 //		cmds = cmds.add([ "fag", startPoint.x, startPoint.y, endPoint.x, endPoint.y, color0.red, color0.green, color0.blue, color0.alpha, color1.red, color1.green, color1.blue, color1.alpha ]);
@@ -280,6 +280,14 @@ JPen {
 
 	*alpha_ { arg opacity;
 		cmds = cmds.add([ "alp", opacity ]);
+	}
+
+	*blendMode_{ arg mode;
+		"Meta_JPen:blendMode_ : not yet implemented".warn;
+	}
+	
+	*setShadow { arg offsetPoint = Point( 2, 2 ), blur = 0.5, color = Color.black;
+		"Meta_JPen:setShadow : not yet implemented".warn;
 	}
 
 // ------------ from extPlot2D (swiki) ------------

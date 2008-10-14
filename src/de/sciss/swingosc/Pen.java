@@ -146,7 +146,7 @@ implements Icon
 		mapConstr.put( "cub", new ConstrCurveTo() );
 		mapConstr.put( "rec", new ConstrAddRect( new Rectangle2D.Float() ));
 		mapConstr.put( "ova", new ConstrAddRect( new Ellipse2D.Float() ));
-		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN, false ));
+		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN, true ));
 		mapConstr.put( "pie", new ConstrAddArc( Arc2D.PIE, false ));
 		mapConstr.put( "cyl", new ConstrAddCylSector() );
 		mapConstr.put( "rst", new ConstrReset() );
