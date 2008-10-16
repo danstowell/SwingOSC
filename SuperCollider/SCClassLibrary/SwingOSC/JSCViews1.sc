@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 11-Aug-08
+ *	@version		0.61, 16-Oct-08
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -80,7 +80,7 @@ JSCContainerView : JSCView { // abstract class
 	// ----------------- private instance methods -----------------
 
 	prViewPortID { ^id }	// actually this refers to a viewport-view!! we should fuse that with the containerID concept XXX
-	prChildOrder { ^-1 }
+	prChildOrder { arg child; ^-1 }
 
 	prGetRefTopLeft {
 // more efficient but too difficult to maintain
@@ -107,7 +107,7 @@ JSCContainerView : JSCView { // abstract class
 		if( child.id.notNil, {
 			vpID = this.prViewPortID;
 			bndl = Array( 4 );
-			bndl.add([ '/method', vpID, \add, '[', '/ref', child.prContainerID, ']', this.prChildOrder ]);
+			bndl.add([ '/method', vpID, \add, '[', '/ref', child.prContainerID, ']', this.prChildOrder( child )]);
 			if( this.prAllVisible, {
 				if( this.id != vpID, {
 					bndl.add([ '/method', vpID, \validate ]);
@@ -227,7 +227,7 @@ JSCCompositeView : JSCContainerView {
 
 	// ----------------- private instance methods -----------------
 
-	prChildOrder { ^0 }
+	prChildOrder { arg child; ^0 }
 
 	prInitView {
 		jinsets = Insets( 3, 3, 3, 3 );  // so focus borders of children are not clipped
@@ -301,7 +301,7 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 
 	// ----------------- private instance methods -----------------
 
-	prChildOrder { ^0 }
+	prChildOrder { arg child; ^0 }
 	
 	init { }	// kind of overriden by prInitTopView
 
@@ -311,7 +311,7 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 //		scBounds		= argBounds;
 //		jBounds		= this.prBoundsToJava( scBounds );
 //		jinsets		= Insets.new;
-		this.prInit( nil, argBounds.asRect, this.class.viewClass, window.server, id );
+		this.prInit( nil, argBounds, this.class.viewClass, window.server, id );
 //		argParent.add( this );		// maybe window or viewadapter
 	}
 
@@ -783,9 +783,15 @@ JSCSlider : JSCSliderBase
 	}
 
 	prInitView {
+		var argBounds;
 		properties.put( \value, 0.0 );
 		properties.put( \step, 0.0 );
-		orientation = if( this.bounds.width > this.bounds.height, 0, 1 );
+		if( scBounds.isNil, {
+			orientation = 0;
+		}, {
+			argBounds	= this.bounds;
+			orientation = if( this.bounds.width > this.bounds.height, 0, 1 );
+		});
 		clpse	= Collapse({ this.doAction });
 		acResp	= OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
 			var newVal;
@@ -3212,7 +3218,7 @@ JSCTextEditBase : JSCStaticTextBase {
 		parent = argParent.asView; // actual view
 // cocoa does parent.asView once more. too cryptic IMO ?
 //		this.prInit( parent, argBounds.asRect, this.class.viewClass, parent.server, id );
-		this.prInit( parent.asView, argBounds.asRect, this.class.viewClass, parent.server, id );
+		this.prInit( parent.asView, argBounds, this.class.viewClass, parent.server, id );
 		argParent.add( this );//maybe window or viewadapter
 	}
 

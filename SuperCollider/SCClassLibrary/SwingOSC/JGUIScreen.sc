@@ -38,7 +38,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 01-Aug-08
+ *	@version		0.61, 16-Oct-08
  */
 JSCWindow : Object
 {
@@ -208,6 +208,10 @@ JSCWindow : Object
 		if( acceptsMouseOver != bool, {			acceptsMouseOver = bool;				server.sendMsg( '/method', this.id, \setAcceptMouseOver, bool );
 		});
 	}	
+
+	pack {
+		server.sendMsg( '/method', this.id, \pack );
+	}
 
 	front {
 		var bndl;

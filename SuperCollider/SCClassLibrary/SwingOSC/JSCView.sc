@@ -63,7 +63,7 @@ JSCView {  // abstract class
 	
 	var clpseMouseMove, clpseMouseDrag;
 
-	var jinsets, scBounds, jBounds, allVisible;
+	var jinsets, scBounds, jBounds, allVisible, cmpLayout;
 	
 	*initClass {
 		unicodeMap = IdentityDictionary.new;
@@ -288,7 +288,7 @@ JSCView {  // abstract class
 
 	init { arg argParent, argBounds, id;
 		parent = argParent.asView;	// actual view
-		this.prInit( parent, argBounds.asRect, this.class.viewClass, parent.server, id );
+		this.prInit( parent, argBounds, this.class.viewClass, parent.server, id );
 		argParent.add( this );		// maybe window or viewadapter
 	}
 	
@@ -300,7 +300,11 @@ JSCView {  // abstract class
 	prInit { arg argParent, argBounds, argViewClass, argServer, argID;
 		server		= argServer; // ?? { argParent.server; };
 		properties	= IdentityDictionary.new;
-		scBounds		= argBounds;
+		if( argBounds.isString, {
+			cmpLayout	= argBounds;
+		}, {
+			scBounds	= argBounds.asRect;
+		});
 		properties.put( \enabled, true );
 		properties.put( \canFocus, true );
 		properties.put( \resize, 1 );
@@ -338,7 +342,7 @@ JSCView {  // abstract class
 		server.listSendBundle( nil, bndl );
 
 		dataptr = nil;
-		onClose.value(this);
+		onClose.value( this );
 	}
 
 	prSCViewNew { arg preMsg, postMsg;
@@ -348,11 +352,16 @@ JSCView {  // abstract class
 		
 		bndl			= List.new;
 		bndl.addAll( preMsg );
-		jBounds		= this.prBoundsToJava( scBounds );
-		argBounds		= jBounds.asSwingArg;
-		bndl.add([ '/set', this.id, \bounds ] ++ argBounds ++ [ \font, '[', '/ref', \font, ']' ]);
-		if( this.id != cnID, {
-			bndl.add([ '/set', cnID, \bounds ] ++ argBounds );
+		if( scBounds.isNil, {
+			bndl.add([ '/set', this.id, \font, '[', '/ref', \font, ']' ]);
+			jBounds		= Rect.new;
+		}, {
+			jBounds		= this.prBoundsToJava( scBounds );
+			argBounds		= jBounds.asSwingArg;
+			bndl.add([ '/set', this.id, \bounds ] ++ argBounds ++ [ \font, '[', '/ref', \font, ']' ]);
+			if( this.id != cnID, {
+				bndl.add([ '/set', cnID, \bounds ] ++ argBounds );
+			});
 		});
 		if( this.prNeedsTransferHandler, {
 			this.prCreateDnDResponder( bndl );
@@ -831,4 +840,6 @@ JSCView {  // abstract class
 //		[ this, "< prAllVisible", visible, allVisible ].postln;
 		^allVisible;
 	}
+	
+	protCmpLayout { ^cmpLayout }
 }
