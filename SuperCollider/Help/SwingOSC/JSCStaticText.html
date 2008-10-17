@@ -9,15 +9,16 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCStaticText. last mod: 30-jul-07 sciss
+<p>This class is meant as an emulation of SCStaticText. last mod: 17-oct-08 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
 <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
-<tr><td class="oscTabKey">multi-line</td><td class="oscTabValue">multi-line text wrap is not possible (you might use JSCTextView instead)</td></tr>
 <tr><td colspan="2" class="oscTabSection">different behaviour</td></tr>
 <tr><td class="oscTabKey">abbreviation</td><td class="oscTabValue">text label is abbreviated when width too small</td></tr>
-<!-- <tr><td colspan="2" class="oscTabSection">extended functionality</td></tr> -->
+<tr><td class="oscTabKey">multi-line</td><td class="oscTabValue">multi-line text is not directly supported. A workaround is to use HTML text with &lt;BR&gt; elements (or use JSCTextView instead)</td></tr>
+<tr><td colspan="2" class="oscTabSection">extended functionality</td></tr>
+<tr><td class="oscTabKey">HTML code</td><td class="oscTabValue">you can add text decorations by using a HTML string</td></tr>
 <!-- <tr><td colspan="2" class="oscTabSection">known issues / todo</td></tr> -->
 </table>
 </div>
@@ -35,11 +36,11 @@ A non-editable static text (label) field.
     f = <span class="cl">FlowLayout</span>.new( w.view.bounds );
     w.view.decorator = f;
     t = <span class="st">&quot;The quick brown fox&quot;</span>;
-    <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 20, 20, 340, 30 )).string_( t ).align_( <span class="sy">\left</span> );
+    <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 20, 20, 340, 50 )).string_( t ).align_( <span class="sy">\left</span> );
     f.nextLine;
-    <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 20, 20, 340, 30 )).string_( t ).align_( <span class="sy">\center</span> );
+    <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 20, 20, 340, 50 )).string_( t ).align_( <span class="sy">\center</span> );
     f.nextLine;
-    x = <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 20, 20, 340, 30 )).string_( t ).align_( <span class="sy">\right</span> );
+    x = <span class="cl">JSCStaticText</span>( w, <span class="cl">Rect</span>( 20, 20, 340, 50 )).string_( t ).align_( <span class="sy">\right</span> );
     w.front;
 )
 
@@ -57,5 +58,11 @@ x.string = <span class="st">&quot;&Uuml;berraschung&quot;</span>;
 x.string = <span class="st">&quot;&quot;</span> ++ 0xC3.asAscii ++ 0x9C.asAscii ++ <span class="st">&quot;berraschung&quot;</span>; <span class="cm">// &amp;Uuml; occupies two bytes here!</span>
 
 </pre>
+<h2>HTML Formatting</h2>
+<P>You can introduce text formatting by supplying a simplified HTML string:</P> 
+<PRE>
+x.string = <SPAN CLASS="st">"&lt;HTML&gt;&lt;BODY&gt;&lt;IMG WIDTH=31 HEIGHT=31 SRC=\"http://supercollider.sourceforge.net/images/icon.supercollider.gif\"&gt;&lt;FONT SIZE=4&gt;&lt;U&gt;Hallo&lt;/U&gt;&lt;BR&gt;&lt;I&gt;Welt&lt;/I&gt;&lt;/BODY&gt;"</SPAN>;
+
+</PRE>
 </body>
 </html>
