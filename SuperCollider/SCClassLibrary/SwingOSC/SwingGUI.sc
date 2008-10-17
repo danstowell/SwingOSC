@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 06-Oct-08
+ *	@version		0.61, 17-Oct-08
  */
 SwingGUI {
 	classvar extraClasses;
@@ -108,6 +108,7 @@ SwingGUI {
 
 	///////////////// extras /////////////////
 			
+	*panel { ^JSCPanel }
 	*checkBox { ^JSCCheckBox }
 	*tabbedPane { ^JSCTabbedPane }
 	*scrollBar { ^JSCScrollBar }

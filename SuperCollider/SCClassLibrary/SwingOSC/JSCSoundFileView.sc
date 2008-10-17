@@ -33,7 +33,7 @@
  *	Replacement for / enhancement of the (Cocoa) SCSoundFileView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 11-Aug-08
+ *	@version		0.61, 17-Oct-08
  */
 JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	classvar cacheServers;	// IdentitySet whose elements are SwingOSC instances
@@ -311,6 +311,7 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	gridOn { ^this.getProperty( \gridPainted )}
 	gridResolution { ^this.getProperty( \gridResolution )}
 	gridColor { ^this.getProperty( \gridColor ) }	
+	timeCursorEditable { ^this.getProperty( \timeCursorEditable )}
 	timeCursorOn { ^this.getProperty( \timeCursorPainted )}
 	timeCursorPosition { ^this.getProperty( \timeCursorPosition )}
 	timeCursorColor { ^this.getProperty( \timeCursorColor )}
@@ -386,6 +387,10 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 		this.setProperty( \timeCursorPosition, frame );
 	}
 	
+	timeCursorEditable_ { arg bool;
+		this.setProperty( \timeCursorEditable, bool );
+	}
+	
 	timeCursorOn_ { arg bool;
 		this.setProperty( \timeCursorPainted, bool );
 	}
@@ -452,8 +457,8 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 		^viewStart / (numFrames - viewFrames).max( 1 );
 	}
 	
-	gridOffset_{|offset|
-		this.setProperty(\gridOffset, offset);		
+	gridOffset_{ arg offset;
+		this.setProperty( \gridOffset, offset );
 	}
 
 	// (these are taken from JSCScope since we don't subclass that)
@@ -462,10 +467,16 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	}
 
 	x_ { arg val;
-		viewStart 	= val.min( val, numFrames - viewFrames );
-		viewFrames	= viewFrames.min( viewFrames, numFrames - viewStart );
+		viewStart 	= val.min( numFrames - viewFrames );
+		viewFrames	= viewFrames.min( numFrames - viewStart );
 		this.prUpdateViewSpan;
-	}	
+	}
+	
+	viewFrames_ { arg val;
+		viewFrames = val.min( numFrames );
+		viewStart  = viewStart.min( numFrames - viewFrames );
+		this.prUpdateViewSpan;
+	}
 
 //	y {
 //		^this.getProperty(\y)

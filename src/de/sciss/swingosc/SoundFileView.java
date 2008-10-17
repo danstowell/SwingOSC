@@ -83,7 +83,7 @@ import de.sciss.util.MutableInt;
 import de.sciss.util.MutableLong;
 
 /**
- *	@version	0.61, 26-Aug-08
+ *	@version	0.61, 17-Oct-08
  *	@author		Hanns Holger Rutz
  */
 public class SoundFileView
@@ -116,6 +116,7 @@ implements FocusListener
 	private Color					colrGrid			= Color.blue;
 	private long					gridOffset			= 0;
 	private float					gridResolution		= 1.0f;
+	protected boolean				timeCursorEditable	= true;
 	protected boolean				timeCursorOn		= false;
 	private Color					colrTimeCursor		= Color.blue;
 	protected long					timeCursorPos		= 0;
@@ -440,6 +441,11 @@ implements FocusListener
 		}
 	}
 
+	public void setTimeCursorEditable( boolean onOff )
+	{
+		timeCursorEditable = onOff;
+	}
+	
 	public void setTimeCursorPainted( boolean onOff )
 	{
 		if( onOff != timeCursorOn ) {
@@ -1787,7 +1793,7 @@ g2.setComposite( cmpOrig );
 					startPos = position;
 					if( span2.isEmpty() || !sel.editableStart || !sel.editableSize ) {
 //						edit = TimelineVisualEdit.position( this, doc, position ).perform();
-						if( timeCursorOn && (position != timeCursorPos) ) {
+						if( timeCursorEditable && timeCursorOn && (position != timeCursorPos) ) {
 							span = new Span( Math.min( position, timeCursorPos ), Math.max( position, timeCursorPos ));
 							timeCursorPos = position;
 							dispatchCursorChange();

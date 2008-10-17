@@ -28,6 +28,8 @@
  *	@version	0.61, 16-Oct-08
  */
 JSCPanel : JSCContainerView {
+	var layID;
+	
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
 
 //	asFlowView { ... }
@@ -37,37 +39,20 @@ JSCPanel : JSCContainerView {
 	prChildOrder { arg child; ^child.protCmpLayout ?? "" }
 
 	prInitView {
-		jinsets = Insets( 3, 3, 3, 3 );  // so focus borders of children are not clipped
+		jinsets	= Insets( 3, 3, 3, 3 );  // so focus borders of children are not clipped
+		layID	= "lay" ++ this.id;
 		^this.prSCViewNew([
-			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/new', "net.miginfocom.swing.MigLayout", ']', ']' ]
+			[ '/local', "lay" ++ this.id, '[', '/new', "net.miginfocom.swing.MigLayout", ']',
+				this.id, '[', '/new', "de.sciss.swingosc.Panel", '[', '/ref', layID, ']', ']' ]
 		]);
 	}
 	
 	layout_ { arg constraints;
-		server.sendMsg( '/set', this.id, \layoutConstraints, constraints );
+		server.sendMsg( '/set', layID, \layoutConstraints, constraints );
 	}
 
-//	add { arg child;
-//		var bndl, vpID;
-//		
-//		children = children.add( child );
-////		if( decorator.notNil, { decorator.place( child )});
-//
-//		if( child.id.notNil, {
-//			vpID = this.prViewPortID;
-//			bndl = Array( 4 );
-//			bndl.add([ '/method', vpID, \add, '[', '/ref', child.prContainerID, ']', child.protCmpLayout ? "" ]);
-//			if( this.prAllVisible, {
-//				if( this.id != vpID, {
-//					bndl.add([ '/method', vpID, \validate ]);
-//				});
-//				bndl.add([ '/method', this.id, \revalidate ]);
-//				bndl.add([ '/method', child.id, \repaint ]);
-//				pendingValidation = false;
-//			}, {
-//				pendingValidation = true;
-//			});
-//			server.listSendBundle( nil, bndl );
-//		});
-//	}
+	prClose { arg preMsg, postMsg;
+		^super.prClose( preMsg ++
+			[[ '/free', layID ]], postMsg );
+	}
 }
