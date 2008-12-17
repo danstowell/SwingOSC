@@ -16,6 +16,7 @@ JSCFreqScope : JSCScope {
 	var <scopebuf, <fftbuf;
 	var <active, <node, <inBus, <dbRange, dbFactor, rate, <freqMode;
 	var <bufSize;	// size of FFT
+	var <>specialSynthDef, <specialSynthArgs; // Allows to override the analysis synth
 	
 	*viewClass { ^JSCScope }
 	
@@ -98,6 +99,45 @@ JSCFreqScope : JSCScope {
 //			ScopeOut.ar( ((BufRd.ar(1, fftbufnum, phasor, 1) * mul).ampdb * dbFactor) + 1, scopebufnum);
 //		}).send(audioServer);
 
+		// These next two are based on the original two, but adapted by Dan Stowell 
+		// to calculate the frequency response between two channels
+		SynthDef("freqScope0_magresponse", { arg in=0, fftbufnum=0, scopebufnum=1, rate=4, phase=1, dbFactor = 0.02, in2=1;
+			var signal, chain, result, phasor, numSamples, mul, add;
+			var signal2, chain2, divisionbuf;
+			mul = 0.00285;
+			numSamples = (BufSamples.kr(fftbufnum) - 2) * 0.5; // 1023 (bufsize=2048)
+			signal = In.ar(in);
+			signal2 = In.ar(in2);
+			chain = FFT(fftbufnum, signal, wintype:1);
+			divisionbuf = LocalBuf(BufFrames.ir(fftbufnum));
+			chain2 = FFT(divisionbuf, signal2, wintype:1);
+			// Here we perform complex division to estimate the freq response
+			chain = PV_Div(chain2, chain);
+			chain = PV_MagSmear(chain, 1);
+			// -1023 to 1023, 0 to 2046, 2 to 2048 (skip first 2 elements DC and Nyquist)
+			phasor = LFSaw.ar(rate/BufDur.kr(fftbufnum), phase, numSamples, numSamples + 2);
+			phasor = phasor.round(2); // the evens are magnitude
+			JScopeOut.ar( ((BufRd.ar(1, divisionbuf, phasor, 1, 1) * mul).ampdb * dbFactor) + 1, scopebufnum);
+		}).send(audioServer);
+		
+		SynthDef("freqScope1_magresponse", { arg in=0, fftbufnum=0, scopebufnum=1, rate=4, phase=1, dbFactor = 0.02, in2=1;
+			var signal, chain, result, phasor, halfSamples, mul, add;
+			var signal2, chain2, divisionbuf;
+			mul = 0.00285;
+			halfSamples = BufSamples.kr(fftbufnum) * 0.5;
+			signal = In.ar(in);
+			signal2 = In.ar(in2);
+			chain = FFT(fftbufnum, signal, wintype:1);
+			divisionbuf = LocalBuf(BufFrames.ir(fftbufnum));
+			chain2 = FFT(divisionbuf, signal2, wintype:1);
+			// Here we perform complex division to estimate the freq response
+			chain = PV_Div(chain2, chain);
+			chain = PV_MagSmear(chain, 1);
+			phasor = halfSamples.pow(LFSaw.ar(rate/BufDur.kr(fftbufnum), phase, 0.5, 0.5)) * 2; // 2 to bufsize
+			phasor = phasor.round(2); // the evens are magnitude
+			JScopeOut.ar( ((BufRd.ar(1, divisionbuf, phasor, 1, 1) * mul).ampdb * dbFactor) + 1, scopebufnum);
+		}).send(audioServer);
+
 		"JSCFreqScope: SynthDefs sent".postln;
 	}
 	
@@ -133,9 +173,9 @@ JSCFreqScope : JSCScope {
 //				\fftbufnum, fftbuf.bufnum, \scopebufnum, scopebuf.bufnum]);
 
 		node = audioServer.nextNodeID; // get new node just to be safe
-		audioServer.sendMsg("/s_new", "freqScope" ++ freqMode.asString, node, 1, 0, 
+		audioServer.sendMsg("/s_new", specialSynthDef ?? {"freqScope" ++ freqMode.asString}, node, 1, 0, 
 				\in, inBus, \dbFactor, dbFactor, \rate, 4,
-				\fftbufnum, fftbuf.bufnum, \scopebufnum, scopebuf.bufnum);
+				\fftbufnum, fftbuf.bufnum, \scopebufnum, scopebuf.bufnum, *specialSynthArgs);
 	}
 	
 	kill {
@@ -217,4 +257,25 @@ JSCFreqScope : JSCScope {
 		});
 	}
 	
+	specialSynthArgs_ {|args|
+		specialSynthArgs = args;
+		if(args.notNil and:{active}){
+			audioServer.sendMsg("/n_set", node, *specialSynthArgs);
+		}
+	}
+	
+	special { |defname, extraargs|
+		this.specialSynthDef_(defname);
+		this.specialSynthArgs_(extraargs);
+		if(active, {
+			audioServer.sendMsg("/n_free", node);
+			node = audioServer.nextNodeID;
+			this.start;
+		});		
+	}
+
+	*response{ |parent, bounds, bus1, bus2, freqMode=1|
+		^this.new(parent, bounds).inBus_(bus1.index)
+			.special("freqScope%_magresponse".format(freqMode), [\in2, bus2])
+	}	
 }
