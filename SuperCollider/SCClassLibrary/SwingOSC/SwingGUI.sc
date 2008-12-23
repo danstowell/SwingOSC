@@ -88,8 +88,8 @@ SwingGUI {
 	*textView { ^JSCTextView }
 //	*quartzComposerView { ^JSCQuartzComposerView }
 	*scrollView { ^JSCScrollView }
-	*ezSlider { ^EZSlider }		// cross-platform now!
-	*ezNumber { ^EZNumber }		// cross-platform now!
+	*ezSlider { ^EZSliderJ }		// cross-platform now!
+	*ezNumber { ^EZNumberJ }		// cross-platform now!
 	
 	*font { ^JFont }
 	*pen { ^JPen }
