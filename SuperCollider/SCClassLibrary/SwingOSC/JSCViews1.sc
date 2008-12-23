@@ -40,6 +40,13 @@ JSCContainerView : JSCView { // abstract class
 		children.copy.do({ arg child; child.remove });
 	}
 	
+	addFlowLayout { |margin, gap| 
+		this.decorator_( FlowLayout( this.bounds, margin, gap ) );
+		^this.decorator;
+		}
+
+
+	
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
 
 	asPageLayout { arg title, bounds;
@@ -47,6 +54,7 @@ JSCContainerView : JSCView { // abstract class
 		// FlowView better ?
 		^MultiPageLayout.on( this, bounds );
 	}
+
 
 	flow { arg func, bounds;
 		var f, comp;

@@ -163,6 +163,11 @@ JSCWindow : Object
 
 	asView { ^view }
 	
+	addFlowLayout { |margin, gap| 
+		view.decorator_( FlowLayout( view.bounds, margin, gap ) );
+		^this.view.decorator;
+		 }
+		 
 	close { this.prClose }
 	
 	isClosed { ^dataptr.isNil }
