@@ -2284,6 +2284,13 @@ JSCTextView : JSCView {
 	}
 
 	open { arg path;
+		Platform.case(\windows, {
+			if(path[1]==$:){
+				// Windows path styles "C:\blah" will need an extra slash at start
+				path = "/" ++ path
+			};
+			path = path.tr($\\, $/);
+		});
 		path = path.replace( ' ', '%20' );
 		this.openURL( "file://"++path );
 	}
