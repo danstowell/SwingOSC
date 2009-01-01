@@ -90,6 +90,7 @@ SwingGUI {
 	*scrollView { ^JSCScrollView }
 	*ezSlider { ^EZSliderJ }		// not cross-platform for now
 	*ezNumber { ^EZNumberJ }		// not cross-platform for now
+	*ezRanger { ^EZRangerJ }		// not cross-platform for now
 	*font { ^JFont }
 	*pen { ^JPen }
 	
