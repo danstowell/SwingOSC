@@ -761,6 +761,11 @@ JSCSlider : JSCSliderBase
 		"JSCSlider.thumbSize_ : not yet implemented".warn;
 		this.setProperty( \thumbSize, size );
 	}
+
+	pixelStep { 
+		var b = this.bounds; 
+		^(b.width.max( b.height ) - this.thumbSize).reciprocal;
+	}
 	
 	bounds_ { arg rect;
 		var result;
@@ -931,6 +936,11 @@ JSCRangeSlider : JSCSliderBase {
 	setDeviation { arg deviation, average;
 		var lo = (1 - deviation) * average;
 		this.setSpan( lo, lo + deviation );
+	}
+
+	pixelStep { 
+		var b = this.bounds; 
+		^(b.width.max( b.height )).reciprocal;
 	}
 
 	increment {

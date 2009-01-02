@@ -38,7 +38,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 16-Oct-08
+ *	@version		0.61, 02-Jan-09
  */
 JSCWindow : Object
 {
@@ -171,6 +171,9 @@ JSCWindow : Object
 	close { this.prClose }
 	
 	isClosed { ^dataptr.isNil }
+
+	addToOnClose { arg function; onClose = onClose.addFunc( function )}
+	removeFromOnClose { arg function; onClose = onClose.removeFunc( function )}
 	
 	visible_ { arg bool;
 		var pre, post;
@@ -310,6 +313,14 @@ JSCWindow : Object
 	
 	bounds_ { arg argBounds;
 		this.prSetBounds( argBounds );
+	}
+	
+	setTopLeftBounds { arg rect, menuSpacer = 45;
+		rect = rect.copy;
+		// 45 is the height of the mac os menu
+		// if you are in full screen mode you would want to pass in 0
+		rect.top = JSCWindow.screenBounds.height - rect.height - rect.top - menuSpacer;
+		this.bounds = rect;
 	}
 	
 	setInnerExtent { arg w, h; // resize window keeping top left corner fixed
