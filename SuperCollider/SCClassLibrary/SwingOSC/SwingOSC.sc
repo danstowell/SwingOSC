@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 01-Aug-08
+ *	@version		0.61, 02-Jan-09
  */
 SwingOptions
 {
@@ -209,7 +209,7 @@ SwingOSC : Model
 			}.fork( clock );
 		}
 		{ arg error;	// throws when TCP server not available
-		
+			onFailure.value;
 		}
 	}
 	

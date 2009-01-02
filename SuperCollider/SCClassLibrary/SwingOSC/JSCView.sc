@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.61, 11-Aug-08
+ *	@version		0.61, 02-Jan-09
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -170,6 +170,10 @@ JSCView {  // abstract class
 //
 //	id_ { arg id; this.setProperty( \id, id )}
 
+	dragLabel_ { arg string;
+		"JSCView:dragLabel_ : not yet implemented.".warn;
+	}
+	
 	opaque { ^this.getProperty( \opaque )}
 	
 	opaque_ { arg bool; this.setProperty( \opaque, bool )}
@@ -810,7 +814,7 @@ JSCView {  // abstract class
 
 	// contract: the returned rect is not identical to the one passed in
 	prBoundsToJava { arg rect;
-		var pTopLeft, pinsets;
+		var pTopLeft;
 		
 		pTopLeft = parent.prGetRefTopLeft;
 		// moveBy guarantees that we get a copy!

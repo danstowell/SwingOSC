@@ -280,15 +280,20 @@
 						<dict>
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
+								<string>00E6828FFEC88D1A11DB9C8B</string>
+								<string>53C7CFDB0D70DDD40050CAD2</string>
+								<string>53C7CFDC0D70DDD40050CAD2</string>
+								<string>53C7CFDD0D70DDD40050CAD2</string>
+								<string>53C7CFDE0D70DDD40050CAD2</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>53E889E90D70EB1B00AA4B0C</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>3</integer>
-									<integer>1</integer>
+									<integer>11</integer>
+									<integer>2</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -392,9 +397,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>53E889BA0D70E99F00AA4B0C</string>
+				<string>53BD75C30EBB0B08003A8E6D</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>53E889BB0D70E99F00AA4B0C</string>
+				<string>53BD75C40EBB0B08003A8E6D</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -513,7 +518,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>225504067.60821</real>
+	<real>247139034.13744301</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -528,8 +533,9 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>53C7D0190D70E0510050CAD2</string>
-		<string>/Users/rutz/Documents/devel/JNITablet/JNITablet.xcodeproj</string>
+		<string>53BD75C50EBB0B08003A8E6D</string>
+		<string>/Users/rutz/Documents/workspace/SwingOSC/JNITablet/JNITablet.xcodeproj</string>
+		<string>53BD75C60EBB0B08003A8E6D</string>
 	</array>
 	<key>WindowString</key>
 	<string>280 81 805 795 0 0 1440 878 </string>

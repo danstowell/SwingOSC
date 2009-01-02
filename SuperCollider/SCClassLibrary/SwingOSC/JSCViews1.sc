@@ -27,11 +27,11 @@
  */
 
 /**
- *	@version		0.61, 16-Oct-08
+ *	@version		0.61, 02-Jan-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
-	var <children, <>decorator;
+	var <children, <decorator, <relativeOrigin = false;
 	var pendingValidation = false;
 			
 	// ----------------- public instance methods -----------------
@@ -40,13 +40,25 @@ JSCContainerView : JSCView { // abstract class
 		children.copy.do({ arg child; child.remove });
 	}
 	
-	addFlowLayout { |margin, gap| 
-		this.decorator_( FlowLayout( this.bounds, margin, gap ) );
-		^this.decorator;
-		}
-
-
+	relativeOrigin_ { arg bool;
+		relativeOrigin = bool;
+//		this.setProperty(\relativeOrigin, bool);
+		this.prInvalidateBounds;
+	}
 	
+	addFlowLayout { arg margin, gap;
+		this.decorator_( FlowLayout( this.bounds, margin, gap ));
+		^this.decorator;
+	}
+
+	decorator_ { arg decor;
+		if( relativeOrigin, {
+			decor.bounds = decor.bounds.moveTo( 0, 0 );
+			decor.reset;
+		});
+		decorator = decor;
+	}
+
 	// ----------------- quasi-interface methods : crucial-lib support -----------------
 
 	asPageLayout { arg title, bounds;
@@ -103,7 +115,12 @@ JSCContainerView : JSCView { // abstract class
 //		}, {
 //			^(scBounds.leftTop - jinsets.leftTop);
 //		});
-		^(this.bounds.leftTop - jinsets.leftTop);
+//		^(this.bounds.leftTop - jinsets.leftTop);
+		^if( relativeOrigin, {
+			Point( jinsets.left.neg, jinsets.top.neg )
+		}, {
+			this.bounds.leftTop - jinsets.leftTop
+		});
 	}
 
 	add { arg child;
@@ -909,6 +926,11 @@ JSCRangeSlider : JSCSliderBase {
 	setSpanActive { arg lo, hi;
 		this.setSpan( lo, hi );
 		this.doAction;
+	}
+
+	setDeviation { arg deviation, average;
+		var lo = (1 - deviation) * average;
+		this.setSpan( lo, lo + deviation );
 	}
 
 	increment {

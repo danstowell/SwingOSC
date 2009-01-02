@@ -57,8 +57,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 225503625;
-			PBXWorkspaceStateSaveDate = 225503625;
+			PBXPerProjectTemplateStateSaveDate = 247139034;
+			PBXWorkspaceStateSaveDate = 247139034;
 		};
 		sourceControlManager = 53C7CFB50D70DCB20050CAD2 /* Source Control */;
 		userBuildSettings = {
@@ -109,9 +109,9 @@
 	};
 	53C7CFE20D70DDD40050CAD2 /* TabletWrapper.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {872, 2520}}";
+			sepNavIntBoundsRect = "{{0, 0}, {984, 2520}}";
 			sepNavSelRange = "{660, 0}";
-			sepNavVisRect = "{{0, 0}, {872, 749}}";
+			sepNavVisRect = "{{0, 122}, {984, 749}}";
 		};
 	};
 	53C7CFEF0D70DE8D0050CAD2 /* TabletTest.java */ = {

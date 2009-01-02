@@ -51,6 +51,14 @@ JSCPanel : JSCContainerView {
 		server.sendMsg( '/set', layID, \layoutConstraints, constraints );
 	}
 
+	columnLayout_ { arg constraints;
+		server.sendMsg( '/set', layID, \columnConstraints, constraints );
+	}
+
+	rowLayout_ { arg constraints;
+		server.sendMsg( '/set', layID, \rowConstraints, constraints );
+	}
+
 	prClose { arg preMsg, postMsg;
 		^super.prClose( preMsg ++
 			[[ '/free', layID ]], postMsg );
