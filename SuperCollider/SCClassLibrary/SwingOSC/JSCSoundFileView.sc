@@ -422,7 +422,7 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 		sel = selections[ index ];
 		if( this.selectionSize( index ) > 0 ) {
 			this.x_( this.selectionStart( index ));
-			this.xZoom = this.selectionSize( index ) / (this.bounds.width - 2) / block;
+			this.xZoom = this.selectionSize( index ) / (this.prBoundsReadOnly.width - 2) / block;
 		};
 	}
 	
@@ -486,11 +486,11 @@ JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 //	}	
 
 	xZoom {
-		^( viewFrames / ((this.bounds.width - 2) * block) );
+		^( viewFrames / ((this.prBoundsReadOnly.width - 2) * block) );
 	}
 
 	xZoom_ { arg val;
-		viewFrames 	= (block * val * (this.bounds.width - 2)).clip( 0, numFrames );
+		viewFrames 	= (block * val * (this.prBoundsReadOnly.width - 2)).clip( 0, numFrames );
 		viewStart 	= viewStart.min( numFrames - viewFrames );
 		this.prUpdateViewSpan;
 	}	

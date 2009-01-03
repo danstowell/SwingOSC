@@ -119,7 +119,7 @@ JSCContainerView : JSCView { // abstract class
 		^if( relativeOrigin, {
 			Point( jinsets.left.neg, jinsets.top.neg )
 		}, {
-			this.bounds.leftTop - jinsets.leftTop
+			this.prBoundsReadOnly.leftTop - jinsets.leftTop
 		});
 	}
 
@@ -745,13 +745,13 @@ JSCSlider : JSCSliderBase
 	
 	increment {
 		var inc;
-		inc = (if( orientation == 0, { this.bounds.width }, { this.bounds.height }) - 2).max( 1 ).reciprocal.max( this.step );
+		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal.max( this.step );
 		^this.valueAction = this.value + inc;
 	}
 	
 	decrement {
 		var inc;
-		inc = (if( orientation == 0, { this.bounds.width }, { this.bounds.height }) - 2).max( 1 ).reciprocal.max( this.step );
+		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal.max( this.step );
 		^this.valueAction = this.value - inc;
 	}
 	
@@ -763,7 +763,7 @@ JSCSlider : JSCSliderBase
 	}
 
 	pixelStep { 
-		var b = this.bounds; 
+		var b = this.prBoundsReadOnly; 
 		^(b.width.max( b.height ) - this.thumbSize).reciprocal;
 	}
 	
@@ -813,14 +813,14 @@ JSCSlider : JSCSliderBase
 	}
 
 	prInitView {
-		var argBounds;
+		var b;
 		properties.put( \value, 0.0 );
 		properties.put( \step, 0.0 );
 		if( scBounds.isNil, {
 			orientation = 0;
 		}, {
-			argBounds	= this.bounds;
-			orientation = if( this.bounds.width > this.bounds.height, 0, 1 );
+			b			= this.prBoundsReadOnly;
+			orientation	= if( b.width > b.height, 0, 1 );
 		});
 		clpse	= Collapse({ this.doAction });
 		acResp	= OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
@@ -939,13 +939,13 @@ JSCRangeSlider : JSCSliderBase {
 	}
 
 	pixelStep { 
-		var b = this.bounds; 
+		var b = this.prBoundsReadOnly; 
 		^(b.width.max( b.height )).reciprocal;
 	}
 
 	increment {
 		var inc, val; 
-		inc = (if( orientation == 0, { this.bounds.width }, { this.bounds.height }) - 2).max( 1 ).reciprocal;
+		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal;
 		val = this.hi + inc;
 		if( val > 1, {
 			inc = 1 - this.hi;
@@ -956,7 +956,7 @@ JSCRangeSlider : JSCSliderBase {
 	
 	decrement { 
 		var inc, val; 
-		inc = (if( orientation == 0, { this.bounds.width }, { this.bounds.height }) - 2).max( 1 ).reciprocal;
+		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal;
 		val = this.lo - inc;
 		if( val < 0, {
 			inc = this.lo;
@@ -1021,11 +1021,13 @@ JSCRangeSlider : JSCSliderBase {
 	}
 
 	prInitView {
+		var b;
 		properties.put( \lo, 0.0 );
 		properties.put( \hi, 1.0 );
 		properties.put( \step, 0.0 );
 		jinsets		= Insets( 3, 3, 3, 3 );
-		orientation	= if( this.bounds.width > this.bounds.height, 0, 1 );
+		b			= this.prBoundsReadOnly;
+		orientation	= if( b.width > b.height, 0, 1 );
 		clpse		= Collapse({ this.doAction });
 		acResp		= OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
 			var newLo, newHi;
@@ -1115,10 +1117,10 @@ JSC2DSlider : JSCSliderBase {
 		this.doAction;
 	}
 
-	incrementY { ^this.y = this.y + this.bounds.height.reciprocal }
-	decrementY { ^this.y = this.y - this.bounds.height.reciprocal }
-	incrementX { ^this.x = this.x + this.bounds.width.reciprocal }
-	decrementX { ^this.x = this.x - this.bounds.width.reciprocal }
+	incrementY { ^this.y = this.y + this.prBoundsReadOnly.height.reciprocal }
+	decrementY { ^this.y = this.y - this.prBoundsReadOnly.height.reciprocal }
+	incrementX { ^this.x = this.x + this.prBoundsReadOnly.width.reciprocal }
+	decrementX { ^this.x = this.x - this.prBoundsReadOnly.width.reciprocal }
 
 	defaultKeyDownAction { arg char, modifiers, unicode,keycode;
 		// standard keydown
@@ -2112,7 +2114,7 @@ JSCUserView : JSCAbstractUserView {
 	// ----------------- public instance methods -----------------
 
 	mousePosition {
-		var b = this.bounds;
+		var b = this.prBoundsReadOnly;
 		^((lastMouseX - b.left) @ (lastMouseY - b.top));
 	}
 
@@ -2351,6 +2353,10 @@ JSCTextView : JSCView {
 	// ----------------- private instance methods -----------------
 	
 	prCreateLinkResponder {
+		if( hyResp.notNil, {
+			"JSCTextView.prCreateLinkResponder : already created!".warn;
+			^nil;
+		});
 		hyResp = OSCpathResponder( server.addr, [ '/hyperlink', this.id ], { arg time, resp, msg; var url, descr;
 			{
 				url   = msg[3].asString;

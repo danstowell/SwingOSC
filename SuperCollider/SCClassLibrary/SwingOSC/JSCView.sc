@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.61, 02-Jan-09
+ *	@version		0.61, 03-Jan-09
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -103,15 +103,7 @@ JSCView {  // abstract class
 
 	asView { ^this }
 	
-	bounds {
-		var pTopLeft;
-		if( scBounds.isNil, {
-			// need to revalidate bounds
-			pTopLeft	= parent.prGetRefTopLeft;
-			scBounds	= jinsets.addTo( jBounds.moveBy( pTopLeft.x, pTopLeft.y ));
-		});
-		^scBounds.copy;
-	}
+	bounds { ^this.prBoundsReadOnly.copy }
 
 	bounds_ { arg rect;
 		var argBounds, bndl, cnID = this.prContainerID;
@@ -550,6 +542,16 @@ JSCView {  // abstract class
 	// subclasses can override this to do special refreshes
 	prBoundsUpdated {}
 
+	prBoundsReadOnly {
+		var pTopLeft;
+		if( scBounds.isNil, {
+			// need to revalidate bounds
+			pTopLeft	= parent.prGetRefTopLeft;
+			scBounds	= jinsets.addTo( jBounds.moveBy( pTopLeft.x, pTopLeft.y ));
+		});
+		^scBounds;
+	}
+
 	prCreateCompResponder { arg bndl;
 		var msg, id, cnID, cmpID;
 	
@@ -644,12 +646,13 @@ JSCView {  // abstract class
 		clpseMouseMove	= Collapse({ arg x, y, modifiers; this.mouseOver( x, y, modifiers )});
 		clpseMouseDrag	= Collapse({ arg x, y, modifiers; this.mouseMove( x, y, modifiers )});
 		mouseResp			= OSCpathResponder( server.addr, [ '/mouse', this.id ], { arg time, resp, msg;
-			var state, x, y, modifiers, button, clickCount;
+			var state, x, y, modifiers, button, clickCount, b;
 		
 			// [ '/mouse', id, state, x, y, modifiers, button, clickCount ]
 			state 		= msg[2].asSymbol;
-			x			= msg[3];
-			y			= msg[4];
+			b			= this.prBoundsReadOnly; // (parent ? this).prGetRefTopLeft;
+			x			= msg[3] + b.left - jinsets.left;
+			y			= msg[4] + b.top - jinsets.top;
 			modifiers		= msg[5];
 
 			// java->cocoa ; this translates shift (1), ctrl (2), cmd (4), alt (8)
@@ -683,7 +686,7 @@ JSCView {  // abstract class
 //			};
 		});
 		mouseResp.add;
-		msg = [ '/local', "mse" ++ this.id, '[', '/new', "de.sciss.swingosc.MouseResponder", this.id, true, this.prGetWindow.id, ']' ];
+		msg = [ '/local', "mse" ++ this.id, '[', '/new', "de.sciss.swingosc.MouseResponder", this.id, false, this.prGetWindow.id, ']' ];
 		if( bndl.notNil, {
 			bndl.add( msg );
 		}, {

@@ -326,7 +326,7 @@ JSCWindow : Object
 	
 	setInnerExtent { arg w, h; // resize window keeping top left corner fixed
 		var b;
-		b = this.bounds;
+		b = this.prBoundsReadOnly;
 		w = w ? b.width;
 		h = h ? b.height;
 		this.bounds = Rect.new( b.left, b.top + b.height - h, w, h );

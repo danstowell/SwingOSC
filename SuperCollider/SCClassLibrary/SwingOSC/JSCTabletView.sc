@@ -110,7 +110,7 @@ JSCTabletView : JSCAbstractUserView {
 				proximityAction.value( this, entering, deviceID, pointingDeviceType, systemTabletID, pointingDeviceID, tabletID, uniqueID );
 
 			}, {	// from tabletEvent
-				bounds		= this.bounds;
+				bounds		= this.prBoundsReadOnly;
 				deviceID		= msg[3];
 				x			= msg[4] - bounds.left;
 				y			= bounds.bottom - msg[5] + cocoaBorder; // sucky cocoa

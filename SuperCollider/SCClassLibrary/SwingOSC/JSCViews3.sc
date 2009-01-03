@@ -491,12 +491,14 @@ JSCScrollBar : JSCControlView {
 	}
 
 	prInitView {
+		var b;
 		maxExtent		= 0x3FFFFFFF / 0x40000000;
 		properties.put( \value, 0.0 );
 		properties.put( \extent, 1.0 );
 		properties.put( \blockIncrement, 1.0 );
 		properties.put( \unitIncrement, 0.1 );
-		orientation	= if( this.bounds.width > this.bounds.height, 0, 1 );
+		b			= this.prBoundsReadOnly;
+		orientation	= if( b.width > b.height, 0, 1 );
 		clpse		= Collapse({ this.doAction });
 		acResp		= OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
 			var newVal, newAdjust;
