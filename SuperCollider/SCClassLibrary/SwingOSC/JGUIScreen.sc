@@ -48,6 +48,7 @@ JSCWindow : Object
 	
 	classvar <>verbose = false;
 	classvar <>allWindows;
+	classvar <>initAction;
 	
 	var dataptr, <name, <>onClose, <view, <userCanClose = true;
 	var <alwaysOnTop = false;
