@@ -2334,7 +2334,16 @@ JSCTextView : JSCView {
 			path = path.tr($\\, $/);
 		});
 		path = path.replace( ' ', '%20' );
-		this.openURL( "file://"++path );
+
+		if ( path.contains( "SC://"), {
+			path = Help.findHelpFile( path.asRelativePath( "SC:/") );
+		});
+
+		if ( path.contains( "://" ).not, {
+			if ( path.first.asString != "/" ) { path = String.scDir +/+ path; };
+			path = "file://"++path;
+		});
+		this.openURL( path );
 	}
 
 	defaultKeyDownAction { arg key, modifiers, unicode;
