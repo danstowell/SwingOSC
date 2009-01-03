@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 02-Jan-09
+ *	@version		0.61, 03-Jan-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -2176,7 +2176,7 @@ JSCTextView : JSCView {
 	var <autohidesScrollers = false, <hasHorizontalScroller = false, <hasVerticalScroller = false;
 	var <usesTabToFocusNextView = true, <enterInterpretsSelection = true;
 //	var <textBounds;
-	var <linkAction;
+	var <linkAction, <linkEnteredAction, <linkExitedAction;
 
 	var txResp, hyResp;
 	
@@ -2196,6 +2196,10 @@ JSCTextView : JSCView {
 
 	// ----------------- public instance methods -----------------
 
+	doLinkAction { arg url, description;
+		linkAction.value( this, url, description );
+	}
+	
 	string_ { arg str;
 		^this.setString( str, -1 );
 	}
@@ -2266,14 +2270,18 @@ JSCTextView : JSCView {
 	}
 	
 	linkAction_ { arg func;
+		if( func.notNil && hyResp.isNil, { this.prCreateLinkResponder });
 		linkAction = func;
-		if( hyResp.isNil, {
-			hyResp = OSCpathResponder( server.addr, [ '/hyperlink', this.id ], { arg time, resp, msg;
-				{ linkAction.value( this, msg[2].asString.collect( _.toLower ).asSymbol, msg[3].asString, msg[4].asString )}.defer;
-			}).add;
-			server.sendMsg( '/local', "hy" ++ this.id,
-				'[', '/new', "de.sciss.swingosc.HyperlinkResponder", this.id, ']' );
-		});
+	}
+
+	linkEnteredAction_ { arg func;
+		if( func.notNil && hyResp.isNil, { this.prCreateLinkResponder });
+		linkEnteredAction = func;
+	}
+
+	linkExitedAction_ { arg func;
+		if( func.notNil && hyResp.isNil, { this.prCreateLinkResponder });
+		linkExitedAction = func;
 	}
 	
 	usesTabToFocusNextView_ { arg bool;
@@ -2341,6 +2349,22 @@ JSCTextView : JSCView {
 	}
 
 	// ----------------- private instance methods -----------------
+	
+	prCreateLinkResponder {
+		hyResp = OSCpathResponder( server.addr, [ '/hyperlink', this.id ], { arg time, resp, msg; var url, descr;
+			{
+				url   = msg[3].asString;
+				descr = msg[4].asString;
+				switch( msg[2],
+					\ACTIVATED, { linkAction.value( this, url, descr )},
+					\ENTERED,   { linkEnteredAction.value( this, url, descr )},
+					\EXITED,    { linkExitedAction.value( this, url, descr )}
+				);
+			}.defer;
+		}).add;
+		server.sendMsg( '/local', "hy" ++ this.id,
+			'[', '/new', "de.sciss.swingosc.HyperlinkResponder", this.id, ']' );
+	}
 	
 	prContainerID { ^cnID }
 
