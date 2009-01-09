@@ -109,11 +109,12 @@ JSCView {  // abstract class
 		var argBounds, bndl, cnID = this.prContainerID;
 		jBounds	= this.prBoundsToJava( rect );
 		argBounds	= jBounds.asSwingArg;
-		bndl		= Array( 5 );
-		bndl.add([ '/set', this.id, \bounds ] ++ argBounds );
-		if( this.id != cnID, {
+		bndl		= Array( 4 );
+//		bndl		= Array( 5 );
+//		bndl.add([ '/set', this.id, \bounds ] ++ argBounds );
+//		if( this.id != cnID, {
 			bndl.add([ '/set', cnID, \bounds ] ++ argBounds );
-		});
+//		});
 		if( parent.notNil, { parent.prMoveChild( bndl, this )});
 		server.listSendBundle( nil, bndl );
 		this.prInvalidateBounds;
