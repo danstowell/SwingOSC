@@ -54,6 +54,7 @@ JSCWindow : Object
 	var <alwaysOnTop = false;
 	var <drawHook;
 	var <acceptsMouseOver = false;	var <acceptsClickThrough = true;
+	var <>toFrontAction, <>endFrontAction;
 	
 	var <server, <id;
 	var bounds;
@@ -454,24 +455,31 @@ JSCWindow : Object
 			var state;
 		
 			state = msg[2].asSymbol;
-			case
-			{ state === \resized }
-			{
+			switch( state,
+			\resized, {
 //				bounds = this.prBoundsFromJava( Rect( msg[3], msg[4], msg[5], msg[6] ));
 				bounds = Rect( msg[3], msg[4], msg[5], msg[6] );
 //				if( drawHook.notNil, { this.refresh });
-			}
-			{ state === \moved }
-			{
+			},
+			\moved, {
 //				bounds = this.prBoundsFromJava( Rect( msg[3], msg[4], msg[5], msg[6] ));
 				bounds = Rect( msg[3], msg[4], msg[5], msg[6] );
-			}
-			{ state === \closing }
-			{
-				if( userCanClose, {
-					{ this.prClose; }.defer;
+			},
+			\activated, {
+				if( toFrontAction.notNil, {
+					{ toFrontAction.value( this )}.defer;
 				});
-			}
+			},
+			\deactivated, {
+				if( endFrontAction.notNil, {
+					{ endFrontAction.value( this )}.defer;
+				});
+			},
+			\closing, {
+				if( userCanClose, {
+					{ this.prClose }.defer;
+				});
+			});
 		}).add;
 
 //		server.sendBundle( nil,
