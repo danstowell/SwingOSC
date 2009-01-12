@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.61, 03-Jan-09
+ *	@version		0.61, 12-Jan-09
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -104,6 +104,10 @@ JSCView {  // abstract class
 	asView { ^this }
 	
 	bounds { ^this.prBoundsReadOnly.copy }
+
+	absoluteBounds {
+		^parent.prAddAllTopLeft( jBounds.insetAll( jinsets.left, jinsets.top, jinsets.right, jinsets.bottom ));
+	}
 
 	bounds_ { arg rect;
 		var argBounds, bndl, cnID = this.prContainerID;

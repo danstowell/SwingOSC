@@ -32,7 +32,7 @@
  *	It specifies the space that a container must leave at each of its edges. 
  *
  *	@author	Hanns Holger Rutz
- *	@version	0.58, 18-Jan-08
+ *	@version	0.61, 12-Jan-09
  */
 Insets {
 	var <top, <left, <bottom, <right;
@@ -58,6 +58,8 @@ Insets {
 		^Point( left, top );
 	}
 
+	storeArgs { ^[ top, left, bottom, right ]}
+	
 	// ----------------- private instance methods -----------------
 
 	prInit {

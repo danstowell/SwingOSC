@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 03-Jan-09
+ *	@version		0.61, 12-Jan-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -121,6 +121,10 @@ JSCContainerView : JSCView { // abstract class
 		}, {
 			this.prBoundsReadOnly.leftTop - jinsets.leftTop
 		});
+	}
+
+	prAddAllTopLeft { arg rect;
+		^parent.prAddAllTopLeft( rect.moveBy( jBounds.left, jBounds.top ));
 	}
 
 	add { arg child;
@@ -387,6 +391,8 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 	prAllVisible {
 		^(visible and: { this.prGetWindow.visible });
 	}
+
+	prAddAllTopLeft { arg rect; ^rect }
 }
 
 JSCScrollTopView : JSCTopView {
