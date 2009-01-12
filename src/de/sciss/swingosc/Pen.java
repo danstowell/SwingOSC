@@ -2,7 +2,7 @@
  *  Pen.java
  *  SwingOSC
  *
- *  Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *  Copyright (c) 2005-2009 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -84,7 +84,7 @@ import javax.swing.JComponent;
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.61, 04-Aug-08
+ *	@version	0.61, 12-Jan-09
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -468,10 +468,10 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 					at		= null;
 				} else {
 					final float scalex  = (float) Math.abs( gc.at.getScaleX() );
-					final float[] dash  = gc.strk.getDashArray();
+					final float[] dash  = gc.strk.getDashArray(); // might be null!
 					final float[] dash2;
 					
-					if( dash.length < 2 ) {
+					if( (dash == null) || (dash.length < 2) ) {
 						dash2 = dash;
 					} else {
 						dash2 = new float[ dash.length ];
