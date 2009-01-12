@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCWindow. last mod: 15-Jan-08 sciss
+<p>This class is meant as an emulation of SCWindow. last mod: 19-Jan-09 sciss
 </p>
 <table>
 <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -84,24 +84,13 @@ A class representing a user interface window. See also <A HREF="JSCView.html">JS
     <span class="cl">JSCWindow</span>.closeAll    
 </PRE>
 <P>&nbsp;</P>
-<P>Add an initAction for all <code><span class="cl">JSCWindow</span></code>s:</P>
+<P>To register a function that gets called every time a window is opened:</P>
 <PRE>
-    <span class="cl">JSCWindow</span>.initAction=myFunction    
+    <span class="cl">JSCWindow</span>.initAction = { <span class="kw">arg</span> win; <span class="st">"Opened '%'!\n"</span>.postf( win.name )};
+    <span class="cl">JSCWindow</span>( <span class="st">"Huhu"</span> ).front;
 </PRE>
 <P>&nbsp;</P>
-		<h2>Actions</h2>
-		<p>Add a toFrontAction for a <code><span class="cl">JSCWindow</span></code>:</p>
-		<pre>
-    <span class="cl">JSCWindow</span>.toFrontAction=myFunction   
- 
-</pre>
-		<p>Add an endFrontAction for a <code><span class="cl">JSCWindow</span></code>:</p>
-		<pre>
-    <span class="cl">JSCWindow</span>.endFrontAction=myFunction    
-</pre>
-		<pre>
-</pre>
-		<h2>Determining the screen bounds</h2>
+<h2>Determining the screen bounds</h2>
 <PRE>
     <span class="cl">JSCWindow</span>.screenBounds
     
@@ -163,6 +152,12 @@ s.waitForBoot({
 		.action_({ w.close });
 	w.front;
 )
+</PRE>
+<P>&nbsp;</P>
+<P>Further notifications include a window becoming active (being brought to the front) or inactive (focus is transferred to another window):</P>
+<PRE>
+    w.toFrontAction = { <span class="kw">arg</span> win; <span class="st">"Activated '%'!\n"</span>.postf( win.name )};
+    w.endFrontAction = { <span class="kw">arg</span> win; <span class="st">"Deactivated '%'!\n"</span>.postf( win.name )};
 </PRE>
 <P>&nbsp;</P>
 <h2>Customizing the window look</h2>

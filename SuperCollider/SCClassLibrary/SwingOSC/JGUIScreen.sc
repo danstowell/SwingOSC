@@ -38,7 +38,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 02-Jan-09
+ *	@version		0.61, 12-Jan-09
  */
 JSCWindow : Object
 {
@@ -416,6 +416,7 @@ JSCWindow : Object
 //		view			= JSCTopView( nil, argBounds.moveTo( 0, 0 ), server );
 //		id			= view.id;
 		this.prInit( name, argBounds, resizable && border, border, scroll ); // , view );
+		initAction.value( this );
 	}
 
 //	prBoundsToJava { arg cocoa;
