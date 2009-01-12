@@ -50,7 +50,7 @@ import javax.swing.text.StyledDocument;
  *	mechanism for data updates and utility methods for styling.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 19-Dec-07
+ *	@version	0.61, 12-Jan-09
  */
 public class TextView
 extends JTextPane
@@ -151,7 +151,9 @@ extends JTextPane
 			// fixes a bug with empty documents where
 			// the font is not properly applied through setCharacterAttributes...
 			setFont( f );
-			return;
+// NOTE: don't return, because we still need to execute the below
+// with HTML pages!
+//			return;
 		}
 		final MutableAttributeSet as = new SimpleAttributeSet();
 		StyleConstants.setFontFamily( as, f.getFamily() );
@@ -167,7 +169,9 @@ extends JTextPane
 			// fixes a bug with empty documents where
 			// the colour is not properly applied through setCharacterAttributes...
 			setForeground( c );
-			return;
+// NOTE: don't return, because we still need to execute the below
+// with HTML pages!
+//			return;
 		}
 		final MutableAttributeSet as = new SimpleAttributeSet();
 		StyleConstants.setForeground( as, c );
