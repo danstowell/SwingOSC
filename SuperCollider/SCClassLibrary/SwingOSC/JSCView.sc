@@ -51,7 +51,7 @@ JSCView {  // abstract class
 	classvar unicodeMap;
 
 	var dataptr, <parent, <>action, <background;
-	var <mouseDownAction, <mouseUpAction, <mouseOverAction, <mouseMoveAction;	var <>keyDownAction, <>keyUpAction, <>keyTyped;	var <beginDragAction,<>canReceiveDragHandler,<receiveDragHandler;
+	var <mouseDownAction, <mouseUpAction, <mouseOverAction, <mouseMoveAction;	var <>keyDownAction, <>keyUpAction, <>keyTyped, <>keyModifiersChangedAction;	var <beginDragAction,<>canReceiveDragHandler,<receiveDragHandler;
 	var <>onClose;
 
 	var <server;	// the SwingOSC server used for this view
@@ -435,7 +435,7 @@ JSCView {  // abstract class
 			^nil;
 		});
 		keyResp = OSCpathResponder( server.addr, [ '/key', this.id ], { arg time, resp, msg;
-			var char, state, propagate, unicode, modifiers, plusMod, keyCode;
+			var char, state, propagate, unicode, modifiers, keyCode;
 		
 			state = msg[2].asSymbol;
 			if( state !== \typed, {
@@ -443,45 +443,51 @@ JSCView {  // abstract class
 				unicode		= msg[4];
 				modifiers		= msg[5];
 				propagate		= unicode != 0xFFFF;
-				plusMod		= fakeModifiers;
+				// java->cocoa ; this translates shift (1), ctrl (2), cmd (4), alt (8)
+				modifiers		= ((modifiers & 3) << 17) |
+							  ((modifiers & 4) << 18) |
+							  ((modifiers & 8) << 16) | fakeModifiers;
 				if( propagate.not, {
-					case { (keyCode >= 33) && (keyCode <= 40) } // arrow keys + page up/dn, home
+					case
+					{ ((keyCode >= 16) && (keyCode <= 18)) || (keyCode == 157) } // shift, ctrl, alt, meta
 					{
-						plusMod   = plusMod | 0x800000; // 0x900000;
+						{ this.keyModifiersChanged( modifiers )}.defer;
+					}
+					{ (keyCode >= 33) && (keyCode <= 40) } // arrow keys + page up/dn, home
+					{
+						modifiers = modifiers | 0x800000; // 0x900000;
 						unicode   = unicodeMap.at( keyCode );
 						propagate = true;
 					}
 					{ (keyCode >= 112) && (keyCode <= 123) } // F1 ... F12
 					{
-						plusMod   = plusMod | 0x800000;
+						modifiers = modifiers | 0x800000;
 						unicode   = keyCode + 63124;
 						propagate = true;
 					}
 					{ (keyCode >= 96) && (keyCode <= 111) } // numpad
 					{
-						plusMod   = plusMod | 0x200000;
+						modifiers = modifiers | 0x200000;
 						propagate = true;
 					}
 					{ keyCode == 20 } // caps lock
 					{
 						// on/off is reflected thru keyPressed/keyReleased
-						fakeModifiers = if( state === \pressed, 								fakeModifiers | 0x10000,
-							fakeModifiers & 0x80FFF
+						fakeModifiers = if( state === \pressed, 							fakeModifiers | 0x10000,
+							fakeModifiers & 0xFFFEFFFF
 						);
+						modifiers = modifiers | fakeModifiers;
+						{ this.keyModifiersChanged( modifiers )}.defer;
 					};
 				}, {
 					unicode	= unicodeMap.atFail( keyCode, unicode );
 				});
 				if( propagate, {
-					// java->cocoa ; this translates shift (1), ctrl (2), cmd (4), alt (8)
-					modifiers		= ((modifiers & 3) << 17) |
-								  ((modifiers & 4) << 18) |
-								  ((modifiers & 8) << 16) | plusMod;
-					char			= unicode.asAscii;
+					char = unicode.asAscii;
 					if( state === \pressed, {
-						{ this.keyDown( char, modifiers, unicode, keyCode );}.defer;
+						{ this.keyDown( char, modifiers, unicode, keyCode )}.defer;
 					}, { // "released
-						{ this.keyUp( char, modifiers, unicode, keyCode );}.defer;
+						{ this.keyUp( char, modifiers, unicode, keyCode )}.defer;
 					});
 				});
 			});
@@ -506,16 +512,14 @@ JSCView {  // abstract class
 		globalKeyUpAction.value( this, char, modifiers, unicode, keycode );
 		this.handleKeyUpBubbling( this, char, modifiers, unicode, keycode );
 	}
-	
+
+	keyModifiersChanged { arg modifiers;	
+		this.handleKeyModifiersChangedBubbling( this, modifiers );
+	}
+		
 	handleKeyDownBubbling { arg view, char, modifiers, unicode, keycode;
 		var result;
 		// nil from keyDownAction --> pass it on
-//		if( keyDownAction.isNil, {
-//			this.defaultKeyDownAction( char,modifiers,unicode,keycode );
-//			result = nil;
-//		}, {
-//			result = keyDownAction.value( view, char, modifiers, unicode, keycode );
-//		});
 		result =Êif( keyDownAction.isNil, {
 			this.defaultKeyDownAction( char, modifiers, unicode, keycode );
 		}, {
@@ -538,6 +542,14 @@ JSCView {  // abstract class
 		if( result.isNil, {  
 			// call keydown action of parent view
 			parent.handleKeyUpBubbling( view, char, modifiers, unicode, keycode );
+		});
+	}
+
+	handleKeyModifiersChangedBubbling { arg view, modifiers;
+		// nil from keyModifiersChangedAction --> pass it on
+		if( keyModifiersChangedAction.value( view, modifiers ).isNil, {
+			// call keydown action of parent view
+			parent.handleKeyModifiersChangedBubbling( view, modifiers );
 		});
 	}
 

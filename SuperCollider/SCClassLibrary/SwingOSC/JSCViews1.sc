@@ -372,13 +372,16 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 
 	prGetWindow { ^window }
 
-	// created by JSCWindow
 	handleKeyDownBubbling { arg view, char, modifiers, unicode, keycode;
 		keyDownAction.value( view, char, modifiers, unicode, keycode );
 	}
 
 	handleKeyUpBubbling { arg view, char, modifiers, unicode, keycode;
 		keyUpAction.value( view, char, modifiers, unicode, keycode );
+	}
+
+	handleKeyModifiersChangedBubbling { arg view, modifiers;
+		keyModifiersChangedAction.value( view, modifiers );
 	}
 
 	prBoundsToJava { arg rect; ^rect.copy }
