@@ -27,11 +27,11 @@
  */
 
 /**
- *	@version		0.61, 12-Jan-09
+ *	@version		0.61, 13-Jan-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
-	var <children, <decorator, <relativeOrigin = false;
+	var <children, <decorator, <relativeOrigin = true;
 	var pendingValidation = false;
 			
 	// ----------------- public instance methods -----------------
