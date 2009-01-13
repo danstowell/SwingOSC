@@ -2008,7 +2008,7 @@ JSCAbstractUserView : JSCView {
 	var <drawFunc;
 	var <clearOnRefresh = true;
 	var <>refreshOnFocus = true;
-	var <relativeOrigin;
+	var <relativeOrigin = true;
 
 	var penID			= nil;
 	var pendingDraw	= false;
