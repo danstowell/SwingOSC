@@ -47,7 +47,9 @@ JSCContainerView : JSCView { // abstract class
 	}
 	
 	addFlowLayout { arg margin, gap;
-		this.decorator_( FlowLayout( this.bounds, margin, gap ));
+		this.relativeOrigin.if
+			{this.decorator_( FlowLayout( this.bounds.moveTo(0,0), margin, gap ) )}
+			{this.decorator_( FlowLayout( this.bounds, margin, gap ) )};
 		^this.decorator;
 	}
 
