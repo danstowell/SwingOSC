@@ -93,7 +93,9 @@ SwingGUI {
 	*ezListView { ^EZListView }
 	*ezPopUpMenu { ^EZPopUpMenu}
 	*ezNumber { ^EZNumber}
-	*ezRanger { ^EZRanger }		
+	*ezRanger { ^EZRanger }	
+	
+	*knob { ^JKnob }		
 	*font { ^JFont }
 	*pen { ^JPen }
 	
