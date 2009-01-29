@@ -34,9 +34,11 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
@@ -47,17 +49,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.Action;
+
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 
-import de.sciss.app.AbstractApplication;
 import de.sciss.common.AppWindow;
-import de.sciss.common.BasicApplication;
-import de.sciss.common.BasicMenuFactory;
-import de.sciss.common.ShowWindowAction;
 import de.sciss.gui.GUIUtil;
 import de.sciss.gui.MenuAction;
 
@@ -68,8 +69,8 @@ extends AppWindow
 	public static final int	FLAG_SCROLLPANE		= 0x02;
 	public static final int	FLAG_NORESIZE		= 0x04;
 
-	private final ShowWindowAction	actionShowWindow;
-	private final BasicMenuFactory	mf;
+//	private final ShowWindowAction	actionShowWindow;
+//	private final BasicMenuFactory	mf;
 	
 	private final Map				winL		= new HashMap();
 	private final JComponent		topView;
@@ -78,7 +79,7 @@ extends AppWindow
 	private List		collMouseResp		= null;
 	private boolean 	acceptsMouseOver	= false;
 
-	private static boolean isMacOs() {
+	private static boolean isMacOS() {
    	 	return System.getProperty( "os.name" ).indexOf( "Mac" ) >= 0;
     }
    
@@ -89,16 +90,21 @@ extends AppWindow
 	public Frame( String title, Rectangle cocoaBounds, int flags )
 	{
 		super( REGULAR );
-		actionShowWindow = new ShowWindowAction( this );
-		final BasicApplication app = (BasicApplication) AbstractApplication.getApplication(); 
-		mf = app.getMenuFactory();
-		mf.addToWindowMenu( actionShowWindow );	// MUST BE BEFORE INIT()!!
+//		final BasicApplication app = (BasicApplication) AbstractApplication.getApplication(); 
+//		mf = app.getMenuFactory();
+//		actionShowWindow = new ShowWindowAction( this );
+//		mf.addToWindowMenu( actionShowWindow );	// MUST BE BEFORE INIT()!!
 		
 		actionClose = new ActionClose();
-		mf.putMimic( "file.close", this, actionClose );
-//		action.setEnabled( true );
-//		action = new ActionMinimize();
-		mf.putMimic( "window.minimize", this, new ActionMinimize() );
+//		mf.putMimic( "file.close", this, actionClose );
+//		mf.putMimic( "window.minimize", this, new ActionMinimize() );
+		final InputMap	imap = this.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW );
+		final ActionMap	amap = this.getActionMap();
+		final int		modif = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_W, modif ), "close" );
+		amap.put( "close", actionClose );
+		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_M, modif ), "minimize" );
+		amap.put( "minimize", new ActionMinimize() );
 		
 		init();
 		setTitle( title );	// needs to be after init. WHY?
@@ -123,7 +129,7 @@ extends AppWindow
 			}
 		}
 		catch( Exception e ) {
-			mf.removeFromWindowMenu( actionShowWindow );
+//			mf.removeFromWindowMenu( actionShowWindow );
 			e.printStackTrace();
 			throw new IllegalStateException();
 		}
@@ -208,15 +214,15 @@ extends AppWindow
 	public void setTitle( String title )
 	{
 		super.setTitle( title );
-		actionShowWindow.putValue( Action.NAME, title );
+//		actionShowWindow.putValue( Action.NAME, title );
 	}
 
-	public void dispose()
-	{
-		mf.removeFromWindowMenu( actionShowWindow );
-		actionShowWindow.dispose();
-		super.dispose();
-	}
+//	public void dispose()
+//	{
+//		mf.removeFromWindowMenu( actionShowWindow );
+//		actionShowWindow.dispose();
+//		super.dispose();
+//	}
 	
 	protected WindowEvent windowEvent( Event e )
 	{
@@ -343,7 +349,7 @@ extends AppWindow
 	    		return;
 	    	}
 	    	
-	    	if( isMacOs() ) {
+	    	if( isMacOS() ) {
 	    		final Class cWindowClass = Class.forName("apple.awt.CWindow");
 	    		if( cWindowClass.isInstance( peer )) {
 	    			// ((apple.awt.CWindow) peer).setAlpha( alpha );
@@ -369,7 +375,7 @@ extends AppWindow
     		return;
         }
     }
-    
+
     private class ActionClose
 	extends MenuAction
 	{

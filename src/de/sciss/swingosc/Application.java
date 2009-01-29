@@ -1,10 +1,10 @@
 package de.sciss.swingosc;
 
-import java.awt.event.KeyEvent;
+//import java.awt.event.KeyEvent;
 import java.io.File;
 
 import javax.swing.Action;
-import javax.swing.KeyStroke;
+//import javax.swing.KeyStroke;
 
 import de.sciss.app.AbstractApplication;
 import de.sciss.app.Document;
@@ -13,8 +13,8 @@ import de.sciss.app.DocumentListener;
 import de.sciss.common.BasicApplication;
 import de.sciss.common.BasicMenuFactory;
 import de.sciss.common.BasicWindowHandler;
-import de.sciss.gui.MenuGroup;
-import de.sciss.gui.MenuItem;
+//import de.sciss.gui.MenuGroup;
+//import de.sciss.gui.MenuItem;
 
 public class Application
 extends BasicApplication
@@ -65,25 +65,22 @@ extends BasicApplication
 	{
 		return new BasicMenuFactory( this ) {
 			public void addMenuItems() {
-				MenuGroup	mg;
-				MenuItem	mi;
+//				MenuGroup	mg;
+//				MenuItem	mi;
 				
 				remove( get( "file" ));
-				mg = new MenuGroup( "file", getResourceString( "menuFile" ));
-				add( mg, 0 );
-				mi = new MenuItem( "close", getResourceString( "menuClose" ),
-				   KeyStroke.getKeyStroke( KeyEvent.VK_W, MENU_SHORTCUT ));
-				mg.add( mi );
+//				mg = new MenuGroup( "file", getResourceString( "menuFile" ));
+//				add( mg, 0 );
+//				mi = new MenuItem( "close", getResourceString( "menuClose" ),
+//				   KeyStroke.getKeyStroke( KeyEvent.VK_W, MENU_SHORTCUT ));
+//				mg.add( mi );
 				remove( get( "edit" ));
-				mi = new MenuItem( "minimize", getResourceString( "menuMinimize" ),
-					KeyStroke.getKeyStroke( KeyEvent.VK_M, MENU_SHORTCUT ));
-//				mi.setEnabled( false );
-				mg = (MenuGroup) get( "window" );
-				mg.add( mi, 0 );
+//				mi = new MenuItem( "minimize", getResourceString( "menuMinimize" ),
+//					KeyStroke.getKeyStroke( KeyEvent.VK_M, MENU_SHORTCUT ));
+//				mg = (MenuGroup) get( "window" );
+//				mg.add( mi, 0 );
+				remove( get( "window" ));
 				remove( get( "help" ));
-//				mg = (MenuGroup) get( "help" );
-//				mg.remove( mg.get( "manual" ));
-//				mg.remove( mg.get( "shortcuts" ));
 			}
 			
 			public void showPreferences() { /* none */ }

@@ -88,7 +88,7 @@ TD.when {
 </HEAD>
 <BODY>
 <h1>
-SwingOSC <small>-- version 0.61 RC SVN-151 (built 13-jan-09) --</small>
+SwingOSC <small>-- version 0.61 RC SVN-156 (built 30-jan-09) --</small>
 </h1>
 <h3>statement</h3>
 <TABLE><TR><TD VALIGN="top"><IMG SRC="application.png" ALT=""></TD><TD><p>
@@ -205,6 +205,14 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <LI>complete peakmeterview, add some nice stuff like tree view ...</LI>
 </UL>
 <h3>change history</h3>
+<h4>v0.61 (jan 2009 - SVN rev. ??)</h4>
+<UL>
+<LI>Server: performance improvement, improved booting from SC</LI>
+<LI>SC classes: moved OSX specific stuff to separate folder, adding (still experimental) JSCMenuNode, JPen (joinStyle_, lineDash_, alpha_), adding JavaObjectD, SwingGUI (stringBounds), JSCTextView (open, linkAction), JSCContainerView (relativeOrigin), JSCWindow (initAction, toFrontAction, endFrontAction), JSCView (absoluteBounds), JSCUserView (relativeOrigin true)</LI>
+<LI>Refactoring: using ScissLib (application framework with window handler customization)</LI>
+<LI>Bug fixes: 2037842, 2482337</LI>
+<LI>New features: 1849186</LI>
+</UL>
 <h4>v0.60 (may 2008 - SVN rev. 77)</h4>
 <UL>
 <LI>sc classes: fixes for control rate scoping, JSCView (handleKeyUp/DownBubbling, focusColor_ dummy,), JPen (addArc, addWedge, addAnnularWedge, setSmoothing), JSCListView (bounds), JSCTextView (bounds, open), adding coarse String-bounds estimator,</LI>
