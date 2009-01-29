@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCUserView. last mod: 16-jan-08 sciss
+<p>This class is meant as an emulation of SCUserView. last mod: 29-jan-09 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -55,22 +55,19 @@ Note: please use the abstraction layer GUI.userView if possible! (see <A HREF="S
     func = { <span class="kw">arg</span> me;
         <span class="cl">JPen</span>.use {
             <span class="cm">// clipping into the boundingbox</span>
-            <span class="cl">JPen</span>.addRect( me.bounds );
+            <span class="cl">JPen</span>.addRect( me.bounds.moveTo( 0, 0 ));
             <span class="cl">JPen</span>.clip;
 
             <span class="cm">// draw background</span>
-            <span class="cl">JPen</span>.color = <span class="cl">Color</span>.gray( 0.5 );
-            <span class="cl">JPen</span>.moveTo( me.bounds.left @ me.bounds.top );
-            <span class="cl">JPen</span>.lineTo( (me.bounds.left @ me.bounds.top) +
-                         (me.bounds.width @ 0) );
-            <span class="cl">JPen</span>.lineTo( (me.bounds.left @ me.bounds.top) +
-                         (me.bounds.width @ me.bounds.height) );
-            <span class="cl">JPen</span>.lineTo( (me.bounds.left @ me.bounds.top ) +
-                         (0 @ me.bounds.height) );
-            <span class="cl">JPen</span>.lineTo( me.bounds.left @ me.bounds.top );
+            <span class="cm">// (alternatively use addRect)</span>
+            <span class="cl">JPen</span>.fillColor = <span class="cl">Color</span>.gray( 0.5 );
+            <span class="cl">JPen</span>.moveTo( 0 @ 0 );
+            <span class="cl">JPen</span>.lineTo( me.bounds.width @ 0 );
+            <span class="cl">JPen</span>.lineTo( me.bounds.width @ me.bounds.height );
+            <span class="cl">JPen</span>.lineTo( 0 @ me.bounds.height );
+            <span class="cl">JPen</span>.lineTo( 0 @ 0 );
             <span class="cl">JPen</span>.fill;
 
-            <span class="cl">JPen</span>.translate( 100, 100 );
             10.do {
                 <span class="cl">JPen</span>.color = <span class="cl">Color</span>.red( rrand( 0.0, 1 ), rrand( 0.0, 0.5 ));
                 <span class="cl">JPen</span>.addArc( 400.exprand( 2 ) @ 100.rand, rrand( 10, 100 ), 2pi.rand, pi );
@@ -99,7 +96,7 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
 </pre>
 <P>&nbsp;</P>
 <h2>relativeOrigin_</h2>
-<P>Sets the coordinate origin of <A HREF="JPen.html">JPen</A> in the view's <code>drawFunc</code> to be relative to the view's top left corner (when <code><span class="kw">true</span></code>) or to be relative to the window's top left corner (when <code><span class="kw">false</span></code>, which is the default).
+<P>Sets the coordinate origin of <A HREF="JPen.html">JPen</A> in the view's <code>drawFunc</code> to be relative to the view's top left corner (when <code><span class="kw">true</span></code>, which is the default) or to be relative to the window's top left corner (when <code><span class="kw">false</span></code>).
 </P>
 <PRE>
 (
@@ -107,7 +104,8 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
     w.view.background_( <span class="cl">Color</span>.white );
     3.do { <span class="kw">arg</span> i;
         v = <span class="cl">JSCUserView</span>(w, <span class="cl">Rect</span>( 20 + (i * 120), 100, 100, 100 ))
-            .relativeOrigin_( <span class="kw">true</span> )
+<span class="cm">// this code not needed since it's the default</span>
+<span class="cm">//          .relativeOrigin_( true )</span>
             .drawFunc_({
                 <span class="cl">JPen</span>.strokeRect( <span class="cl">Rect</span>( 0, 0, 100, 100 ));
                 <span class="cl">JPen</span>.line(   0 @ 0, 100 @ 100 );
@@ -126,6 +124,7 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
     w.view.background_( <span class="cl">Color</span>.white );
     3.do { <span class="kw">arg</span> i;
         v = <span class="cl">JSCUserView</span>(w, <span class="cl">Rect</span>( 20 + (i * 120), 100, 100, 100 ))
+            .relativeOrigin_( <span class="kw">false</span> )
             .drawFunc_({ <span class="kw">arg</span> view; <span class="kw">var</span> bounds;
                 bounds = view.bounds;
                 <span class="cl">JPen</span>.translate( bounds.left, bounds.top );
@@ -172,22 +171,14 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
     drawFunc = { <span class="kw">arg</span> me;
         <span class="cl">JPen</span>.use {
             <span class="cm">// clipping into the boundingbox</span>
-            <span class="cl">JPen</span>.addRect( me.bounds );
+            <span class="cl">JPen</span>.addRect( me.bounds.moveTo( 0, 0 ));
             <span class="cl">JPen</span>.clip;
 
             <span class="cm">// draw background</span>
-            <span class="cl">JPen</span>.color = <span class="cl">Color</span>.gray( sat );
-            <span class="cl">JPen</span>.moveTo( me.bounds.left @ me.bounds.top );
-            <span class="cl">JPen</span>.lineTo( (me.bounds.left @ me.bounds.top) +
-                         (me.bounds.width @ 0) );
-            <span class="cl">JPen</span>.lineTo( (me.bounds.left @ me.bounds.top) +
-                         (me.bounds.width @ me.bounds.height) );
-            <span class="cl">JPen</span>.lineTo( (me.bounds.left @ me.bounds.top ) +
-                         (0 @ me.bounds.height) );
-            <span class="cl">JPen</span>.lineTo( me.bounds.left @ me.bounds.top );
+            <span class="cl">JPen</span>.fillColor = <span class="cl">Color</span>.gray( sat );
+            <span class="cl">JPen</span>.addRect( me.bounds.moveTo( 0, 0 ));
             <span class="cl">JPen</span>.fill;
 
-            <span class="cl">JPen</span>.translate( 100, 100 );
             10.do {
                 <span class="cl">JPen</span>.color = <span class="cl">Color</span>.red( rrand( 0.0, 1 ), rrand( 0.0, 0.5 ));
                 <span class="cl">JPen</span>.addArc( 400.exprand( 2 ) @ 100.rand, rrand( 10, 100 ), 2pi.rand, pi );
@@ -225,9 +216,9 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
 <span class="cm">// therefore, in this example, we use the drawFunc of the user view</span>
 <span class="cm">// and not the window to paint (see SCUserView help for comparison)</span>
 
-<span class="cm">// <strong>NOTE:</strong> after some drawing, sclang starts to partially drop</span>
-<span class="cm">// OSC packets resulting in illegal drawing commands sent and</span>
-<span class="cm">// the dislay to flicker</span>
+<span class="cm">// <strong>NOTE:</strong> after some drawing, the number of OSC packets sent</span>
+<span class="cm">// during each refresh increases which results in more sluggish </span>
+<span class="cm">// updates</span>
 
 (
     <span class="kw">var</span> w, txt, tmppoints, all;
@@ -300,8 +291,7 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
     x = gui.userView.new( w, <span class="cl">Rect</span>( 10, 10, width - 20, height - 20 ))
         .canFocus_( <span class="kw">false</span> )
         .drawFunc_( drawFunc )
-        .clearOnRefresh_( <span class="kw">false</span> )
-        .relativeOrigin_( <span class="kw">true</span> );
+        .clearOnRefresh_( <span class="kw">false</span> );
 
     w.front;
     <span class="cl">Routine</span>({ while({ x.isClosed.not }, { x.refresh; (1/25).wait })}).play( <span class="cl">AppClock</span> );
@@ -327,7 +317,6 @@ w.view.background_( <span class="cl">Color</span>.white );
 views = { <span class="kw">arg</span> i;
     v = <span class="cl">JSCUserView</span>( w, <span class="cl">Rect</span>( 20 + (i * 120), 100, 100, 100 ))
         .refreshOnFocus_( <span class="kw">false</span> )
-        .relativeOrigin_( <span class="kw">true</span> )
         .drawFunc_( func );
 } ! 3;
 w.front;

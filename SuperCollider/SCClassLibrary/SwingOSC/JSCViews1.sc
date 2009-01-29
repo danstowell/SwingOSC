@@ -2109,9 +2109,8 @@ JSCUserView : JSCAbstractUserView {
 		^this.new( parent, bounds ).refreshOnFocus_( false ).drawFunc_({ arg view;
 			var b = view.bounds, min = min( b.width, b.height ), max = max( b.width, b.height ),
 			    num = (max / min).asInteger;
-			JPen.addRect( b );
+			JPen.addRect( b.moveTo( 0, 0 ));
 			JPen.clip;
-			JPen.translate( b.left, b.top );
 			JPen.scale( min, min );
 			num.do({ 	arg i;
 				var rel = i / num;
@@ -2161,7 +2160,7 @@ JSCUserView : JSCAbstractUserView {
 	}
 
 	prInitView {
-		relativeOrigin	= false;
+//		relativeOrigin	= false;
 		jinsets			= Insets( 3, 3, 3, 3 );
 		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.swingosc.UserView", ']' ]
