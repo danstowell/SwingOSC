@@ -173,3 +173,19 @@
 		^([ '[', '/new', "java.net.InetSocketAddress", this.hostname, this.port, ']' ]);
 	}
 }
+
+
+// These are required for correct functioning of SCViewHolder.
+// SCViewHolder IS A CROSS-PLATFORM CLASS
+// Therefore its extensions must not be in an osx-specific folder.
+
+// don't blame me for this hackery
++ SCViewHolder {
+//	prIsInsideContainer { ^false }
+//	prSetScBounds {}
+	prInvalidateBounds {}
+	prInvalidateAllVisible {}
+	prVisibilityChange {}
+	protDraw {}
+	id { ^nil }	// this is detected by JSCContainerView!
+} 
