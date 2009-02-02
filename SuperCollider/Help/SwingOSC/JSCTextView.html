@@ -7,40 +7,40 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.48">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #52557b}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #52557b; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #52557b}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #52557b; min-height: 13.0px}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; color: #525679}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #525679; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #525679}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Helvetica; color: #525679; min-height: 13.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #52557b}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #525679}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #9d281b}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; min-height: 16.0px}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
 p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13; min-height: 14.0px}
-p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #9d281b; min-height: 14.0px}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
 span.s1 {text-decoration: underline}
 span.s2 {font: 15.0px Helvetica}
 span.s3 {font: 9.0px Monaco; color: #000000}
 span.s4 {color: #000000}
-span.s5 {color: #52557b}
+span.s5 {color: #525679}
 span.s6 {font: 9.0px Monaco}
-span.s7 {color: #0019ba}
-span.s8 {color: #ad1d13}
+span.s7 {color: #0024b5}
+span.s8 {color: #9d281b}
 span.s9 {color: #606060}
-span.s10 {color: #0000bf}
+span.s10 {color: #0019ba}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><b>SwingOSC – Java-based cross-platform replacements for Cocoa GUI classes</b></p>
 <p class="p2"><br></p>
-<p class="p3">This class is meant as an emulation of SCTextView. last mod: 03-aug-08 sciss</p>
+<p class="p3">This class is meant as an emulation of SCTextView. last mod: 02-feb-09 sciss</p>
 <p class="p3">Also refer to [<span class="s1">JSCView</span>] for different behaviour affecting all widgets</p>
 <p class="p4"><br></p>
 <p class="p3"><b>no-op / not working</b></p>
@@ -149,9 +149,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p14"><br></p>
 <p class="p14"><br></p>
 <p class="p11">// loading a text file (SwingOSC only). plain text, html and rtf should work</p>
-<p class="p13">t.openURL( <span class="s9">"file://"</span> ++ <span class="s9">"~/*/*.html"</span>.standardizePath.pathMatch.choose.absolutePath );</p>
+<p class="p13">t.openURL( <span class="s9">"file:"</span> ++ <span class="s9">"~/*/*.html"</span>.standardizePath.pathMatch.choose.absolutePath );</p>
 <p class="p15"><span class="s4">t.openURL( </span>"http://swiki.hfbk-hamburg.de:8888/MusicTechnology/6"<span class="s4"> );</span></p>
-<p class="p11"><span class="s4">t.openURL( </span><span class="s9">"file://"</span><span class="s4"> ++ </span><span class="s7">Document</span><span class="s4">.current.path ); </span>// RTF is not properly loaded - why?</p>
+<p class="p11"><span class="s4">t.openURL( </span><span class="s9">"file:"</span><span class="s4"> ++ </span><span class="s7">Document</span><span class="s4">.current.path ); </span>// RTF is not properly loaded - why?</p>
 <p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// TODO : clicking on links has no effect!</p>
 <p class="p14"><br></p>
 <p class="p11">// listen for document changes</p>

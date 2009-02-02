@@ -2331,29 +2331,19 @@ JSCTextView : JSCView {
 	caretColor_ { arg color; this.setProperty( \caretColor, color )}
 
 	openURL { arg url;
-		server.sendMsg( '/method', this.id, \setPage, '[', '/new', "java.net.URL", url, ']' );
+//		server.sendMsg( '/method', this.id, \setPage, '[', '/new', "java.net.URL", url, ']' );
+		server.sendMsg( '/method', this.id, \setPage, url );
 		// XXX update client send string rep.
 	}
 
 	open { arg path;
-		Platform.case(\windows, {
-			if(path[1]==$:){
-				// Windows path styles "C:\blah" will need an extra slash at start
-				path = "/" ++ path
-			};
-			path = path.tr($\\, $/);
+		var file;
+		if( path.beginsWith( "SC://" ), {
+			path = Help.findHelpFile( path.copyToEnd( 5 ));
+		}, {
+			path = path.absolutePath;
 		});
-		path = path.replace( ' ', '%20' );
-
-		if ( path.contains( "SC://"), {
-			path = Help.findHelpFile( path.asRelativePath( "SC:/") );
-		});
-
-		if ( path.contains( "://" ).not, {
-			if ( path.first.asString != "/" ) { path = String.scDir +/+ path; };
-			path = "file://"++path;
-		});
-		this.openURL( path );
+		server.sendMsg( '/method', this.id, \setPage, '[', '/methodr', '[', '/new', "java.io.File", path, ']', 'toURL', ']' );
 	}
 
 	defaultKeyDownAction { arg key, modifiers, unicode;
