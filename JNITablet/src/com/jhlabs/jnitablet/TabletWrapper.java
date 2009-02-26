@@ -33,7 +33,7 @@ import java.util.List;
  *
  *	@author		Jerry Huxtable
  *	@author		Hanns Holger Rutz
- *	@version	0.11, 24-Feb-08
+ *	@version	0.12, 21-Feb-09
  */
 public class TabletWrapper
 {
@@ -41,7 +41,8 @@ public class TabletWrapper
 		System.loadLibrary( "JNITablet" );
 	}
 
-	private static final double		VERSION			= 0.11;
+	public static boolean			DEBUG			= false;
+	private static final double		VERSION			= 0.12;
 
 	private static TabletWrapper	instance;
 
@@ -53,6 +54,7 @@ public class TabletWrapper
 		if( instance != null ) throw new IllegalStateException( "Only one instance allowed" );
 		instance = this;
 		startup();
+		if( DEBUG ) System.err.println( "TabletWrapper: started" );
 	}
 	
 	public static final double getVersion()

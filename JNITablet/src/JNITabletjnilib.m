@@ -69,7 +69,7 @@ static jint GetJNIEnv(JNIEnv **env, bool *mustDetach)
 //		if( [event subtype] != NX_SUBTYPE_TABLET_POINT ) break;
     case NSTabletPoint:
 		if (GetJNIEnv(&env, &shouldDetach) != JNI_OK) {
-			NSLog(@"Couldn't attach to JVM");
+			NSLog(@"JNITablet: Couldn't attach to JVM");
 			return;
 		}
 		NSPoint tilt = [event tilt];
@@ -101,7 +101,7 @@ static jint GetJNIEnv(JNIEnv **env, bool *mustDetach)
 		
 	case NSTabletProximity:
 		if (GetJNIEnv(&env, &shouldDetach) != JNI_OK) {
-			NSLog(@"Couldn't attach to JVM");
+			NSLog(@"JNITablet: Couldn't attach to JVM");
 			return;
 		}
 		(*env)->CallVoidMethod( env, g_object, g_postProximityMethodID,
@@ -139,6 +139,8 @@ JNIEXPORT void JNICALL Java_com_jhlabs_jnitablet_TabletWrapper_startup(JNIEnv *e
     if( g_class != (jclass) 0 ) {
         g_postMethodID			= (*env)->GetMethodID( env, g_class, "postEvent", "(IIFFIIIIIFFFFFSSS)V" );
         g_postProximityMethodID	= (*env)->GetMethodID( env, g_class, "postProximityEvent", "(IIZIIIIIIII)V" );
+	} else {
+		NSLog(@"JNITablet: Couldn't register java methods");
 	}
 }
 

@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 #undef com_jhlabs_jnitablet_TabletWrapper_VERSION
-#define com_jhlabs_jnitablet_TabletWrapper_VERSION 0.11
+#define com_jhlabs_jnitablet_TabletWrapper_VERSION 0.12
 /*
  * Class:     com_jhlabs_jnitablet_TabletWrapper
  * Method:    startup

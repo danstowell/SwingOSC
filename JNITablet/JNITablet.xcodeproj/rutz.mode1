@@ -243,8 +243,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -316,7 +314,7 @@
 							<real>249</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>280 81 805 795 0 0 1440 878 </string>
+						<string>283 61 805 795 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -353,7 +351,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {534, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>280 81 805 795 0 0 1440 878 </string>
+								<string>283 61 805 795 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -361,6 +359,8 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -373,7 +373,7 @@
 								<key>Frame</key>
 								<string>{{0, 5}, {534, 749}}</string>
 								<key>RubberWindowFrame</key>
-								<string>280 81 805 795 0 0 1440 878 </string>
+								<string>283 61 805 795 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -397,9 +397,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>53BD75C30EBB0B08003A8E6D</string>
+				<string>5348D8E10F509CCC00ACF724</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>53BD75C40EBB0B08003A8E6D</string>
+				<string>5348D8E20F509CCC00ACF724</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -518,7 +518,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>247139034.13744301</real>
+	<real>256944862.77793199</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -533,12 +533,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>53BD75C50EBB0B08003A8E6D</string>
+		<string>53C7D0190D70E0510050CAD2</string>
 		<string>/Users/rutz/Documents/workspace/SwingOSC/JNITablet/JNITablet.xcodeproj</string>
-		<string>53BD75C60EBB0B08003A8E6D</string>
+		<string>5348D8EA0F509D6E00ACF724</string>
 	</array>
 	<key>WindowString</key>
-	<string>280 81 805 795 0 0 1440 878 </string>
+	<string>283 61 805 795 0 0 1440 878 </string>
 	<key>WindowTools</key>
 	<array>
 		<dict>
@@ -576,6 +576,8 @@
 							<string>211pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
@@ -617,7 +619,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>53C7D0190D70E0510050CAD2</string>
-				<string>53E889E70D70EB1500AA4B0C</string>
+				<string>5348D8E00F509CCC00ACF724</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
