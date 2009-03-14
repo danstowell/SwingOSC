@@ -1908,7 +1908,7 @@ JSCListView : JSCControlView {
 }
 
 JSCDragView : JSCStaticTextBase {
-	var <>interpretDroppedStrings = true;
+	var <>interpretDroppedStrings = false;
 	
 	// ----------------- public class methods -----------------
 
