@@ -35,6 +35,7 @@
 JSCNumberBox : JSCTextEditBase {
 
 	var <>step=1;
+	var <>scroll_step; // a dummy for SC compatibility
 
 	var acResp;	// OSCpathResponder for action listening
 	var txResp;
