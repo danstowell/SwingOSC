@@ -370,7 +370,7 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		server.listSendBundle( nil, bndl );
 	}
 
-	prInitView {Êthis.prSCViewNew }
+	prInitView {ï¿½this.prSCViewNew }
 
 	prGetWindow { ^window }
 
@@ -769,7 +769,7 @@ JSCSlider : JSCSliderBase
 	thumbSize { ^this.getProperty( \thumbSize, 12 )}
 	
 	thumbSize_ { arg size;
-		"JSCSlider.thumbSize_ : not yet implemented".warn;
+	//	"JSCSlider.thumbSize_ : not yet implemented".warn;
 		this.setProperty( \thumbSize, size );
 	}
 
