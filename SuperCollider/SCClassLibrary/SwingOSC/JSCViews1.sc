@@ -2881,6 +2881,25 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 		this.strokeColor_( strokec );
 		this.fillColor_( fillc );
 	}
+
+// XXX sorry, don't have time in this moment, requires too much changes
+// since thankfully jan did it a different ay
+//	curve_ {Êarg values;
+//		var curveNumbers, shape, curve;
+////		var curves = values.copy; // XXX should be a readable instance field
+//		if( values.isArray, {
+//			curveNumbers = curves.collect({ arg it;
+//				shape = this.prShapeNumber( it );
+//				curve = if( shape == 5, it, 0.0 );
+//				[ shape, curve ];
+//			});
+//			this.prSetCurves( curveNumbers );
+//		}, {
+//			shape = this.prShapeNumber( curves );
+//			curve = if( shape == 5, values, 0.0 );
+//			this.setCurve( -1, shape, curve );
+//		});
+//	}
 	
 	setCurve { arg index, curve = \lin;
 		var shape, value, curves;
@@ -2890,17 +2909,13 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 			if( curves.notNil, {
 				curves.fill( curve );
 			}, {
-//				("AAA " ++ value).postln;
 				properties[ \value ] = value ++ [(curve ! value[1].size)];
-//				("AAA " ++ properties[ \value ]).postln;
 			});
 		}, { if( index < size, {
 			if( curves.notNil, {
 				curves[ index ] = curve;
 			}, {
-//				("BBB " ++ value).postln;
 				properties[ \value ] = value ++ [(\lin ! value[1].size).put( index, curve )];
-//				("BBB " ++ properties[ \value ]).postln;
 			});
 		})});
 		if( curve.isFloat, {
@@ -3256,6 +3271,8 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 			2.do({ arg j; var xyvals = val[ j ]; xyvals.size.do({ arg i; xyvals[ i ] = xyvals[ i ].clip( 0.0, 1.0 )})});
 		});
 	}
+
+	prShapeNumber { arg name; ^Env.shapeNames.at( name ) ? 5 }
 }
 
 JSCTextEditBase : JSCStaticTextBase {

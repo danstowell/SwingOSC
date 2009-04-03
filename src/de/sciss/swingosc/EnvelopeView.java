@@ -55,7 +55,7 @@ import de.sciss.net.OSCMessage;
  *	Swing implementation and extension of SCEnvelopeView by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.59, 25-Feb-08
+ *	@version	0.61, 03-Apr-09
  */
 public class EnvelopeView
 extends AbstractMultiSlider
@@ -124,6 +124,8 @@ extends AbstractMultiSlider
 	{
 		super();
 		this.clipThumbs = clipThumbs;
+		drawLines		= true;
+		
 
 		final MouseAdapter ma = new MouseAdapter();
 		addMouseListener( ma );
@@ -1111,8 +1113,8 @@ extends AbstractMultiSlider
 		protected int					shape			= SHP_LINEAR;
 		protected float					curve			= 0f;
 		protected Color					fillColor 		= Color.black;
-		protected float					thumbWidth 		= 12f;
-		protected float					thumbHeight		= 12f;
+		protected float					thumbWidth 		= 5f; // 12f;
+		protected float					thumbHeight		= 5f; // 12f;
 		
 		protected boolean				readOnly		= false;
 		protected boolean				selected		= false;
