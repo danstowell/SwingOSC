@@ -264,7 +264,7 @@ extends AbstractMultiSlider
 							float ix = n.cx;
 							do {
 								ix = Math.max( n1s.cx, Math.min( n2s.cx, ix + istep ));
-								gpLines.lineTo( ix, h * (1f - envAt( n, n2, ix * sx )));
+								gpLines.lineTo( ix, h * (1f - envAt( n1s, n2s, ix * sx )));
 							} while( ix != n2.cx );
 						}
 						break;
@@ -308,7 +308,7 @@ extends AbstractMultiSlider
 						float ix = n.cx;
 						do {
 							ix = Math.max( n1s.cx, Math.min( n2s.cx, ix + istep ));
-							gpLines.lineTo( ix, h * (1f - envAt( n, n2, ix * sx )));
+							gpLines.lineTo( ix, h * (1f - envAt( n1s, n2s, ix * sx )));
 						} while( ix != n2.cx );
 						break;
 
