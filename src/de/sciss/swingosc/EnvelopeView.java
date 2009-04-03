@@ -26,6 +26,7 @@
  *  Changelog:
  *		05-Feb-07	created
  *		26-Jul-07	added support for connection shapes, added horizEditMode
+ *		04-Apr-09	completed and fixed shapes drawing
  */
 
 package de.sciss.swingosc;
@@ -125,7 +126,6 @@ extends AbstractMultiSlider
 		super();
 		this.clipThumbs = clipThumbs;
 		drawLines		= true;
-		
 
 		final MouseAdapter ma = new MouseAdapter();
 		addMouseListener( ma );
@@ -240,43 +240,32 @@ extends AbstractMultiSlider
 							gpLines.curveTo( n.cx * EXPM1R + n2.cx * EXPM1, n.cy, n.cx * EXPM1 + n2.cx * EXPM1R, n2.cy, n2.cx, n2.cy );
 						}
 						break;
-						
+	
+					case Node.SHP_EXPONENTIAL:
+					case Node.SHP_CURVE:
 					case Node.SHP_WELCH:
-						// XXX only approximate
-						for( int j = 0; j < n.connections.length; j++ ) {
-							n2 = n.connections[ j ];
-							gpLines.moveTo( n.cx, n.cy );
-							if( n.y < n2.y ) {
-								gpLines.curveTo( n.cx * 0.556f + n2.cx * 0.444f, n.cy * 0.278f + n2.cy * 0.722f, n.cx * 0.29f + n2.cx * 0.71f, n2.cy, n2.cx, n2.cy );
-							} else {
-								gpLines.curveTo( n2.cx * 0.29f + n.cx * 0.71f, n.cy, n2.cx * 0.556f + n.cx * 0.444f, n2.cy * 0.278f + n.cy * 0.722f, n2.cx, n2.cy );
-							}
-						}
-						break;
-						
 					case Node.SHP_SQUARED:
-						// XXX only approximate
-						for( int j = 0; j < n.connections.length; j++ ) {
-							n2 = n.connections[ j ];
-							gpLines.moveTo( n.cx, n.cy );
-							if( n.y < n2.y ) {
-								gpLines.curveTo( n.cx * 0.9f + n2.cx * 0.1f, n.cy, n.cx * 0.5f + n2.cx * 0.5f, n.cy, n2.cx, n2.cy );
-							} else {
-								gpLines.curveTo( n2.cx * 0.5f + n.cx * 0.5f, n2.cy, n2.cx * 0.9f + n.cx * 0.1f, n2.cy, n2.cx, n2.cy );
-							}
-						}
-						break;
-
 					case Node.SHP_CUBED:
-						// XXX only approximate ?
 						for( int j = 0; j < n.connections.length; j++ ) {
 							n2 = n.connections[ j ];
 							gpLines.moveTo( n.cx, n.cy );
-							if( n.y < n2.y ) {
-								gpLines.curveTo( n.cx * 0.6667f + n2.cx * 0.3333f, n.cy, n.cx * 0.3333f + n2.cx * 0.6667f, n.cy, n2.cx, n2.cy );
+							final float sx = 1.0f / Math.max( 1, w );
+							final int   istep;
+							final Node	n1s, n2s;
+							if( n.x <= n2.x ) {
+								istep	= 2;
+								n1s		= n;
+								n2s		= n2;
 							} else {
-								gpLines.curveTo( n2.cx * 0.3333f + n.cx * 0.6667f, n2.cy, n2.cx * 0.6667f + n.cx * 0.3333f, n2.cy, n2.cx, n2.cy );
+								istep = -2;
+								n1s		= n2;
+								n2s		= n;
 							}
+							float ix = n.cx;
+							do {
+								ix = Math.max( n1s.cx, Math.min( n2s.cx, ix + istep ));
+								gpLines.lineTo( ix, h * (1f - envAt( n, n2, ix * sx )));
+							} while( ix != n2.cx );
 						}
 						break;
 					}
@@ -298,40 +287,65 @@ extends AbstractMultiSlider
 						gpLines.lineTo( n2.cx, n2.cy );
 						break;
 
+					case Node.SHP_EXPONENTIAL:
+					case Node.SHP_CURVE:
+					case Node.SHP_WELCH:
+					case Node.SHP_SQUARED:
+					case Node.SHP_CUBED:
+						gpLines.moveTo( n.cx, n.cy );
+						final float sx = 1.0f / Math.max( 1, w );
+						final int   istep;
+						final Node	n1s, n2s;
+						if( n.x <= n2.x ) {
+							istep	= 2;
+							n1s		= n;
+							n2s		= n2;
+						} else {
+							istep = -2;
+							n1s		= n2;
+							n2s		= n;
+						}
+						float ix = n.cx;
+						do {
+							ix = Math.max( n1s.cx, Math.min( n2s.cx, ix + istep ));
+							gpLines.lineTo( ix, h * (1f - envAt( n, n2, ix * sx )));
+						} while( ix != n2.cx );
+						break;
+
 					case Node.SHP_SINE:
 						gpLines.moveTo( n.cx, n.cy );
 						gpLines.curveTo( n.cx * EXPM1R + n2.cx * EXPM1, n.cy, n.cx * EXPM1 + n2.cx * EXPM1R, n2.cy, n2.cx, n2.cy );
 						break;
 
-					case Node.SHP_WELCH:
-						// XXX only approximate
-						gpLines.moveTo( n.cx, n.cy );
-						if( n.y < n2.y ) {
-							gpLines.curveTo( n.cx * 0.556f + n2.cx * 0.444f, n.cy * 0.278f + n2.cy * 0.722f, n.cx * 0.29f + n2.cx * 0.71f, n2.cy, n2.cx, n2.cy );
-						} else {
-							gpLines.curveTo( n2.cx * 0.29f + n.cx * 0.71f, n.cy, n2.cx * 0.556f + n.cx * 0.444f, n2.cy * 0.278f + n.cy * 0.722f, n2.cx, n2.cy );
-						}
-						break;
+//					case Node.SHP_WELCH:
+//						// approximate... WRONG
+//						gpLines.moveTo( n.cx, n.cy );
+//						if( n.y < n2.y ) {
+//							gpLines.curveTo( n.cx * 0.556f + n2.cx * 0.444f, n.cy * 0.278f + n2.cy * 0.722f, n.cx * 0.29f + n2.cx * 0.71f, n2.cy, n2.cx, n2.cy );
+//						} else {
+//							gpLines.curveTo( n2.cx * 0.29f + n.cx * 0.71f, n.cy, n2.cx * 0.556f + n.cx * 0.444f, n2.cy * 0.278f + n.cy * 0.722f, n2.cx, n2.cy );
+//						}
+//						break;
 
-					case Node.SHP_SQUARED:
-						// XXX only approximate
-						gpLines.moveTo( n.cx, n.cy );
-						if( n.y < n2.y ) {
-							gpLines.curveTo( n.cx * 0.9f + n2.cx * 0.1f, n.cy, n.cx * 0.5f + n2.cx * 0.5f, n.cy, n2.cx, n2.cy );
-						} else {
-							gpLines.curveTo( n2.cx * 0.5f + n.cx * 0.5f, n2.cy, n2.cx * 0.9f + n.cx * 0.1f, n2.cy, n2.cx, n2.cy );
-						}
-						break;
+//					case Node.SHP_SQUARED:
+//						// approximate... WRONG
+//						gpLines.moveTo( n.cx, n.cy );
+//						if( n.y < n2.y ) {
+//							gpLines.curveTo( n.cx * 0.9f + n2.cx * 0.1f, n.cy, n.cx * 0.5f + n2.cx * 0.5f, n.cy, n2.cx, n2.cy );
+//						} else {
+//							gpLines.curveTo( n2.cx * 0.5f + n.cx * 0.5f, n2.cy, n2.cx * 0.9f + n.cx * 0.1f, n2.cy, n2.cx, n2.cy );
+//						}
+//						break;
 
-					case Node.SHP_CUBED:
-						// XXX only approximate
-						gpLines.moveTo( n.cx, n.cy );
-						if( n.y < n2.y ) {
-							gpLines.curveTo( n.cx * 0.6667f + n2.cx * 0.3333f, n.cy, n.cx * 0.3333f + n2.cx * 0.6667f, n.cy, n2.cx, n2.cy );
-						} else {
-							gpLines.curveTo( n2.cx * 0.3333f + n.cx * 0.6667f, n2.cy, n2.cx * 0.6667f + n.cx * 0.3333f, n2.cy, n2.cx, n2.cy );
-						}
-						break;
+//					case Node.SHP_CUBED:
+//						// approximate... WRONG
+//						gpLines.moveTo( n.cx, n.cy );
+//						if( n.y < n2.y ) {
+//							gpLines.curveTo( n.cx * 0.6667f + n2.cx * 0.3333f, n.cy, n.cx * 0.3333f + n2.cx * 0.6667f, n.cy, n2.cx, n2.cy );
+//						} else {
+//							gpLines.curveTo( n2.cx * 0.3333f + n.cx * 0.6667f, n2.cy, n2.cx * 0.6667f + n.cx * 0.3333f, n2.cy, n2.cx, n2.cy );
+//						}
+//						break;
 					}
 					n = n2;
 				}
@@ -780,6 +794,83 @@ extends AbstractMultiSlider
 		}
 	}
 	
+	// analoguous to the code in PyrArrayPrimitives.cpp
+	private float envAt( Node n1, Node n2, float x )
+	{
+		if( nodes.length == 0 ) return 0f;
+		
+		final float pos, y;
+		
+//		for( idx = 0; idx < nodes.length; idx++ ) {
+//			if( nodes[ idx ].x > x ) break;
+//		}
+//		n1	= nodes[ Math.max( 0, idx - 1 )];
+//		n2	= nodes[ Math.min( nodes.length - 1, idx )];
+//		if( n1.x < n2.x ) {
+//			tmp	= n1;
+//			n1	= n2;
+//			n2	= tmp;
+//		}
+		if( x <= n1.x ) return n1.y;
+		if( x >= n2.x ) return n2.y;
+		pos	= (x - n1.x) / (n2.x - n1.x);
+
+		switch( n1.shape ) {
+		case Node.SHP_STEP:
+			y = n2.y;
+			break;
+			
+		case Node.SHP_LINEAR:
+		default:
+			y = pos * (n2.y - n1.y) + n1.y;
+			break;
+			
+		case Node.SHP_EXPONENTIAL:
+			final float y1Lim = Math.max( 0.0001f, n1.y );
+			y = (float) (y1Lim * Math.pow( n2.y / y1Lim, pos ));
+			break;
+			
+		case Node.SHP_SINE:
+			y = (float) (n1.y + (n2.y - n1.y) * (-Math.cos( Math.PI * pos ) * 0.5 + 0.5));
+			break;
+			
+		case Node.SHP_WELCH:
+			if( n1.y < n2.y ) {
+				y = (float) (n1.y + (n2.y - n1.y) * Math.sin( Math.PI * 0.5 * pos ));
+			} else { 
+				y = (float) (n2.y - (n2.y - n1.y) * Math.sin( Math.PI * 0.5 * (1 - pos) ));
+			}
+			break;
+			
+		case Node.SHP_CURVE:
+			if( Math.abs( n1.curve ) < 0.0001f ) {
+				y = pos * (n2.y - n1.y) + n1.y;
+			} else {
+				final double denom	= 1.0 - Math.exp( n1.curve );
+				final double numer	= 1.0 - Math.exp( pos * n1.curve );
+				y = (float) (n1.y + (n2.y - n1.y) * (numer / denom));
+			}
+			break;
+			
+		case Node.SHP_SQUARED:
+			final double y1Pow2	= Math.sqrt( n1.y );
+			final double y2Pow2	= Math.sqrt( n2.y );
+			final double yPow2	= pos * (y2Pow2 - y1Pow2) + y1Pow2;
+			y = (float) (yPow2 * yPow2);
+			break;
+
+		case Node.SHP_CUBED:
+			final double y1Pow3	= Math.pow( n1.y, 0.3333333 );
+			final double y2Pow3	= Math.pow( n2.y, 0.3333333 );
+			final double yPow3	= pos * (y2Pow3 - y1Pow3) + y1Pow3;
+			y = (float) (yPow3 * yPow3 * yPow3);
+			break;
+		}
+
+		return y;
+	}
+
+	
 // --------------- internal classes ---------------
 	
 	private class MouseAdapter
@@ -1101,10 +1192,10 @@ extends AbstractMultiSlider
 		
 		private static final int		SHP_STEP		= 0;
 		private static final int		SHP_LINEAR		= 1;
-//		private static final int		SHP_EXPONENTIAL	= 2;
+		private static final int		SHP_EXPONENTIAL	= 2;
 		private static final int		SHP_SINE		= 3;
 		private static final int		SHP_WELCH		= 4;
-//		private static final int		SHP_CURVE		= 5;
+		private static final int		SHP_CURVE		= 5;
 		private static final int		SHP_SQUARED		= 6;
 		private static final int		SHP_CUBED		= 7;
 		

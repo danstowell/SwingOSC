@@ -2754,7 +2754,7 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 
 	*paletteExample { arg parent, bounds;
 		^this.new( parent, bounds ).value_([ (0..4)/4, sqrt( (0..4)/4 )])
-			.thumbSize_( 4 ).drawLines_( true ).selectionColor_( Color.red );
+			.thumbSize_( 4 ).selectionColor_( Color.red );
 	}
 
 	// ----------------- public instance methods -----------------
@@ -2792,10 +2792,12 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 			selection = selection.copyFromStart( size - 1 );
 		};
 
+		xvals =  xvals.collect(_.clip( 0.0, 1.0 ));
+		yvals =  yvals.collect(_.clip( 0.0, 1.0 ));
 		if( curves.isNil, {
-			valClip = [ xvals.collect({ arg x; x.clip( 0.0, 1.0 )}), yvals.collect({ arg y; y.clip( 0.0, 1.0 )})];
+			valClip = [ xvals, yvals ];
 		}, {
-			valClip = [ xvals.collect({ arg x; x.clip( 0.0, 1.0 )}), yvals.collect({ arg y; y.clip( 0.0, 1.0 )}), curves ];
+			valClip = [ xvals, yvals, curves.asArray.clipExtend( size )];
 		});
 		this.setProperty( \value, valClip );
 	}
@@ -2882,24 +2884,57 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 		this.fillColor_( fillc );
 	}
 
-// XXX sorry, don't have time in this moment, requires too much changes
-// since thankfully jan did it a different ay
-//	curve_ {Êarg values;
-//		var curveNumbers, shape, curve;
-////		var curves = values.copy; // XXX should be a readable instance field
-//		if( values.isArray, {
-//			curveNumbers = curves.collect({ arg it;
-//				shape = this.prShapeNumber( it );
-//				curve = if( shape == 5, it, 0.0 );
-//				[ shape, curve ];
-//			});
-//			this.prSetCurves( curveNumbers );
-//		}, {
-//			shape = this.prShapeNumber( curves );
-//			curve = if( shape == 5, values, 0.0 );
-//			this.setCurve( -1, shape, curve );
-//		});
-//	}
+	curves_ { arg curves;
+		var value;
+		if( curves.isArray, {
+			value = properties[ \value ];
+//			curves.asArray.clipExtend( size ).postln;
+			value = [ value[ 0 ], value[ 1 ], curves.asArray.clipExtend( size )];
+			this.setProperty( \value, value );
+		}, {
+			this.setCurve( -1, curves );
+		});
+	}
+	
+	setEnv { arg env, minValue, maxValue, minTime, maxTime;
+		var times, levels;
+		var spec;
+
+		times		= [ 0.0 ] ++ env.times.integrate;
+		maxTime		= maxTime ? times.last;
+		minTime		= minTime ? 0.0;
+		levels		= env.levels;
+		minValue		= minValue ? levels.minItem;
+		maxValue		= maxValue ? levels.maxItem;
+		
+		levels		= levels.linlin( minValue, maxValue, 0, 1 );
+		times		= times.linlin( minTime, maxTime, 0, 1 );
+		
+		this.value_([ times.asFloat, levels.asFloat, env.curves ]);
+	}
+
+	editEnv { arg env, minValue, maxValue, duration;
+		var vals, levels, times, viewDur;
+		vals		= this.value;
+		times	= vals[ 0 ].differentiate.copyToEnd( 1 );
+		viewDur	= vals[ 0 ].last - vals[ 0 ].first;
+		if( viewDur > 0, {
+			times = times / viewDur * (duration ? 1.0);
+		});
+		levels	= vals[ 1 ].linlin( 0, 1, minValue, maxValue );
+		env.times_( times );
+		env.levels_( levels );
+		env.curves_( vals[ 2 ] ? \lin );
+	}
+
+	asEnv { arg minValue, maxValue, duration;
+		var env;
+		env = Env.new;
+		this.editEnv( env, minValue, maxValue, duration );
+		^env;
+	}
+	
+	curve_ { arg curve = \lin; this.setCurve( -1, curve )}
 	
 	setCurve { arg index, curve = \lin;
 		var shape, value, curves;
@@ -2918,17 +2953,16 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 				properties[ \value ] = value ++ [(\lin ! value[1].size).put( index, curve )];
 			});
 		})});
-		if( curve.isFloat, {
+		if( curve.isNumber, {
 			shape = 5;
+			curve = curve.asFloat;
 		}, {
-			shape = Env.shapeNames[ curve ];
+			shape = Env.shapeNames[ curve ] ? 0;
 			curve = 0.0;
 		});
 		server.sendMsg( '/method', this.id, \setShape, index, shape, curve );
 	}
 	
-	curve_ { arg curve = \lin; this.setCurve( -1, curve )}
-
 	lockBounds_ { arg val; this.setProperty( \lockBounds, val )}
 	
 	horizontalEditMode_ { arg val; this.setProperty( \horizontalEditMode, val )}
@@ -3220,6 +3254,7 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 		\value, {
 			this.prFixValues;
 			if( value.size < 3, {
+				// XXX should check against max bundle size
 				server.listSendMsg([ '/method', this.id, \setValues ] ++ value[ 0 ].asSwingArg ++ value[ 1 ].asSwingArg );
 			}, {
 				curvesSC = value[ 2 ];
@@ -3227,23 +3262,24 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 					shapes = Array( curvesSC.size );
 					curves = Array( curvesSC.size );
 					curvesSC.do({ arg curve;
-						if( curve.isFloat, {
+						if( curve.isNumber, {
 							shapes.add( 5 );
-							curves.add( curve );
+							curves.add( curve.asFloat );
 						}, {
-							shapes.add( Env.shapeNames[ curve ]);
+							shapes.add( Env.shapeNames[ curve ] ? 0 );
 							curves.add( 0.0 );
 						});
 					});
 				}, {
-					if( curvesSC.isFloat, {
+					if( curvesSC.isNumber, {
 						shapes = 5;
-						curves = curvesSC;
+						curves = curvesSC.asFloat;
 					}, {
-						shapes = Env.shapeNames[ curvesSC ];
+						shapes = Env.shapeNames[ curvesSC ] ? 0;
 						curves = 0.0;
 					});
 				});
+				// XXX should check against max bundle size
 				server.listSendMsg([ '/method', this.id, \setValues ] ++ value[ 0 ].asSwingArg ++ value[ 1 ].asSwingArg ++ shapes.asSwingArg ++ curves.asSwingArg );
 			});
 			^this;
