@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCTextField. last mod: 10-oct-07 sciss
+<p>This class is meant as an emulation of SCTextField. last mod: 06-apr-09 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -49,6 +49,11 @@ b.valueAction = <span class="st">&quot;lala&quot;</span>;
 b.boxColor = <span class="cl">Color</span>.grey;
 b.stringColor = <span class="cl">Color</span>.white;
 b.align = <span class="sy">\center</span>;
+
+<span class="cm">// note: action gets only called if the user presses</span>
+<span class="cm">// return! if you want to be notified when the</span>
+<span class="cm">// textfield looses its focus, you can use the focusLostAction:</span>
+b.focusLostAction = { <span class="kw">arg</span> field; [ <span class="st">"Lost focus"</span>, field.value ].postln };
 
 </pre>
 <h3>default keyboard mappings</h3>

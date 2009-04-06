@@ -45,7 +45,7 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 
 	defaultKeyDownAction { arg key, modifiers, unicode; ^this } // swallow all
 
-	string_ { arg s; super.string = s.as(String); }
+	string_ { arg s; super.string = s.as( String )}
 
 // doesn't work yet
 	defaultGetDrag { ^this.string }
@@ -69,7 +69,7 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 			object = msg[4].asString;
 			string = object;
 			properties.put( \string, object );
-			{ this.doAction; }.defer;
+			{ this.doAction }.defer;
 		}).add;
 		txResp = OSCpathResponder( server.addr, [ '/doc', this.id ], { arg time, resp, msg;
 			var state, str;
@@ -81,11 +81,11 @@ JSCTextField : JSCTextEditBase {   // not a child class of JSCNumberBox
 			{
 				str = msg[5].asString;
 if( msg[4] != str.size, { ("Yukk. len is "++msg[4]++"; but string got "++str.size).postln });
-				string = serverString = serverString.insert( msg[3], str );
+				string = object = serverString = serverString.insert( msg[3], str );
 			}
 			{ state === \remove }
 			{
-				string = serverString = serverString.keep( msg[3] ) ++ serverString.drop( msg[3] + msg[4] );
+				string = object = serverString = serverString.keep( msg[3] ) ++ serverString.drop( msg[3] + msg[4] );
 			};
 		}).add;
 		^this.prSCViewNew([

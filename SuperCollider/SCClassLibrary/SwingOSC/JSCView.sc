@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.61, 12-Jan-09
+ *	@version		0.61, 06-Apr-09
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -53,6 +53,7 @@ JSCView {  // abstract class
 	var dataptr, <parent, <>action, <background;
 	var <mouseDownAction, <mouseUpAction, <mouseOverAction, <mouseMoveAction;	var <>keyDownAction, <>keyUpAction, <>keyTyped, <>keyModifiersChangedAction;	var <beginDragAction,<>canReceiveDragHandler,<receiveDragHandler;
 	var <>onClose;
+	var <>focusGainedAction, <>focusLostAction;
 
 	var <server;	// the SwingOSC server used for this view
 	var properties;
@@ -624,10 +625,12 @@ JSCView {  // abstract class
 			\gainedFocus, {
 				hasFocus = true;
 				this.prFocusChange;
+				if( focusGainedAction.notNil, {{ focusGainedAction.value( this )}.defer });
 			},
 			\lostFocus, {
 				hasFocus = false;
 				this.prFocusChange;
+				if( focusLostAction.notNil, {{ focusLostAction.value( this )}.defer });
 			});
 		});
 		cmpResp.add;
