@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 13-Jan-09
+ *	@version		0.61, 11-Apr-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -330,6 +330,8 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		});
 	}
 
+	absoluteBounds { ^this.bounds }
+
 	// ----------------- private instance methods -----------------
 
 	prChildOrder { arg child; ^0 }
@@ -398,6 +400,14 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 	}
 
 	prAddAllTopLeft { arg rect; ^rect }
+
+	prBoundsReadOnly {
+		if( scBounds.isNil, {
+			// need to revalidate bounds
+			scBounds	= jinsets.addTo( jBounds );
+		});
+		^scBounds;
+	}
 }
 
 JSCScrollTopView : JSCTopView {
