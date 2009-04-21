@@ -286,6 +286,10 @@ JSCView {  // abstract class
 		});
 	}
 	
+	asSwingArg {
+		^[ '[', '/ref', this.id, ']' ];
+	}
+	
 	// ----------------- private instance methods -----------------
 
 	init { arg argParent, argBounds, id;

@@ -12,7 +12,7 @@
 	<property name="resources.dir"	value="resources"/>
     <property name="main-class"		value="de.sciss.swingosc.SwingOSC"/>
 	<property name="lib.dir"		value="libraries"/>
-	<property name="libraries"		value="${lib.dir}/ScissLib.jar:${lib.dir}/NetUtil.jar:${lib.dir}/MRJAdapter.jar:JNITablet/build/TabletWrapper.jar"/>
+	<property name="libraries"		value="${lib.dir}/ScissLib.jar:${lib.dir}/JCollider.jar:${lib.dir}/MRJAdapter.jar:JNITablet/build/TabletWrapper.jar"/>
     <property name="version"		value="0.61"/>
     <property name="debug"			value="true"/>
 	
@@ -50,7 +50,7 @@
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${resources.dir}" update="true"/>
 		<if><not><equals arg1="${plain}" arg2="true" /></not><then>
 			<unjar src="${lib.dir}/ScissLib.jar" dest="${lib.dir}" />
-			<unjar src="${lib.dir}/NetUtil.jar" dest="${lib.dir}" />
+			<unjar src="${lib.dir}/JCollider.jar" dest="${lib.dir}" />
 			<unjar src="${lib.dir}/MRJAdapter.jar" dest="${lib.dir}" />
 			<unjar src="${lib.dir}/miglayout-swing.jar" dest="${lib.dir}" />
 			<unjar src="JNITablet/build/TabletWrapper.jar" dest="${lib.dir}" />

@@ -2,7 +2,7 @@
  *	JSCViews collection 4
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2009 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -27,195 +27,141 @@
  */
 
 /**
- *	@version		0.61, 11-Aug-08
+ *	@version		0.61, 21-Apr-09
  *	@author		Hanns Holger Rutz
  */
 JPeakMeterManager {
-	classvar all;			// IdentityDictionary mapping guiServer name to
-						//	IdentityDictionary mapping audioServer name to JPeakMeterManager
-	var <guiServer, <audioServer;
-	var views;			// IdentityDictionary mapping a JSCPeakMeterView to a config.
-						//	A config is an IdentityDictionary itself with the following entries:
-						//	- \busIndexOffset	the channel offset div(2) in the control bus
-						//	- \numChannels	the number of audio channels (control bus channels div(2))
-						//	- \synths			an Array of Synth instances (the metering synths)
-						//	- \group			the group for the synths _if created by the manager_
-	var cbus;				// current meter control bus
-	var numChannels = 0;	// current number of audio channels
+	classvar all;			// IdentityDictionary mapping JSCSynth to JPeakMeterManager
+
 	var <id;				// server side manager id
+	
+	var jscsynth, numViews = 0;
 	
 	// ----------------- quasi-constructor -----------------
 
-	*newFrom { arg guiServer, audioServer;
-		var res, guiServerDict;
+	*newFrom { arg swing, scsynth;
+		var res, jscsynth;
+		
+		jscsynth = JSCSynth.newFrom( swing, scsynth );
 		if( all.isNil, {
 			all	= IdentityDictionary.new;
 		});
-		guiServerDict = all.at( guiServer.name );
-		if( guiServerDict.isNil, {
-			guiServerDict = IdentityDictionary.new;
-			all.put( guiServer.name, guiServerDict );
-		});
-		res = guiServerDict.at( audioServer.name );
+		res = all[ jscsynth ];
 		if( res.isNil, {
-			res = this.new( guiServer, audioServer );
-			guiServerDict.put( guiServer.name, res );
+			res = this.new( jscsynth );
+			all[ jscsynth ] = res;
 		});
 		^res;
 	}
 	
 	// ----------------- constructor -----------------
 
-	*new { arg guiServer, audioServer;
-		^super.new.prInit( guiServer, audioServer );
+	*new { arg jscsynth;
+		^super.new.prInit( jscsynth );
 	}
 
 	// ----------------- private instance methods -----------------
 
-	prInit { arg argGuiServer, argAudioServer;
-		views		= IdentityDictionary.new;
-		guiServer		= argGuiServer;
-		audioServer	= argAudioServer;
-		id			= guiServer.nextNodeID;
-		guiServer.sendBundle( nil, [ '/method',
+	prInit { arg argJSCSynth;
+//		views		= IdentityDictionary.new;
+		jscsynth		= argJSCSynth;
+		id			= jscsynth.swing.nextNodeID;
+		jscsynth.swing.listSendMsg([ '/method',
 			'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
-			\setServer, audioServer.addr.hostname, audioServer.addr.port, audioServer.options.protocol ]
-		);
+			\setServer ] ++ jscsynth.asSwingArg );
 	}
 	
 	protRegister { arg view;
-		var config, oldCBus, viewNumChannels, group, bndl;
-		
-		config			= IdentityDictionary.new;
-		views.put( view, config );
-		viewNumChannels	= view.bus.numChannels;
-		config.put( \numChannels, viewNumChannels );
-		config.put( \busIndexOffset, numChannels );
-		this.protSetGroup( view, view.group );	// creates group if necessary
-		group			= config.at( \group );
-		oldCBus			= cbus;
-		numChannels		= numChannels + viewNumChannels;
-		cbus				= Bus.control( audioServer, numChannels << 1 );
-~cbus = cbus;
-~group = group;
-		bndl				= Array( 3 );
-		bndl.add([ '/set', view.id, \numChannels, numChannels ]);
-		bndl.add([ '/method', this.id, \addAndSetBus,
-			'[', '/ref', view.id, ']', group.nodeID, cbus.index ]);
-		if( view.active, {
-			bndl.add([ '/method', this.id, \setActive, '[', '/ref', view.id, ']', true ]);
-		});
-		guiServer.listSendBundle( nil, bndl );
-		{
-			guiServer.sync;
-			oldCBus.free;
-		}.fork( SwingOSC.clock );
+		var ctrlBus;
+		ctrlBus	= view.protGetCtrlBus;
+		jscsynth.swing.listSendMsg([ '/method', this.id, \addListener ] ++ view.asSwingArg ++
+			[ '[', '/new', "de.sciss.jcollider.Bus" ] ++ jscsynth.asSwingArg ++
+			[ view.bus.rate, view.bus.index, view.bus.numChannels, ']' ] ++
+			[ '[', '/method', "de.sciss.jcollider.Group", \basicNew ] ++ jscsynth.asSwingArg ++ [ view.group.nodeID, ']' ] ++
+			[ '[', '/new', "de.sciss.jcollider.Bus" ] ++ jscsynth.asSwingArg ++
+			[ ctrlBus.rate, ctrlBus.index, ctrlBus.numChannels, ']', view.active, view.protGetNodeID ]);
+		numViews = numViews + 1;
 	}
-	
+
 	protUnregister { arg view;
-		var bndl, synths, group, config, viewNumChannels;
-		
-		config			= views.removeAt( view );
-		synths			= config.at( \synths );
-		bndl				= Array( synths.size + 1 );
-		group			= config.at( \group );
-		viewNumChannels	= config.at( \numChannels );
-		numChannels		= numChannels - viewNumChannels;
-		synths.do({ arg synth; bndl.add( synth.freeMsg )});
-		if( group.notNil, {
-			bndl.add( group.freeMsg );
-		});
-		if( bndl.notEmpty, {
-			audioServer.listSendBundle( nil, bndl );
-		});
-		if( views.isEmpty, {
+		jscsynth.swing.listSendMsg([ '/method', this.id, \removeListener ] ++ view.asSwingArg );
+		numViews = numViews - 1;
+		if( numViews == 0, {
 			this.prDispose;
 		});
 	}
 	
 	prDispose {
-		all.at( guiServer.name ).removeAt( audioServer.name );
-		guiServer.sendBundle( nil, [ '/method', this.id, \dispose ], [ '/free', this.id ]);
-		cbus.free;
-		cbus			= nil;
-		guiServer		= nil;
-		audioServer	= nil;
-	}
-	
-	protSetGroup { arg view, group;
-		var config, synths, bndl, newGroup, oldGroup;
-		
-		config	= views.at( view );
-		synths	= config.at( \synths );
-		oldGroup	= config.at( \group );
-		bndl		= Array( synths.size + 2 );
-		if( group.isNil, {
-			group	= Group.basicNew( audioServer );
-			// only store groups that _we_ create
-			// in order to properly free them later
-			config.put( \group, group );
-			bndl.add( group.newMsg( audioServer.asGroup, \addToTail ));
-		}, {
-			config.removeAt( \group );
-		});
-		synths.do({ arg synth; bndl.add( synth.moveToTailMsg( group ))});
-		if( oldGroup.notNil, {
-			bndl.add( oldGroup.freeMsg );
-		});
-		if( bndl.notEmpty, {
-			audioServer.listSendBundle( nil, bndl );
-		});
+		all.removeAt( jscsynth );
+		jscsynth.swing.sendBundle( nil, [ '/method', this.id, \dispose ], [ '/free', this.id ]);
+		jscsynth		= nil;
 	}
 	
 	protSetActive { arg view, active;
-		guiServer.sendMsg( '/method', this.id, \setActive, '[', '/ref', view.id, ']', active );
+		jscsynth.swing.listSendMsg([ '/method', this.id, \setListenerTask ] ++ view.asSwingArg ++ [ active ]);
 	}
 }
 
-JSCPeakMeterView : JSCControlView {
+JSCPeakMeter : JSCControlView {
 	var <bus, <group, manager;
-	var <active = false;
-	var <border = false, <caption = true, <captionVisible = true, <captionPosition = \left;
+	var <active = true;
+	var <border = false, <caption = false, <captionVisible = true, <captionPosition = \left;
 	var <rmsPainted = true, <holdPainted = true;
 //	var acResp;	// OSCpathResponder for action listening
+	var weCreatedGroup = false;
+	var ctrlBus, nodeID;
 
 	// ----------------- public instance methods -----------------
 
 	active_ { arg bool;
-		active = bool;
-		if( manager.notNil, {
-			manager.protSetActive( this, active );
+		if( bool != active, {
+			active = bool;
+			if( manager.notNil, {
+				manager.protSetActive( this, active );
+			});
 		});
 	}
 	
 	border_ { arg bool;
-		border = bool;
-		this.setProperty( \border, border );
+		if( bool != border, {
+			border = bool;
+			this.setProperty( \border, border );
+		});
 	}
 	
 	caption_ { arg bool;
-		caption = bool;
-		this.setProperty( \caption, caption );
+		if( bool != caption, {
+			caption = bool;
+			this.setProperty( \caption, caption );
+		});
 	}
 
 	captionVisible_ { arg bool;
-		captionVisible = bool;
-		this.setProperty( \captionVisible, captionVisible );
+		if( bool != captionVisible, {
+			captionVisible = bool;
+			this.setProperty( \captionVisible, captionVisible );
+		});
 	}
 
 	captionPosition_ { arg value;
-		captionPosition = value;
-		this.setProperty( \captionPosition, captionPosition );
+		if( value != captionPosition, {
+			captionPosition = value;
+			this.setProperty( \captionPosition, captionPosition );
+		});
 	}
 	
 	rmsPainted_ { arg bool;
-		rmsPainted = bool;
-		this.setProperty( \rmsPainted, rmsPainted );
+		if( bool != rmsPainted, {
+			rmsPainted = bool;
+			this.setProperty( \rmsPainted, rmsPainted );
+		});
 	}
 
 	holdPainted_ { arg bool;
-		holdPainted = bool;
-		this.setProperty( \holdPainted, holdPainted );
+		if( bool != holdPainted, {
+			holdPainted = bool;
+			this.setProperty( \holdPainted, holdPainted );
+		});
 	}
 
 	font { ^this.getProperty( \font )}
@@ -224,47 +170,49 @@ JSCPeakMeterView : JSCControlView {
 	}
 
 	group_ { arg g;
-		group = g;
-		if( manager.notNil, {
-			manager.protSetGroup( this, group );
+		if( g != group, {
+			this.prUnregister;
+			if( g.notNil and: { bus.notNil and: { g.server != bus.server }}, {
+				Error( "Bus and Group cannot be on different servers" ).throw;
+			});
+			group = g;
+			this.prRegister;
 		});
 	}
 	
 	bus_ { arg b;
 		var numChannels;
-		// if( (bus.server != b.server) or: { b.numChannels != bus.numChannels }, { ... });
-		this.prUnregister;
-		if( b.notNil and: { b.numChannels > 0 }, {
-			bus			= b;
-			manager		= JPeakMeterManager.newFrom( this.server, bus.server );
-			manager.protRegister( this );
-			numChannels	= bus.numChannels;
-		}, {
-			bus			= nil;
-			numChannels	= 0;
+		if( b != bus, {
+			// if( (bus.server != b.server) or: { b.numChannels != bus.numChannels }, { ... });
+			this.prUnregister;
+			if( b.notNil, {
+				if( group.notNil and: { group.server != b.server }, {
+					Error( "Bus and Group cannot be on different servers" ).throw;
+				});
+				numChannels	= b.numChannels;
+				nodeID		= Array.fill( numChannels, { b.server.nextNodeID }).first;
+			}, {
+				numChannels 	= 0;
+				nodeID		= -1;
+			});
+			bus		= b;
+			ctrlBus	= Bus.control( bus.server, numChannels << 1 );
 			server.sendMsg( '/set', this.id, \numChannels, numChannels );
+			this.prRegister;
 		});
-		
-//		server.sendMsg( '/method', this.id, \setBus, b.server.addr.hostname, b.server.addr.port, b.server.options.protocol, b.index, b.numChannels );
 	}
 
 	// ----------------- private instance methods -----------------
 
+	protGetCtrlBus { ^ctrlBus }
+	protGetNodeID { ^nodeID }
+
 	prClose { arg preMsg, postMsg;
 		this.prUnregister;
 		^super.prClose( preMsg, postMsg );
-//		acResp.remove;
-//		^super.prClose([[ '/method', "ac" ++ this.id, \remove ],
-//					   [ '/free', "ac" ++ this.id ]]);
 	}
 
 	prInitView {
-//		properties.put( \value, false );
-//		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
-//			// don't call valueAction coz we'd create a loop
-//			properties.put( \value, msg[4] != 0 );
-//			{ this.doAction; }.defer;
-//		}).add;
 		^this.prSCViewNew([
 			[ '/local', this.id, '[', '/new', "de.sciss.gui.PeakMeterPanel", ']' ]
 		]);
@@ -274,6 +222,25 @@ JSCPeakMeterView : JSCControlView {
 		if( manager.notNil, {
 			manager.protUnregister( this );
 			manager = nil;
+		});
+		if( weCreatedGroup, {
+			group.free;
+			group = nil;
+			weCreatedGroup = false;
+		});
+		ctrlBus.free;
+		ctrlBus = nil;
+	}
+	
+	prRegister {
+		if( bus.notNil and: { bus.numChannels > 0 }, {
+			if( group.isNil, {
+//				group			= Group.tail( bus.server );
+				group			= Group.tail( RootNode( bus.server ));
+				weCreatedGroup	= true;
+			});
+			manager		= JPeakMeterManager.newFrom( this.server, bus.server );
+			manager.protRegister( this );
 		});
 	}
 	
