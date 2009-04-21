@@ -24,22 +24,30 @@
  *
  *
  *	Changelog:
+ *		keydown behaviour 12/4/9 Alberto de Campo
  */
 
 /**
  *	Replacement for the (Cocoa) SCNumberBox.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 11-Aug-08
+ *	@version		0.61, 21-Apr-09
  */
 JSCNumberBox : JSCTextEditBase {
 
-	var <>step=1;
-	var <>scroll_step; // a dummy for SC compatibility
+	var <>step = 1;
+	var <>scroll_step = 1; // a dummy for SC compatibility
+	var <>scroll = true; // a dummy for SC compatibility
 
 	var acResp;	// OSCpathResponder for action listening
 	var txResp;
 	var serverString = "";	// necessary coz we immediately store client-side on string_ !
+
+	var <>shift_scale = 100.0, <>ctrl_scale = 10.0, <>alt_scale = 0.1;
+	var <>clipLo = -inf, <>clipHi = inf;
+
+	// mouse scrolling
+	var scrollHit, scrollInc, scrollDir;
 	
 	// ----------------- public class methods -----------------
 
@@ -49,13 +57,24 @@ JSCNumberBox : JSCTextEditBase {
 
 	// ----------------- public instance methods -----------------
 
-	increment { this.valueAction = this.value + step; }
-	decrement { this.valueAction = this.value - step; }
+	getScale { arg modifiers;
+		^case
+		{ (modifiers & 0x020000) != 0 } { shift_scale }
+//		{ (modifiers & 0x040000) != 0 } { ctrl_scale }
+		{ (modifiers & 0x100000) != 0 } { ctrl_scale } // cmd-key since ctrl is used for dnd
+		{ (modifiers & 0x080000) != 0 } { alt_scale }
+		{ 1 };
+	}
+
+	value_ { arg val; ^super.value_( val.clip( clipLo, clipHi ))}
+	
+	increment { arg zoom = 1; this.valueAction = this.value + (step * zoom) }
+	decrement { arg zoom = 1; this.valueAction = this.value - (step * zoom) }
 	
 	defaultKeyDownAction { arg char, modifiers, unicode;
-		if( unicode == 0xF700, { this.increment; ^this });
+		if( unicode == 0xF700, { this.increment( this.getScale( modifiers )); ^this });
 		if( unicode == 0xF703, { ^this });
-		if( unicode == 0xF701, { this.decrement; ^this });
+		if( unicode == 0xF701, { this.decrement( this.getScale( modifiers )); ^this });
 		if( unicode == 0xF702, { ^this });
 		if( (char == $\r) || (char == $\n), { ^this }); // enter key
 		if( char.isDecDigit or: { "+-.eE".includes( char )}, { ^this });
@@ -95,6 +114,49 @@ JSCNumberBox : JSCTextEditBase {
 	
 	// ----------------- private instance methods -----------------
 
+// this is very ugly, leave away client side scrolling atm
+//	prNeedsMouseHandler { ^true }
+//
+//	mouseDown { arg x, y, modifiers, buttonNumber, clickCount;
+//		scrollHit = Point( x, y );
+//		if( scroll, { scrollInc = this.getScale( modifiers )});
+//		^super.mouseDown( x, y, modifiers, buttonNumber, clickCount );
+//	}
+//
+//	mouseMove { arg x, y, modifiers;
+//		var direction;
+//		if( scroll, {
+//			if( scrollDir.isNil, {
+//				abs( x - scrollHit.x ).postln;
+//				if( abs( y - scrollHit.y ) > 1, {
+//					scrollDir = \v;
+//					scrollHit.y = y + sign( scrollHit.y - y );
+//					server.sendMsg( '/set', this.id, \cursor, '[', '/ref', \null, ']');
+//				}, { if( abs( x - scrollHit.x ) > 1, {
+//					scrollDir = \h;
+//					scrollHit.x  = x + sign( scrollHit.x - x );
+//					server.sendMsg( '/set', this.id, \cursor, '[', '/ref', \null, ']');
+//				})});
+//			});
+//			if( scrollDir.notNil, {
+//				if( scrollDir == \v, {
+//					this.valueAction = this.value + ((scrollHit.y - y) * this.scroll_step * scrollInc);
+//				}, {
+//					this.valueAction = this.value + ((x - scrollHit.x) * this.scroll_step * scrollInc);
+//				});
+//				scrollHit = Point( x, y );
+//			});
+//		});
+//		^super.mouseMove( x, y, modifiers );
+//	}
+//	
+//	mouseUp { arg x, y, modifiers;
+//		if( scrollDir.notNil, {
+//			server.sendMsg( '/set', this.id, \cursor, '[', '/ref', \null, ']');
+//		});
+//		^super.mouseUp( x, y, modifiers );
+//	}
+	
 	properties {
 		^super.properties ++ #[ \minDecimals, \maxDecimals ];
 	}

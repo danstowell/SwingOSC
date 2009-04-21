@@ -24,10 +24,11 @@
  *
  *
  *	Changelog:
+ *		keydown behaviour 12/4/9 Alberto de Campo
  */
 
 /**
- *	@version		0.61, 11-Apr-09
+ *	@version		0.61, 21-Apr-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -714,7 +715,18 @@ JSCVLayoutView : JSCLayoutView {
 JSCControlView : JSCView {} // abstract class
 
 JSCSliderBase : JSCControlView {
+
+	var <>shift_scale = 100.0, <>ctrl_scale = 10.0, <>alt_scale = 0.1;
+
 	// ----------------- public instance methods -----------------
+
+	getScale { arg modifiers;
+		^case
+		{ (modifiers & 0x020000) != 0 } { shift_scale }
+		{ (modifiers & 0x040000) != 0 } { ctrl_scale }
+		{ (modifiers & 0x080000) != 0 } { alt_scale }
+		{ 1 };
+	}
 
 	knobColor {
 		^this.getProperty(\knobColor, Color.new)
@@ -764,28 +776,20 @@ JSCSlider : JSCSliderBase
 		this.setPropertyWithAction( \value, this.prSnap( val ));
 	}	
 	
-	increment {
-		var inc;
-		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal.max( this.step );
-		^this.valueAction = this.value + inc;
-	}
-	
-	decrement {
-		var inc;
-		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal.max( this.step );
-		^this.valueAction = this.value - inc;
-	}
+	increment { arg zoom = 1; ^this.valueAction = this.value + (max( this.step, this.pixelStep ) * zoom) }
+	decrement { arg zoom = 1; ^this.valueAction = this.value - (max( this.step, this.pixelStep ) * zoom) }
 	
 	thumbSize { ^this.getProperty( \thumbSize, 12 )}
 	
 	thumbSize_ { arg size;
 	//	"JSCSlider.thumbSize_ : not yet implemented".warn;
-		this.setProperty( \thumbSize, size );
+//		this.setProperty( \thumbSize, size );
 	}
 
-	pixelStep { 
-		var b = this.prBoundsReadOnly; 
-		^(b.width.max( b.height ) - this.thumbSize).reciprocal;
+	pixelStep {
+		var b = this.prBoundsReadOnly;
+		// XXX thumbSize doesn't correspond to laf's thumbSize
+		^(if( orientation == 0, b.width, b.height ) - this.thumbSize).max( 1 ).reciprocal;
 	}
 	
 	bounds_ { arg rect;
@@ -804,12 +808,12 @@ JSCSlider : JSCSliderBase
 		if (char == $n, { this.valueAction = 0.0; ^this });
 		if (char == $x, { this.valueAction = 1.0; ^this });
 		if (char == $c, { this.valueAction = 0.5; ^this });
-		if (char == $], { this.increment; ^this });
-		if (char == $[, { this.decrement; ^this });
-		if (unicode == 16rF700, { this.increment; ^this });
-		if (unicode == 16rF703, { this.increment; ^this });
-		if (unicode == 16rF701, { this.decrement; ^this });
-		if (unicode == 16rF702, { this.decrement; ^this });
+		if (char == $], { this.increment( this.getScale( modifiers )); ^this });
+		if (char == $[, { this.decrement( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF700, { this.increment( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF703, { this.increment( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF701, { this.decrement( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF702, { this.decrement( this.getScale( modifiers )); ^this });
 		^nil		// bubble if it's an invalid key
 	}
 	
@@ -960,13 +964,13 @@ JSCRangeSlider : JSCSliderBase {
 	}
 
 	pixelStep { 
-		var b = this.prBoundsReadOnly; 
-		^(b.width.max( b.height )).reciprocal;
+		var b = this.prBoundsReadOnly;
+		^(if( orientation == 0, { b.width }, { b.height }) - 2).max( 1 ).reciprocal;
 	}
 
-	increment {
+	increment { arg zoom = 1;
 		var inc, val; 
-		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal;
+		inc = this.pixelStep * zoom;
 		val = this.hi + inc;
 		if( val > 1, {
 			inc = 1 - this.hi;
@@ -975,9 +979,9 @@ JSCRangeSlider : JSCSliderBase {
 		this.setSpanActive( this.lo + inc, val );
 	}
 	
-	decrement { 
+	decrement { arg zoom = 1;
 		var inc, val; 
-		inc = (if( orientation == 0, { this.prBoundsReadOnly.width }, { this.prBoundsReadOnly.height }) - 2).max( 1 ).reciprocal;
+		inc = this.pixelStep * zoom;
 		val = this.lo - inc;
 		if( val < 0, {
 			inc = this.lo;
@@ -1009,10 +1013,10 @@ JSCRangeSlider : JSCSliderBase {
 		if (char == $x, { this.setSpanActive( 1.0, 1.0 ); ^this });
 		if (char == $c, { this.setSpanActive( 0.5, 0.5 ); ^this });
 		if (char == $a, { this.setSpanActive( 0.0, 1.0 ); ^this });
-		if (unicode == 16rF700, { this.increment; ^this });
-		if (unicode == 16rF703, { this.increment; ^this });
-		if (unicode == 16rF701, { this.decrement; ^this });
-		if (unicode == 16rF702, { this.decrement; ^this });
+		if (unicode == 0xF700, { this.increment( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF703, { this.increment( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF701, { this.decrement( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF702, { this.decrement( this.getScale( modifiers )); ^this });
 		^nil;		// bubble if it's an invalid key
 	}
 
@@ -1138,10 +1142,13 @@ JSC2DSlider : JSCSliderBase {
 		this.doAction;
 	}
 
-	incrementY { ^this.y = this.y + this.prBoundsReadOnly.height.reciprocal }
-	decrementY { ^this.y = this.y - this.prBoundsReadOnly.height.reciprocal }
-	incrementX { ^this.x = this.x + this.prBoundsReadOnly.width.reciprocal }
-	decrementX { ^this.x = this.x - this.prBoundsReadOnly.width.reciprocal }
+	pixelStepX { ^(this.prBoundsReadOnly.width - 17).max( 1 ).reciprocal }
+	pixelStepY { ^(this.prBoundsReadOnly.height - 17).max( 1 ).reciprocal }
+
+	incrementY { arg zoom = 1; ^this.y = this.y + (this.pixelStepY * zoom) }
+	decrementY { arg zoom = 1; ^this.y = this.y - (this.pixelStepY * zoom) }
+	incrementX { arg zoom = 1; ^this.x = this.x + (this.pixelStepX * zoom) }
+	decrementX { arg zoom = 1; ^this.x = this.x - (this.pixelStepX * zoom) }
 
 	defaultKeyDownAction { arg char, modifiers, unicode,keycode;
 		// standard keydown
@@ -1149,10 +1156,10 @@ JSC2DSlider : JSCSliderBase {
 		if (char == $n, { this.setXYActive( 0.0, 0.0 ); ^this });
 		if (char == $x, { this.setXYActive( 1.0, 1.0 ); ^this });
 		if (char == $c, { this.setXYActive( 0.5, 0.5 ); ^this });
-		if (unicode == 16rF700, { this.incrementY; this.doAction; ^this });
-		if (unicode == 16rF703, { this.incrementX; this.doAction; ^this });
-		if (unicode == 16rF701, { this.decrementY; this.doAction; ^this });
-		if (unicode == 16rF702, { this.decrementX; this.doAction; ^this });
+		if (unicode == 0xF700, { this.incrementY( this.getScale( modifiers )); this.doAction; ^this });
+		if (unicode == 0xF703, { this.incrementX( this.getScale( modifiers )); this.doAction; ^this });
+		if (unicode == 0xF701, { this.decrementY( this.getScale( modifiers )); this.doAction; ^this });
+		if (unicode == 0xF702, { this.decrementX( this.getScale( modifiers )); this.doAction; ^this });
 		^nil		// bubble if it's an invalid key
 	}
 
@@ -3335,7 +3342,7 @@ JSCTextEditBase : JSCStaticTextBase {
 	
 	value_ { arg val;
 		keyString = nil;
-		this.stringColor = normalColor;
+//		this.stringColor = normalColor;
 		object = val;
 		this.string = object.asString;
 	}
@@ -3344,7 +3351,7 @@ JSCTextEditBase : JSCStaticTextBase {
 		var prev;
 		prev = object;
 		this.value = val;
-		if (object != prev, { this.doAction });
+		if( object != prev, { this.doAction });
 	}
 	
 	boxColor {

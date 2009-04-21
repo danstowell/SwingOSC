@@ -372,9 +372,14 @@ JSCView {  // abstract class
 		// has to create a key responder, even if it's not using it personally ;-C
 		this.prCreateKeyResponder( bndl );
 		this.prCreateCompResponder( bndl );
+		if( this.prNeedsMouseHandler, {
+			this.prCreateMouseResponder( bndl );
+		});
 		bndl.addAll( postMsg );
 		server.listSendBundle( nil, bndl );
 	}
+	
+	prNeedsMouseHandler { ^false }
 
 	prGetWindow { ^parent.prGetWindow }
 

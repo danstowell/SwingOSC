@@ -13,6 +13,7 @@ JKnob {
 	
 	var <view, gui, modDrag, modVert;
 	var <>mouseOverAction;
+	var <>shift_scale = 100.0, <>ctrl_scale = 10.0, <>alt_scale = 0.1;
 	
 	*new { arg parent, bounds;
 		GUI.useID( \swing, { ^super.new.prInit( parent, bounds )});
@@ -221,23 +222,34 @@ JKnob {
 	canFocus { ^view.canFocus }
 	canFocus_ { arg bool; view.canFocus_( bool )}
 
-	increment { ^this.valueAction = (this.value + keystep).min(1) }
-	decrement { ^this.valueAction = (this.value - keystep).max(0) }
-	
 	refresh { view.refresh }
+
+	getScale { arg modifiers;
+		^case
+		{ (modifiers & 0x020000) != 0 } { shift_scale }
+		{ (modifiers & 0x040000) != 0 } { ctrl_scale }
+		{ (modifiers & 0x080000) != 0 } { alt_scale }
+		{ 1 };
+	}
+
+	increment { arg zoom=1; ^this.valueAction = this.value + (keystep * zoom) }
+	decrement { arg zoom=1; ^this.valueAction = this.value - (keystep * zoom) }
 
 	prKeyDown { arg view, char, modifiers, unicode, keycode;
 		// standard keydown
+		// rand could also use zoom factors
 		if (char == $r, { this.valueAction = 1.0.rand; });
 		if (char == $n, { this.valueAction = 0.0; });
 		if (char == $x, { this.valueAction = 1.0; });
 		if (char == $c, { this.valueAction = 0.5; });
-		if (char == $], { this.increment; ^this });
-		if (char == $[, { this.decrement; ^this });
-		if (unicode == 16rF700, { this.increment; ^this });
-		if (unicode == 16rF703, { this.increment; ^this });
-		if (unicode == 16rF701, { this.decrement; ^this });
-		if (unicode == 16rF702, { this.decrement; ^this });
+		if (char == $], { this.increment( this.getScale( modifiers )); ^this });
+		if (char == $[, { this.decrement( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF700, { this.increment( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF703, { this.increment( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF701, { this.decrement( this.getScale( modifiers )); ^this });
+		if (unicode == 0xF702, { this.decrement( this.getScale( modifiers )); ^this });
+
+		^nil		// bubble if it's an invalid key
 	}
 
 	prReceiveDrag {

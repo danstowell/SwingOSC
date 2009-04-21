@@ -4,27 +4,29 @@
  */
 // THIS IS EXPERIMENTAL AND SUBJECT TO CHANGES!!!
 JSCImage : JavaObject {
-	*new { arg multiple, height = nil, server;
-		
-		if( multiple.isKindOf( Point ), {
-			Error( "JImage.new( <Point> ): not yet supported" ).throw;
-		});
-		
-		if( multiple.isKindOf( Number ), {
-			Error( "JImage.new( <Number> ): not yet supported" ).throw;
-		});
-		
-		^if( multiple.isKindOf( String ), {
-			if( multiple.beginsWith( "http://" ).not
-			    and: { multiple.beginsWith( "file://" ).not }
-			    and: { multiple.beginsWith( "ftp://" ).not  }, {
-								
-				this.open( multiple, server );
-			}, {
-				this.openURL( multiple, server );
-			});
-		});
-	}
+
+// this polymorphous constructor sucks, we don't support it
+//	*new { arg multiple, height = nil, server;
+//		
+//		if( multiple.isKindOf( Point ), {
+//			Error( "JImage.new( <Point> ): not yet supported" ).throw;
+//		});
+//		
+//		if( multiple.isKindOf( Number ), {
+//			Error( "JImage.new( <Number> ): not yet supported" ).throw;
+//		});
+//		
+//		^if( multiple.isKindOf( String ), {
+//			if( multiple.beginsWith( "http://" ).not
+//			    and: { multiple.beginsWith( "file://" ).not }
+//			    and: { multiple.beginsWith( "ftp://" ).not  }, {
+//								
+//				this.open( multiple, server );
+//			}, {
+//				this.openURL( multiple, server );
+//			});
+//		});
+//	}
 	
 	*openURL { arg url, server;
 		var jURL, img;
