@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 21-Apr-09
+ *	@version		0.61, 22-Apr-09
  *	@author		Hanns Holger Rutz
  */
 JPeakMeterManager {
@@ -74,6 +74,7 @@ JPeakMeterManager {
 	protRegister { arg view;
 		var ctrlBus;
 		ctrlBus	= view.protGetCtrlBus;
+//[ "protRegister", ctrlBus, view.bus, view.group ].postln;
 		jscsynth.swing.listSendMsg([ '/method', this.id, \addListener ] ++ view.asSwingArg ++
 			[ '[', '/new', "de.sciss.jcollider.Bus" ] ++ jscsynth.asSwingArg ++
 			[ view.bus.rate, view.bus.index, view.bus.numChannels, ']' ] ++
@@ -217,7 +218,7 @@ JSCPeakMeter : JSCControlView {
 	
 	*meterServer { arg server;
 		var win, inBus, outBus, fntSmall, viewWidth, inMeterWidth, outMeterWidth, inMeter, outMeter,
-		    inGroup, outGroup, chanWidth = 13, meterHeight = 200, fLab, fBooted, numIn, numOut;
+		    inGroup, outGroup, chanWidth = 13, meterHeight = 200, fLab, fBooted, numIn, numOut, fPeriod;
 
 		numIn		= server.options.numOutputBusChannels;
 		numOut		= server.options.numInputBusChannels;
@@ -254,6 +255,7 @@ JSCPeakMeter : JSCControlView {
 	    	fLab.value( "out", numOut, 8 + inMeterWidth );
 	    	
 	    	fBooted = {
+//	    		"-----------Yo".postln;
 			inGroup			= Group.head( RootNode( server ));
 			outGroup			= Group.tail( RootNode( server ));
 			outBus			= Bus( \audio, 0, server.options.numOutputBusChannels, server );
@@ -264,16 +266,26 @@ JSCPeakMeter : JSCControlView {
 			outMeter.bus		= outBus;
 	    	};
 	    	
+	    	fPeriod = {
+	    		inMeter.bus		= nil;
+	    		inMeter.group		= nil;
+	    		outMeter.bus		= nil;
+	    		outMeter.group	= nil;
+	    	};
+	    	
 		win.front;
-		
 
 		win.onClose_({
 			ServerTree.remove( fBooted );
+			CmdPeriod.remove( fPeriod );
+			ServerQuit.remove( fPeriod );
 			inGroup.free; inGroup = nil;
 			outGroup.free; outGroup = nil;
 		});
 
 		ServerTree.add( fBooted );
+		CmdPeriod.add( fPeriod );
+		ServerQuit.add( fPeriod );
 		if( server.serverRunning, fBooted ); // otherwise starts when booted
 	}
 	
