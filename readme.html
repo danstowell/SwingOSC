@@ -88,7 +88,7 @@ TD.when {
 </HEAD>
 <BODY>
 <h1>
-SwingOSC <small>-- version 0.61 RC SVN-156 (built 30-jan-09) --</small>
+SwingOSC <small>-- version 0.61 RC SVN-176 (built 22-apr-09) --</small>
 </h1>
 <h3>statement</h3>
 <TABLE><TR><TD VALIGN="top"><IMG SRC="application.png" ALT=""></TD><TD><p>
@@ -134,7 +134,7 @@ requirements / installation
 <p>
 SwingOSC is written in Java(tm) and requires a Java runtime environment (JRE) version 1.4 or better. On Mac&nbsp;OS&nbsp;X you already have this runtime. On other platforms you may need to download and install a recent runtime from <A HREF="http://java.sun.com" CLASS="ext">java.sun.com</A>. You can verify your current java version by opening a terminal and executing the command <code>java -version</code>.
 </P><P>
-<SPAN CLASS="highlight">Linux note:</SPAN> There are other free implementations for the Java standard platform, like <A HREF="http://harmony.apache.org/" CLASS="ext">Apache Harmony</A> and <A HREF="http://www.gnu.org/software/classpath/">GNU Classpath</A>. <A HREF="http://www.kaffe.org/links.shtml" CLASS="ext">Kaffe.org</A> has a list of related things. I have tested SwingOSC only with Sun's and Apple's VM and I don't know whether it runs with those alternatives. Particularly AWT (the GUI base system) is incomplete, so I don't recommend using for example gij which seems to be the default on Debian / Ubuntu. Installing <SPAN CLASS="highlight">Sun's&nbsp;Java</SPAN> does not imply that you cannot have your current alternative Java installed (see nescivi's posting on this thread for details: <A HREF="http://www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html">www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html</A>).
+<SPAN CLASS="highlight">Linux note:</SPAN> There are other free implementations for the Java standard platform, like <A HREF="http://harmony.apache.org/" CLASS="ext">Apache Harmony</A> and <A HREF="http://www.gnu.org/software/classpath/">GNU Classpath</A>. However, most of them are not suitable for GUI applications since their AWT/Swing is incomplete or buggy. SwingOSC should work both with Sun's VM and <A HREF="http://openjdk.java.net/" CLASS="ext">OpenJDK</A>. Note that you can have more than one java runtime installed (see nescivi's posting on this thread for details: <A HREF="http://www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html">www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html</A>).
 </P>
 <UL>
 <LI><SPAN CLASS="highlight">Installing SuperCollider classes :</SPAN> please refer to the separate file <A HREF="SuperCollider/readme.html">SuperCollider/readme.html</A></LI>
@@ -202,14 +202,14 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <UL>
 <LI>password protection in TCP mode?</LI>
 <LI>text file or similar with a restriction list of allowed classes to instantiate?</LI>
-<LI>complete peakmeterview, add some nice stuff like tree view ...</LI>
+<LI>add some nice stuff like tree view ...</LI>
 </UL>
 <h3>change history</h3>
-<h4>v0.61 (jan 2009 - SVN rev. ??)</h4>
+<h4>v0.61 (apr 2009 - SVN rev. ??)</h4>
 <UL>
 <LI>Server: performance improvement, improved booting from SC</LI>
-<LI>SC classes: moved OSX specific stuff to separate folder, adding (still experimental) JSCMenuNode, JPen (joinStyle_, lineDash_, alpha_), adding JavaObjectD, SwingGUI (stringBounds), JSCTextView (open, linkAction), JSCContainerView (relativeOrigin), JSCWindow (initAction, toFrontAction, endFrontAction), JSCView (absoluteBounds), JSCUserView (relativeOrigin true)</LI>
-<LI>Refactoring: using ScissLib (application framework with window handler customization)</LI>
+<LI>SC classes: moved OSX specific stuff to separate folder, adding (still experimental) JSCMenuNode, JPen (joinStyle_, lineDash_, alpha_), adding JavaObjectD, SwingGUI (stringBounds), JSCTextView (open, linkAction), JSCContainerView (relativeOrigin), JSCWindow (initAction, toFrontAction, endFrontAction), JSCView (absoluteBounds), JSCUserView (relativeOrigin true), JSCPeakMeter added</LI>
+<LI>Refactoring: using ScissLib (application framework with window handler customization), now JCollider (for peakmeter, in future version for scope etc.)</LI>
 <LI>Bug fixes: 2037842, 2482337</LI>
 <LI>New features: 1849186</LI>
 </UL>
