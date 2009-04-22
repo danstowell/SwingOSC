@@ -373,7 +373,7 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		server.listSendBundle( nil, bndl );
 	}
 
-	prInitView {�this.prSCViewNew }
+	prInitView { ^this.prSCViewNew }
 
 	prGetWindow { ^window }
 

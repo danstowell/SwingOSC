@@ -7,125 +7,62 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.48">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #000000}
-p.p2 {margin: 0.0px 0.0px 16.0px 0.0px; font: 24.0px Lucida Grande; color: #0000bf}
-p.p3 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Lucida Grande; color: #000000}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p1 {margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #544f83}
+p.p2 {margin: 0.0px 0.0px 16.0px 0.0px; font: 18.0px Lucida Grande}
+p.p3 {margin: 0.0px 0.0px 16.0px 0.0px; font: 13.0px Lucida Grande}
+p.p4 {margin: 0.0px 0.0px 12.0px 0.0px; font: 13.0px Lucida Grande}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
 span.s1 {color: #0000bf}
-span.s2 {color: #000000}
-span.s3 {text-decoration: underline ; color: #0000bf}
-span.s4 {color: #606060}
-span.s5 {color: #007300}
-span.s6 {font: 10.0px Monaco}
-span.s7 {font: 10.0px Monaco; color: #0000bf}
-span.s8 {font: 9.0px Monaco}
-span.Apple-tab-span {white-space:pre}
+span.s2 {color: #606060}
+span.s3 {color: #007300}
 </style>
 </head>
 <body>
-<h2 style="margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #000000"><span class="s1"><b>SwingOSC</b></span><b> – </b><span class="s1"><b>Java</b></span><b>-based </b><span class="s1"><b>GUI</b></span><b> classes</b></h2>
-<h1 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 24.0px Lucida Grande; color: #0000bf"><b>JSCPeakMeter</b></h1>
-<p class="p2"><span class="s2"><b>!!!</b></span><b>INCOMPLETE</b><span class="s2"><b>!!!</b></span></p>
-<p class="p3"><b>Note: please use the abstraction layer </b><span class="s1"><b>GUI</b></span><b>.peakMeterView if possible! (see </b><a href="SC://GUI"><span class="s1"><b>GUI</b></span></a><b>).</b> <span class="s1">See</span> also <a href="JSCView.html"><span class="s3">JSCView</span></a>.</p>
-<p class="p4">s.boot;</p>
-<p class="p5"><br></p>
-<p class="p4">(</p>
-<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s1">JSCWindow</span>( <span class="s4">"Meter"</span>, <span class="s1">Rect</span>( 200, 200, 128, 225 ), <span class="s1">false</span> );</p>
-<p class="p4"><span class="Apple-converted-space">    </span>b = <span class="s1">JSCPeakMeter</span>( w, <span class="s1">Rect</span>( 4, 4, 56, 217 ));</p>
-<p class="p4"><span class="Apple-converted-space">    </span>b.bus = <span class="s1">Bus</span>( <span class="s5">\audio</span>, s.options.numOutputBusChannels, 2, s );</p>
-<p class="p4"><span class="Apple-converted-space">    </span>w.front;</p>
-<p class="p4">)</p>
-<p class="p5"><br></p>
-<p class="p4">b.border = <span class="s1">true</span>;</p>
-<p class="p4">b.border = <span class="s1">false</span>;</p>
-<p class="p4">b.caption = <span class="s1">true</span>;</p>
-<p class="p4">b.caption = <span class="s1">false</span>;</p>
-<p class="p4">b.caption = <span class="s1">true</span>;</p>
-<p class="p4">b.font = <span class="s1">JFont</span>( <span class="s4">"Eurostile"</span>, 11 );</p>
-<p class="p4">b.font = <span class="s1">JFont</span>( <span class="s4">"Andale Mono"</span>, 13 );</p>
-<p class="p4">b.captionVisible = <span class="s1">false</span>;</p>
-<p class="p4">b.captionVisible = <span class="s1">true</span>;</p>
-<p class="p4">b.captionPosition = <span class="s5">\right</span>;</p>
-<p class="p4">b.captionPosition = <span class="s5">\left</span>;</p>
-<p class="p4">b.captionPosition = <span class="s5">\center</span>;</p>
-<p class="p4">b.rmsPainted = <span class="s1">false</span>;</p>
-<p class="p4">b.rmsPainted = <span class="s1">true</span>;</p>
-<p class="p4">b.holdPainted = <span class="s1">false</span>;</p>
-<p class="p4">b.holdPainted = <span class="s1">true</span>;</p>
-<p class="p5"><br></p>
-<p class="p4">b.mouseDownAction = { <span class="s4">"Doing!"</span>.postln };</p>
-<p class="p5"><br></p>
-<p class="p4">b.active = <span class="s1">false</span>;</p>
-<p class="p4">b.active = <span class="s1">true</span>;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6">(</p>
-<p class="p7">~meter = { <span class="s1">arg</span> server;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">var</span> win, inBus, outBus, fntSmall, viewWidth, inMeterWidth, outMeterWidth, inMeter, outMeter,</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    </span>inGroup, outGroup, chanWidth = 13, meterHeight = 200, <span class="s6">fLab</span>;</p>
-<p class="p8"><br></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>outBus<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">Bus</span>( <span class="s5">\audio</span>, 0, server.options.numOutputBusChannels, server );</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inBus<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">Bus</span>( <span class="s5">\audio</span>, outBus.numChannels, server.options.numInputBusChannels, server );</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inMeterWidth<span class="Apple-tab-span">	</span>= inBus.numChannels * chanWidth + 29;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>outMeterWidth<span class="Apple-tab-span">	</span>= outBus.numChannels * chanWidth + 29;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>viewWidth<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= inMeterWidth + outMeterWidth + 11;</p>
-<p class="p8"><br></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inGroup<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">Group</span>.head( <span class="s1">RootNode</span>( server ));</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>outGroup<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">Group</span>.tail( <span class="s1">RootNode</span>( server ));</p>
-<p class="p8"><br></p>
-<p class="p7"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    </span>win<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= </span><span class="s7">JSCWindow</span>( server.name ++ <span class="s4">" levels (dBFS)"</span>, <span class="s1">Rect</span>( 5, 305, viewWidth, meterHeight + 26 ), <span class="s1">false</span> );</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    </span>inMeter<span class="Apple-tab-span">	</span>= <span class="s1">JSCPeakMeter</span>( win, <span class="s1">Rect</span>( 4, 4, inMeterWidth, <span class="s8">meterHeight</span> ))</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>.border_( <span class="s1">true</span> ).caption_( <span class="s1">true</span> )</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>.group_( inGroup )</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>.bus_( inBus );</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    </span>outMeter<span class="Apple-tab-span">	</span>= <span class="s1">JSCPeakMeter</span>( win, <span class="s1">Rect</span>( inMeterWidth + 8, 4, outMeterWidth, <span class="s8">meterHeight</span> ))</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>.border_( <span class="s1">true</span> ).caption_( <span class="s1">true</span> )</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>.group_( outGroup )</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>.bus_( outBus );</p>
-<p class="p9"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">   <span class="Apple-tab-span">	</span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>fntSmall = <span class="s1">JFont</span>( <span class="s4">"Helvetica"</span>, 8 );</p>
-<p class="p9"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">   <span class="Apple-tab-span">	</span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>fLab = { <span class="s1">arg</span> name, bus, xOff; <span class="s1">var</span> comp;</p>
-<p class="p7"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>comp = </span><span class="s7">JSCCompositeView</span><span class="s6">( win, </span><span class="s7">Rect</span><span class="s6">( xOff, </span>meterHeight + 4, bus.numChannels * chanWidth + 28, 18 ))</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>.background_( <span class="s1">Color</span>.black );</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s1">JSCStaticText</span>( comp, <span class="s1">Rect</span>( 0, 0, 22, 18 ))</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>.align_( <span class="s5">\right</span> ).font_( fntSmall ).stringColor_( <span class="s1">Color</span>.white ).string_( name );</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>bus.numChannels.do({ <span class="s1">arg</span> ch;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s1">JSCStaticText</span>( comp, <span class="s1">Rect</span>( 21 + (ch * chanWidth), 0, 20, 18 ))</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>.align_( <span class="s5">\center</span> ).font_( fntSmall ).stringColor_( <span class="s1">Color</span>.white ).string_( ch.asString );</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>});</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>};</p>
-<p class="p9"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">   <span class="Apple-tab-span">	</span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>fLab.value( <span class="s4">"in"</span>, inBus, 4 );</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>fLab.value( <span class="s4">"out"</span>, outBus, 8 + inMeterWidth );</p>
-<p class="p9"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">   <span class="Apple-tab-span">	</span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    <span class="Apple-tab-span">	</span></span>~win = win;</p>
-<p class="p9"><br></p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// dB scale</p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>UserView(view, Rect(0,0,meterWidth,195)).drawFunc_({</p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>"0".drawCenteredIn(Rect(0, 0, meterWidth, 12), Font("Helvetica-Bold", 10), Color.white);</p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>"-80".drawCenteredIn(Rect(0, 170, meterWidth, 12), Font("Helvetica-Bold", 10), Color.white);</p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p8"><br></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>win.front;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><br></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>win.onClose_({</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inGroup.free; outGroup.free;</p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ServerTree.remove(func);</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ServerTree.add(func);</p>
-<p class="p10">//<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(serverRunning, func); // otherwise starts when booted</p>
-<p class="p7">}</p>
-<p class="p7">)</p>
-<p class="p8"><br></p>
-<p class="p7">~meter.( s );</p>
+<h2 style="margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande; color: #544f83"><b>SwingOSC – Java-based GUI classes</b></h2>
+<h1 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 18.0px Lucida Grande"><b>JSCPeakMeter</b></h1>
+<p class="p3"><b>Warning: experimental stage, subject to changes!</b></p>
+<p class="p4">Note: please use the abstraction layer GUI.peakMeterView if possible! (see <a href="SC://GUI">GUI</a>). See also <a href="JSCView.html">JSCView</a>.</p>
+<p class="p5">s.boot;</p>
+<p class="p6"><br></p>
+<p class="p5">(</p>
+<p class="p5"><span class="Apple-converted-space">    </span>w = <span class="s1">JSCWindow</span>( <span class="s2">"Meter"</span>, <span class="s1">Rect</span>( 200, 200, 128, 225 ), <span class="s1">false</span> );</p>
+<p class="p5"><span class="Apple-converted-space">    </span>b = <span class="s1">JSCPeakMeter</span>( w, <span class="s1">Rect</span>( 4, 4, 56, 217 ));</p>
+<p class="p5"><span class="Apple-converted-space">    </span>b.bus = <span class="s1">Bus</span>( <span class="s3">\audio</span>, s.options.numOutputBusChannels, 2, s );</p>
+<p class="p5"><span class="Apple-converted-space">    </span>w.front;</p>
+<p class="p5">)</p>
+<p class="p6"><br></p>
+<p class="p5">b.border = <span class="s1">true</span>;</p>
+<p class="p5">b.border = <span class="s1">false</span>;</p>
+<p class="p5">b.caption = <span class="s1">true</span>;</p>
+<p class="p5">b.caption = <span class="s1">false</span>;</p>
+<p class="p5">b.caption = <span class="s1">true</span>;</p>
+<p class="p5">b.font = <span class="s1">JFont</span>( <span class="s2">"Eurostile"</span>, 11 );</p>
+<p class="p5">b.font = <span class="s1">JFont</span>( <span class="s2">"Andale Mono"</span>, 13 );</p>
+<p class="p5">b.captionVisible = <span class="s1">false</span>;</p>
+<p class="p5">b.captionVisible = <span class="s1">true</span>;</p>
+<p class="p5">b.captionPosition = <span class="s3">\right</span>;</p>
+<p class="p5">b.captionPosition = <span class="s3">\left</span>;</p>
+<p class="p5">b.captionPosition = <span class="s3">\center</span>;</p>
+<p class="p5">b.rmsPainted = <span class="s1">false</span>;</p>
+<p class="p5">b.rmsPainted = <span class="s1">true</span>;</p>
+<p class="p5">b.holdPainted = <span class="s1">false</span>;</p>
+<p class="p5">b.holdPainted = <span class="s1">true</span>;</p>
+<p class="p6"><br></p>
+<p class="p5">b.mouseDownAction = { <span class="s2">"Doing!"</span>.postln };</p>
+<p class="p6"><br></p>
+<p class="p5">b.active = <span class="s1">false</span>;</p>
+<p class="p5">b.active = <span class="s1">true</span>;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">// check the server metering:</p>
+<p class="p5"><span class="s1">JSCPeakMeter</span>.meterServer( s );</p>
+<p class="p6"><br></p>
+<p class="p5">x = { <span class="s1">Dust</span>.ar( 1 ! s.options.numOutputBusChannels ) * 0.7 }.play</p>
+<p class="p5">x.free;</p>
+<p class="p6"><br></p>
+<p class="p7">// WARNING:</p>
+<p class="p5">quitting scsynth while the meters are up are probably ending in confusing in this version. this needs to be fixed soon.</p>
 </body>
 </html>

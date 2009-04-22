@@ -530,7 +530,7 @@ JSCView {  // abstract class
 	handleKeyDownBubbling { arg view, char, modifiers, unicode, keycode;
 		var result;
 		// nil from keyDownAction --> pass it on
-		result =Êif( keyDownAction.isNil, {
+		result = if( keyDownAction.isNil, {
 			this.defaultKeyDownAction( char, modifiers, unicode, keycode );
 		}, {
 			keyDownAction.value( view, char, modifiers, unicode, keycode );

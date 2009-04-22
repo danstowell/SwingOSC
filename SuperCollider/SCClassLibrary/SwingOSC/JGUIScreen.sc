@@ -495,7 +495,7 @@ JSCWindow : Object
 //		);
 		bndl = Array( 3 );
 		server.protEnsureApplication;
-		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ argBounds.asSwingArg ++ [ border.not.binaryValue | (scroll.binaryValue << 1) |Ê(resizable.not.binaryValue << 2), ']', ]);
+		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.Frame" ] ++ argName.asSwingArg ++ argBounds.asSwingArg ++ [ border.not.binaryValue | (scroll.binaryValue << 1) | (resizable.not.binaryValue << 2), ']', ]);
 //		if( resizable.not, { bndl.add([ '/set', this.id, \resizable, 0 ])});
 		bndl.add([ '/local', "ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.WindowResponder", this.id, ']',

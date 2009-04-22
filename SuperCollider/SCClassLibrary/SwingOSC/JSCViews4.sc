@@ -110,6 +110,7 @@ JSCPeakMeter : JSCControlView {
 //	var acResp;	// OSCpathResponder for action listening
 	var weCreatedGroup = false;
 	var ctrlBus, nodeID;
+	var <numChannels = 0;
 
 	// ----------------- public instance methods -----------------
 
@@ -181,7 +182,6 @@ JSCPeakMeter : JSCControlView {
 	}
 	
 	bus_ { arg b;
-		var numChannels;
 		if( b != bus, {
 			// if( (bus.server != b.server) or: { b.numChannels != bus.numChannels }, { ... });
 			this.prUnregister;
@@ -191,17 +191,92 @@ JSCPeakMeter : JSCControlView {
 				});
 				numChannels	= b.numChannels;
 				nodeID		= Array.fill( numChannels, { b.server.nextNodeID }).first;
+				ctrlBus		= Bus.control( b.server, numChannels << 1 );
+				server.sendMsg( '/set', this.id, \numChannels, numChannels );
+				bus			= b;
+				this.prRegister;
 			}, {
-				numChannels 	= 0;
+//				numChannels 	= 0;
 				nodeID		= -1;
+				bus			= nil;
 			});
-			bus		= b;
-			ctrlBus	= Bus.control( bus.server, numChannels << 1 );
+		});
+	}
+	
+	numChannels_ { arg ch;
+		if( ch != numChannels, {
+			if( bus.notNil, {
+				Error( "Cannot change numChannels when bus is set" ).throw;
+			});
+			numChannels = ch;
 			server.sendMsg( '/set', this.id, \numChannels, numChannels );
-			this.prRegister;
 		});
 	}
 
+	// ----------------- public class methods -----------------
+	
+	*meterServer { arg server;
+		var win, inBus, outBus, fntSmall, viewWidth, inMeterWidth, outMeterWidth, inMeter, outMeter,
+		    inGroup, outGroup, chanWidth = 13, meterHeight = 200, fLab, fBooted, numIn, numOut;
+
+		numIn		= server.options.numOutputBusChannels;
+		numOut		= server.options.numInputBusChannels;
+		inMeterWidth	= numIn * chanWidth + 29;
+		outMeterWidth	= numOut * chanWidth + 29;
+		viewWidth		= inMeterWidth + outMeterWidth + 11;
+
+	    win		= JSCWindow( server.name ++ " levels (dBFS)", Rect( 5, 305, viewWidth, meterHeight + 26 ), false );
+	    inMeter	= JSCPeakMeter( win, Rect( 4, 4, inMeterWidth, meterHeight ))
+	    	.border_( true ).caption_( true );
+//	    	.numChannels_( inGroup.numChannels );
+//	    	.group_( inGroup )
+//	    	.bus_( inBus );
+	    outMeter	= JSCPeakMeter( win, Rect( inMeterWidth + 8, 4, outMeterWidth, meterHeight ))
+	    	.border_( true ).caption_( true );
+//	    	.numChannels_( outGroup.numChannels );
+//	    	.group_( outGroup )
+//	    	.bus_( outBus );
+	    	
+	    	fntSmall = JFont( "Helvetica", 8 );
+	    	
+	    	fLab = { arg name, numChannels, xOff; var comp;
+	  		comp = JSCCompositeView( win, Rect( xOff, meterHeight + 4, numChannels * chanWidth + 28, 18 ))
+	  			.background_( Color.black );
+	  		JSCStaticText( comp, Rect( 0, 0, 22, 18 ))
+	  			.align_( \right ).font_( fntSmall ).stringColor_( Color.white ).string_( name );
+	  		numChannels.do({ arg ch;
+		  		JSCStaticText( comp, Rect( 21 + (ch * chanWidth), 0, 20, 18 ))
+		  			.align_( \center ).font_( fntSmall ).stringColor_( Color.white ).string_( ch.asString );
+	  		});
+	    	};
+	    	
+	    	fLab.value( "in", numIn, 4 );
+	    	fLab.value( "out", numOut, 8 + inMeterWidth );
+	    	
+	    	fBooted = {
+			inGroup			= Group.head( RootNode( server ));
+			outGroup			= Group.tail( RootNode( server ));
+			outBus			= Bus( \audio, 0, server.options.numOutputBusChannels, server );
+			inBus			= Bus( \audio, outBus.numChannels, server.options.numInputBusChannels, server );
+			inMeter.group		= inGroup;
+			inMeter.bus		= inBus;
+			outMeter.group	= outGroup;
+			outMeter.bus		= outBus;
+	    	};
+	    	
+		win.front;
+		
+
+		win.onClose_({
+			ServerTree.remove( fBooted );
+			inGroup.free; inGroup = nil;
+			outGroup.free; outGroup = nil;
+		});
+
+		ServerTree.add( fBooted );
+		if( server.serverRunning, fBooted ); // otherwise starts when booted
+	}
+	
 	// ----------------- private instance methods -----------------
 
 	protGetCtrlBus { ^ctrlBus }

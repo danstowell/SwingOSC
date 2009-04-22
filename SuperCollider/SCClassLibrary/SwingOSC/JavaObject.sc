@@ -268,7 +268,7 @@ JavaObjectD : JavaObject {
 	destroy {
 		try {
 			destroyAction.value( this );
-		}Ê{ arg e;
+		} { arg e;
 			e.reportError;
 		};
 		super.destroy;

@@ -414,6 +414,7 @@ implements OSCListener, Constants, /* ServerListener, */ ActionListener,
 		GraphElem			rms		= UGen.ar( "Lag", UGen.ar( "squared", in ), UGen.ir( 0.1f ));
 		GraphElem			peak	= UGen.ar( "Peak", in, t_trig );
 		final GraphElem		out;
+		final SynthDef		def;
 		GraphElem			temp;
 
 		if( numChannels > 1 ) {
@@ -423,7 +424,7 @@ implements OSCListener, Constants, /* ServerListener, */ ActionListener,
 				peak = UGen.ar( "max", peak, temp.getOutput( i ));
 			}
 			temp = rms;
-			rms  = rms.getOutput( 0 );
+			rms  = temp.getOutput( 0 );
 			for( int i = 1; i < numChannels; i++ ) {
 				rms = UGen.ar( "+", rms, temp.getOutput( i ));
 			}
@@ -434,9 +435,11 @@ implements OSCListener, Constants, /* ServerListener, */ ActionListener,
 		// a /c_getn on the meter bus. each request is followed
 		// by a /n_set to re-trigger the latch so that we are
 		// not missing any peak values.
-		out = UGen.kr( "Out", i_kOtBs, UGen.kr( "Latch", peak, t_trig ), rms );
+		out = UGen.kr( "Out", i_kOtBs, UGen.array( UGen.kr( "Latch", peak, t_trig ), rms ));
 		
-		return new SynthDef( "swing-peak" + numChannels, out );
+		def = new SynthDef( "swing-peak" + numChannels, out );
+//		def.writeDefFile( new java.io.File( "/Users/rutz/Desktop/meters.scsyndef" ));
+		return def;
 	}
 	
 	public void removeListener( PeakMeterView view )
