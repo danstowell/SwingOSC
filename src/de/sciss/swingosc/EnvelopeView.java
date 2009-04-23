@@ -56,7 +56,7 @@ import de.sciss.net.OSCMessage;
  *	Swing implementation and extension of SCEnvelopeView by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.61, 03-Apr-09
+ *	@version	0.61, 23-Apr-09
  */
 public class EnvelopeView
 extends AbstractMultiSlider
@@ -248,24 +248,46 @@ extends AbstractMultiSlider
 					case Node.SHP_CUBED:
 						for( int j = 0; j < n.connections.length; j++ ) {
 							n2 = n.connections[ j ];
-							gpLines.moveTo( n.cx, n.cy );
-							final float sx = 1.0f / Math.max( 1, w );
-							final int   istep;
+							final float oy1, oy2, sy1, sy2;
+//							sx	= 1.0f / Math.max( 1, w );
+//							final int   istep;
 							final Node	n1s, n2s;
-							if( n.x <= n2.x ) {
-								istep	= 2;
+							if( n.x == n2.x ) {
+								gpLines.moveTo( n.cx, n.cy );
+								gpLines.lineTo( n2.cx, n2.cy );
+								break;
+							} else if( n.x < n2.x ) {
+//								istep	= 2;
 								n1s		= n;
 								n2s		= n2;
 							} else {
-								istep = -2;
+//								istep = -2;
 								n1s		= n2;
 								n2s		= n;
 							}
-							float ix = n.cx;
+							final float dx = n2s.cx - n1s.cx;
+							if( clipThumbs ) {
+								oy1 = 0f;
+								oy2	= 0f;
+								sy1	= h;
+								sy2	= h;
+							} else {
+								oy1 = n1s.thumbHeight / 2;
+								oy2	= n2s.thumbHeight / 2;
+								sy1	= h - n1s.thumbHeight;
+								sy2	= h - n2s.thumbHeight;
+							}
+							float ix = 0f; // n.cx - n1s.cx;
+							float rx, ry;
+							gpLines.moveTo( n1s.cx, n1s.cy );
 							do {
-								ix = Math.max( n1s.cx, Math.min( n2s.cx, ix + istep ));
-								gpLines.lineTo( ix, h * (1f - envAt( n1s, n2s, ix * sx )));
-							} while( ix != n2.cx );
+//								ix = Math.max( 0, Math.min( dx, ix + istep ));
+								ix = Math.min( dx, ix + 2 );
+								rx = ix / dx;
+								ry = (1f - envAt( n1s, n2s, rx ));
+								gpLines.lineTo( ix + n1s.cx, (sy1 * ry + oy1) * (1 - rx) +
+								                             (sy2 * ry + oy2) * rx );
+							} while( ix != dx );
 						}
 						break;
 					}
@@ -292,24 +314,47 @@ extends AbstractMultiSlider
 					case Node.SHP_WELCH:
 					case Node.SHP_SQUARED:
 					case Node.SHP_CUBED:
-						gpLines.moveTo( n.cx, n.cy );
-						final float sx = 1.0f / Math.max( 1, w );
-						final int   istep;
+//						gpLines.moveTo( n.cx, n.cy );
+						final float oy1, oy2, sy1, sy2;
+//						sx	= 1.0f / Math.max( 1, w );
+//						final int   istep;
 						final Node	n1s, n2s;
-						if( n.x <= n2.x ) {
-							istep	= 2;
+						if( n.x == n2.x ) {
+							gpLines.moveTo( n.cx, n.cy );
+							gpLines.lineTo( n2.cx, n2.cy );
+							break;
+						} else if( n.x < n2.x ) {
+//							istep	= 2;
 							n1s		= n;
 							n2s		= n2;
 						} else {
-							istep = -2;
+//							istep = -2;
 							n1s		= n2;
 							n2s		= n;
 						}
-						float ix = n.cx;
+						final float dx = n2s.cx - n1s.cx;
+						if( clipThumbs ) {
+							oy1 = 0f;
+							oy2	= 0f;
+							sy1	= h;
+							sy2	= h;
+						} else {
+							oy1 = n1s.thumbHeight / 2;
+							oy2	= n2s.thumbHeight / 2;
+							sy1	= h - n1s.thumbHeight;
+							sy2	= h - n2s.thumbHeight;
+						}
+						float ix = 0f; // n.cx - n1s.cx;
+						float rx, ry;
+						gpLines.moveTo( n1s.cx, n1s.cy );
 						do {
-							ix = Math.max( n1s.cx, Math.min( n2s.cx, ix + istep ));
-							gpLines.lineTo( ix, h * (1f - envAt( n1s, n2s, ix * sx )));
-						} while( ix != n2.cx );
+//							ix = Math.max( 0, Math.min( dx, ix + istep ));
+							ix = Math.min( dx, ix + 2 );
+							rx = ix / dx;
+							ry = (1f - envAt( n1s, n2s, rx ));
+							gpLines.lineTo( ix + n1s.cx, (sy1 * ry + oy1) * (1 - rx) +
+							                             (sy2 * ry + oy2) * rx );
+						} while( ix != dx );
 						break;
 
 					case Node.SHP_SINE:
@@ -794,12 +839,17 @@ extends AbstractMultiSlider
 		}
 	}
 	
-	// analoguous to the code in PyrArrayPrimitives.cpp
-	private float envAt( Node n1, Node n2, float x )
+	/*
+	 * 	Analoguous to the code in PyrArrayPrimitives.cpp.
+	 * 	
+	 * 	@param	x	a relative position between 0.0 (at n1)
+	 * 				and 1.0 (at n2)
+	 */
+	private float envAt( Node n1, Node n2, float pos )
 	{
 		if( nodes.length == 0 ) return 0f;
 		
-		final float pos, y;
+		final float /* pos, */ y;
 		
 //		for( idx = 0; idx < nodes.length; idx++ ) {
 //			if( nodes[ idx ].x > x ) break;
@@ -811,9 +861,12 @@ extends AbstractMultiSlider
 //			n1	= n2;
 //			n2	= tmp;
 //		}
-		if( x <= n1.x ) return n1.y;
-		if( x >= n2.x ) return n2.y;
-		pos	= (x - n1.x) / (n2.x - n1.x);
+		
+//		if( x <= n1.x ) return n1.y;
+//		if( x >= n2.x ) return n2.y;
+//		pos	= (x - n1.x) / (n2.x - n1.x);
+		if( pos <= 0f ) return n1.y;
+		if( pos >= 1f ) return n2.y;
 
 		switch( n1.shape ) {
 		case Node.SHP_STEP:
