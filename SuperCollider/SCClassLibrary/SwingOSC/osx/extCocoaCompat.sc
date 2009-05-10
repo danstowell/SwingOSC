@@ -165,7 +165,7 @@
 		"SCWindow.unminimize : not yet working".error;
 	}
 
-	visible_ { arg boo;
-		"SCWindow.visible_ : not yet working".error;
-	}
+//	visible_ { arg boo;
+//		"SCWindow.visible_ : not yet working".error;
+//	}
 }
