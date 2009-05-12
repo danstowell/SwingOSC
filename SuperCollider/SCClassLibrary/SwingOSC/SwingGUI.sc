@@ -113,7 +113,7 @@ SwingGUI {
 
 	///////////////// extras /////////////////
 			
-	*panel { ^JSCPanel }
+//	*panel { ^JSCPanel }
 	*checkBox { ^JSCCheckBox }
 	*tabbedPane { ^JSCTabbedPane }
 	*scrollBar { ^JSCScrollBar }
