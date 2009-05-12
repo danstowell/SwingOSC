@@ -52,7 +52,6 @@
 			<unjar src="${lib.dir}/ScissLib.jar" dest="${lib.dir}" />
 			<unjar src="${lib.dir}/JCollider.jar" dest="${lib.dir}" />
 			<unjar src="${lib.dir}/MRJAdapter.jar" dest="${lib.dir}" />
-			<unjar src="${lib.dir}/miglayout-swing.jar" dest="${lib.dir}" />
 			<unjar src="JNITablet/build/TabletWrapper.jar" dest="${lib.dir}" />
 			<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${lib.dir}" excludes="*.jar" update="true"/>
 			<delete includeemptydirs="true">
