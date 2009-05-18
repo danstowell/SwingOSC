@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCCompositeView. last mod: 16-Jan-08 sciss
+<p>This class is meant as an emulation of SCCompositeView. last mod: 18-May-09 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -36,7 +36,7 @@ w = <span class="cl">JSCWindow</span>.new;
 
 c = <span class="cl">JSCCompositeView</span>( w, <span class="cl">Rect</span>( 20, 20, 300, 300 ));
 
-a = <span class="cl">JSC2DSlider</span>( c, <span class="cl">Rect</span>( 20, 20, 100, 100 )); <span class="cm">// top left is 20, 20 NOT 0, 0 !</span>
+a = <span class="cl">JSC2DSlider</span>( c, <span class="cl">Rect</span>( 20, 20, 100, 100 ));
 b = <span class="cl">JSC2DSlider</span>( c, <span class="cl">Rect</span>( 120, 120, 100, 100 ));
 
 c.background = <span class="cl">Gradient</span>( <span class="cl">Color</span>.rand, <span class="cl">Color</span>.rand );
@@ -45,7 +45,7 @@ w.front;
 )
 
 </pre>
-<P>Coordinates are the same as that for the window, not relative to the origin of the composite view (as in other gui frameworks).
+<P>Coordinates are always relative to the top-left corner of the parent view, unless you set <code>relativeOrigin</code> to <code><span class="kw">true</span></code>.
 </P>
 <h3>overlapping children</h3>
 <P>If children are placed in a way that their bounding boxes overlap, a child that was created <EM>after</EM> another child will appear <EM>in&nbsp;front</EM> of that other child:

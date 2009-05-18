@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCUserView. last mod: 29-jan-09 sciss
+<p>This class is meant as an emulation of SCUserView. last mod: 18-May-09 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -138,6 +138,8 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
 )
 </pre>
 <P>&nbsp;</P>
+<P>The effect of <code>relativeOrigin</code> setting regarding the reported mouse coordinates is shown in the section <B>mouseUpAction_</B>.</P>
+<P>&nbsp;</P>
 <h2>keyDownAction_</h2>
 <P>Sets the function which should be evaluated if the view is in focus and a key is pressed. This function will be passed four arguments: the view itself, the key pressed as a <A HREF="SC://Char">Char</A>, the modifier keys <A HREF="SC://Integer">Integer</A> (shift, alt, etc.), and the unicode value <A HREF="SC://Integer">Integer</A>. See <A HREF="JSCView.html">JSCView</A> for more details.</P>
 <pre>
@@ -209,8 +211,32 @@ v.focusVisible = <span class="kw">false</span>;  <span class="cm">// don't paint
     };
 )
     
-<span class="cm">// draw on the view</span>
+</pre>
+<p>Important: the mouse coordinates reported depend on the setting of <code>relativeOrigin</code>: for the default of <code><span class="kw">true</span></code>, they are relative to the left-top corner of the view, for <code><span class="kw">false</span></code>, they are relative to the view's parent container top-left. That means that the mouse coordinates always refer to the same origin as the pen drawing coordinates. As a result, you can always plug the mouse coordinates directly into drawing commands without the need of translation, regardless of the <code>relativeOrigin</code> setting:</p>
+<pre>(
+    w = <span class="cl">JSCWindow</span>.new;
 
+    2.do({ <span class="kw">arg</span> i; <span class="kw">var</span> v, f;
+        v = <span class="cl">JSCUserView</span>( w, <span class="cl">Rect</span>( 20 + (i * 180), 30, 150, 300 ))
+            .relativeOrigin_( i == 0 )
+            .background_( <span class="cl">Color</span>.rand )
+            .focusVisible_( <span class="kw">false</span> );
+        f = { <span class="kw">arg</span> view, x, y; v.drawFunc = { <span class="kw">arg</span> view; <span class="cl">JPen</span>.stringAtPoint( <span class="st">&quot;%, %&quot;</span>.format( x, y ), (x + 12) @ (y - 4 ))}};
+        v.mouseDownAction = f;
+        v.mouseMoveAction = f;
+        x = v;
+    });
+    w.front;
+)
+</pre>
+<P>&nbsp;</P>
+<P>Note that you can use the <code>mousePosition</code> method to receive <A HREF="SC://Char">Point</A> object a which is always measured relative to the view's left-top corner:</P>
+<pre>
+x.mouseOverAction = { <span class="kw">arg</span> view; view.mousePosition.postln }; w.acceptsMouseOver = <span class="kw">true</span>;
+</pre>
+<P>&nbsp;</P>
+<P>A final example for mouse control shows how it can be used to draw live on the view:</P>
+<pre>
 <span class="cm">// <strong>NOTE:</strong> in swing, do not rely on correct painting</span>
 <span class="cm">// when components overlap. components should never overlap.</span>
 <span class="cm">// therefore, in this example, we use the drawFunc of the user view</span>

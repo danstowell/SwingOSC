@@ -2,7 +2,7 @@
  *	JSCViews collection 1
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2009 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -28,11 +28,11 @@
  */
 
 /**
- *	@version		0.61, 21-Apr-09
+ *	@version		0.61, 18-May-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
-	var <children, <decorator, <relativeOrigin = true;
+	var <children, <decorator;
 	var pendingValidation = false;
 			
 	// ----------------- public instance methods -----------------
@@ -409,6 +409,8 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		});
 		^scBounds;
 	}
+
+//	prGetParentRefTopLeft { ^Point( 0, 0 )}
 }
 
 JSCScrollTopView : JSCTopView {
@@ -2027,7 +2029,6 @@ JSCAbstractUserView : JSCView {
 	var <drawFunc;
 	var <clearOnRefresh = true;
 	var <>refreshOnFocus = true;
-	var <relativeOrigin = true;
 
 	var penID			= nil;
 	var pendingDraw	= false;
@@ -2141,8 +2142,13 @@ JSCUserView : JSCAbstractUserView {
 	// ----------------- public instance methods -----------------
 
 	mousePosition {
-		var b = this.prBoundsReadOnly;
-		^((lastMouseX - b.left) @ (lastMouseY - b.top));
+		var b;
+		^if( relativeOrigin, {
+			lastMouseX @ lastMouseY;
+		}, {
+			b = this.prBoundsReadOnly;
+			(lastMouseX - b.left) @ (lastMouseY - b.top);
+		});
 	}
 
 	relativeOrigin_ { arg bool;

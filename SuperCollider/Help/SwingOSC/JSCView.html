@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<P>This class is meant as an emulation of SCView. last mod: 12-Jan-09 sciss
+<P>This class is meant as an emulation of SCView. last mod: 18-May-09 sciss
 </p>
 <table>
 <!-- <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -171,7 +171,7 @@ When called, the function will be passed the following arguments:
 <P>
 Four functions can be assigned to track mouse events with a view. The methods to assign these functions are <code>mouseDownAction_</code> (called when the mouse button is pressed over the view), <code>mouseUpAction_</code> (called when the mouse button is released over the view), <code>mouseMoveAction_</code> (called when the mouse button is kept pressed and the mouse is dragged over the view), and <code>mouseOverAction_</code> (called when the mouse is moved over the view). Mouse tracking is enabled once one of these methods are called. Since you often don't need to track mouse movements without the button being pressed, using requires that you additionally call <code>acceptsMouseOver_( <span class="kw">true</span> )</code> on the window that contains the view to make it actually work (not accepting mouse over events saves CPU power and OSC traffic).
 </P><P>
-All these functions are called with four arguments (the view, mouseX, mouseY, key-modifiers), where the mouse coordinates are global to the top view, not local to the child view!
+All these functions are called with four arguments (the view, mouseX, mouseY, key-modifiers), where the mouse coordinates are relative to the top left corner of the view.
 </P><P>Example:</P>
 <pre><span class="cm">// use the 'mouse pad' to telepathically control the 2D slider on the right</span>
 (
@@ -184,7 +184,7 @@ All these functions are called with four arguments (the view, mouseX, mouseY, ke
     b = <span class="cl">JSC2DSlider</span>( w, <span class="cl">Rect</span>( 180, 10, 160, 160 ))
         .canFocus_( <span class="kw">false</span> );
     f = { <span class="kw">arg</span> view, x, y, modif; <span class="kw">var</span> bounds = view.bounds;
-        b.setXY( (x - bounds.left) / bounds.width, 1.0 - ((y - bounds.top) / bounds.height) );
+        b.setXY( x / bounds.width, 1.0 - (y / bounds.height) );
     };
     a.mouseMoveAction = f;
     a.mouseDownAction = { <span class="kw">arg</span> ... args; b.knobColor = <span class="cl">Color</span>.red; f.value( *args )};
@@ -201,6 +201,11 @@ w.acceptsMouseOver = <span class="kw">true</span>;  <span class="cm">// otherwis
 
 a.enabled = <span class="kw">false</span>;
 a.enabled = <span class="kw">true</span>;
+
+</pre>
+<P>Sometimes you just want to display a hint about the functionality of a view that pops up when the mouse is moved over the view. You can achieve this by setting a tool-tip string:</P>
+<pre>
+a.toolTip = <span class="st">"Press + move the mouse here"</span>;
 
 </pre>
 <h2>Instance methods : focus</h2>

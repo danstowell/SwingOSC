@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.61, 06-Apr-09
+ *	@version		0.61, 18-Apr-09
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -55,12 +55,12 @@ JSCView {  // abstract class
 	var <>onClose;
 	var <>focusGainedAction, <>focusLostAction;
 
-	var <server;	// the SwingOSC server used for this view
+	var <server, <id;	// the SwingOSC server used for this view
 	var properties;
 	var keyResp, dndResp, mouseResp, cmpResp;
-	var <hasFocus = false;
-	var <id;
-	var <visible = true;
+	
+	var <hasFocus = false, <visible = true, <relativeOrigin = true;
+	var <toolTip;
 	
 	var clpseMouseMove, clpseMouseDrag;
 
@@ -160,9 +160,14 @@ JSCView {  // abstract class
 		});
 	}
 	
-		// implemented in CocoaGUI but not in Swing - Swing should politely ignore the calls
+	// implemented in CocoaGUI but not in Swing - Swing should politely ignore the calls
 	focusColor { ^this.background }
 	focusColor_ {}
+
+	toolTip_ { arg string;
+		toolTip = string;
+		server.sendMsg( '/set', this.id, \toolTipText, string );
+	}
 
 //	id { ^this.getProperty( \id )}
 //
@@ -578,6 +583,8 @@ JSCView {  // abstract class
 		});
 		^scBounds;
 	}
+	
+//	prGetParentRefTopLeft { ^parent.prGetRefTopLeft }
 
 	prCreateCompResponder { arg bndl;
 		var msg, id, cnID, cmpID;
@@ -679,9 +686,14 @@ JSCView {  // abstract class
 		
 			// [ '/mouse', id, state, x, y, modifiers, button, clickCount ]
 			state 		= msg[2].asSymbol;
-			b			= this.prBoundsReadOnly; // (parent ? this).prGetRefTopLeft;
-			x			= msg[3] + b.left - jinsets.left;
-			y			= msg[4] + b.top - jinsets.top;
+			if( relativeOrigin, {
+				x		= msg[3] - jinsets.left;
+				y		= msg[4] - jinsets.top;
+			}, {
+				b		= this.prBoundsReadOnly;
+				x		= msg[3] + b.left - jinsets.left;
+				y		= msg[4] + b.top - jinsets.top;
+			});
 			modifiers		= msg[5];
 
 			// java->cocoa ; this translates shift (1), ctrl (2), cmd (4), alt (8)
