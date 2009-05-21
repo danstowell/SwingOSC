@@ -88,7 +88,7 @@ TD.when {
 </HEAD>
 <BODY>
 <h1>
-SwingOSC <small>-- version 0.61 RC SVN-184 (built 19-may-09) --</small>
+SwingOSC <small>-- version 0.62 SVN (built 21-may-09) --</small>
 </h1>
 <h3>statement</h3>
 <TABLE><TR><TD VALIGN="top"><IMG SRC="application.png" ALT=""></TD><TD><p>
@@ -98,7 +98,7 @@ SwingOSC is (C)opyright 2005&ndash;2009 by Hanns Holger Rutz. All rights reserve
 </p></TD></TR></TABLE><p>
 For project status, API and current version, visit <a href="http://www.sciss.de/swingOSC/" class="ext">www.sciss.de/swingOSC</a>.
 </p><p>
-For OSC communication, SwingOSC uses the NetUtil library, which is licensed under the <A HREF="licenses/NetUtil-License.txt">GNU Lesser General Public License (LGPL)</A>. The compiled library is included, for sourcecode and details visit <a href="http://www.sciss.de/netutil/" class="ext">www.sciss.de/netutil</a>. SwingOSC also builds on top of <A HREF="http://www.sciss.de/scissLib" TARGET="_blank" CLASS="ext">ScissLib</A> which is licensed under the <A HREF="licenses/ScissLib-License.txt">GNU General Public License</A>.
+For OSC communication, SwingOSC uses the NetUtil library, which is licensed under the <A HREF="licenses/NetUtil-License.txt">GNU Lesser General Public License (LGPL)</A>. The compiled library is included, for sourcecode and details visit <a href="http://www.sciss.de/netutil/" class="ext">www.sciss.de/netutil</a>. SwingOSC also builds on top of <A HREF="http://www.sciss.de/scissLib" CLASS="ext">ScissLib</A> which is licensed under the <A HREF="licenses/ScissLib-License.txt">GNU General Public License</A>.
 </p>
 <h3>
 security note
@@ -116,12 +116,6 @@ The current version can be downloaded here:
 <UL>
 <LI><A HREF="http://sourceforge.net/projects/swingosc" CLASS="ext">sourceforge.net/projects/swingosc</A></LI>
 </UL>
-<P>
-The SuperCollider for Windows built maintained by the IEM Graz already comes with a preconfigured SwingOSC installation (however not always the newest):
-</P>
-<UL>
-<LI><A HREF="http://sourceforge.net/project/showfiles.php?group_id=54622&amp;package_id=133499" CLASS="ext">sourceforge.net/project/showfiles.php?group_id=54622&amp;package_id=133499</A></LI>
-</UL>
 <P>Developers can download the lastest version from <A HREF="http://subversion.tigris.org/">Subversion</A> (SVN):</P>
 <PRE>
 &gt; cd <var>&lt;baseDir&gt;</var>
@@ -132,9 +126,9 @@ The SuperCollider for Windows built maintained by the IEM Graz already comes wit
 requirements / installation
 </h3>
 <p>
-SwingOSC is written in Java(tm) and requires a Java runtime environment (JRE) version 1.4 or better. On Mac&nbsp;OS&nbsp;X you already have this runtime. On other platforms you may need to download and install a recent runtime from <A HREF="http://java.sun.com" CLASS="ext">java.sun.com</A>. You can verify your current java version by opening a terminal and executing the command <code>java -version</code>.
+SwingOSC is written in Java(tm) and requires a Java runtime environment (JRE) version 1.4 or better. On Mac&nbsp;OS&nbsp;X you already have this runtime. On other platforms you may need to download and install a recent runtime. SwingOSC should work with java from <A HREF="http://java.sun.com" CLASS="ext">java.sun.com</A> and <A HREF="http://openjdk.java.net/" CLASS="ext">openjdk.java.net</A>. You can verify your current java version by opening a terminal and executing the command <code>java -version</code>.
 </P><P>
-<SPAN CLASS="highlight">Linux note:</SPAN> There are other free implementations for the Java standard platform, like <A HREF="http://harmony.apache.org/" CLASS="ext">Apache Harmony</A> and <A HREF="http://www.gnu.org/software/classpath/">GNU Classpath</A>. However, most of them are not suitable for GUI applications since their AWT/Swing is incomplete or buggy. SwingOSC should work both with Sun's VM and <A HREF="http://openjdk.java.net/" CLASS="ext">OpenJDK</A>. Note that you can have more than one java runtime installed (see nescivi's posting on this thread for details: <A HREF="http://www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html">www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html</A>).
+<SPAN CLASS="highlight">Linux note:</SPAN> There are other free implementations for the Java standard platform, like <A HREF="http://harmony.apache.org/" CLASS="ext">Apache Harmony</A> and <A HREF="http://www.gnu.org/software/classpath/">GNU Classpath</A>. However, most of them are not suitable for GUI applications since their AWT/Swing is incomplete or buggy. Note that you can have more than one java runtime installed (see nescivi's posting on this thread for details: <A HREF="http://www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html">www.nabble.com/swingOSC-installation-on-Linux-Ubuntu-7.04-t4638827.html</A>).
 </P>
 <UL>
 <LI><SPAN CLASS="highlight">Installing SuperCollider classes :</SPAN> please refer to the separate file <A HREF="SuperCollider/readme.html">SuperCollider/readme.html</A></LI>
@@ -193,9 +187,8 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <P>To compile <CODE>MovieView.java</CODE>, you will need to have <code>jmf.jar</code> in your classpath (see requirements sections above). If JMF is not installed, the Ant build will skip the compilation of <CODE>MovieView.java</CODE> and you will not be able to use <CODE>JSCMovieView</CODE>.</P>
 <h3>known issues</h3>
 <UL>
-<LI>in TCP mode SuperCollider on Mac&nbsp;OS&nbsp;X often crashes when the server quits.<!-- try disconnecting the client (<code>SwingOSC.default.disconnect</code>) before quitting the server! --></LI>
 <LI>with a lot of messages sent en-bloc from sclang &ndash; and even a sparsely populated window setup means a lot of OSC traffic &ndash;, there can be a buffer overflow which results in the last messages being lost when using UDP transport. as a circumvention, you can either<UL>
-<LI>use TCP mode</LI>
+<LI>use TCP mode (default)</LI>
 <LI>or put your GUI buidling process in a <code>Routine</code> and place short <code>wait</code> statements in the body until no more message dropping occurs.</LI></UL></LI>
 </UL>
 <h3>to-do list</h3>
@@ -205,10 +198,14 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <LI>add some nice stuff like tree view ...</LI>
 </UL>
 <h3>change history</h3>
-<h4>v0.61 (apr 2009 - SVN rev. ??)</h4>
+<h4>v0.62 (??? 2009 - SVN rev. ???)</h4>
+<UL>
+<LI>SC classes: JSCView (mouse coordinates now relative to view's left-top)</LI>
+</UL>
+<h4>v0.61 (may 2009 - SVN rev. 181)</h4>
 <UL>
 <LI>Server: performance improvement, improved booting from SC</LI>
-<LI>SC classes: moved OSX specific stuff to separate folder, adding (still experimental) JSCMenuNode, JPen (joinStyle_, lineDash_, alpha_), adding JavaObjectD, SwingGUI (stringBounds), JSCTextView (open, linkAction), JSCContainerView (relativeOrigin), JSCWindow (initAction, toFrontAction, endFrontAction), JSCView (absoluteBounds), JSCUserView (relativeOrigin true), JSCPeakMeter added</LI>
+<LI>SC classes: moved OSX specific stuff to separate folder, adding (still experimental) JSCMenuNode, JPen (joinStyle_, lineDash_, alpha_), adding JavaObjectD, SwingGUI (stringBounds), JSCTextView (open, linkAction), JSCContainerView (relativeOrigin), JSCWindow (initAction, toFrontAction, endFrontAction), JSCView (absoluteBounds, focusGainedAction, focusLostAction), JSCUserView (relativeOrigin true), JSCPeakMeter added, JSCEnvelopeView (all curve shapes should work now), keyboard value scrolling (for JSCSlider etc.)</LI>
 <LI>Refactoring: using ScissLib (application framework with window handler customization), now JCollider (for peakmeter, in future version for scope etc.)</LI>
 <LI>Bug fixes: 2037842, 2482337</LI>
 <LI>New features: 1849186</LI>
