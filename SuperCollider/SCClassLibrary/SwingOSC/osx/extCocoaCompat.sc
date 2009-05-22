@@ -31,7 +31,7 @@
  *	cocoa gui behaves exactly as swingOSC gui,
  *	at least has some more graceful fallbacks...
  *
- *	@version	0.61, 11-May-09
+ *	@version	0.62, 21-May-09
  *	@author	Hanns Holger Rutz
  */
 + SCDragView {
@@ -144,14 +144,23 @@
 	}
 
 	openURL { arg url;
-		"SCTextView.openURL : not yet working".error;
+		if( url.beginsWith( "file:" ), {
+			url = url.copyToEnd( 5 );
+			if( url.beginsWith( "//" ), {
+				url = url.copyToEnd( 2 );
+			});
+			^this.open( url );
+		}, {
+			"SCTextView.openURL : only working with file protocol".error;
+		});
 	}
 }
 
 + SCUserView {
-	focusVisible { ^true }
+	focusVisible { ^this.focusColor.alpha > 0 }
 	focusVisible_ { arg visible;
-		"SCUserView.focusVisible_ : not yet working".error;
+		this.focusColor = Color( 0.0, 0.0, 0.0, if( visible, 0.5, 0.0 ));
+//		"SCUserView.focusVisible_ : not yet working".error;
 	}
 
 	refreshOnFocus { ^true }

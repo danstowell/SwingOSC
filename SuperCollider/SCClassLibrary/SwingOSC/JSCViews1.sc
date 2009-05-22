@@ -28,7 +28,7 @@
  */
 
 /**
- *	@version		0.61, 18-May-09
+ *	@version		0.62, 21-May-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -2248,8 +2248,13 @@ JSCTextView : JSCView {
 		// XXX
 	}
 	
+	caret { ^selStart }
 	selectionStart { ^selStart }
 	selectionSize { ^(selStop - selStart) }
+	
+//	lineWrap_ { arg onOff;
+//		server.sendMsg( '/set', this.id, \lineWrap, onOff );
+//	}
 	
 	stringColor_ { arg color;
 		stringColor = color;
@@ -2355,7 +2360,7 @@ JSCTextView : JSCView {
 
 	openURL { arg url;
 //		server.sendMsg( '/method', this.id, \setPage, '[', '/new', "java.net.URL", url, ']' );
-		server.sendMsg( '/method', this.id, \setPage, url );
+		server.sendMsg( '/set', this.id, \page, url );
 		// XXX update client send string rep.
 	}
 
@@ -2366,7 +2371,19 @@ JSCTextView : JSCView {
 		}, {
 			path = path.absolutePath;
 		});
-		server.sendMsg( '/method', this.id, \setPage, '[', '/methodr', '[', '/new', "java.io.File", path, ']', 'toURL', ']' );
+		server.sendMsg( '/set', this.id, \page, '[', '/methodr', '[', '/new', "java.io.File", path, ']', 'toURL', ']' );
+	}
+	
+	select { arg start, len;
+		server.sendMsg( '/method', this.id, \select, start, start + len );
+	}
+	
+	selectAll {
+		server.sendMsg( '/method', this.id, \selectAll );
+	}
+
+	caret_ { arg pos;
+		server.sendMsg( '/set', this.id, \carentPosition, pos );
 	}
 
 	defaultKeyDownAction { arg key, modifiers, unicode;

@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 22-Apr-09
+ *	@version		0.62, 21-May-09
  *	@author		Hanns Holger Rutz
  */
 JPeakMeterManager {
@@ -35,7 +35,11 @@ JPeakMeterManager {
 
 	var <id;				// server side manager id
 	
-	var jscsynth, numViews = 0;
+	var jscsynth, views;
+	var fBooted, fPeriod, fQuit;
+	var inited = false;
+	
+	var verbose = false; // for debugging purposes
 	
 	// ----------------- quasi-constructor -----------------
 
@@ -63,43 +67,102 @@ JPeakMeterManager {
 	// ----------------- private instance methods -----------------
 
 	prInit { arg argJSCSynth;
-//		views		= IdentityDictionary.new;
+		fBooted		= {Êthis.prBooted };
+		fPeriod		= {Êthis.prPeriod };
+		fQuit		= {Êthis.prQuit };
+		ServerTree.add( fBooted );
+		CmdPeriod.add( fPeriod );
+		ServerQuit.add( fQuit );
+		views		= IdentitySet.new;
 		jscsynth		= argJSCSynth;
 		id			= jscsynth.swing.nextNodeID;
-		jscsynth.swing.listSendMsg([ '/method',
-			'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
-			\setServer ] ++ jscsynth.asSwingArg );
+//		jscsynth.swing.listSendMsg([ '/method',
+//			'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
+//			\setServer ] ++ jscsynth.asSwingArg );
+
+		if( jscsynth.scsynth.serverRunning, { ^this.prBooted });
 	}
 	
 	protRegister { arg view;
-		var ctrlBus;
-		ctrlBus	= view.protGetCtrlBus;
-//[ "protRegister", ctrlBus, view.bus, view.group ].postln;
-		jscsynth.swing.listSendMsg([ '/method', this.id, \addListener ] ++ view.asSwingArg ++
-			[ '[', '/new', "de.sciss.jcollider.Bus" ] ++ jscsynth.asSwingArg ++
-			[ view.bus.rate, view.bus.index, view.bus.numChannels, ']' ] ++
-			[ '[', '/method', "de.sciss.jcollider.Group", \basicNew ] ++ jscsynth.asSwingArg ++ [ view.group.nodeID, ']' ] ++
-			[ '[', '/new', "de.sciss.jcollider.Bus" ] ++ jscsynth.asSwingArg ++
-			[ ctrlBus.rate, ctrlBus.index, ctrlBus.numChannels, ']', view.active, view.protGetNodeID ]);
-		numViews = numViews + 1;
+		views.add( view );
+//		[ "serverRunning", jscsynth.scsynth.serverRunning ].postln;
+		if( jscsynth.scsynth.serverRunning && inited, { this.prAddView( view )});
 	}
 
 	protUnregister { arg view;
-		jscsynth.swing.listSendMsg([ '/method', this.id, \removeListener ] ++ view.asSwingArg );
-		numViews = numViews - 1;
-		if( numViews == 0, {
+		views.remove( view );
+		if( inited, { this.prRemoveView( view )});
+		if( views.size == 0, {
 			this.prDispose;
 		});
 	}
 	
 	prDispose {
+		if( verbose, { "DISPOSE".postln });
+		ServerTree.remove( fBooted );
+		CmdPeriod.remove( fPeriod );
+		ServerQuit.remove( fQuit );
 		all.removeAt( jscsynth );
-		jscsynth.swing.sendBundle( nil, [ '/method', this.id, \dispose ], [ '/free', this.id ]);
-		jscsynth		= nil;
+		this.prQuit;
+		jscsynth = nil;
 	}
 	
 	protSetActive { arg view, active;
+		if( jscsynth.scsynth.serverRunning.not, { ^this });
 		jscsynth.swing.listSendMsg([ '/method', this.id, \setListenerTask ] ++ view.asSwingArg ++ [ active ]);
+	}
+	
+	prBooted {
+		if( verbose, { "BOOTED".postln });
+		if( inited.not, {
+			inited = true;
+			jscsynth.swing.listSendMsg([ '/method',
+				'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
+				\setServer ] ++ jscsynth.asSwingArg );
+		});
+		views.do({ arg view; this.prAddView( view )});
+	}
+
+	prQuit {
+		if( verbose, { "QUIT".postln });
+		inited = false;
+		views.do({ arg view; view.protPeriod });
+		jscsynth.swing.sendBundle( nil, [ '/method', this.id, \dispose ], [ '/free', this.id ]);
+	}
+	
+	prPeriod {
+		if( verbose, { ("PERIOD " ++ inited).postln });
+		if( inited.not, { ^this });
+		views.do({ arg view;
+			view.protPeriod;
+			this.prRemoveView( view );
+// prBooted is called again, taking care of the re-registering!
+//			if( view.protValid, {
+//				this.prAddView( view );
+//			});
+		});
+	}
+
+	prRemoveView { arg view;
+		if( verbose, { ("REMOVE " ++ view.id).postln });
+		jscsynth.swing.listSendMsg([ '/method', this.id, \removeListener ] ++ view.asSwingArg );
+	}
+
+	prAddView { arg view;
+		var ctrlBus, group;
+		if( view.protValid.not, {
+			if( verbose, { ("ADDVIEW " ++ view.id ++ " --> IGNORED").postln });
+			^this
+		});
+		if( verbose, { ("ADDVIEW " ++ view.id).postln });
+		ctrlBus	= view.protGetCtrlBus;
+		group	= view.protGetGroup;
+		jscsynth.swing.listSendMsg([ '/method', this.id, \addListener ] ++ view.asSwingArg ++
+			[ '[', '/new', "de.sciss.jcollider.Bus" ] ++ jscsynth.asSwingArg ++
+			[ view.bus.rate, view.bus.index, view.bus.numChannels, ']' ] ++
+			[ '[', '/method', "de.sciss.jcollider.Group", \basicNew ] ++ jscsynth.asSwingArg ++ [ group.nodeID, ']' ] ++
+			[ '[', '/new', "de.sciss.jcollider.Bus" ] ++ jscsynth.asSwingArg ++
+			[ ctrlBus.rate, ctrlBus.index, ctrlBus.numChannels, ']', view.active, view.protGetNodeID ]);
 	}
 }
 
@@ -112,6 +175,7 @@ JSCPeakMeter : JSCControlView {
 	var weCreatedGroup = false;
 	var ctrlBus, nodeID;
 	var <numChannels = 0;
+	var valid = true; // false with user-provided group after cmdperiod
 
 	// ----------------- public instance methods -----------------
 
@@ -172,12 +236,13 @@ JSCPeakMeter : JSCControlView {
 	}
 
 	group_ { arg g;
-		if( g != group, {
+		if( (g != group) or: { valid.not }, {
 			this.prUnregister;
 			if( g.notNil and: { bus.notNil and: { g.server != bus.server }}, {
 				Error( "Bus and Group cannot be on different servers" ).throw;
 			});
-			group = g;
+			group	= g;
+			valid	= true;
 			this.prRegister;
 		});
 	}
@@ -191,8 +256,8 @@ JSCPeakMeter : JSCControlView {
 					Error( "Bus and Group cannot be on different servers" ).throw;
 				});
 				numChannels	= b.numChannels;
-				nodeID		= Array.fill( numChannels, { b.server.nextNodeID }).first;
-				ctrlBus		= Bus.control( b.server, numChannels << 1 );
+				nodeID		= nil;
+//				ctrlBus		= Bus.control( b.server, numChannels << 1 );
 				server.sendMsg( '/set', this.id, \numChannels, numChannels );
 				bus			= b;
 				this.prRegister;
@@ -218,7 +283,7 @@ JSCPeakMeter : JSCControlView {
 	
 	*meterServer { arg server;
 		var win, inBus, outBus, fntSmall, viewWidth, inMeterWidth, outMeterWidth, inMeter, outMeter,
-		    inGroup, outGroup, chanWidth = 13, meterHeight = 200, fLab, fBooted, numIn, numOut, fPeriod;
+		    inGroup, outGroup, chanWidth = 13, meterHeight = 220, fLab, fBooted, numIn, numOut /*, fPeriod */ ;
 
 		numIn		= server.options.numOutputBusChannels;
 		numOut		= server.options.numInputBusChannels;
@@ -258,6 +323,7 @@ JSCPeakMeter : JSCControlView {
 //	    		"-----------Yo".postln;
 			inGroup			= Group.head( RootNode( server ));
 			outGroup			= Group.tail( RootNode( server ));
+//[ inGroup, outGroup ].postln;
 			outBus			= Bus( \audio, 0, server.options.numOutputBusChannels, server );
 			inBus			= Bus( \audio, outBus.numChannels, server.options.numInputBusChannels, server );
 			inMeter.group		= inGroup;
@@ -266,33 +332,66 @@ JSCPeakMeter : JSCControlView {
 			outMeter.bus		= outBus;
 	    	};
 	    	
-	    	fPeriod = {
-	    		inMeter.bus		= nil;
-	    		inMeter.group		= nil;
-	    		outMeter.bus		= nil;
-	    		outMeter.group	= nil;
-	    	};
+//	    	fPeriod = {
+//	    		inMeter.bus		= nil;
+//	    		inMeter.group		= nil;
+//	    		outMeter.bus		= nil;
+//	    		outMeter.group	= nil;
+//	    	};
 	    	
 		win.front;
 
 		win.onClose_({
 			ServerTree.remove( fBooted );
-			CmdPeriod.remove( fPeriod );
-			ServerQuit.remove( fPeriod );
+//			CmdPeriod.remove( fPeriod );
+//			ServerQuit.remove( fPeriod );
 			inGroup.free; inGroup = nil;
 			outGroup.free; outGroup = nil;
 		});
 
 		ServerTree.add( fBooted );
-		CmdPeriod.add( fPeriod );
-		ServerQuit.add( fPeriod );
+//		CmdPeriod.add( fPeriod );
+//		ServerQuit.add( fPeriod );
 		if( server.serverRunning, fBooted ); // otherwise starts when booted
 	}
 	
 	// ----------------- private instance methods -----------------
 
-	protGetCtrlBus { ^ctrlBus }
-	protGetNodeID { ^nodeID }
+	protGetCtrlBus {
+		if( ctrlBus.isNil, {
+			ctrlBus = Bus.control( bus.server, numChannels << 1 );
+		});
+		^ctrlBus;
+	}
+	
+	protGetNodeID {
+		if( nodeID.isNil, {
+			nodeID = Array.fill( numChannels, { bus.server.nextNodeID }).first;
+		});
+		^nodeID;
+	}
+	
+	protGetGroup {
+		if( group.isNil, {
+			group			= Group.tail( RootNode( bus.server ));
+			weCreatedGroup	= true;
+		});
+		^group;
+	}
+	
+	protPeriod {
+		nodeID = nil;
+		if( group.notNil, {
+			group = nil;
+			if( weCreatedGroup, {
+				weCreatedGroup	= false;
+			}, {
+				valid			= false;
+			});
+		});
+	}
+	
+	protValid { ^valid }
 
 	prClose { arg preMsg, postMsg;
 		this.prUnregister;
@@ -321,16 +420,11 @@ JSCPeakMeter : JSCControlView {
 	
 	prRegister {
 		if( bus.notNil and: { bus.numChannels > 0 }, {
-			if( group.isNil, {
-//				group			= Group.tail( bus.server );
-				group			= Group.tail( RootNode( bus.server ));
-				weCreatedGroup	= true;
-			});
-			manager		= JPeakMeterManager.newFrom( this.server, bus.server );
+			manager = JPeakMeterManager.newFrom( this.server, bus.server );
 			manager.protRegister( this );
 		});
 	}
-	
+		
 	prSendProperty { arg key, value;
 		key	= key.asSymbol;
 

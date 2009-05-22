@@ -412,7 +412,9 @@ implements OSCListener, Constants, /* ServerListener, */ ActionListener,
 		final GraphElem		t_trig	= TrigControl.kr( "t_trig" );
 		final GraphElem		in		= UGen.ar( "In", i_aInBs );
 		GraphElem			rms		= UGen.ar( "Lag", UGen.ar( "squared", in ), UGen.ir( 0.1f ));
-		GraphElem			peak	= UGen.ar( "Peak", in, t_trig );
+//		GraphElem			peak	= UGen.ar( "Peak", in, t_trig );
+		GraphElem			trigA	= UGen.ar( "Trig1", t_trig, UGen.ir( "SampleDur" ));
+		GraphElem			peak	= UGen.ar( "Peak", in, trigA );
 		final GraphElem		out;
 		final SynthDef		def;
 		GraphElem			temp;
@@ -436,6 +438,10 @@ implements OSCListener, Constants, /* ServerListener, */ ActionListener,
 		// by a /n_set to re-trigger the latch so that we are
 		// not missing any peak values.
 		out = UGen.kr( "Out", i_kOtBs, UGen.array( UGen.kr( "Latch", peak, t_trig ), rms ));
+//		out = UGen.kr( "Out", i_kOtBs, UGen.array( UGen.kr( "Latch", peak, trigD ), rms ));
+//		final GraphElem	inPeak = UGen.kr( "In", i_kOtBs );
+//		out = UGen.kr( "Out", i_kOtBs, UGen.array( UGen.kr( "Select", t_trig, peak, inPeak ), rms ));
+//		out = UGen.kr( "Out", i_kOtBs, UGen.array( UGen.kr( "max", peak, inPeak ), rms ));
 		
 		def = new SynthDef( "swing-peak" + numChannels, out );
 //		def.writeDefFile( new java.io.File( "/Users/rutz/Desktop/meters.scsyndef" ));
