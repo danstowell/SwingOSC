@@ -37,7 +37,8 @@ JPeakMeterManager {
 	
 	var jscsynth, views;
 	var fBooted, fPeriod, fQuit;
-	var inited = false;
+
+	var inited = false, created = false;
 	
 	var verbose = false; // for debugging purposes
 	
@@ -80,7 +81,7 @@ JPeakMeterManager {
 //			'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
 //			\setServer ] ++ jscsynth.asSwingArg );
 
-		if( jscsynth.scsynth.serverRunning, { ^this.prBooted });
+		if( jscsynth.scsynth.serverRunning, fBooted );
 	}
 	
 	protRegister { arg view;
@@ -116,9 +117,12 @@ JPeakMeterManager {
 		if( verbose, { "BOOTED".postln });
 		if( inited.not, {
 			inited = true;
-			jscsynth.swing.listSendMsg([ '/method',
-				'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
-				\setServer ] ++ jscsynth.asSwingArg );
+			if( created.not, {
+				jscsynth.swing.listSendMsg([ '/method',
+					'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
+					\setServer ] ++ jscsynth.asSwingArg );
+				created = true;
+			});
 		});
 		views.do({ arg view; this.prAddView( view )});
 	}
@@ -127,12 +131,16 @@ JPeakMeterManager {
 		if( verbose, { "QUIT".postln });
 		inited = false;
 		views.do({ arg view; view.protPeriod });
-		jscsynth.swing.sendBundle( nil, [ '/method', this.id, \dispose ], [ '/free', this.id ]);
+		if( created, {
+			jscsynth.swing.sendBundle( nil, [ '/method', this.id, \dispose ], [ '/free', this.id ]);
+			created = false;
+		});
 	}
 	
 	prPeriod {
 		if( verbose, { ("PERIOD " ++ inited).postln });
 		if( inited.not, { ^this });
+		inited = false;
 		views.do({ arg view;
 			view.protPeriod;
 			this.prRemoveView( view );
