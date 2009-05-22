@@ -293,8 +293,8 @@ JSCPeakMeter : JSCControlView {
 		var win, inBus, outBus, fntSmall, viewWidth, inMeterWidth, outMeterWidth, inMeter, outMeter,
 		    inGroup, outGroup, chanWidth = 13, meterHeight = 220, fLab, fBooted, numIn, numOut /*, fPeriod */ ;
 
-		numIn		= server.options.numOutputBusChannels;
-		numOut		= server.options.numInputBusChannels;
+		numIn		= server.options.numInputBusChannels;
+		numOut		= server.options.numOutputBusChannels;
 		inMeterWidth	= numIn * chanWidth + 29;
 		outMeterWidth	= numOut * chanWidth + 29;
 		viewWidth		= inMeterWidth + outMeterWidth + 11;
