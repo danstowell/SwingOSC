@@ -270,4 +270,6 @@ JKnob {
 	receiveDragHandler_ { arg func; view.receiveDragHandler_( func )}
 	beginDragAction { ^view.beginDragAction }
 	beginDragAction_ { arg func; view.beginDragAction_( func )}
+	resize_{arg mode; view.resize_(mode)}
+	resize{^view.resize}
 }
