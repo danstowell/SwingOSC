@@ -47,6 +47,10 @@ JSCContainerView : JSCView { // abstract class
 		this.prInvalidateBounds;
 	}
 	
+		// this is a TEMPORARY method
+		// will be removed when relativeOrigin variable is permanently banished
+	prRelativeOrigin { ^relativeOrigin }
+	
 	addFlowLayout { arg margin, gap;
 		this.relativeOrigin.if
 			{this.decorator_( FlowLayout( this.bounds.moveTo(0,0), margin, gap ) )}
