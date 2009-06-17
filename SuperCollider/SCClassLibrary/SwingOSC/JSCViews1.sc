@@ -2123,7 +2123,7 @@ JSCAbstractUserView : JSCView {
 }
 
 JSCUserView : JSCAbstractUserView {
-	var lastMouseX, lastMouseY;
+	var lastMouseX = 0, lastMouseY = 0;
 
 	// ----------------- public class methods -----------------
 
