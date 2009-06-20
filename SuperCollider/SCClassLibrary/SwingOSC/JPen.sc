@@ -202,7 +202,7 @@ JPen {
 	}
 
 	*fillStroke {
-		this.draw( 4 );
+		this.draw( 3 );
 	}
 	
 	*draw { arg option = 0; // 0 = fill, 1 = eofill, 2 = stroke, 3 = fillstroke, 4 = eofillstroke
