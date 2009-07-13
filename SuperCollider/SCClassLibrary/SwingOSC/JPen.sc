@@ -209,6 +209,10 @@ JPen {
 		cmds = cmds.add([ "fdr", option ]);
 	}
 
+	*fillAxialGradient { arg startPoint, endPoint, color0, color1;
+		warn( "Meta_JPen:fillAxialGradient - not yet implemented" );
+	}
+
 // ------------- direct drawing commands -------------
 
 	*strokeRect { arg rect;
