@@ -46,7 +46,7 @@ import de.sciss.gui.AquaFocusBorder;
  *	added support for focus border
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.60, 26-Feb-08
+ *	@version	0.62, 13-Jul-09
  */
 public class UserView
 extends JComponent
@@ -56,6 +56,7 @@ implements FocusListener
 	private AquaFocusBorder	border;
 	private Pen				pen;
 	private boolean			clear				= true;
+	private boolean			shouldPaintBg		= true;
 	
 	public UserView( Pen image )
 	{
@@ -95,24 +96,26 @@ implements FocusListener
 	public void setClearOnRefresh( boolean clear )
 	{
 		this.clear = clear;
+		if( clear ) shouldPaintBg = true;
 		setOpaque( !clear );
 	}
 	
-	public void repaintIcon()
-	{
-		if( clear ) {
-			repaint();
-		} else {
-			paintImmediately( 0, 0, getWidth(), getHeight() );
-		}
-	}
-
-	//	public void setBackground( Color c )
+//	public void repaintIcon()
 //	{
-////		setOpaque( (c != null) && (c.getAlpha() == 0xFF) );
-//		super.setBackground( c );
-////		repaint();
+//		if( clear ) {
+//			repaint();
+//		} else {
+//			paintImmediately( 0, 0, getWidth(), getHeight() );
+//		}
 //	}
+
+	public void setBackground( Color c )
+	{
+		shouldPaintBg = true;
+//		setOpaque( (c != null) && (c.getAlpha() == 0xFF) );
+		super.setBackground( c );
+//		repaint();
+	}
 
 	public void setFocusVisible( boolean b )
 	{
@@ -126,11 +129,12 @@ implements FocusListener
 	{
 		final Color		bg 		= getBackground();
 		final Insets	insets	= getInsets();
-		if( (bg != null) && (bg.getAlpha() > 0) ) {
+		if( (bg != null) && (bg.getAlpha() > 0) && shouldPaintBg ) {
 			g.setColor( bg );
 			g.fillRect( insets.left, insets.top,
 					getWidth() - (insets.left + insets.right),
 					getHeight() - (insets.top + insets.bottom ));
+			if( !clear ) shouldPaintBg = false;
 		}
 //		if( image != null ) image.paintIcon( this, g, insets.left, insets.top );
 		if( pen != null ) {

@@ -84,7 +84,7 @@ import javax.swing.JComponent;
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.61, 12-Jan-09
+ *	@version	0.62, 13-Jul-09
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -106,6 +106,8 @@ implements Icon
 	
 	protected final FontRenderContext	frc;
 	protected GraphicsContext			gc;
+//	protected final GeneralPath			emptyGP;
+	protected GeneralPath				gp;
 	
 	private boolean						absCoords;
 	
@@ -212,6 +214,9 @@ implements Icon
 		recCmds.clear();
 		context.clear();
 		gc	= new GraphicsContext();
+//		emptyGP.reset();
+//		gp	= emptyGP;
+		gp	= new GeneralPath();
 	}
 	
 	public void setComponent( Component c )
@@ -255,6 +260,7 @@ implements Icon
 		recCmds.clear();
 		context.clear();
 		gc = null;
+		gp = null;
 	}
 	
 	public void dispose()
@@ -330,7 +336,7 @@ implements Icon
 		protected final AffineTransform	at;
 		protected Shape					clip;
 //		private final GeneralPath		gp;
-		protected GeneralPath			gp;
+//		protected GeneralPath			gp;
 		protected Font					fnt;
 		protected Map					hints;
 		protected Composite				comp;
@@ -342,7 +348,7 @@ implements Icon
 			strk	= strkDefault;
 			at		= new AffineTransform();
 			clip	= null;
-			gp		= new GeneralPath();
+//			gp		= new GeneralPath();
 			fnt		= fntDefault;
 			hints	= antiAliasOn;
 		}
@@ -354,7 +360,7 @@ implements Icon
 			strk	= orig.strk;
 			at		= new AffineTransform( orig.at );
 			clip	= orig.clip;
-			gp		= new GeneralPath( orig.gp );
+//			gp		= new GeneralPath( orig.gp );
 			fnt		= orig.fnt;
 			hints	= orig.hints;
 		}
@@ -713,7 +719,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 1 );
-			gc.gp.moveTo( pt[ 0 ], pt[ 1 ]);
+			gp.moveTo( pt[ 0 ], pt[ 1 ]);
 			return off;
 		}
 	}
@@ -726,7 +732,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 1 );
-			gc.gp.lineTo( pt[ 0 ], pt[ 1 ]);
+			gp.lineTo( pt[ 0 ], pt[ 1 ]);
 			return off;
 		}
 	}
@@ -739,7 +745,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 2 );
-			gc.gp.quadTo( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
+			gp.quadTo( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
 			return off;
 		}
 	}
@@ -752,7 +758,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		protected int constr( Object[] cmd, int off )
 		{
 			off = transform( cmd, off, 3 );
-			gc.gp.curveTo( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ], pt[ 4 ], pt[ 5 ]);
+			gp.curveTo( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ], pt[ 4 ], pt[ 5 ]);
 			return off;
 		}
 	}
@@ -764,7 +770,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 		protected int constr( Object[] cmd, int off )
 		{
-			gc.gp.reset();
+			gp.reset();
 			return off;
 		}
 	}
@@ -776,8 +782,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 		protected int constr( Object[] cmd, int off )
 		{
-			recCmds.add( new CmdDraw( gc.gp ));
-			gc.gp = new GeneralPath();
+			recCmds.add( new CmdDraw( gp ));
+			gp = new GeneralPath();
 			return off;
 		}
 	}
@@ -789,8 +795,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 		protected int constr( Object[] cmd, int off )
 		{
-			recCmds.add( new CmdFill( gc.gp ));
-			gc.gp = new GeneralPath();
+			recCmds.add( new CmdFill( gp ));
+			gp = new GeneralPath();
 			return off;
 		}
 	}
@@ -806,29 +812,29 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			final int type = ((Number) cmd[ off++ ]).intValue();
 			switch( type ) {
 			case 0:	// fill (NON_ZERO)
-				recCmds.add( new CmdFill( gc.gp ));
+				recCmds.add( new CmdFill( gp ));
 				break;
 			case 1:	// fill (EVEN_ODD)
-				gc.gp.setWindingRule( GeneralPath.WIND_EVEN_ODD );
-				recCmds.add( new CmdFill( gc.gp ));
+				gp.setWindingRule( GeneralPath.WIND_EVEN_ODD );
+				recCmds.add( new CmdFill( gp ));
 				break;
 			case 2:	// draw
-				recCmds.add( new CmdDraw( gc.gp ));
+				recCmds.add( new CmdDraw( gp ));
 				break;
 			case 3:	// fill (NON_ZERO) and draw
-				recCmds.add( new CmdFill( gc.gp ));
-				recCmds.add( new CmdDraw( gc.gp ));
+				recCmds.add( new CmdFill( gp ));
+				recCmds.add( new CmdDraw( gp ));
 				break;
 			case 4:	// fill (EVEN_ODD) and draw
-				gc.gp.setWindingRule( GeneralPath.WIND_EVEN_ODD );
-				recCmds.add( new CmdFill( gc.gp ));
-				recCmds.add( new CmdDraw( gc.gp ));
+				gp.setWindingRule( GeneralPath.WIND_EVEN_ODD );
+				recCmds.add( new CmdFill( gp ));
+				recCmds.add( new CmdDraw( gp ));
 				break;
 			default:
 				System.out.println( "JPen.fillDraw illegal type " + type );
 				break;
 			}
-			gc.gp = new GeneralPath();
+			gp = new GeneralPath();
 			return off;
 		}
 	}
@@ -840,9 +846,9 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 		protected int constr( Object[] cmd, int off )
 		{
-			recCmds.add( new CmdClip( gc.gp ));
-			gc.clip	= gc.gp;
-			gc.gp	= new GeneralPath();
+			recCmds.add( new CmdClip( gp ));
+			gc.clip	= gp;
+			gp		= new GeneralPath();
 			return off;
 		}
 	}
@@ -1056,7 +1062,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		{
 			off = decode( cmd, off, 4 );
 			shp.setFrame( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ]);
-			gc.gp.append( gc.at.createTransformedShape( shp ), false );
+			gp.append( gc.at.createTransformedShape( shp ), false );
 			return off;
 		}
 	}
@@ -1083,9 +1089,9 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			arc.setArcByCenter( pt[ 0 ], pt[ 1 ], pt[ 2 ],
 							    pt[ 3 ] * kRad2DegM, pt[ 4 ] * kRad2DegM, type );
 //			gc.gp.append( gc.at.createTransformedShape( arc ), false );
-			gc.gp.append( gc.at.createTransformedShape( arc ), connect );
+			gp.append( gc.at.createTransformedShape( arc ), connect );
 			if( type == Arc2D.PIE ) {
-				gc.gp.moveTo( pt[ 0 ], pt[ 1 ]);	// behave like cocoa
+				gp.moveTo( pt[ 0 ], pt[ 1 ]);	// behave like cocoa
 			}
 			return off;
 		}
@@ -1113,8 +1119,8 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 
 			final Area shp = new Area( pie );
 			shp.subtract( new Area( cyl ));
-			gc.gp.append( gc.at.createTransformedShape( shp ), false );
-			gc.gp.moveTo( pt[ 0 ] + (float) Math.cos( pt[ 4 ]) * pt[ 2 ],
+			gp.append( gc.at.createTransformedShape( shp ), false );
+			gp.moveTo( pt[ 0 ] + (float) Math.cos( pt[ 4 ]) * pt[ 2 ],
 			              pt[ 1 ] + (float) Math.sin( pt[ 4 ]) * pt[ 2 ]);	// behave like cocoa 
 			return off;
 		}
@@ -1164,7 +1170,7 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	private class ConstrStringInRect
 	extends Constr
 	{
-		private final GeneralPath		gp		= new GeneralPath();
+		private final GeneralPath		gpStr	= new GeneralPath();
 		private final AffineTransform	atPos	= new AffineTransform();
 		
 		protected ConstrStringInRect() { /* empty */ }
@@ -1190,24 +1196,27 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			float dx;
 			TextLayout txtLay;
 		    
-			gp.reset();
-			while( lbm.getPosition() < styledText.getEndIndex() ) {
-		         txtLay	= lbm.nextLayout( w );
-		         y  	   += txtLay.getAscent();
-		         if( y + txtLay.getDescent() > yStop ) break;
-		         dx		= (w - txtLay.getVisibleAdvance()) *
-		         	(txtLay.isLeftToRight() ? halign : (1.0f - halign));
+			try {
+				while( lbm.getPosition() < styledText.getEndIndex() ) {
+					txtLay	= lbm.nextLayout( w );
+					y  	   += txtLay.getAscent();
+					if( y + txtLay.getDescent() > yStop ) break;
+					dx		= (w - txtLay.getVisibleAdvance()) *
+						(txtLay.isLeftToRight() ? halign : (1.0f - halign));
+					
+					atPos.setToTranslation( x + dx, y );
+					gpStr.append( txtLay.getOutline( atPos ), false );
+					y 	   += txtLay.getDescent() + txtLay.getLeading();
+				}
+				dy = (yStop - y) * valign;
+				if( dy != 0f ) gpStr.transform( AffineTransform.getTranslateInstance( 0, dy ));
 
-		         atPos.setToTranslation( x + dx, y );
-		         gp.append( txtLay.getOutline( atPos ), false );
-		         y 	   += txtLay.getDescent() + txtLay.getLeading();
-		     }
-			dy = (yStop - y) * valign;
-			if( dy != 0f ) gp.transform( AffineTransform.getTranslateInstance( 0, dy ));
+				recCmds.add( new CmdFill( gc.at.createTransformedShape( gpStr )));
 
-			recCmds.add( new CmdFill( gc.at.createTransformedShape( gp )));
-
-			return off;
+				return off;
+			} finally {
+				gpStr.reset();
+			}
 		}
 	}
 
