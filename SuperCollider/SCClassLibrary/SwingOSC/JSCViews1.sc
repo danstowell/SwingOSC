@@ -2086,6 +2086,13 @@ JSCAbstractUserView : JSCView {
 	
 	focusVisible { ^this.getProperty( \focusVisible, true )}
 	focusVisible_ { arg visible; this.setProperty( \focusVisible, visible )}
+	
+	focusColor_ { arg colr;
+		if( (colr.alpha > 0) != this.focusVisible, {
+			this.focusVisible = colr.alpha > 0;
+		});
+		^super.focusColor_( colr );
+	}
 
 	// ----------------- private instance methods -----------------
 

@@ -37,7 +37,8 @@
  *  				; clip and matrix are concatenating
  *  	24-Nov-07	stroke is transformed according to current AffineTransform
  *  				at draw statement (behaves like cocoa counterpart)
- *  	25-Feb-08	image suppport
+ *  	25-Feb-08	image support
+ *  	14-Jul-09	replacing hashmap with array (should be faster)
  */
  
 package de.sciss.swingosc;
@@ -68,23 +69,22 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import javax.swing.Icon;
 import javax.swing.JComponent;
-//import javax.swing.SwingUtilities;
 
 import de.sciss.gui.GUIUtil;
 
 /**
- *	@version	0.62, 13-Jul-09
+ *	@version	0.62, 14-Jul-09
  *	@author		Hanns Holger Rutz
  */
 public class Pen
@@ -95,7 +95,7 @@ implements Icon
 	protected final Stack 				context		= new Stack();
 	
 	protected final List				recCmds		= new ArrayList();
-	private final Map					mapConstr	= new HashMap( 38 );
+	private final Constr[]				constrs		= new Constr[ 39 ];
 	
 	protected final float[]				pt			= new float[ 8 ];
 	
@@ -106,7 +106,6 @@ implements Icon
 	
 	protected final FontRenderContext	frc;
 	protected GraphicsContext			gc;
-//	protected final GeneralPath			emptyGP;
 	protected GeneralPath				gp;
 	
 	private boolean						absCoords;
@@ -136,44 +135,45 @@ implements Icon
 
 	public Pen( boolean absCoords )
 	{
-		mapConstr.put( "drw", new ConstrDraw() );
-		mapConstr.put( "fll", new ConstrFill() );
-		mapConstr.put( "fdr", new ConstrFillDraw() );
-		mapConstr.put( "stk", new ConstrWidth() );
-		mapConstr.put( "dsh", new ConstrDash() );
-		mapConstr.put( "joi", new ConstrJoin() );
-		mapConstr.put( "mov", new ConstrMoveTo() );
-		mapConstr.put( "lin", new ConstrLineTo() );
-		mapConstr.put( "qua", new ConstrQuadTo() );
-		mapConstr.put( "cub", new ConstrCurveTo() );
-		mapConstr.put( "rec", new ConstrAddRect( new Rectangle2D.Float() ));
-		mapConstr.put( "ova", new ConstrAddRect( new Ellipse2D.Float() ));
-		mapConstr.put( "arc", new ConstrAddArc( Arc2D.OPEN, true ));
-		mapConstr.put( "pie", new ConstrAddArc( Arc2D.PIE, false ));
-		mapConstr.put( "cyl", new ConstrAddCylSector() );
-		mapConstr.put( "rst", new ConstrReset() );
-		mapConstr.put( "trn", new ConstrTranslate() );
-		mapConstr.put( "scl", new ConstrScale() );
-		mapConstr.put( "rot", new ConstrRotate() );
-		mapConstr.put( "shr", new ConstrShear() );
-		mapConstr.put( "mat", new ConstrMatrix() );
-		mapConstr.put( "dco", new ConstrDrawColor() );
-		mapConstr.put( "fco", new ConstrFillColor() );
-		mapConstr.put( "fnt", new ConstrFont() );
-		mapConstr.put( "frc", new ConstrFillRect() );
-		mapConstr.put( "fov", new ConstrFillOval() );
-		mapConstr.put( "drc", new ConstrDrawRect() );
-		mapConstr.put( "dov", new ConstrDrawOval() );
-		mapConstr.put( "dst", new ConstrStringAtPoint() );
-		mapConstr.put( "dsr", new ConstrStringInRect() );
-		mapConstr.put( "psh", new ConstrPush() );
-		mapConstr.put( "pop", new ConstrPop() );
-		mapConstr.put( "clp", new ConstrClip() );
-		mapConstr.put( "ali", new ConstrSmooth() );
-		mapConstr.put( "alp", new ConstrAlpha() );
-		mapConstr.put( "img", new ConstrImage() );
-		mapConstr.put( "imc", new ConstrCroppedImage() );
-		mapConstr.put( "pnt", new ConstrPaint() );
+		constrs[  0 ] = new ConstrDraw();
+		constrs[  1 ] = new ConstrFill();
+		constrs[  2 ] = new ConstrFillDraw();
+		constrs[  3 ] = new ConstrWidth();
+		constrs[  4 ] = new ConstrDash();
+		constrs[  5 ] = new ConstrJoin();
+		constrs[  6 ] = new ConstrMoveTo();
+		constrs[  7 ] = new ConstrLineTo();
+		constrs[  8 ] = new ConstrQuadTo();
+		constrs[  9 ] = new ConstrCurveTo();
+		constrs[ 10 ] = new ConstrAddRect( new Rectangle2D.Float() );
+		constrs[ 11 ] = new ConstrAddRect( new Ellipse2D.Float() );
+		constrs[ 12 ] = new ConstrAddArc( Arc2D.OPEN, true );
+		constrs[ 13 ] = new ConstrAddArc( Arc2D.PIE, false );
+		constrs[ 14 ] = new ConstrAddCylSector();
+		constrs[ 15 ] = new ConstrReset();
+		constrs[ 16 ] = new ConstrTranslate();
+		constrs[ 17 ] = new ConstrScale();
+		constrs[ 18 ] = new ConstrRotate();
+		constrs[ 19 ] = new ConstrShear();
+		constrs[ 20 ] = new ConstrMatrix();
+		constrs[ 21 ] = new ConstrDrawColor();
+		constrs[ 22 ] = new ConstrFillColor();
+		constrs[ 23 ] = new ConstrFont();
+		constrs[ 24 ] = new ConstrFillRect();
+		constrs[ 25 ] = new ConstrFillOval();
+		constrs[ 26 ] = new ConstrDrawRect();
+		constrs[ 27 ] = new ConstrDrawOval();
+		constrs[ 28 ] = new ConstrStringAtPoint();
+		constrs[ 29 ] = new ConstrStringInRect();
+		constrs[ 30 ] = new ConstrPush();
+		constrs[ 31 ] = new ConstrPop();
+		constrs[ 32 ] = new ConstrClip();
+		constrs[ 33 ] = new ConstrSmooth();
+		constrs[ 34 ] = new ConstrAlpha();
+		constrs[ 35 ] = new ConstrImage();
+		constrs[ 36 ] = new ConstrCroppedImage();
+		constrs[ 37 ] = new ConstrPaint();
+		constrs[ 38 ] = new ConstrArcTo();
 		
 		frc = new FontRenderContext( GraphicsEnvironment.
 				getLocalGraphicsEnvironment().
@@ -231,12 +231,14 @@ implements Icon
 	
 	public void add( Object[] oscCmds )
 	{
-		Object cmdID = null;
+//		Object cmdID = null;
+		int cmdID = -1;
 
 		try {
 			for( int off = 0; off < oscCmds.length; ) {
-				cmdID	= oscCmds[ off++ ];
-				off 		= ((Constr) mapConstr.get( cmdID )).constr( oscCmds, off );
+				cmdID	= ((Number) oscCmds[ off++ ]).intValue();
+//				off 	= ((Constr) constrs.get( cmdID )).constr( oscCmds, off );
+				off 	= constrs[ cmdID ].constr( oscCmds, off );
 			}
 		}
 		catch( NullPointerException e1 ) {
@@ -759,6 +761,33 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 		{
 			off = transform( cmd, off, 3 );
 			gp.curveTo( pt[ 0 ], pt[ 1 ], pt[ 2 ], pt[ 3 ], pt[ 4 ], pt[ 5 ]);
+			return off;
+		}
+	}
+
+	private class ConstrArcTo
+	extends Constr
+	{
+		private final Arc2D			arc = new Arc2D.Float();
+//		private final Point2D		p1  = new Point2D.Float();
+		private final Point2D.Float	p2  = new Point2D.Float();
+		private final Point2D.Float	p3  = new Point2D.Float();
+		
+		protected ConstrArcTo() { /* empty */ }
+		
+		protected int constr( Object[] cmd, int off )
+		{
+			off = decode( cmd, off, 5 );
+			final Point2D p1 = gp.getCurrentPoint();
+			try {
+				gc.at.inverseTransform( p1, p1 );
+			}
+			catch( NoninvertibleTransformException e1 ) { /* hmmm... ignore */ }
+			p2.setLocation( pt[ 0 ], pt[ 1 ]);
+			p3.setLocation( pt[ 2 ], pt[ 3 ]);
+			arc.setArcByTangent( p1, p2, p3, pt[ 4 ]);
+			gp.append( gc.at.createTransformedShape( arc ), true );
+//			gp.moveTo( pt[ 0 ], pt[ 1 ]);	// behave like cocoa
 			return off;
 		}
 	}

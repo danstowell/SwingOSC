@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of Pen. last mod: 04-aug-08 sciss
+<p>This class is meant as an emulation of Pen. last mod: 14-jul-09 sciss
 </p>
 <table>
 <tr><td colspan="2" class="oscTabSection">no-op / not working</td></tr>
@@ -213,6 +213,78 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
     d = 0.99;   <span class="cm">// really slow</span>
 </pre>
 <P>&nbsp;</P>
+<h3>*arcTo</h3>
+<pre>
+<span class="cl">JPen</span>.arcTo( <var>&lt;(Point) point1&gt;</var>, <var>&lt;(Point) point2&gt;</var>, <var>&lt;(Number) radius&gt;</var> )
+
+</pre>
+<p>Draws an arc of a circle using a radius and two tangents. The first tangent is formed by the current pen location and <code>point1</code>, the second by <code>point1</code> and <code>point2</code>. In the following example, you can drag the end points of the tangent lines around:
+</p>
+<pre>
+    (
+    <span class="kw">var</span> w, r, ps, dragIdx, fCross;
+    
+    r      = 50; <span class="cm">// radius</span>
+    w      = <span class="cl">JSCWindow</span>( <span class="st">&quot;arcTo&quot;</span>, <span class="cl">Rect</span>( 100, 200, 400, 400 ), resizable: <span class="kw">false</span> );
+    ps     = [ 50 @ 200, 350 @ 50, 200 @ 350 ];
+    fCross = { <span class="kw">arg</span> p, colr;
+        <span class="cl">JPen</span>.strokeColor = colr;
+        <span class="cl">JPen</span>.line( p + (-6 @ -6), p + (6 @ 6) );
+        <span class="cl">JPen</span>.line( p + (-6 @ 6), p + (6 @ -6) );
+        <span class="cl">JPen</span>.stroke;
+    };
+    w.drawHook = { <span class="kw">var</span> dp10, dp12, dp02, a, b, c, s, th, dist, tp1, tp2, ang, cp;
+        <span class="cl">JPen</span>.strokeColor = <span class="cl">Color</span>.green;
+        <span class="cl">JPen</span>.moveTo( ps[ 0 ]);
+        <span class="cl">JPen</span>.lineTo( ps[ 1 ]);
+        <span class="cl">JPen</span>.lineTo( ps[ 2 ]);
+        <span class="cl">JPen</span>.stroke;
+        
+        <span class="cl">JPen</span>.strokeColor = <span class="cl">Color</span>.black;
+        <span class="cl">JPen</span>.moveTo( ps[ 0 ]);
+        <span class="cl">JPen</span>.arcTo( ps[ 1 ], ps[ 2 ], r );
+        <span class="cl">JPen</span>.stroke;
+        
+        ps.do( fCross.( <span class="kw">_</span>, <span class="cl">Color</span>.red ));
+        
+        <span class="cm">// visualize center and touching points</span>
+        dp10 = ps[ 0 ] - ps[ 1 ];
+        dp12 = ps[ 2 ] - ps[ 1 ];
+        dp02 = ps[ 2 ] - ps[ 0 ];
+        a    = dp02.rho;
+        b    = dp10.rho;
+        c    = dp12.rho;
+        s    = (a + b + c) / 2;
+        th   = sqrt( (s - b) * (s - c) / (s * (s - a)) );
+        dist = r / th;
+        tp1  = <span class="cl">Polar</span>( dist, dp10.theta ).asPoint + ps[ 1 ];
+        tp2  = <span class="cl">Polar</span>( dist, dp12.theta ).asPoint + ps[ 1 ];
+        ang  = theta( (tp1 + tp2) / 2 - ps[ 1 ]);
+        dist = sqrt( r.squared + dist.squared );
+        cp   = ps[ 1 ] + <span class="cl">Polar</span>( dist, ang ).asPoint;
+        
+        [ cp, tp1, tp2 ].do( fCross.( <span class="kw">_</span>, <span class="cl">Color</span>.blue ));
+    };
+    w.view
+        .background_( <span class="cl">Color</span>.white )
+        .mouseDownAction_({ <span class="kw">arg</span> view, x, y;
+            <span class="kw">var</span> dist, mp, idx;
+            mp      = x @ y;
+            dist    = ps.collect({ <span class="kw">arg</span> p; p.dist( mp )});
+            idx     = dist.minIndex;
+            dragIdx = if( dist[ idx ] &lt; 6, idx );
+        })
+        .mouseMoveAction_({ <span class="kw">arg</span> view, x, y;
+            if( dragIdx.notNil, {
+                ps[ dragIdx ] = x @ y;
+                w.refresh;
+            });
+        });
+
+    w.front;
+    )
+</pre>
+<p>&nbsp;</p>
 <h3>*addArc</h3>
 <pre>
 <span class="cl">JPen</span>.addArc( <var>&lt;(Point) center&gt;</var>, <var>&lt;(Number) radius&gt;</var>, <var>&lt;(Number) startAngle&gt;</var>, <var>&lt;(Number) arcAngle&gt;</var> )

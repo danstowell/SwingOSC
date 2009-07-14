@@ -47,7 +47,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.61, 14-Oct-08
+ *	@version		0.62, 14-Jul-09
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not
@@ -68,33 +68,33 @@ JPen {
 // ------------- affine transforms -------------
 
 	*translate { arg x = 0, y = 0;
-		cmds = cmds.add([ "trn", x, y ]);
+		cmds = cmds.add([ 16, x, y ]);
 	}
 
 	*scale { arg x = 0, y = 0;
-		cmds = cmds.add([ "scl", x, y ]);
+		cmds = cmds.add([ 17, x, y ]);
 	}
 
 	*skew { arg x = 0, y = 0;
-		cmds = cmds.add([ "shr", x, y ]);
+		cmds = cmds.add([ 19, x, y ]);
 	}
 
 	*rotate { arg angle = 0, x = 0, y = 0;
-		cmds = cmds.add([ "rot", angle, x, y ]);
+		cmds = cmds.add([ 18, angle, x, y ]);
 	}
 
 	*matrix_ { arg array;
-		cmds = cmds.add([ "mat" ] ++ array );
+		cmds = cmds.add([ 20 ] ++ array );
 	}
 
 // ------------- color and stroke customization (setter methods) -------------
 
 	*strokeColor_ { arg color;
-		cmds = cmds.add([ "dco", color.red, color.green, color.blue, color.alpha ]);
+		cmds = cmds.add([ 21, color.red, color.green, color.blue, color.alpha ]);
 	}
 
 	*fillColor_ { arg color;
-		cmds = cmds.add([ "fco", color.red, color.green, color.blue, color.alpha ]);
+		cmds = cmds.add([ 22, color.red, color.green, color.blue, color.alpha ]);
 	}
 	
 	*color_ { arg color;
@@ -103,11 +103,11 @@ JPen {
 	}
 	
 	*width_ { arg width=1;
-		cmds = cmds.add([ "stk", width ]);
+		cmds = cmds.add([ 3, width ]);
 	}
 
 	*font_ { arg font;
-		cmds = cmds.add([ "fnt", font.name, font.size, font.style ]);
+		cmds = cmds.add([ 23, font.name, font.size, font.style ]);
 	}
 
 	/**
@@ -119,19 +119,19 @@ JPen {
 	}
 
 	*smoothing_ { arg flag = true;
-		cmds = cmds.add([ "ali", flag.binaryValue ]);
+		cmds = cmds.add([ 33, flag.binaryValue ]);
 	}
 	
 	*paint_ { arg paint;
-		cmds = cmds.add([ "pnt", paint.id ]);
+		cmds = cmds.add([ 37, paint.id ]);
 	}
 
 	*joinStyle_ { arg style = 0; // 0 = miter, 1 = round, 2 = bevel
-		cmds = cmds.add([ "joi", style ]);
+		cmds = cmds.add([ 5, style ]);
 	}
 	
 	*lineDash_ { arg pattern; // should be a FloatArray
-		cmds = cmds.add([ "dsh", pattern.size ] ++ pattern );
+		cmds = cmds.add([ 4, pattern.size ] ++ pattern );
 	}
 
 // ------------- path composition -------------
@@ -145,15 +145,15 @@ JPen {
 	}
 
 	*beginPath {
-		cmds = cmds.add([ "rst" ]);
+		cmds = cmds.add([ 15 ]);
 	}
 
 	*moveTo { arg point;
-		cmds = cmds.add([ "mov", point.x, point.y ]);
+		cmds = cmds.add([ 6, point.x, point.y ]);
 	}
 
 	*lineTo { arg point;
-		cmds = cmds.add([ "lin", point.x, point.y ]);
+		cmds = cmds.add([ 7, point.x, point.y ]);
 	}
 
 	*line { arg p1, p2;
@@ -161,44 +161,48 @@ JPen {
 	}
 
 	*curveTo { arg point, cpoint1, cpoint2;
-		cmds = cmds.add([ "cub", cpoint1.x, cpoint1.y, cpoint2.x, cpoint2.y, point.x, point.y ]);
+		cmds = cmds.add([ 9, cpoint1.x, cpoint1.y, cpoint2.x, cpoint2.y, point.x, point.y ]);
 	}
 
 	*quadCurveTo { arg point, cpoint1;
-		cmds = cmds.add([ "qua", cpoint1.x, cpoint1.y, point.x, point.y ]);
+		cmds = cmds.add([ 8, cpoint1.x, cpoint1.y, point.x, point.y ]);
+	}
+
+	*arcTo { arg point1, point2, radius;
+		cmds = cmds.add([ 38, point1.x, point1.y, point2.x, point2.y, radius ]);
 	}
 
 	*addArc { arg center, radius, startAngle, arcAngle;
-		cmds = cmds.add([ "arc", center.x, center.y, radius, startAngle, arcAngle ]);
+		cmds = cmds.add([ 12, center.x, center.y, radius, startAngle, arcAngle ]);
 	}
 
 	*addWedge { arg center, radius, startAngle, arcAngle;
-		cmds = cmds.add([ "pie", center.x, center.y, radius, startAngle, arcAngle ]);
+		cmds = cmds.add([ 13, center.x, center.y, radius, startAngle, arcAngle ]);
 	}
 
 	*addAnnularWedge { arg center, innerRadius, outerRadius, startAngle, arcAngle;
-		cmds = cmds.add([ "cyl", center.x, center.y, innerRadius, outerRadius,
-					           startAngle, arcAngle ]);
+		cmds = cmds.add([ 14, center.x, center.y, innerRadius, outerRadius,
+					        startAngle, arcAngle ]);
 	}
 
 	*addRect { arg rect;
-		cmds = cmds.add([ "rec", rect.left, rect.top, rect.width, rect.height ]);
+		cmds = cmds.add([ 10, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
 	*addOval { arg rect;
-		cmds = cmds.add([ "ova", rect.left, rect.top, rect.width, rect.height ]);
+		cmds = cmds.add([ 11, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
 	*stroke {
-		cmds = cmds.add([ "drw" ]);
+		cmds = cmds.add([ 0 ]);
 	}
 
 	*fill {
-		cmds = cmds.add([ "fll" ]);
+		cmds = cmds.add([ 1 ]);
 	}
 
 	*clip {
-		cmds = cmds.add([ "clp" ]);
+		cmds = cmds.add([ 32 ]);
 	}
 
 	*fillStroke {
@@ -206,7 +210,7 @@ JPen {
 	}
 	
 	*draw { arg option = 0; // 0 = fill, 1 = eofill, 2 = stroke, 3 = fillstroke, 4 = eofillstroke
-		cmds = cmds.add([ "fdr", option ]);
+		cmds = cmds.add([ 2, option ]);
 	}
 
 	*fillAxialGradient { arg startPoint, endPoint, color0, color1;
@@ -216,19 +220,19 @@ JPen {
 // ------------- direct drawing commands -------------
 
 	*strokeRect { arg rect;
-		cmds = cmds.add([ "drc", rect.left, rect.top, rect.width, rect.height ]);
+		cmds = cmds.add([ 26, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
 	*fillRect { arg rect;
-		cmds = cmds.add([ "frc", rect.left, rect.top, rect.width, rect.height ]);
+		cmds = cmds.add([ 24, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
 	*strokeOval { arg rect;
-		cmds = cmds.add([ "dov", rect.left, rect.top, rect.width, rect.height ]);
+		cmds = cmds.add([ 27, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
 	*fillOval { arg rect;
-		cmds = cmds.add([ "fov", rect.left, rect.top, rect.width, rect.height ]);
+		cmds = cmds.add([ 25, rect.left, rect.top, rect.width, rect.height ]);
 	}
 	
 //	*drawAquaButton { arg rect, type=0, down=false, on=false;
@@ -243,23 +247,23 @@ JPen {
 	}
 	
 	*stringAtPoint { arg str, point;
-		cmds = cmds.add([ "dst", str, point.x, point.y ]);
+		cmds = cmds.add([ 28, str, point.x, point.y ]);
 	}
 	
 	*stringInRect { arg str, rect;
-		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 0, 0 ]);
+		cmds = cmds.add([ 29, str, rect.left, rect.top, rect.width, rect.height, 0, 0 ]);
 	}
 	
 	*stringCenteredIn { arg str, rect;
-		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 0.5, 0.5 ]);
+		cmds = cmds.add([ 29, str, rect.left, rect.top, rect.width, rect.height, 0.5, 0.5 ]);
 	}
 	
 	*stringLeftJustIn { arg str, rect;
-		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 0, 0.5 ]);
+		cmds = cmds.add([ 29, str, rect.left, rect.top, rect.width, rect.height, 0, 0.5 ]);
 	}
 	
 	*stringRightJustIn { arg str, rect;
-		cmds = cmds.add([ "dsr", str, rect.left, rect.top, rect.width, rect.height, 1, 0.5 ]);
+		cmds = cmds.add([ 29, str, rect.left, rect.top, rect.width, rect.height, 1, 0.5 ]);
 	}
 	
 // ------------- image commands THESE ARE EXPERIMENTAL AND SUBJECT TO CHANGES!!! -------------
@@ -269,11 +273,11 @@ JPen {
 	}
 	
 	*imageAtPoint { arg img, point;
-		cmds = cmds.add([ "img", img.id, point.x, point.y ]);
+		cmds = cmds.add([ 35, img.id, point.x, point.y ]);
 	}
 	
 	*imageSlice { arg img, point, rect;
-		cmds = cmds.add([ "imc", img.id, point.x, point.y, rect.left, rect.top, rect.width, rect.height ]);
+		cmds = cmds.add([ 36, img.id, point.x, point.y, rect.left, rect.top, rect.width, rect.height ]);
 	}
 
 // ------------ gradients, translucency, composites ------------
@@ -283,7 +287,7 @@ JPen {
 //	}
 
 	*alpha_ { arg opacity;
-		cmds = cmds.add([ "alp", opacity ]);
+		cmds = cmds.add([ 34, opacity ]);
 	}
 
 	*blendMode_{ arg mode;
@@ -324,11 +328,11 @@ JPen {
 // ------------ private ------------
 
 	*push {
-		cmds = cmds.add([ "psh" ]);
+		cmds = cmds.add([ 30 ]);
 	}
 
 	*pop {
-		cmds = cmds.add([ "pop" ]);
+		cmds = cmds.add([ 31 ]);
 	}
 	
 	// called by JSCWindow, JSCUserView
