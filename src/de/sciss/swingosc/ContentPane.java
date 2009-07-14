@@ -78,6 +78,8 @@ extends JPanel // JComponent
 		}
 	}
 	
+//	public boolean isOptimizedDrawingEnabled() { return false; }
+	
 //	public void repaintIcon()
 //	{
 //		repaint();

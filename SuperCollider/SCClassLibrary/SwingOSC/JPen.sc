@@ -214,7 +214,9 @@ JPen {
 	}
 
 	*fillAxialGradient { arg startPoint, endPoint, color0, color1;
-		warn( "Meta_JPen:fillAxialGradient - not yet implemented" );
+		cmds = cmds.add([ 39, startPoint.x, startPoint.y, endPoint.x, endPoint.y,
+		                      color0.red, color0.green, color0.blue, color0.alpha,
+		                      color1.red, color1.green, color1.blue, color1.alpha  ]);
 	}
 
 // ------------- direct drawing commands -------------

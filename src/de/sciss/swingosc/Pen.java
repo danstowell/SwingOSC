@@ -49,6 +49,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -95,7 +96,7 @@ implements Icon
 	protected final Stack 				context		= new Stack();
 	
 	protected final List				recCmds		= new ArrayList();
-	private final Constr[]				constrs		= new Constr[ 39 ];
+	private final Constr[]				constrs		= new Constr[ 40 ];
 	
 	protected final float[]				pt			= new float[ 8 ];
 	
@@ -174,6 +175,7 @@ implements Icon
 		constrs[ 36 ] = new ConstrCroppedImage();
 		constrs[ 37 ] = new ConstrPaint();
 		constrs[ 38 ] = new ConstrArcTo();
+		constrs[ 39 ] = new ConstrFillAxialGrad();
 		
 		frc = new FontRenderContext( GraphicsEnvironment.
 				getLocalGraphicsEnvironment().
@@ -1420,6 +1422,34 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 			} else {
 				gc.pntFill = (Paint) pnt;
 			}
+			return off;
+		}
+	}
+
+	// 0: id
+	private class ConstrFillAxialGrad
+	extends Constr
+	{
+		protected ConstrFillAxialGrad() { /* empty */ }
+
+		protected int constr( Object[] cmd, int off )
+		{
+			final Color	colr1, colr2;
+			final Paint	pntOld, pnt;
+
+			off			= decode( cmd, off, 4 );
+			colr1		= getColor( cmd, off );
+			off		   += 4;
+			colr2		= getColor( cmd, off );
+			off		   += 4;
+			
+			pnt			= new GradientPaint( pt[ 0 ], pt[ 1 ], colr1, pt[ 2 ], pt[ 3 ], colr2 );
+			pntOld		= gc.pntFill; 
+			gc.pntFill	= pnt;
+			recCmds.add( new CmdFill( gp ));
+			gp			= new GeneralPath();
+			gc.pntFill	= pntOld;
+
 			return off;
 		}
 	}

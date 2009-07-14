@@ -29,6 +29,7 @@
  
 package de.sciss.swingosc;
 
+//import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -57,6 +58,8 @@ implements FocusListener
 	private Pen				pen;
 	private boolean			clear				= true;
 	private boolean			shouldPaintBg		= true;
+	
+//	private Color bgColr = null;
 	
 	public UserView( Pen image )
 	{
@@ -114,6 +117,7 @@ implements FocusListener
 		shouldPaintBg = true;
 //		setOpaque( (c != null) && (c.getAlpha() == 0xFF) );
 		super.setBackground( c );
+//bgColr = c;
 //		repaint();
 	}
 
@@ -125,12 +129,24 @@ implements FocusListener
 		}
 	}
 
+//private final java.util.Random rnd = new java.util.Random();
+
 	public void paintComponent( Graphics g )
 	{
+		if( shouldPaintBg ) super.paintComponent( g );
+		
+//		final java.awt.Graphics2D g2 = (java.awt.Graphics2D) g;
+//		
+//g.clipRect( 0, 0, getWidth(), getHeight() );
+//g2.setComposite( AlphaComposite.SrcAtop );
 		final Color		bg 		= getBackground();
+//final Color	bg = new Color( rnd.nextInt( 0xFFFFFF ));
 		final Insets	insets	= getInsets();
+//if( getX() == 1 ) System.out.println( "paintComponent " + bg.getRed() );		
 		if( (bg != null) && (bg.getAlpha() > 0) && shouldPaintBg ) {
+//if( getX() == 1 ) System.out.println( "--> B" );		
 			g.setColor( bg );
+//			g.drawString( "XXXXXXXXX", 0, 0 );
 			g.fillRect( insets.left, insets.top,
 					getWidth() - (insets.left + insets.right),
 					getHeight() - (insets.top + insets.bottom ));
@@ -138,6 +154,7 @@ implements FocusListener
 		}
 //		if( image != null ) image.paintIcon( this, g, insets.left, insets.top );
 		if( pen != null ) {
+//if( getX() == 1 ) System.out.println( "--> C" );		
 			if( pen.getAbsCoords() ) {
 				pen.paintIcon( this, g, 0, 0 );
 			} else {
