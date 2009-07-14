@@ -1063,7 +1063,7 @@ A helper class to draw on a <A HREF="JSCWindow.html">JSCWindow</A>, a <A HREF="J
 </p>
 <pre>
     (
-    i = <span class="cl">JImage</span>.load( <span class="st">&quot;http://sciss.de/swingOSC/application.png&quot;</span> );
+    i = <span class="cl">JSCImage</span>.openURL( <span class="st">&quot;http://sciss.de/swingOSC/application.png&quot;</span> );
     w = <span class="cl">JSCWindow</span>.new.front;
     w.drawHook = {
         (1..10).do({ <span class="kw">arg</span> j;
