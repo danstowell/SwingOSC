@@ -102,6 +102,8 @@ JSCView {  // abstract class
 	
 	// ----------------- public instance methods -----------------
 
+	scheme { ^SwingGUI }
+	
 	asView { ^this }
 	
 	bounds { ^this.prBoundsReadOnly.copy }
