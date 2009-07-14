@@ -2033,19 +2033,19 @@ JSCAbstractUserView : JSCView {
 	var <drawFunc;
 	var <clearOnRefresh = true;
 	var <>refreshOnFocus = true;
+	var <>lazyRefresh   = true;
 
 	var penID			= nil;
 	var pendingDraw	= false;
+	var routRefresh, condRefresh;
 
 	// ----------------- public instance methods -----------------
 
 	refresh {
 		pendingDraw = false;
-		if( drawFunc.notNil, {
-			JPen.protRefresh( drawFunc, this, server, penID, this.id );
-		});
+		if( drawFunc.notNil, { this.protRefresh });
 	}
-
+		
 	clearOnRefresh_{ arg bool;
 		clearOnRefresh = bool;
 		this.setProperty( \clearOnRefresh, bool );
@@ -2078,7 +2078,7 @@ JSCAbstractUserView : JSCView {
 		drawFunc = func;
 		if( this.prAllVisible, {
 			pendingDraw = false;
-			JPen.protRefresh( drawFunc, this, server, penID, this.id );
+			this.protRefresh;
 		}, {
 			pendingDraw = true;
 		});
@@ -2100,6 +2100,25 @@ JSCAbstractUserView : JSCView {
 //		this.refresh;
 //	}
 
+	prSCViewNew { arg preMsg, postMsg;
+		condRefresh = Condition.new;
+		routRefresh = Routine({
+			inf.do({
+				condRefresh.wait;
+				condRefresh.test = false;
+				if( drawFunc.notNil, {
+					try {
+						JPen.protRefresh( drawFunc, this, server, penID, this.id )
+					} { arg error;
+						error.reportError;
+					};
+				});
+				0.01.wait;
+			});
+		}).play( AppClock );
+		^super.prSCViewNew( preMsg, postMsg );
+	}
+
 	prFocusChange {
 		// the user may wish to paint differently according to the focus
 		if( refreshOnFocus, { this.protDraw });
@@ -2114,8 +2133,19 @@ JSCAbstractUserView : JSCView {
 	}
 
 	prClose { arg preMsg, postMsg;
+//		routRefresh.cancel;
+		routRefresh.stop;
 		this.drawFunc_( nil );
 		^super.prClose( preMsg, postMsg );
+	}
+
+	protRefresh {
+		if( lazyRefresh, {
+//			routRefresh.instantaneous;
+			condRefresh.test = true; condRefresh.signal;
+		}, {
+			JPen.protRefresh( drawFunc, this, server, penID, this.id );
+		});
 	}
 
 	protDraw {
@@ -2124,7 +2154,8 @@ JSCAbstractUserView : JSCView {
 //			// will be done already by JSCWindow, and hence
 //			// would slow down refresh unnecessarily (???)
 //			JPen.protRefresh( drawFunc, this, server, penID, nil );
-			JPen.protRefresh( drawFunc, this, server, penID, this.id );
+//			JPen.protRefresh( drawFunc, this, server, penID, this.id );
+			this.protRefresh;
 		});
 	}
 }
