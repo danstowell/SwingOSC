@@ -13,12 +13,13 @@ extends AbstractResponder
 	{
 		super( objectID, numReplyArgs );
 
-//System.out.println( "is a " + client.getObject( frameID ).getClass() );
-		this.f	= frameID == null ? null : (Frame) client.getObject( frameID );
-		if( f != null ) {
+		final Object o = frameID == null ? null : client.getObject( frameID );
+		if( (o != null) && (o instanceof Frame) ) {
+			f = (Frame) o;
 			f.registerMouseResponder( this );
 			acceptsMouseOver = f.getAcceptMouseOver();
 		} else {
+			f = null;
 			acceptsMouseOver = true;
 		}
 	}
