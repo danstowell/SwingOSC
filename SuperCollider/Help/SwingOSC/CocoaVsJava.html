@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based cross-platform replacements for Cocoa GUI classes</h2>
-<p>This document lists most of the available classes. last mod: 28-jan-08 sciss
+<p>This document lists most of the available classes. last mod: 17-jul-09 sciss
 </p>
 </div>
 <h1>Cocoa vs. Java GUI classes</h1>
@@ -32,6 +32,7 @@ Views that <STRONG>only exists in Cocoa</STRONG> at the moment:
 <UL>
 <LI><A HREF="SC://SCQuartzComposerView">SCQuartzComposerView</A> : a view to play back QuartzComposer composition. QC is only available on Mac&nbsp;OS&nbsp;X, so it is not possible to have this view on other platforms.</LI>
 <LI><A HREF="SC://SC2DTabletSlider">SC2DTabletSlider</A> : this view is rather superfluous since you can create something similar with <A HREF="JSCTabletView.html">JSCTabletView</A>, using a <code>drawFunc</code> or layering it on top of a <A HREF="JSC2DSlider.html">JSC2DSlider</A>.</LI>
+<LI><A HREF="SC://SCLevelIndicator">SCLevelIndicator</A> : you might want to look at <A HREF="JSCPeakMeter.html">JSCPeakMeter</A> though.</LI>
 </UL>
 <P>&nbsp;</P>
 <P>
@@ -45,9 +46,10 @@ Helper classes that <STRONG>do not work with SwingOSC</STRONG> at the moment:
 Views that <STRONG>only exists in Swing</STRONG> at the moment:
 </P>
 <UL>
-<LI><A HREF="JSCCheckBox.html">JSCCheckBox</A> : checkmark toggle button<</LI>
+<LI><A HREF="JSCCheckBox.html">JSCCheckBox</A> : checkmark toggle button</LI>
 <LI><A HREF="JSCTabbedPane.html">JSCTabbedPane</A> : hosts multiple containers that can be switched through tabs</LI>
 <LI><A HREF="JSCScrollBar.html">JSCScrollBar</A> : slider to navigate virtual viewports</LI>
+<LI><A HREF="JSCPeakMeter.html">JSCPeakMeter</A> : a volume meter (peak and RMS) for audio busses</LI>
 </UL>
 <P>&nbsp;</P>
 <P>

@@ -9,17 +9,15 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande}
 p.p2 {margin: 0.0px 0.0px 16.0px 0.0px; font: 19.0px Lucida Grande}
-p.p3 {margin: 0.0px 0.0px 16.0px 0.0px; font: 13.0px Lucida Grande; color: #000000}
-p.p4 {margin: 0.0px 0.0px 12.0px 0.0px; font: 13.0px Lucida Grande; color: #000000}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
-p.p7 {margin: 0.0px 0.0px 12.0px 0.0px; font: 13.0px Lucida Grande}
-span.s1 {font: 10.0px Monaco; color: #0000bf}
-span.s2 {text-decoration: underline ; color: #0000bf}
-span.s3 {color: #000000}
-span.s4 {color: #0000bf}
-span.s5 {color: #606060}
-span.s6 {color: #007300}
+p.p3 {margin: 0.0px 0.0px 16.0px 0.0px; font: 13.0px Lucida Grande}
+p.p4 {margin: 0.0px 0.0px 12.0px 0.0px; font: 13.0px Lucida Grande}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
+span.s1 {font: 10.0px Monaco; color: #0019ba}
+span.s2 {text-decoration: underline ; color: #0019ba}
+span.s3 {color: #0019ba}
+span.s4 {color: #606060}
+span.s5 {color: #2b6f11}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -27,43 +25,40 @@ span.Apple-tab-span {white-space:pre}
 <h2 style="margin: 0.0px 0.0px 11.0px 0.0px; font: 14.0px Lucida Grande"><b>SwingOSC – Java-based GUI classes</b></h2>
 <h1 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 19.0px Lucida Grande"><b>JSCPeakMeter</b></h1>
 <p class="p3"><b>Warning: experimental stage, subject to changes!</b></p>
-<p class="p4">Note: please use the abstraction layer <span class="s1">GUI.peakMeterView</span> if possible! (see <a href="SC://GUI"><span class="s2">GUI</span></a>). <span class="s3">See</span> also <a href="JSCView.html"><span class="s2">JSCView</span></a>.</p>
+<p class="p4">Note: please use the abstraction layer <span class="s1">GUI.peakMeterView</span> if possible! (see <a href="SC://GUI"><span class="s2">GUI</span></a>). See also <a href="JSCView.html"><span class="s2">JSCView</span></a>.</p>
 <p class="p5">s.boot;</p>
 <p class="p6"><br></p>
 <p class="p5">(</p>
-<p class="p5"><span class="Apple-converted-space">    </span>w = <span class="s4">JSCWindow</span>( <span class="s5">"Meter"</span>, <span class="s4">Rect</span>( 200, 200, 200, 228 ), <span class="s4">false</span> );</p>
-<p class="p5"><span class="Apple-converted-space">    </span>b = <span class="s4">JSCPeakMeter</span>( w, <span class="s4">Rect</span>( 4, 4, 56, 220 ));</p>
-<p class="p5"><span class="Apple-converted-space">    </span>b.bus = <span class="s4">Bus</span>( <span class="s6">\audio</span>, s.options.numOutputBusChannels, 2, s );</p>
+<p class="p5"><span class="Apple-converted-space">    </span>w = <span class="s3">JSCWindow</span>( <span class="s4">"Meter"</span>, <span class="s3">Rect</span>( 200, 200, 200, 228 ), <span class="s3">false</span> );</p>
+<p class="p5"><span class="Apple-converted-space">    </span>b = <span class="s3">JSCPeakMeter</span>( w, <span class="s3">Rect</span>( 4, 4, 56, 220 ));</p>
+<p class="p5"><span class="Apple-converted-space">    </span>b.bus = <span class="s3">Bus</span>( <span class="s5">\audio</span>, s.options.numOutputBusChannels, 2, s );</p>
 <p class="p5"><span class="Apple-converted-space">    </span>w.front;</p>
 <p class="p5">)</p>
 <p class="p6"><br></p>
-<p class="p5">g.reboot;</p>
-<p class="p5">s.quit;</p>
-<p class="p6"><br></p>
-<p class="p7">The meter can be configured, using the properties <span class="s1">border</span>, <span class="s1">caption</span>, <span class="s1">captionVisible</span>, <span class="s1">captionPosition</span>, <span class="s1">rmsPainted</span>, and <span class="s1">holdPainted</span>, as demonstrated by the following example:</p>
+<p class="p4">The meter can be configured, using the properties <span class="s1">border</span>, <span class="s1">caption</span>, <span class="s1">captionVisible</span>, <span class="s1">captionPosition</span>, <span class="s1">rmsPainted</span>, and <span class="s1">holdPainted</span>, as demonstrated by the following example:</p>
 <p class="p5">(</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s4">JSCCheckBox</span>( w, <span class="s4">Rect</span>( 70, 4, 126, 24 )).string_( <span class="s5">"Border"</span> ).action_({ <span class="s4">arg</span> v; b.border = v.value });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s4">JSCCheckBox</span>( w, <span class="s4">Rect</span>( 70, 32, 126, 24 )).string_( <span class="s5">"Caption"</span> ).action_({ <span class="s4">arg</span> v; b.caption = v.value });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s4">JSCCheckBox</span>( w, <span class="s4">Rect</span>( 90, 60, 126, 24 )).string_( <span class="s5">"Visible"</span> ).value_( <span class="s4">true</span> ).action_({ <span class="s4">arg</span> v; b.captionVisible = v.value });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s4">JSCStaticText</span>( w, <span class="s4">Rect</span>( 90, 88, 30, 24 )).string_( <span class="s5">"Pos:"</span> );</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s4">JSCPopUpMenu</span>( w, <span class="s4">Rect</span>( 124, 88, 72, 24 )).items_([ <span class="s6">\left</span>, <span class="s6">\right</span>, <span class="s6">\center</span> ])</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({ <span class="s4">arg</span> v; b.captionPosition = v.items[ v.value ]});</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s4">JSCCheckBox</span>( w, <span class="s4">Rect</span>( 70, 116, 126, 24 )).string_( <span class="s5">"RMS Painted"</span> ).value_( <span class="s4">true</span> ).action_({ <span class="s4">arg</span> v; b.rmsPainted = v.value });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s4">JSCCheckBox</span>( w, <span class="s4">Rect</span>( 70, 144, 126, 24 )).string_( <span class="s5">"Hold Painted"</span> ).value_( <span class="s4">true</span> ).action_({ <span class="s4">arg</span> v; b.holdPainted = v.value });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">JSCCheckBox</span>( w, <span class="s3">Rect</span>( 70, 4, 126, 24 )).string_( <span class="s4">"Border"</span> ).action_({ <span class="s3">arg</span> v; b.border = v.value });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">JSCCheckBox</span>( w, <span class="s3">Rect</span>( 70, 32, 126, 24 )).string_( <span class="s4">"Caption"</span> ).action_({ <span class="s3">arg</span> v; b.caption = v.value });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">JSCCheckBox</span>( w, <span class="s3">Rect</span>( 90, 60, 126, 24 )).string_( <span class="s4">"Visible"</span> ).value_( <span class="s3">true</span> ).action_({ <span class="s3">arg</span> v; b.captionVisible = v.value });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">JSCStaticText</span>( w, <span class="s3">Rect</span>( 90, 88, 30, 24 )).string_( <span class="s4">"Pos:"</span> );</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">JSCPopUpMenu</span>( w, <span class="s3">Rect</span>( 124, 88, 72, 24 )).items_([ <span class="s5">\left</span>, <span class="s5">\right</span>, <span class="s5">\center</span> ])</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({ <span class="s3">arg</span> v; b.captionPosition = v.items[ v.value ]});</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">JSCCheckBox</span>( w, <span class="s3">Rect</span>( 70, 116, 126, 24 )).string_( <span class="s4">"RMS Painted"</span> ).value_( <span class="s3">true</span> ).action_({ <span class="s3">arg</span> v; b.rmsPainted = v.value });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">JSCCheckBox</span>( w, <span class="s3">Rect</span>( 70, 144, 126, 24 )).string_( <span class="s4">"Hold Painted"</span> ).value_( <span class="s3">true</span> ).action_({ <span class="s3">arg</span> v; b.holdPainted = v.value });</p>
 <p class="p5">)</p>
 <p class="p6"><br></p>
-<p class="p7">When the caption is active and visible, the label font can be changed:</p>
-<p class="p5">b.font = <span class="s4">JFont</span>( <span class="s5">"Eurostile"</span>, 11 );</p>
-<p class="p5">b.font = <span class="s4">JFont</span>( <span class="s5">"Andale Mono"</span>, 13 );</p>
+<p class="p4">When the caption is active and visible, the label font can be changed:</p>
+<p class="p5">b.font = <span class="s3">JFont</span>( <span class="s4">"Eurostile"</span>, 11 );</p>
+<p class="p5">b.font = <span class="s3">JFont</span>( <span class="s4">"Andale Mono"</span>, 13 );</p>
 <p class="p6"><br></p>
-<p class="p7">When the monitored bus is silent, you can pause the meter updates to save some CPU power:</p>
-<p class="p5">b.active = <span class="s4">false</span>;</p>
-<p class="p5">b.active = <span class="s4">true</span>;</p>
+<p class="p4">When the monitored bus is silent, you can pause the meter updates to save some CPU power:</p>
+<p class="p5">b.active = <span class="s3">false</span>;</p>
+<p class="p5">b.active = <span class="s3">true</span>;</p>
 <p class="p6"><br></p>
-<p class="p7">A utility method for monitoring all the audio interface's inputs and outputs:</p>
-<p class="p5"><span class="s4">JSCPeakMeter</span>.meterServer( s );</p>
+<p class="p4">A utility method for monitoring all the audio interface's inputs and outputs:</p>
+<p class="p5"><span class="s3">JSCPeakMeter</span>.meterServer( s );</p>
 <p class="p6"><br></p>
-<p class="p5">x = { (<span class="s4">CoinGate</span>.ar( (2 / <span class="s4">SampleRate</span>.ir) ! s.options.numOutputBusChannels, <span class="s4">Impulse</span>.ar( <span class="s4">SampleRate</span>.ir / 2 ))) * 0.7 }.play</p>
+<p class="p5">x = { (<span class="s3">CoinGate</span>.ar( (2 / <span class="s3">SampleRate</span>.ir) ! s.options.numOutputBusChannels, <span class="s3">Impulse</span>.ar( <span class="s3">SampleRate</span>.ir / 2 ))) * 0.7 }.play</p>
 <p class="p5">x.free;</p>
 </body>
 </html>
