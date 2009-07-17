@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCUserView. last mod: 18-May-09 sciss
+<p>This class is meant as an emulation of SCUserView. last mod: 17-Jul-09 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -291,36 +291,40 @@ x.mouseOverAction = { <span class="kw">arg</span> view; view.mousePosition.postl
 )
 </pre>
 <P>&nbsp;</P>
-<h2>clearOnRefresh_</h2>
-<P>Set the behaviour for refreshing the view. If this flag is <code><span class="kw">true</span></code> (the default) the view will be cleared before each refresh call, otherwise It will draw in top of it. In the following example we utilize the <code><span class="cl">GUI</span></code> factory pattern (described in the <A HREF="SC://GUI">GUI</A> help file), so you can easily use it with <A HREF="SC://CocoaGUI">CocoaGUI</A> as well.
-<P>Example:</P>
+<h2>clearOnRefresh_ / clearDrawing</h2>
+<P><code>clearOnRefresh_</code> sets the behaviour for refreshing the view. If this flag is <code><span class="kw">true</span></code> (the default) the view will be cleared before each refresh call, otherwise it will draw on top of the previous graphics.
+</P><P>Example:</P>
 <pre>
 (
-    <span class="kw">var</span> width = 640, height = 480, w, theta = 0, drawFunc, gui;
-    gui = <span class="cl">GUI</span>.get( <span class="sy">\swing</span> );
-    w = gui.window.new( <span class="st">&quot;clearOnRefresh = true&quot;</span>, <span class="cl">Rect</span>( 128, 64, width, height ), <span class="kw">false</span> );
-    drawFunc = { <span class="kw">arg</span> view;
-        <span class="kw">var</span> x = 20 * sin( theta ), y = 42 * cos( theta );
-        gui.pen.addRect( view.bounds.moveTo( 0, 0 ));
-        gui.pen.clip;
-        theta = theta + 0.01;
-        gui.pen.fillColor_( <span class="cl">Color</span>.red( 0.2, 0.1 ));
-        gui.pen.fillRect( <span class="cl">Rect</span>( 0, 0, width, height ));
-        gui.pen.strokeColor_( <span class="cl">Color</span>.white );
-        gui.pen.translate( width * 0.5, height * 0.5 );
-        6.do { <span class="kw">arg</span> i;
-            gui.pen.rotate( theta * (1 - (i / 6)) );
-            gui.pen.scale( 0.7 + (i * 0.4), 0.4 + (i * 0.5) );
-            gui.pen.strokeOval( <span class="cl">Rect</span>.aboutPoint( <span class="cl">Point</span>( x, y ), 60, 40 ));
-        };
-    };
-    x = gui.userView.new( w, <span class="cl">Rect</span>( 10, 10, width - 20, height - 20 ))
-        .canFocus_( <span class="kw">false</span> )
-        .drawFunc_( drawFunc )
-        .clearOnRefresh_( <span class="kw">false</span> );
+    <span class="kw">var</span> theta = 0;
+    w = <span class="cl">JSCWindow</span>( <span class="st">&quot;clearOnRefresh = false&quot;</span>, resizable: <span class="kw">false</span> );
+    x = <span class="cl">JSCUserView</span>( w, w.view.bounds )
+        .focusVisible_( <span class="kw">false</span> )
+        .clearOnRefresh_( <span class="kw">false</span> )
+        .drawFunc_({ <span class="kw">arg</span> view;
+            <span class="kw">var</span> x = 20 * sin( theta ), y = 42 * cos( theta ), b = view.bounds;
+            theta = theta + 0.01;
+            <span class="cl">JPen</span>.fillColor = <span class="cl">Color</span>.red( 0.2, 0.05 );
+            <span class="cl">JPen</span>.fillRect( <span class="cl">Rect</span>( 0, 0, b.width, b.height ));
+            <span class="cl">JPen</span>.strokeColor = <span class="cl">Color</span>.white;
+            <span class="cl">JPen</span>.translate( b.width * 0.5, b.height * 0.5 );
+            6.do({ <span class="kw">arg</span> i;
+                <span class="cl">JPen</span>.rotate( theta * (1 - (i / 6)) );
+                <span class="cl">JPen</span>.scale( 0.7 + (i * 0.4), 0.4 + (i * 0.5) );
+                <span class="cl">JPen</span>.strokeOval( <span class="cl">Rect</span>.aboutPoint( x @ y, 60, 40 ));
+            });
+        });
 
     w.front;
-    <span class="cl">Routine</span>({ while({ x.isClosed.not }, { x.refresh; (1/25).wait })}).play( <span class="cl">AppClock</span> );
+    fork { while({ x.isClosed.not }, { x.refresh; (1/5).wait })};
+)
+</pre>
+<P>&nbsp;</P>
+<P>You can explicitly trigger a request to clear the drawing at the next view's refresh, by calling the <code>clearDrawing</code> method:</P>
+<pre>
+(
+    w.name = <span class="st">&quot;Press mouse to clear drawing&quot;</span>;
+    x.mouseDownAction_({ <span class="kw">arg</span> view, x, y; view.clearDrawing });
 )
 </pre>
 <P>&nbsp;</P>

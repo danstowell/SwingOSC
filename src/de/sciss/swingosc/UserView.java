@@ -47,7 +47,7 @@ import de.sciss.gui.AquaFocusBorder;
  *	added support for focus border
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.62, 13-Jul-09
+ *	@version	0.62, 17-Jul-09
  */
 public class UserView
 extends JComponent
@@ -103,6 +103,12 @@ implements FocusListener
 		setOpaque( !clear );
 	}
 	
+	public void clearDrawing()
+	{
+		shouldPaintBg = true;
+		setOpaque( false );
+	}
+	
 //	public void repaintIcon()
 //	{
 //		if( clear ) {
@@ -133,28 +139,24 @@ implements FocusListener
 
 	public void paintComponent( Graphics g )
 	{
-		if( shouldPaintBg ) super.paintComponent( g );
-		
-//		final java.awt.Graphics2D g2 = (java.awt.Graphics2D) g;
-//		
-//g.clipRect( 0, 0, getWidth(), getHeight() );
-//g2.setComposite( AlphaComposite.SrcAtop );
 		final Color		bg 		= getBackground();
-//final Color	bg = new Color( rnd.nextInt( 0xFFFFFF ));
 		final Insets	insets	= getInsets();
-//if( getX() == 1 ) System.out.println( "paintComponent " + bg.getRed() );		
-		if( (bg != null) && (bg.getAlpha() > 0) && shouldPaintBg ) {
-//if( getX() == 1 ) System.out.println( "--> B" );		
-			g.setColor( bg );
-//			g.drawString( "XXXXXXXXX", 0, 0 );
-			g.fillRect( insets.left, insets.top,
+		
+		if( shouldPaintBg ) {
+			super.paintComponent( g );
+
+			if( (bg != null) && (bg.getAlpha() > 0) ) {
+				g.setColor( bg );
+				g.fillRect( insets.left, insets.top,
 					getWidth() - (insets.left + insets.right),
 					getHeight() - (insets.top + insets.bottom ));
-			if( !clear ) shouldPaintBg = false;
+			}
+			if( !clear ) {
+				shouldPaintBg = false;
+				setOpaque( true );
+			}
 		}
-//		if( image != null ) image.paintIcon( this, g, insets.left, insets.top );
 		if( pen != null ) {
-//if( getX() == 1 ) System.out.println( "--> C" );		
 			if( pen.getAbsCoords() ) {
 				pen.paintIcon( this, g, 0, 0 );
 			} else {

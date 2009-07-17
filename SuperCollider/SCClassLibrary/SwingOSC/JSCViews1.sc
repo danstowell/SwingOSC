@@ -28,7 +28,7 @@
  */
 
 /**
- *	@version		0.62, 21-May-09
+ *	@version		0.62, 17-Jul-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -2046,6 +2046,10 @@ JSCAbstractUserView : JSCView {
 		if( drawFunc.notNil, { this.protRefresh });
 	}
 		
+	clearDrawing {
+		server.sendMsg( '/method', this.id, \clearDrawing );
+	}
+	
 	clearOnRefresh_{ arg bool;
 		clearOnRefresh = bool;
 		this.setProperty( \clearOnRefresh, bool );
