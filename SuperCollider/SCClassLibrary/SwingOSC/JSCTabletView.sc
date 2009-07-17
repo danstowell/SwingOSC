@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 11-Aug-08
+ *	@version		0.62, 11-Aug-08
  *	@author		Hanns Holger Rutz
  */
 JSCTabletView : JSCAbstractUserView {
@@ -112,8 +112,8 @@ JSCTabletView : JSCAbstractUserView {
 			}, {	// from tabletEvent
 				bounds		= this.prBoundsReadOnly;
 				deviceID		= msg[3];
-				x			= msg[4] - bounds.left;
-				y			= bounds.bottom - msg[5] + cocoaBorder; // sucky cocoa
+				x			= msg[4] - jinsets.left; // - bounds.left;
+				y			= msg[5] - jinsets.top;  // bounds.bottom - msg[5] + cocoaBorder; // sucky cocoa
 				pressure		= msg[6];
 				tiltx		= msg[7];
 				tilty		= msg[8];

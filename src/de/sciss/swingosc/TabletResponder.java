@@ -30,9 +30,13 @@
 package de.sciss.swingosc;
 
 import java.awt.Component;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.SwingUtilities;
 
 import de.sciss.net.OSCMessage;
 
@@ -42,7 +46,7 @@ import com.jhlabs.jnitablet.TabletListener;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 12-Dec-07
+ *	@version	0.62, 17-Jul-09
  */
 public class TabletResponder
 extends AbstractMouseResponder
@@ -51,6 +55,7 @@ implements TabletListener
 	private static final Class[]	listenerClasses	= { TabletListener.class };
 	private static final String[]	listenerNames	= { "TabletListener" };
 	private final Component			comp;
+	private Window					win				= null;
 	private final Object[]			proxReplyArgs	= new Object[ 9 ];
 	
 	public TabletResponder( Object objectID )
@@ -114,8 +119,21 @@ implements TabletListener
 				//   <buttonMask>, <clickCount>
 				replyArgs[  1 ] = state;
 				replyArgs[  2 ] = new Integer( e.getDeviceID() );
-				replyArgs[  3 ] = new Float( e.getX() );
-				replyArgs[  4 ] = new Float( e.getY() );
+				
+				// since TabletView receives a TabletEvent and doesn't
+				// want to copy it, it cannot correct the coordinates
+				// inplace. Instead the regular cocoa coordinates in the
+				// the window are provided. We mangle them here to
+				// produce proper java style coordinates relative to
+				// the top-left corner of the window.
+				if( win == null ) {
+					win = SwingUtilities.getWindowAncestor( comp );
+					if( win == null ) return;
+				}
+				final Point	p	= SwingUtilities.convertPoint( win,
+				    (int) e.getX(), win.getHeight() - (int) e.getY(), comp );
+				replyArgs[  3 ] = new Float( p.x + (e.getX() % 1.0f) );
+				replyArgs[  4 ] = new Float( p.y - (e.getY() % 1.0f) );
 				replyArgs[  5 ] = new Float( e.getPressure() );
 				replyArgs[  6 ] = new Float( e.getTiltX() );
 				replyArgs[  7 ] = new Float( e.getTiltY() );
