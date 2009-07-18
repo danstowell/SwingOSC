@@ -88,7 +88,7 @@ TD.when {
 </HEAD>
 <BODY>
 <h1>
-SwingOSC <small>-- version 0.62 SVN (built 13-jul-09) --</small>
+SwingOSC <small>-- version 0.62 (built 18-jul-09) --</small>
 </h1>
 <h3>statement</h3>
 <TABLE><TR><TD VALIGN="top"><IMG SRC="application.png" ALT=""></TD><TD><p>
@@ -170,15 +170,19 @@ documentation / usage
 <UL>
 <LI>A few example for SuperCollider and Pure Data are included in their respective <code>examples</code> folders.</LI>
 <LI>The file <A HREF="OSC-Command-Reference.html"><code>OSC-Command-Reference.html</code></A> provides an introduction to the concept of SwingOSC and explains all commands that the server understands.</LI>
-<LI>API documentation is not yet generated. However some of the java classes contain already javadoc comments, so it should be quite easy to get started.</LI>
+<LI>API documentation is rare. You can create a fresh JavaDoc folder this way:
+<PRE>
+$ ant doc
+</PRE>
+</LI>
 </UL>
 <h3>
 compilation
 </h3>
 <P>
 The source code can be compiled using Eclipse SDK 3.4+ (<A HREF="http://www.eclipse.org" CLASS="ext">www.eclipse.org</A>) and Apache Ant 1.6.5+ (<A HREF="http://ant.apache.org/" CLASS="ext">ant.apache.org</A>). You need to install <A HREF="http://ant-contrib.sourceforge.net" CLASS="ext">Ant-Contrib</A> as well (first install Ant if you do not have it, then download Ant-Contrib and copy <code>ant-contrib.jar</code> into Ant's <code>lib</code> folder). The Eclipse project file is configured to run the regular Ant build file. You can make a clean build just with Ant from the terminal:
-</P><PRE>> ant clean jar
-> ant test
+</P><PRE>$ ant clean jar
+$ ant test
 </PRE>
 <P>
 The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if the build works; you can leave away that task. By default, NetUtil is included in the resulting file <code>build/SwingOSC.jar</code>. If wish to link externally to it, you can build like this:
@@ -198,10 +202,11 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <LI>add some nice stuff like tree view ...</LI>
 </UL>
 <h3>change history</h3>
-<h4>v0.62 (??? 2009 - SVN rev. ???)</h4>
+<h4>v0.62 jul 2009 - SVN rev. 207)</h4>
 <UL>
-<LI>SC classes: JSCView (mouse coordinates now relative to view's left-top)</LI>
-<LI>Bug fixes: 2809848, 2809958, 2001007, 2820992</LI>
+<LI>SC classes: JSCView (mouse coordinates now relative to view's left-top, added scheme), JSCUserView (added clearDrawing, refresh is &quot;lazy&quot;, mousePosition initially reports 0@0), JSCImage (renamed from JImage), JPen (added fillAxialGradient, fillStroke uses draw( 3 )), JKnob (added resize(_)), JSCPeakMeter finally works</LI>
+<LI>Bug fixes: 2809848, 2809958, 2001007, 2820992, 1901530</LI>
+<LI>Help files: referring to ViewRedirect classes</LI>
 </UL>
 <h4>v0.61 (may 2009 - SVN rev. 181)</h4>
 <UL>

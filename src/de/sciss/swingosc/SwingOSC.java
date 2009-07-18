@@ -344,6 +344,7 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 	}
 	
 	public InetSocketAddress getLocalAddress()
+	throws IOException
 	{
 		return serv.getLocalAddress();
 	}
