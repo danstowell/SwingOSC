@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.61, 21-Apr-09
+ *	@version		0.63, 29-Jul-09
  *	@author		Hanns Holger Rutz
  */
 JSCSynth {
@@ -55,7 +55,7 @@ JSCSynth {
 	}
 	
 	prInit { arg argSwing, argSCSynth;
-		var optionsID, bndl;
+		var optionsID, bndl, addr;
 		
 		swing	= argSwing;
 		scsynth	= argSCSynth;
@@ -63,16 +63,23 @@ JSCSynth {
 		id		= swing.nextNodeID;
 		optionsID	= swing.nextNodeID;
 		bndl		= Array( 3 );
+		addr		= if( swing.isLocal or: { scsynth.isLocal.not }, {
+			scsynth.addr.asSwingArg;
+		}, {
+			[ '[', '/new', "java.net.InetSocketAddress",
+				'[', '/methodr', '[', '/methodr', '[', '/method', \swing, \getCurrentClient, ']',
+					\getReplyAddress, ']', \getHostName, ']', scsynth.addr.port, ']' ]
+		});
 		bndl.add([ '/method', '[', '/local', optionsID, '[', '/new', "de.sciss.jcollider.ServerOptions", ']', ']',
 					\setProtocol, scsynth.options.protocol ]);
-		bndl.add([ '/method', '[', '/local', id, '[', '/new', "de.sciss.jcollider.Server", scsynth.name ] ++ scsynth.addr.asSwingArg ++
+		bndl.add([ '/method', '[', '/local', id, '[', '/new', "de.sciss.jcollider.Server", scsynth.name ] ++ addr ++
 					[ '[', '/ref', optionsID, ']', scsynth.clientID, ']', ']', \start ]);
 		bndl.add([ '/free', optionsID ]);
 //		bndl.postcs;
 //~bndl = bndl;
 		swing.listSendBundle( nil, bndl );
 	}
-
+	
 	asSwingArg {
 		^[ '[', '/ref', this.id, ']' ];
 	}

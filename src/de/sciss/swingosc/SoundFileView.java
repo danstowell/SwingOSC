@@ -2073,7 +2073,8 @@ g2.setComposite( cmpOrig );
 		private final MutableLong[]				framesWritten;
 		private final Span[]					biasedSpans;
 		private final DecimationHelp[]			decimations;
-		private final int						SUBNUM;
+// XXX SWINGOSC XXX
+//		private final int						SUBNUM;
 		
 		// XXX SWINGOSC XXX
 		private final Span						span;
@@ -2106,7 +2107,8 @@ g2.setComposite( cmpOrig );
 			this.biasedSpans	= biasedSpans;
 			this.decimations	= decimations;
 			
-			SUBNUM				= decimations.length;
+// XXX SWINGOSC XXX
+//			SUBNUM				= decimations.length;
 		}
 		
 		// XXX SWINGOSC XXX
@@ -2239,29 +2241,29 @@ g2.setComposite( cmpOrig );
 			}
 		}
 
-		public void flush()
-		throws IOException
-		{
-			synchronized( fs ) {
-				for( int i = 0; i < fs.length; i++ ) {
-					fs[ i ].flush();
-				}
-			}
-		}
+//		public void flush()
+//		throws IOException
+//		{
+//			synchronized( fs ) {
+//				for( int i = 0; i < fs.length; i++ ) {
+//					fs[ i ].flush();
+//				}
+//			}
+//		}
 
-		public void debugDump()
-		{
-			debugDumpBasics();
-			for( int i = 0; i < SUBNUM; i++ ) {
-				System.err.println( "  decim "+decimations[i].factor+" biased span "+biasedSpans[i].toString()+
-					"; f = " + fs[i].getFile().getName() + " (file span " + fileSpans[i].toString() + " )" );
-			}
-		}
-		
-		protected void debugDumpBasics()
-		{
-			System.err.println( "Span " + span.toString() );
-		}
+//		public void debugDump()
+//		{
+//			debugDumpBasics();
+//			for( int i = 0; i < SUBNUM; i++ ) {
+//				System.err.println( "  decim "+decimations[i].factor+" biased span "+biasedSpans[i].toString()+
+//					"; f = " + fs[i].getFile().getName() + " (file span " + fileSpans[i].toString() + " )" );
+//			}
+//		}
+//		
+//		protected void debugDumpBasics()
+//		{
+//			System.err.println( "Span " + span.toString() );
+//		}
 	}
 	
 	private static class DecimationInfo
@@ -2280,8 +2282,8 @@ g2.setComposite( cmpOrig );
 		 *  Length (rounded) of the time span decimated through subsampling
 		 */
 		public final long	sublength;
-		public final int	model;
-		public final int	channels;
+//		public final int	model;
+//		public final int	channels;
 
 		/**
 		 *  Creates a new <code>DecimationInfo</code>
@@ -2297,11 +2299,11 @@ g2.setComposite( cmpOrig );
 		{
 			this.span			= span;
 			this.sublength		= sublength;
-			this.channels		= channels;
+//			this.channels		= channels;
 			this.idx			= idx;
 			this.shift			= shift;
 			this.inlineDecim	= inlineDecim;
-			this.model			= model;
+//			this.model			= model;
 		}
 
 		/**

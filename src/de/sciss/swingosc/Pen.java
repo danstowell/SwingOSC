@@ -566,10 +566,10 @@ test:		if( (gc.at.getShearX() == 0.0) && (gc.at.getShearY() == 0.0) &&
 	{
 		private final Map hints;
 
-		protected CmdHints( RenderingHints.Key key, Object value )
-		{
-			hints 		= new RenderingHints( key, value );
-		}
+//		protected CmdHints( RenderingHints.Key key, Object value )
+//		{
+//			hints 		= new RenderingHints( key, value );
+//		}
 		
 		protected CmdHints( Map hints )
 		{
