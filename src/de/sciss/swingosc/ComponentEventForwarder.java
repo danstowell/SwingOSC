@@ -38,6 +38,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.SwingUtilities;
+
 /**
  * 	@version	0.63, 30-Jul-09
  *	@author		Hanns Holger Rutz
@@ -79,39 +81,44 @@ implements MouseListener, MouseMotionListener, KeyListener, FocusListener
 		target.dispatchEvent( e );
 	}
 
+	private void redispatchMouse( MouseEvent e )
+	{
+		redispatch( SwingUtilities.convertMouseEvent( e.getComponent(), e, target ));
+	}
+
 	public void mouseClicked( MouseEvent e )
 	{
-		redispatch( e );
+		redispatchMouse( e );
 	}
 
 	public void mouseEntered( MouseEvent e )
 	{
-		redispatch( e );
+		redispatchMouse( e );
 	}
 
 	public void mouseExited( MouseEvent e )
 	{
-		redispatch( e );
+		redispatchMouse( e );
 	}
 
 	public void mousePressed( MouseEvent e )
 	{
-		redispatch( e );
+		redispatchMouse( e );
 	}
 
 	public void mouseReleased( MouseEvent e )
 	{
-		redispatch( e );
+		redispatchMouse( e );
 	}
 
 	public void mouseDragged( MouseEvent e )
 	{
-		redispatch( e );
+		redispatchMouse( e );
 	}
 
 	public void mouseMoved( MouseEvent e )
 	{
-		redispatch( e );
+		redispatchMouse( e );
 	}
 	
 	public void keyPressed( KeyEvent e )
