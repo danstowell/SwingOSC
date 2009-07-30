@@ -29,26 +29,38 @@
 package de.sciss.swingosc;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import javax.media.Control;
+import javax.media.ControllerEvent;
+import javax.media.ControllerListener;
 import javax.media.Duration;
 import javax.media.GainControl;
 import javax.media.MediaLocator;
+import javax.media.RealizeCompleteEvent;
 import javax.media.Time;
 import javax.media.bean.playerbean.MediaPlayer;
 import javax.media.control.FramePositioningControl;
 import javax.media.control.FrameRateControl;
 import javax.swing.JPanel;
 
+/**
+ * 	@version	0.63, 30-Jul-09
+ *	@author		Hanns Holger Rutz
+ */
 public class MovieView
 extends JPanel
+implements ControllerListener
 {
-	private final MediaPlayer 		mp;
-	private FramePositioningControl	fpc	= null;
-	private FrameRateControl		frc	= null;
+	private final MediaPlayer 				mp;
+	private FramePositioningControl			fpc			= null;
+	private FrameRateControl				frc			= null;
+	
+	private Component						oldSource	= null;
+	private final ComponentEventForwarder	cef;
 	
 	public MovieView()
 	{
@@ -58,10 +70,31 @@ extends JPanel
 		mp.setPopupActive( false );
 		mp.setFixedAspectRatio( false ); // like cocoa player
 		add( mp );
+		cef = new ComponentEventForwarder( this );
+		mp.addControllerListener( this );
+	}
+
+	public void controllerUpdate( ControllerEvent e )
+	{
+		if( e instanceof RealizeCompleteEvent ) {
+			checkCEF();
+		}
+	}
+
+	private void checkCEF()
+	{
+		final Component newSource = mp.getVisualComponent();
+		if( newSource != oldSource ) {
+			if( oldSource != null ) cef.removeSource( oldSource );
+			if( newSource != null ) cef.addSource( newSource );
+			oldSource = newSource;
+		}
 	}
 	
 	public void dispose()
 	{
+		if( oldSource != null ) cef.removeSource( oldSource );
+		mp.removeControllerListener( this );
 		mp.stopAndDeallocate();
 		mp.close();
 	}
@@ -78,6 +111,7 @@ extends JPanel
 		mp.realize();
 		fpc = null;
 		revalidate();
+//		checkCEF();
 	}
 	
 	public void start()
@@ -143,6 +177,7 @@ extends JPanel
 	{
 		mp.setFixedAspectRatio( onOff );
 		revalidate();
+//		checkCEF();
 	}
 	
 	public void setToPreferredSize( float ratio )
@@ -151,6 +186,7 @@ extends JPanel
 		final Dimension d = mp.getPreferredSize();
 		setSize( (int) (d.width * ratio + 0.5f), (int) (d.height * ratio + 0.5f) );
 		revalidate();
+//		checkCEF();
 	}
 	
 	public void setRate( float rate )
@@ -255,6 +291,7 @@ extends JPanel
 //		mp.invalidate();
 //		mp.validate();
 		revalidate();
+//		checkCEF();
 	}
 	
 //	public void editCopy()
