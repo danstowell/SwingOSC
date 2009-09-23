@@ -30,14 +30,16 @@ package de.sciss.swingosc;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.MouseWheelEvent;
 
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeListener;
 
 /**
  *	@author		Hanns Holger Rutz
- *	@version	0.57, 18-Jan-08
+ *	@version	0.62, 24-Sep-09
  */
 public class ScrollPane
 extends JScrollPane
@@ -49,6 +51,23 @@ extends JScrollPane
 		super( view );
 		b = getBorder();
 		setBorder( null );
+		// these come closed to mac feel
+		getHorizontalScrollBar().setUnitIncrement( 10 );
+		getVerticalScrollBar().setUnitIncrement( 10 );
+	}
+	
+	public void processMouseWheelEvent( MouseWheelEvent e )
+	{
+		// note: aqua lnf uses shift-modifier to
+		// indicate horizontal scrolling
+		if( e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL ) {
+			final double units = (Math.pow( Math.max( 0, Math.abs( e.getUnitsToScroll() ) - 2 ), 1.3591409142295 ) + 2) * (e.getUnitsToScroll() > 0 ? 1 : -1); 
+				
+			final JScrollBar bar = e.isShiftDown() ? getHorizontalScrollBar() : getVerticalScrollBar();
+			final int amt = (int) (units * bar.getUnitIncrement() * 0.1 + 0.5);
+			bar.setValue( bar.getValue() + amt );
+			e.consume();
+		}
 	}
 	
 	public void setBorder( boolean onOff )
