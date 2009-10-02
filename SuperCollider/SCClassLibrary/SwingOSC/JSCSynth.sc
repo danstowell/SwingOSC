@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.63, 29-Jul-09
+ *	@version		0.63, 02-Oct-09
  *	@author		Hanns Holger Rutz
  */
 JSCSynth {
@@ -52,6 +52,13 @@ JSCSynth {
 			perSwing[ scsynth ] = jSCSynth;
 		});
 		^jSCSynth;
+	}
+	
+	*get { arg swing, scsynth;
+		var perSwing;
+		if( all.isNil, { ^nil });
+		perSwing	= all[ swing ];
+		^if( perSwing.notNil, { perSwing[ scsynth ]});
 	}
 	
 	prInit { arg argSwing, argSCSynth;

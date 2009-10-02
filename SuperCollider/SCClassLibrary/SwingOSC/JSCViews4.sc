@@ -24,12 +24,62 @@
  *
  *
  *	Changelog:
+ *		02-Oct-09		added JPeakMeterSettings
  */
 
 /**
- *	@version		0.62, 02-Oct-09
+ *	@version		0.63, 02-Oct-09
  *	@author		Hanns Holger Rutz
  */
+JPeakMeterSettings {
+	classvar all;			// IdentityDictionary mapping SwingOSC to Server to JPeakMeterSettings
+
+	var <swing, <scsynth, <refreshRate = 30.0;
+	
+	*new { arg swing, scsynth;
+		^super.newCopyArgs( swing, scsynth );
+	}
+
+	*newFrom { arg swing, scsynth;
+		var perSwing, settings;
+		
+		if( all.isNil, {
+			all = IdentityDictionary.new;
+		});
+		perSwing	= all[ swing ];
+		if( perSwing.isNil, {
+			perSwing = IdentityDictionary.new;
+			all[ swing ] = perSwing;
+		});
+		settings = perSwing[ scsynth ];
+		if( settings.isNil, {
+			settings	= this.new( swing, scsynth );
+			perSwing[ scsynth ] = settings;
+		});
+		^settings;
+	}
+	
+	*get { arg swing, scsynth;
+		var perSwing;
+		if( all.isNil, { ^nil });
+		perSwing = all[ swing ];
+		^if( perSwing.notNil, { perSwing[ scsynth ]});
+	}
+	
+	*setRefreshRate { arg rate, swing, scsynth;
+		this.newFrom( swing, scsynth ).refreshRate = rate;
+	}
+	
+	refreshRate_ { arg value;
+		var manager;
+		if( value != refreshRate, {
+			refreshRate	= value;
+			manager		= JPeakMeterManager.get( swing, scsynth );
+			if( manager.notNil, {Êmanager.refreshRate = refreshRate });
+		});
+	}
+}
+
 JPeakMeterManager {
 	classvar all;			// IdentityDictionary mapping JSCSynth to JPeakMeterManager
 
@@ -41,7 +91,6 @@ JPeakMeterManager {
 	var inited = false, created = false;
 	
 	var verbose = false; // for debugging purposes
-	var <refreshRate = 30.0;
 	
 	// ----------------- quasi-constructor -----------------
 
@@ -60,6 +109,8 @@ JPeakMeterManager {
 		^res;
 	}
 	
+	*get { arg swing, scsynth; ^if( all.notNil, { all[ JSCSynth.get( swing, scsynth )]})}
+	
 	// ----------------- constructor -----------------
 
 	*new { arg jscsynth;
@@ -68,9 +119,8 @@ JPeakMeterManager {
 
 	// ----------------- public instance methods -----------------
 	refreshRate_ { arg value;
-		if( value != refreshRate, {
-			refreshRate = value;
-			jscsynth.swing.sendMsg( '/set', this.id, \refreshRate, (1000 / refreshRate).round );
+		if( created, {
+			jscsynth.swing.sendMsg( '/set', this.id, \refreshRate, (1000 / value).round );
 		});
 	}
 	
@@ -123,13 +173,16 @@ JPeakMeterManager {
 	}
 	
 	prBooted {
+		var settings;
 		if( verbose, { "BOOTED".postln });
 		if( inited.not, {
 			inited = true;
 			if( created.not, {
-				jscsynth.swing.listSendMsg([ '/method',
-					'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']',
-					\setServer ] ++ jscsynth.asSwingArg );
+				settings = JPeakMeterSettings.get( jscsynth.swing, jscsynth.scsynth );
+				jscsynth.swing.listSendMsg([ '/set',
+					'[', '/local', id, '[', '/new', "de.sciss.swingosc.PeakMeterManager", ']', ']' ]
+					++ if( settings.notNil, {[ \refreshRate, (1000 / settings.refreshRate).round ]}) ++
+					[ \server ] ++ jscsynth.asSwingArg );
 				created = true;
 			});
 		});
@@ -184,7 +237,7 @@ JPeakMeterManager {
 }
 
 JSCPeakMeter : JSCControlView {
-	var <bus, <group, <manager;
+	var <bus, <group, manager;
 	var <active = true;
 	var <border = false, <caption = false, <captionVisible = true, <captionPosition = \left;
 	var <rmsPainted = true, <holdPainted = true;
@@ -193,6 +246,11 @@ JSCPeakMeter : JSCControlView {
 	var ctrlBus, nodeID;
 	var <numChannels = 0;
 	var valid = true; // false with user-provided group after cmdperiod
+
+
+	*setRefreshRate { arg rate, swing, scsynth;
+		JPeakMeterSettings.setRefreshRate( rate, swing ?? {ÊSwingOSC.default }, scsynth ?? { Server.default });
+	}
 
 	// ----------------- public instance methods -----------------
 
