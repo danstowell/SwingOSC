@@ -301,7 +301,7 @@ extends AbstractMultiSlider
 						gpLines.moveTo( n.cx, n.cy );
 						gpLines.lineTo( n.cx, n2.cy );
 						gpLines.lineTo( n2.cx, n2.cy );
-						n = n2;
+//						n = n2;
 						break;
 						
 					case Node.SHP_LINEAR:
