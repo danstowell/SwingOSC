@@ -27,7 +27,7 @@
  */
 
 /**
- *	@version		0.62, 21-May-09
+ *	@version		0.62, 02-Oct-09
  *	@author		Hanns Holger Rutz
  */
 JPeakMeterManager {
@@ -41,6 +41,7 @@ JPeakMeterManager {
 	var inited = false, created = false;
 	
 	var verbose = false; // for debugging purposes
+	var <refreshRate = 30.0;
 	
 	// ----------------- quasi-constructor -----------------
 
@@ -65,6 +66,14 @@ JPeakMeterManager {
 		^super.new.prInit( jscsynth );
 	}
 
+	// ----------------- public instance methods -----------------
+	refreshRate_ { arg value;
+		if( value != refreshRate, {
+			refreshRate = value;
+			jscsynth.swing.sendMsg( '/set', this.id, \refreshRate, (1000 / refreshRate).round );
+		});
+	}
+	
 	// ----------------- private instance methods -----------------
 
 	prInit { arg argJSCSynth;
@@ -175,7 +184,7 @@ JPeakMeterManager {
 }
 
 JSCPeakMeter : JSCControlView {
-	var <bus, <group, manager;
+	var <bus, <group, <manager;
 	var <active = true;
 	var <border = false, <caption = false, <captionVisible = true, <captionPosition = \left;
 	var <rmsPainted = true, <holdPainted = true;

@@ -104,6 +104,13 @@ implements OSCListener, Constants, /* ServerListener, */ ActionListener,
 //		sc.addServerListener( this );
 	}
 	
+	public void setRefreshRate( int millis )
+	{
+		final boolean restart = meterTimer.isRunning();
+		meterTimer.setDelay( millis );
+		if( restart ) meterTimer.restart();
+	}
+	
 	public void dispose()
 	{
 // EEE
