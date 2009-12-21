@@ -2429,7 +2429,7 @@ JSCTextView : JSCView {
 	}
 
 	caret_ { arg pos;
-		server.sendMsg( '/set', this.id, \carentPosition, pos );
+		server.sendMsg( '/set', this.id, \caretPosition, pos );
 	}
 
 	defaultKeyDownAction { arg key, modifiers, unicode;
