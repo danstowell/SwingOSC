@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.63, 11-Oct-09
+ *	@version		0.63, 21-Dec-09
  */
 SwingOptions
 {
@@ -111,6 +111,7 @@ SwingOSC : Model
 	var <serverRunning = false, <serverBooting = false, <serverVersion;
 	var <dumpMode = 0, <dumpModeR = 0;
 	var <tempRunning = false;
+	var <numTraceLines = 3;
 
 	var <>options; // , <>latency = 0.2, <notified=true;
 	var <nodeAllocator;
@@ -223,6 +224,12 @@ SwingOSC : Model
 	
 	updateClasses { arg ... urls;
 		this.sendMsg( '/classes', \update, *urls );
+	}
+	
+	numTraceLines_ { arg lines;
+		lines = lines.asInteger.max( 0 );
+		this.sendMsg( '/set', \swing, \numTraceLines, lines );
+		numTraceLines = lines;
 	}
 	
 	sync { arg condition, bundles, latency, timeout = 4.0;

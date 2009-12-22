@@ -2406,8 +2406,9 @@ JSCTextView : JSCView {
 
 	openURL { arg url;
 //		server.sendMsg( '/method', this.id, \setPage, '[', '/new', "java.net.URL", url, ']' );
-		server.sendMsg( '/set', this.id, \page, url );
+//		server.sendMsg( '/set', this.id, \page, url );
 		// XXX update client send string rep.
+		server.sendMsg( '/method', this.id, \readURL, '[', '/new', "java.net.URL", url, ']' );
 	}
 
 	open { arg path;
@@ -2417,7 +2418,8 @@ JSCTextView : JSCView {
 		}, {
 			path = path.absolutePath;
 		});
-		server.sendMsg( '/set', this.id, \page, '[', '/methodr', '[', '/new', "java.io.File", path, ']', 'toURL', ']' );
+//		server.sendMsg( '/set', this.id, \page, '[', '/methodr', '[', '/new', "java.io.File", path, ']', 'toURL', ']' );
+		server.sendMsg( '/method', this.id, \read, path );
 	}
 	
 	select { arg start, len;

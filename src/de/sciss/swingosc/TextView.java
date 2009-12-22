@@ -31,15 +31,19 @@ package de.sciss.swingosc;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.EditorKit;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -50,7 +54,7 @@ import javax.swing.text.StyledDocument;
  *	mechanism for data updates and utility methods for styling.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.61, 12-Jan-09
+ *	@version	0.63, 21-Dec-09
  */
 public class TextView
 extends JTextPane
@@ -84,6 +88,155 @@ extends JTextPane
 	{
 		setString( insertPos, replaceLen, updateData.toString() );
 		updateData.setLength( 0 );
+	}
+	
+	public void read( String path )
+	throws IOException
+	{
+		readURL( new File( path ).toURL() );
+	}
+	
+//	public void readURL( URL url )
+//	throws IOException
+//	{
+//		
+//	}
+	
+	// e.g. 'text/html; charset=utf-8'
+	private String extractType( String fullType )
+	{
+		final int i = fullType.indexOf( ';' );
+		return i < 0 ? fullType : fullType.substring( 0, i );
+	}
+	
+//	private String extractCharset( String fullType )
+//	{
+//		final int i = fullType.indexOf( "charset=" );
+//		if( i >= 0 ) {
+//			final int j = fullType.indexOf( ";", i + 8 );
+//			return fullType.substring( i + 8, j >= 0 ? j : fullType.length() );
+//		} else {
+//			return null;
+//		}
+//	}
+
+	public EditorKit getEditorKitForContentType( String type ) {
+		final EditorKit kit = super.getEditorKitForContentType( overrideContentType == null ? type : overrideContentType );
+//		System.out.println( "getEditorKitForContentType( " + type + " ) => " + kit );
+		return kit;
+	}
+	
+	private String overrideContentType = null;
+	
+	public void readURL( URL url )
+	throws IOException
+	{
+		final URLConnection con = url.openConnection();
+//		final String ctyp = con.getContentType();
+		final String ctyp = extractType( con.getContentType() );
+		
+//		final String mime;
+		if( ctyp == null || ctyp.equals( "content/unknown" )) {
+			final String path = url.getPath();
+			final int i = path.lastIndexOf( '.' ) + 1;
+			final String ext = path.substring( i );
+			final String mime;
+			if( ext.equals( "htm" ) ||
+				ext.equals( "html" )) {
+				mime = "text/html";
+			} else if( ext.equals( "rtf" )) {
+				mime = "text/rtf"; 
+			} else {
+				mime = "text/plain";
+			}
+			// tricky shit to get RTF to work...
+			try {
+				overrideContentType = mime;
+				setPage( url );
+			}
+			finally {
+				overrideContentType = null;
+			}
+		} else {
+			setPage( url );
+//			mime = ctyp;
+		}
+
+//		final EditorKit kit = JEditorPane.createEditorKitForContentType( mime );
+//System.out.println( "mime is '" + mime + "'; kit is '" + kit + "'" );
+//		if( kit == null ) {
+//			System.out.println( "Cannot create editor kit for type '" + mime + "'" );
+//			return;
+//		}
+//
+//		setEditorKit( kit );
+//		setPage( url );
+		
+/*		
+		try {
+			removeAllDocListeners();
+			setEditorKit( kit );
+			final Document doc = getDocument();
+			// we need to make sure to set the base URL
+			// otherwise relative links (and images) are broken
+System.out.println( "--1" );
+			if( doc instanceof HTMLDocument ) {
+System.out.println( "--2" );
+				final HTMLDocument htmlDoc = (HTMLDocument) doc;
+				final String f = url.getFile();
+				final int i = f.indexOf( '?' );
+				final String baseFile = i < 0 ? f : f.substring(  0, i );
+				final URL baseURL = new URL( url.getProtocol(), url.getHost(),
+				                             url.getPort(), baseFile );
+				htmlDoc.setBase( baseURL );
+			}
+			final InputStream is = con.getInputStream();
+			try {
+				this.read( is, doc );
+			}
+			finally {
+				try { is.close(); } catch( IOException e2 ) {
+				 	// ignore
+				}
+			}
+		}
+		finally {
+			addAllDocListeners();
+		}
+*/
+		
+/*
+		boolean retry  = false;
+		boolean didRetry;
+		String charset = extractCharset( con.getContentType() );
+		try {
+			removeAllDocListeners();
+			setEditorKit( kit );
+			do {
+				didRetry = retry;
+				final InputStream is = con.getInputStream();
+				final InputStreamReader isr = (charset == null) ?
+					new InputStreamReader( is ) :
+					new InputStreamReader( is, charset );
+				try {
+					kit.read( isr, getDocument(), 0 );
+				}
+				catch( ChangedCharSetException e2 ) {
+					charset = extractCharset( e2.getCharSetSpec() );
+					if( charset != null ) {
+						System.out.println( "charset is '" + charset + "'" );
+						retry = true;
+					}
+				}
+			} while( retry && !didRetry );
+		}
+		catch( BadLocationException e1 ) {
+			e1.printStackTrace(); // should not happen with pos == 0
+		}
+		finally {
+			addAllDocListeners();
+		}
+*/
 	}
 	
 	public void setPage( String url )
