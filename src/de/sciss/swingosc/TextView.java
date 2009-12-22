@@ -81,14 +81,14 @@ extends JTextPane
 		addPropertyChangeListener( "document", new PropertyChangeListener() {
 			public void propertyChange( PropertyChangeEvent pce )
 			{
-System.out.println( "propertyChange : doc" );
+//System.out.println( "propertyChange : doc" );
 				
 				// unregister old
 				final Document oldDoc = (Document) pce.getOldValue();
 				if( oldDoc != null ) {
 					for( int i = 0; i < collDocListeners.size(); i++ ) {
 						oldDoc.removeDocumentListener( (DocumentListener) collDocListeners.get( i ));
-System.out.println( "remove " + collDocListeners.get( i ));
+//System.out.println( "remove " + collDocListeners.get( i ));
 					}
 					if( oldDoc instanceof AbstractDocument ) {
 						final AbstractDocument adoc = (AbstractDocument) oldDoc;
@@ -108,7 +108,7 @@ System.out.println( "remove " + collDocListeners.get( i ));
 				if( oldDoc != null ) {
 					for( int i = 0; i < collDocListeners.size(); i++ ) {
 						newDoc.addDocumentListener( (DocumentListener) collDocListeners.get( i ));
-System.out.println( "add " + collDocListeners.get( i ));
+//System.out.println( "add " + collDocListeners.get( i ));
 					}
 					if( newDoc instanceof AbstractDocument ) {
 						final AbstractDocument adoc = (AbstractDocument) newDoc;

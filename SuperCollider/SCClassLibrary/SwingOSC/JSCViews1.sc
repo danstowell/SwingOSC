@@ -2350,6 +2350,32 @@ JSCTextView : JSCView {
 		});
 	}
 	
+	// e.g. "<HTML><BODY><H1>Heading</H1><P>Paragraph</P></BODY></HTML>"
+	htmlString_ { arg content;
+		var kitID, docID;
+		kitID = server.nextNodeID;
+		docID = server.nextNodeID;
+		server.sendBundle( nil,
+			[ '/local', kitID, '[', '/new', "javax.swing.text.html.HTMLEditorKit", ']',
+			            docID, '[', '/method', kitID, \createDefaultDocument, ']' ],
+//			[ '/method', this.id, \setContentType, "text/html", ']',
+			[ '/set', this.id, \editorKit, '[', '/ref', kitID, ']',
+			                   \document, '[', '/ref', docID, ']' ],
+			[ '/method', kitID, \insertHTML, '[', '/ref', docID, ']', 0,
+				content,
+//				"<html><body><b>This is bold</b><i>this is italics</i></html></body>",
+				0, 0,
+				'[', '/field', "javax.swing.text.html.HTML$Tag", "BODY", ']' ]
+		);
+	}
+
+// don't know how this is supposed to work (the parent tag etc.)
+//	insertHTML { arg htmlString, pos = 0, tag = "BODY";
+//		server.sendMsg( '/methodr', '[', '/method', this.id, \getEditorKit, ']',
+//			\insertHTML, '[', '/method', this.id, \getDocument, ']', pos, htmlString, 0, 0,
+//				'[', '/field', "javax.swing.text.html.HTML$Tag", tag, ']' );
+//	}
+	
 	editable_ { arg bool;
 		editable = bool;
 		server.sendMsg( '/set', this.id, \editable, bool );
