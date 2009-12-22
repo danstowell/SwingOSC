@@ -31,6 +31,8 @@ package de.sciss.swingosc;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -39,7 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTextPane;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -60,7 +64,7 @@ public class TextView
 extends JTextPane
 {
 	private final StringBuffer updateData = new StringBuffer();
-	private final List collDocListeners = new ArrayList();
+	protected final List collDocListeners = new ArrayList();
 
 	public TextView()
 	{
@@ -71,6 +75,56 @@ extends JTextPane
 //				System.out.println( "RECEIVED : " + e.getEventType() );
 //			}
 //		});
+		
+		// this automatically moves document listeners to
+		// a new doc
+		addPropertyChangeListener( "document", new PropertyChangeListener() {
+			public void propertyChange( PropertyChangeEvent pce )
+			{
+System.out.println( "propertyChange : doc" );
+				
+				// unregister old
+				final Document oldDoc = (Document) pce.getOldValue();
+				if( oldDoc != null ) {
+					for( int i = 0; i < collDocListeners.size(); i++ ) {
+						oldDoc.removeDocumentListener( (DocumentListener) collDocListeners.get( i ));
+System.out.println( "remove " + collDocListeners.get( i ));
+					}
+					if( oldDoc instanceof AbstractDocument ) {
+						final AbstractDocument adoc = (AbstractDocument) oldDoc;
+						final DocumentEvent de =
+							adoc.new DefaultDocumentEvent( oldDoc.getStartPosition().getOffset(),
+							                               oldDoc.getLength(),
+							                               DocumentEvent.EventType.REMOVE );
+						// simulate clear
+						for( int i = 0; i < collDocListeners.size(); i++ ) {
+							final DocumentListener l = (DocumentListener) collDocListeners.get( i );
+							l.removeUpdate( de );
+						}
+					}
+				}
+				// unregister new
+				final Document newDoc = (Document) pce.getNewValue();
+				if( oldDoc != null ) {
+					for( int i = 0; i < collDocListeners.size(); i++ ) {
+						newDoc.addDocumentListener( (DocumentListener) collDocListeners.get( i ));
+System.out.println( "add " + collDocListeners.get( i ));
+					}
+					if( newDoc instanceof AbstractDocument ) {
+						final AbstractDocument adoc = (AbstractDocument) newDoc;
+						final DocumentEvent de =
+							adoc.new DefaultDocumentEvent( newDoc.getStartPosition().getOffset(),
+							                               newDoc.getLength(),
+							                               DocumentEvent.EventType.INSERT );
+						// simulate clear
+						for( int i = 0; i < collDocListeners.size(); i++ ) {
+							final DocumentListener l = (DocumentListener) collDocListeners.get( i );
+							l.insertUpdate( de );
+						}
+					}
+				}
+			}
+		});
 	}
 
 	public void beginDataUpdate()
@@ -239,49 +293,49 @@ System.out.println( "--2" );
 */
 	}
 	
-	public void setPage( String url )
-	throws IOException
-	{
-		removeAllDocListeners();
-		try {
-			super.setPage( url );
-		}
-		finally {
-			addAllDocListeners();
-		}
-//System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );
-//System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
-	}
+//	public void setPage( String url )
+//	throws IOException
+//	{
+//		removeAllDocListeners();
+//		try {
+//			super.setPage( url );
+//		}
+//		finally {
+//			addAllDocListeners();
+//		}
+////System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );
+////System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
+//	}
+//	
+//	public void setPage( URL url )
+//	throws IOException
+//	{
+//		removeAllDocListeners();
+//		try {
+//			super.setPage( url );
+//		}
+//		finally {
+//			addAllDocListeners();
+//		}
+////System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );		
+////System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
+//	}
 	
-	public void setPage( URL url )
-	throws IOException
-	{
-		removeAllDocListeners();
-		try {
-			super.setPage( url );
-		}
-		finally {
-			addAllDocListeners();
-		}
-//System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );		
-//System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
-	}
-	
-	private void addAllDocListeners()
-	{
-		final Document doc = getDocument();
-		for( int i = 0; i < collDocListeners.size(); i++ ) {
-			doc.addDocumentListener( (DocumentListener) collDocListeners.get( i ));
-		}
-	}
-	
-	private void removeAllDocListeners()
-	{
-		final Document doc = getDocument();
-		for( int i = 0; i < collDocListeners.size(); i++ ) {
-			doc.removeDocumentListener( (DocumentListener) collDocListeners.get( i ));
-		}
-	}
+//	private void addAllDocListeners()
+//	{
+//		final Document doc = getDocument();
+//		for( int i = 0; i < collDocListeners.size(); i++ ) {
+//			doc.addDocumentListener( (DocumentListener) collDocListeners.get( i ));
+//		}
+//	}
+//	
+//	private void removeAllDocListeners()
+//	{
+//		final Document doc = getDocument();
+//		for( int i = 0; i < collDocListeners.size(); i++ ) {
+//			doc.removeDocumentListener( (DocumentListener) collDocListeners.get( i ));
+//		}
+//	}
 
 	public void setString( int insertPos, int replaceLen, String str )
 	throws BadLocationException
