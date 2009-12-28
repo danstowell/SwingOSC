@@ -36,10 +36,18 @@
 //	}
 //}
 
-+ SimpleNumber {
++ Integer {
 	asSwingArg {
 		^[ this ];
 	}
+	oscEncSize { arg server; ^5 }
+}
+
++ Float {
+	asSwingArg {
+		^[ this ];
+	}
+	oscEncSize { arg server;Ê^if( server.useDoubles, 9, 5 )}
 }
 
 + Boolean {
@@ -85,12 +93,16 @@
 			^[ this ];
 		};
 	}
+
+	oscEncSize { arg server; ^(((this.size + 4) & -4) + 1) }
 }
 
 + Symbol {
 	asSwingArg {
 		^this.asString.asSwingArg;
 	}
+	
+	oscEncSize { arg server; ^(((this.asString.size + 4) & -4) + 1) }
 }
 
 + Color {

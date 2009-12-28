@@ -1890,7 +1890,7 @@ JSCListView : JSCControlView {
 		}
 		{ key === \items }
 		{
-			this.prSetItems( value.performUnaryOp( \asString ));
+			this.prSetItems( value ); // value.performUnaryOp( \asString );
 			^nil;
 //		}
 //		{ key === \bounds }
@@ -1902,30 +1902,34 @@ JSCListView : JSCControlView {
 	}
 
 	prSetItems { arg items;
-		var sizes, dataSize, startIdx;
+		var sizes, dataSize, startIdx, itemArgs;
 
-		sizes = items.collect({ arg item; ((item.size + 4) & -4) + 1 });
+		itemArgs	= items.collect({ arg it; it.asString.asSwingArg }); // necessary to escape plain bracket strings!
+//		sizes	= itemArgs.collect({ arg itemArg; ((itemArg.sum( _.size ) + 4) & -4) + 1 });
+		sizes	= itemArgs.collect({ arg itemArg; itemArg.sum( _.oscEncSize )});
 //("sum = "++sizes.sum).postln;
-		if( (sizes.sum + 70) < server.options.oscBufSize, {
-			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ items ++
+		if( (sizes.sum + 55) <= server.options.oscBufSize, {
+//([ '/method', this.id, \setListData, '[', '/array' ] ++ itemArgs.flatten ++ [ ']', this.value ? -1 ]).asRawOSC.size.postln;
+			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ itemArgs.flatten ++
 											[ ']', this.value ? -1 ]);
 		}, {	// need to split it up
 			startIdx = 0;
-			dataSize	= 45;
+			dataSize	= 47; // 45;
 			server.sendMsg( '/method', this.id, \beginDataUpdate );
 			sizes.do({ arg size, idx;
 				if( (dataSize + size) > server.options.oscBufSize, {
 //("sending : "++dataSize).postln;
+//([ '/method', this.id, \addData, '[', '/array', ] ++ itemArgs.copyRange( startIdx, idx - 1 ).flatten ++ [ ']' ]).asRawOSC.size.postln;
 					server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
-						items.copyRange( startIdx, idx - 1 ) ++ [ ']' ]);
-					dataSize	= 45;
+						itemArgs.copyRange( startIdx, idx - 1 ).flatten ++ [ ']' ]);
+					dataSize	= 47 + size; // 45;
 					startIdx	= idx;
 				}, {
 					dataSize = dataSize + size;
 				});
 			});
 			server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
-					items.copyRange( startIdx, items.size - 1 ) ++ [ ']' ]);
+					itemArgs.copyRange( startIdx, items.size - 1 ).flatten ++ [ ']' ]);
 			server.sendMsg( '/method', this.id, \endDataUpdate, this.value ? -1 );
 		});
 	}
