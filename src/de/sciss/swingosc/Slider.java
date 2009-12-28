@@ -54,7 +54,7 @@ import javax.swing.event.ChangeListener;
  *	dragging the slider.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.45, 24-Jan-06
+ *	@version	0.64, 28-Dec-09
  *
  *	@todo	could also extend SliderBase
  */
@@ -176,7 +176,7 @@ implements ChangeListener
 			currentSize = newSize;
 		}
 	}
-		
+
 	public void setValueNoAction( int n )
 	{
 		removeChangeListener( this );

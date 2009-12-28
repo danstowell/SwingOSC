@@ -33,6 +33,10 @@ package de.sciss.swingosc;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -47,13 +51,19 @@ import javax.swing.ComboBoxModel;
  *	and <code>endDataUpdate</code> statements.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.59, 25-Feb-08
+ *	@version	0.64, 28-Dec-09
  */
 public class PopUpView
 extends JComboBox
 {
+	private static final String SIZE_REGULAR = "regular";
+	private static final String SIZE_SMALL	 = "small";
+	private static final String SIZE_MINI	 = "mini";
+	
 	private final List updateBlocks = new ArrayList();
 //	private int numUpdateItems = 0;
+	private boolean isAqua = getUI().getClass().getName().startsWith( "com.apple" );
+	private String currentSize = SIZE_REGULAR; // re aqua lnf
 	
 	public PopUpView()
 	{
@@ -78,7 +88,25 @@ extends JComboBox
 		super( listData );
 		init();
 	}
-	
+
+	protected void updateAquaSize()
+	{
+		final String newSize;
+		final int h = getHeight() - (isFocusable() ? 4 : 0);
+		if( h >= 22 ) {
+			newSize = SIZE_REGULAR;
+		} else if( h >= 19 ) {
+			newSize = SIZE_SMALL;
+		} else { // >= 15
+			newSize = SIZE_MINI;
+		}
+		if( newSize != currentSize ) {
+			putClientProperty( "JComponent.sizeVariant", newSize );
+			repaint();
+			currentSize = newSize;
+		}
+	}
+
 	// sets index without action firing
 	public void setValue( int idx )
 	{
@@ -100,6 +128,20 @@ extends JComboBox
 	{
 // stupid apple vm has drawing glitches if we do this
 //		setBackground( new Color( 0, 0, 0, 0 ));
+		if( isAqua ) {
+			addComponentListener( new ComponentAdapter() {
+				public void componentResized( ComponentEvent e )
+				{
+					updateAquaSize();
+				}
+			});
+			addPropertyChangeListener( "focusable", new PropertyChangeListener() {
+				public void propertyChange( PropertyChangeEvent e )
+				{
+					updateAquaSize();
+				}
+			});
+		}
 	}
 	
 //	public void setBackground( Color c )

@@ -1523,7 +1523,7 @@ JSCPopUpMenu : JSCControlView {
 //		}
 		{ key === \items }
 		{
-			this.prSetItems( value.performUnaryOp( \asString ));
+			this.prSetItems( value ); // .performUnaryOp( \asString );
 			^nil;
 		};
 		^super.prSendProperty( key, value );
@@ -1549,45 +1549,35 @@ JSCPopUpMenu : JSCControlView {
 //	}
 
 	prSetItems { arg items;
-		var sizes, dataSize, startIdx, bndl, val;
+		var sizes, dataSize, startIdx, itemArgs, bndl, selectedIdx;
 
-		sizes	= items.collect({ arg item; ((item.size + 4) & -4) + 1 });
-		val		= this.value;
-		if( val >= items.size, { val = -1 });
-//("sum = "++sizes.sum).postln;
-		if( (sizes.sum + 70) < server.options.oscBufSize, {
-			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ items ++ [ ']', val ]);
+		itemArgs	= items.collect({ arg it; it.asString.asSwingArg }); // necessary to escape plain bracket strings!
+		selectedIdx = this.value;
+		if( selectedIdx >= items.size, { selectedIdx = -1 });
+		sizes	= itemArgs.collect({ arg itemArg; itemArg.sum( _.oscEncSize )});
+		if( (sizes.sum + 55) <= server.options.oscBufSize, {
+			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ itemArgs.flatten ++ [ ']', selectedIdx ]);
 		}, {	// need to split it up
 			startIdx = 0;
-//			dataSize	= 45;
-//			server.sendMsg( '/method', this.id, \beginDataUpdate );
-			dataSize	= 171; // 139 (there seems to be a limit below 64K)
+			dataSize	= 147; // 45;
 			bndl		= Array( 3 );
 			bndl.add([ '/method', this.id, \beginDataUpdate ]);
 			sizes.do({ arg size, idx;
 				if( (dataSize + size) > server.options.oscBufSize, {
-("sending : "++dataSize).postln;
-//					server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
-//						items.copyRange( startIdx, idx - 1 ) ++ [ ']' ]);
 					bndl.add([ '/method', this.id, \addData, '[', '/array', ] ++
-						items.copyRange( startIdx, idx - 1 ) ++ [ ']' ]);
+						itemArgs.copyRange( startIdx, idx - 1 ).flatten ++ [ ']' ]);
 					server.listSendBundle( nil, bndl );
-//					dataSize	= 45;
+					dataSize	= 111 + size; // 45;
 					startIdx	= idx;
 					bndl		= Array( 2 );
-					dataSize	= 135; // 103 (there seems to be a limit below 64K)
 				}, {
 					dataSize = dataSize + size;
 				});
 			});
-//			server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
-//					items.copyRange( startIdx, items.size - 1 ) ++ [ ']' ]);
-//			server.sendMsg( '/method', this.id, \endDataUpdate, this.value );
 			bndl.add([ '/method', this.id, \addData, '[', '/array', ] ++
-					items.copyRange( startIdx, items.size - 1 ) ++ [ ']' ]);
-			bndl.add([ '/method', this.id, \endDataUpdate, val ]);
+					itemArgs.copyRange( startIdx, items.size - 1 ).flatten ++ [ ']' ]);
+			bndl.add([ '/method', this.id, \endDataUpdate, selectedIdx ]);
 			server.listSendBundle( nil, bndl );
-			([ "sending : " ]++ bndl).postcs;
 		});
 	}
 }
@@ -1902,35 +1892,34 @@ JSCListView : JSCControlView {
 	}
 
 	prSetItems { arg items;
-		var sizes, dataSize, startIdx, itemArgs;
+		var sizes, dataSize, startIdx, itemArgs, bndl, selectedIdx;
 
 		itemArgs	= items.collect({ arg it; it.asString.asSwingArg }); // necessary to escape plain bracket strings!
-//		sizes	= itemArgs.collect({ arg itemArg; ((itemArg.sum( _.size ) + 4) & -4) + 1 });
+		selectedIdx = this.value ? -1;
 		sizes	= itemArgs.collect({ arg itemArg; itemArg.sum( _.oscEncSize )});
-//("sum = "++sizes.sum).postln;
 		if( (sizes.sum + 55) <= server.options.oscBufSize, {
-//([ '/method', this.id, \setListData, '[', '/array' ] ++ itemArgs.flatten ++ [ ']', this.value ? -1 ]).asRawOSC.size.postln;
-			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ itemArgs.flatten ++
-											[ ']', this.value ? -1 ]);
+			server.listSendMsg([ '/method', this.id, \setListData, '[', '/array' ] ++ itemArgs.flatten ++ [ ']', selectedIdx ]);
 		}, {	// need to split it up
 			startIdx = 0;
-			dataSize	= 47; // 45;
-			server.sendMsg( '/method', this.id, \beginDataUpdate );
+			dataSize	= 147; // 45;
+			bndl		= Array( 3 );
+			bndl.add([ '/method', this.id, \beginDataUpdate ]);
 			sizes.do({ arg size, idx;
 				if( (dataSize + size) > server.options.oscBufSize, {
-//("sending : "++dataSize).postln;
-//([ '/method', this.id, \addData, '[', '/array', ] ++ itemArgs.copyRange( startIdx, idx - 1 ).flatten ++ [ ']' ]).asRawOSC.size.postln;
-					server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
+					bndl.add([ '/method', this.id, \addData, '[', '/array', ] ++
 						itemArgs.copyRange( startIdx, idx - 1 ).flatten ++ [ ']' ]);
-					dataSize	= 47 + size; // 45;
+					server.listSendBundle( nil, bndl );
+					dataSize	= 111 + size; // 45;
 					startIdx	= idx;
+					bndl		= Array( 2 );
 				}, {
 					dataSize = dataSize + size;
 				});
 			});
-			server.listSendMsg([ '/method', this.id, \addData, '[', '/array', ] ++
+			bndl.add([ '/method', this.id, \addData, '[', '/array', ] ++
 					itemArgs.copyRange( startIdx, items.size - 1 ).flatten ++ [ ']' ]);
-			server.sendMsg( '/method', this.id, \endDataUpdate, this.value ? -1 );
+			bndl.add([ '/method', this.id, \endDataUpdate, selectedIdx ]);
+			server.listSendBundle( nil, bndl );
 		});
 	}
 }
