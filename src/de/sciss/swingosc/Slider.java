@@ -33,7 +33,12 @@ package de.sciss.swingosc;
 import java.awt.AWTEventMulticaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.BoundedRangeModel;
 import javax.swing.InputMap;
 import javax.swing.JSlider;
@@ -57,7 +62,13 @@ public class Slider
 extends JSlider
 implements ChangeListener
 {
+	private static final String SIZE_REGULAR = "regular";
+	private static final String SIZE_SMALL	 = "small";
+	private static final String SIZE_MINI	 = "mini";
+	
 	private	ActionListener al = null;
+	private boolean isAqua = getUI().getClass().getName().startsWith( "com.apple" );
+	private String currentSize = SIZE_REGULAR; // re aqua lnf
 
 	static {
 		// Gtk+ plaf stupidly doubles gadget height by painting
@@ -109,8 +120,62 @@ implements ChangeListener
 		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_UP, 0 ), "none" );
 		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_RIGHT, 0 ), "none" );
 		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_DOWN, 0 ), "none" );
+		if( isAqua ) {
+			addComponentListener( new ComponentAdapter() {
+				public void componentResized( ComponentEvent e )
+				{
+					updateAquaSize();
+				}
+			});
+			addPropertyChangeListener( "focusable", new PropertyChangeListener() {
+				public void propertyChange( PropertyChangeEvent e )
+				{
+					updateAquaSize();
+				}
+			});
+			addPropertyChangeListener( "orientation", new PropertyChangeListener() {
+				public void propertyChange( PropertyChangeEvent e )
+				{
+					updateAquaSize();
+				}
+			});
+		}
 	}
 	
+	protected void updateAquaSize()
+	{
+		final String newSize;
+		switch( getOrientation() ) {
+		case HORIZONTAL:
+			final int h = getHeight() - (isFocusable() ? 5 : 0);
+			if( h > 16 ) {
+				newSize = SIZE_REGULAR;
+			} else if( h > 12 ) {
+				newSize = SIZE_SMALL;
+			} else {
+				newSize = SIZE_MINI;
+			}
+			break;
+		case VERTICAL:
+			final int w = getWidth() - (isFocusable() ? 4 : 0);
+			if( w > 16 ) {
+				newSize = SIZE_REGULAR;
+			} else if( w > 12 ) {
+				newSize = SIZE_SMALL;
+			} else {
+				newSize = SIZE_MINI;
+			}
+			break;
+		default:
+			newSize = currentSize;
+			break;
+		}
+		if( newSize != currentSize ) {
+			putClientProperty( "JComponent.sizeVariant", newSize );
+			repaint();
+			currentSize = newSize;
+		}
+	}
 		
 	public void setValueNoAction( int n )
 	{
