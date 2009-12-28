@@ -31,6 +31,10 @@ package de.sciss.swingosc;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -40,18 +44,30 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.PlainDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.TabSet;
+import javax.swing.text.TabStop;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 
 /**
  *	Extends <code>JTextPane</code> by a buffering
@@ -62,13 +78,22 @@ import javax.swing.text.StyledDocument;
  */
 public class TextView
 extends JTextPane
+implements UndoableEditListener
 {
-	private final StringBuffer updateData = new StringBuffer();
-	protected final List collDocListeners = new ArrayList();
+	private final StringBuffer				updateData			= new StringBuffer();
+	protected final List					collDocListeners	= new ArrayList();
+//	private boolean useUndoMgr = false;
+	protected final UndoManager				undo		 		= new UndoManager();
 
 	public TextView()
 	{
 		super();
+		
+		// this makes the font sizes from CSS appear
+		// correctly. unfortunately has only effect
+		// in java 1.5+
+		putClientProperty( "JEditorPane.w3cLengthUnits", Boolean.TRUE );
+		
 //		addHyperlinkListener( new HyperlinkListener() {
 //			public void hyperlinkUpdate( HyperlinkEvent e )
 //			{
@@ -76,16 +101,67 @@ extends JTextPane
 //			}
 //		});
 		
+		// install undo/redo shortcuts
+		final AbstractAction undoAction = new AbstractAction( "Undo" ) {
+			public void actionPerformed( ActionEvent e )
+			{
+				try {
+					if( undo.canUndo() ) undo.undo();
+				} catch( CannotUndoException e1 ) { /* ignored */ }
+			}
+		};
+		final AbstractAction redoAction = new AbstractAction( "Redo" ) {
+			public void actionPerformed( ActionEvent e )
+			{
+				try {
+					if( undo.canRedo() ) undo.redo();
+				} catch( CannotRedoException e1 ) { /* ignored */ }
+			}
+		};
+		final ActionMap amap = getActionMap();
+		final InputMap imap	 = getInputMap();
+		final int meta		 = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+		amap.put( "undo", undoAction );
+	 	imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_Z, meta ), "undo" );
+		amap.put( "redo", redoAction );
+		final boolean isMacOS = System.getProperty( "os.name" ).indexOf( "Mac OS" ) >= 0;
+		final int redoKey	 = isMacOS ? KeyEvent.VK_Z : KeyEvent.VK_Y;
+		final int redoMod 	 = isMacOS ? meta | InputEvent.SHIFT_MASK : meta;
+	 	imap.put( KeyStroke.getKeyStroke( redoKey, redoMod ), "redo" );
+
+	 	final Document doc = getDocument(); 
+	 	doc.addUndoableEditListener( this );
+	 	setTabs( doc );
+		
+		// this automatically moves document listeners to
+		// a new doc
+		addPropertyChangeListener( "page", new PropertyChangeListener() {
+			public void propertyChange( PropertyChangeEvent pce )
+			{
+//				System.out.println( "PAGE! " + pce.getNewValue() );
+				// massage
+				final Document doc = getDocument();
+				if( doc != null ) setTabs( doc );
+
+				// note: this goes _after_ the tab
+				// configuration, because otherwise
+				// the user could undo that configuration
+				undo.discardAllEdits();
+			}
+		});
+		
 		// this automatically moves document listeners to
 		// a new doc
 		addPropertyChangeListener( "document", new PropertyChangeListener() {
 			public void propertyChange( PropertyChangeEvent pce )
 			{
 //System.out.println( "propertyChange : doc" );
+				undo.discardAllEdits();
 				
 				// unregister old
 				final Document oldDoc = (Document) pce.getOldValue();
 				if( oldDoc != null ) {
+					oldDoc.removeUndoableEditListener( TextView.this );
 					for( int i = 0; i < collDocListeners.size(); i++ ) {
 						oldDoc.removeDocumentListener( (DocumentListener) collDocListeners.get( i ));
 //System.out.println( "remove " + collDocListeners.get( i ));
@@ -103,9 +179,11 @@ extends JTextPane
 						}
 					}
 				}
-				// unregister new
+								
+				// re-register new
 				final Document newDoc = (Document) pce.getNewValue();
-				if( oldDoc != null ) {
+				if( newDoc != null ) {
+					newDoc.addUndoableEditListener( TextView.this );
 					for( int i = 0; i < collDocListeners.size(); i++ ) {
 						newDoc.addDocumentListener( (DocumentListener) collDocListeners.get( i ));
 //System.out.println( "add " + collDocListeners.get( i ));
@@ -126,7 +204,24 @@ extends JTextPane
 			}
 		});
 	}
-
+	
+	protected static void setTabs( Document doc )
+	{
+		if( doc instanceof StyledDocument ) {
+			final StyledDocument sdoc = (StyledDocument) doc;
+			final TabStop[] tabs = new TabStop[ 30 ];
+			for( int i = 0; i < 30; i++ ) {
+				tabs[ i ] = new TabStop( i * 28 );
+			}
+			final SimpleAttributeSet attrs = new SimpleAttributeSet();
+			StyleConstants.setTabSet( attrs, new TabSet( tabs ));
+			sdoc.setParagraphAttributes( 0, sdoc.getLength(), attrs, false );
+			
+		} else if( doc instanceof PlainDocument ) {
+			doc.putProperty( PlainDocument.tabSizeAttribute, new Integer( 4 ));
+		}
+	}
+	
 	public void beginDataUpdate()
 	{
 		updateData.setLength( 0 );
@@ -203,9 +298,9 @@ extends JTextPane
 			} else {
 				mime = "text/plain";
 			}
-			// tricky shit to get RTF to work...
 			try {
-				overrideContentType = mime;
+				overrideContentType = mime;  // tricky shit to get RTF to work...
+//				undo.discardAllEdits();
 				setPage( url );
 			}
 			finally {
@@ -215,127 +310,7 @@ extends JTextPane
 			setPage( url );
 //			mime = ctyp;
 		}
-
-//		final EditorKit kit = JEditorPane.createEditorKitForContentType( mime );
-//System.out.println( "mime is '" + mime + "'; kit is '" + kit + "'" );
-//		if( kit == null ) {
-//			System.out.println( "Cannot create editor kit for type '" + mime + "'" );
-//			return;
-//		}
-//
-//		setEditorKit( kit );
-//		setPage( url );
-		
-/*		
-		try {
-			removeAllDocListeners();
-			setEditorKit( kit );
-			final Document doc = getDocument();
-			// we need to make sure to set the base URL
-			// otherwise relative links (and images) are broken
-System.out.println( "--1" );
-			if( doc instanceof HTMLDocument ) {
-System.out.println( "--2" );
-				final HTMLDocument htmlDoc = (HTMLDocument) doc;
-				final String f = url.getFile();
-				final int i = f.indexOf( '?' );
-				final String baseFile = i < 0 ? f : f.substring(  0, i );
-				final URL baseURL = new URL( url.getProtocol(), url.getHost(),
-				                             url.getPort(), baseFile );
-				htmlDoc.setBase( baseURL );
-			}
-			final InputStream is = con.getInputStream();
-			try {
-				this.read( is, doc );
-			}
-			finally {
-				try { is.close(); } catch( IOException e2 ) {
-				 	// ignore
-				}
-			}
-		}
-		finally {
-			addAllDocListeners();
-		}
-*/
-		
-/*
-		boolean retry  = false;
-		boolean didRetry;
-		String charset = extractCharset( con.getContentType() );
-		try {
-			removeAllDocListeners();
-			setEditorKit( kit );
-			do {
-				didRetry = retry;
-				final InputStream is = con.getInputStream();
-				final InputStreamReader isr = (charset == null) ?
-					new InputStreamReader( is ) :
-					new InputStreamReader( is, charset );
-				try {
-					kit.read( isr, getDocument(), 0 );
-				}
-				catch( ChangedCharSetException e2 ) {
-					charset = extractCharset( e2.getCharSetSpec() );
-					if( charset != null ) {
-						System.out.println( "charset is '" + charset + "'" );
-						retry = true;
-					}
-				}
-			} while( retry && !didRetry );
-		}
-		catch( BadLocationException e1 ) {
-			e1.printStackTrace(); // should not happen with pos == 0
-		}
-		finally {
-			addAllDocListeners();
-		}
-*/
 	}
-	
-//	public void setPage( String url )
-//	throws IOException
-//	{
-//		removeAllDocListeners();
-//		try {
-//			super.setPage( url );
-//		}
-//		finally {
-//			addAllDocListeners();
-//		}
-////System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );
-////System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
-//	}
-//	
-//	public void setPage( URL url )
-//	throws IOException
-//	{
-//		removeAllDocListeners();
-//		try {
-//			super.setPage( url );
-//		}
-//		finally {
-//			addAllDocListeners();
-//		}
-////System.out.println( "now we've got " + this.getHyperlinkListeners().length + " listeners" );		
-////System.out.println( "EditorKit is " + this.getEditorKit().getContentType() );
-//	}
-	
-//	private void addAllDocListeners()
-//	{
-//		final Document doc = getDocument();
-//		for( int i = 0; i < collDocListeners.size(); i++ ) {
-//			doc.addDocumentListener( (DocumentListener) collDocListeners.get( i ));
-//		}
-//	}
-//	
-//	private void removeAllDocListeners()
-//	{
-//		final Document doc = getDocument();
-//		for( int i = 0; i < collDocListeners.size(); i++ ) {
-//			doc.removeDocumentListener( (DocumentListener) collDocListeners.get( i ));
-//		}
-//	}
 
 	public void setString( int insertPos, int replaceLen, String str )
 	throws BadLocationException
@@ -433,5 +408,15 @@ System.out.println( "--2" );
 	{
 		setOpaque( (c != null) && (c.getAlpha() == 0xFF) );
 		super.setBackground( c );
+	}
+
+	// ---- UndoableEditListener interface ----
+	
+	public void undoableEditHappened( UndoableEditEvent e )
+	{
+//		System.out.println( "edit: " + e.getEdit() + "; " + e.getEdit().isSignificant() );
+        undo.addEdit( e.getEdit() );
+//      undoAction.updateUndoState();
+//      redoAction.updateRedoState();
 	}
 }
