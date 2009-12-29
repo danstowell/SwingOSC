@@ -2283,8 +2283,10 @@ JSCTextView : JSCView {
 		^string.copyRange( selStart, selStop - 1 );  // stupid inclusive ending
 	}
 	
-	selectedString_{ arg str;
-		this.setProperty( \selectedString, str );
+	selectedString_ { arg str;
+		this.setString( str, selStart, selStop - selStart );
+		this.select( selStart, str.size );
+//		this.setProperty( \selectedString, str );
 		// XXX
 	}
 	
