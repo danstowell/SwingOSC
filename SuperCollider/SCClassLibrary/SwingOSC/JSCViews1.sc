@@ -28,7 +28,7 @@
  */
 
 /**
- *	@version		0.62, 17-Jul-09
+ *	@version		0.63, 31-Dec-09
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -2312,18 +2312,106 @@ JSCTextView : JSCView {
 		this.setFont( font, -1, 0 );
 	}
 	
-	setFont { arg font, rangestart = -1, rangesize = 0;
-		server.listSendMsg([ '/method', this.id, \setFont, rangestart, rangesize ] ++ font.asSwingArg );
+	setFont { arg font, rangeStart = -1, rangeSize = 0;
+		server.listSendMsg([ '/method', this.id, \setFont, rangeStart, rangeSize ] ++ font.asSwingArg );
 	}
 	
-	setString { arg string, rangestart = 0, rangesize = 0;
+	tabs_ { arg tabs;
+		this.setTabs( tabs, -1, 0 );
+	}
+	
+	/**
+	 *	@param	tabs		array of either positions (SimpleNumber) in pixels
+	 *					or of two-element arrays [Êposition, align ]
+	 *					where align is any of \left, \right, \center, \decimal, \bar
+	 */
+	setTabs { arg tabs, rangeStart = -1, rangeSize = 0;
+		var pos, align, leader;
+		tabs = tabs.collect({ arg t; #pos, align, leader = t.asArray; [ pos,
+			(([ \left, \right, \center, nil, \decimal, \bar ].indexOf( align ) ? 0) << 8 ) |
+			// note: leaders are currently not working!
+			([ \none, \dots, \hyphens, \underline, \thickline, \equals ].indexOf( leader ) ? 0)]}).flatten;
+		server.listSendMsg([ '/method', this.id, \setTabs, rangeStart, rangeSize ] ++ tabs.asSwingArg );
+	}
+	
+ 	leftIndent_ { arg indent;
+		this.setLeftIndent( indent, -1, 0 );
+	}
+	
+	/**
+	 *	@param	indent	paragraph left indentation in pixels
+	 */
+ 	setLeftIndent { arg indent, rangeStart = -1, rangeSize = 0;
+		server.sendMsg( '/method', this.id, \setLeftIndent, rangeStart, rangeSize, indent );
+	}
+	
+ 	rightIndent_ { arg indent;
+		this.setRightIndent( indent, -1, 0 );
+	}
+	
+	/**
+	 *	@param	indent	paragraph right indentation in pixels
+	 */
+ 	setRightIndent { arg indent, rangeStart = -1, rangeSize = 0;
+		server.sendMsg( '/method', this.id, \setRightIndent, rangeStart, rangeSize, indent );
+	}
+	
+ 	spaceAbove_ { arg space;
+		this.setSpaceAbove( space, -1, 0 );
+	}
+	
+	/**
+	 *	@param	space	paragraph's top margin in pixels
+	 */
+ 	setSpaceAbove { arg space, rangeStart = -1, rangeSize = 0;
+		server.sendMsg( '/method', this.id, \setSpaceAbove, rangeStart, rangeSize, space );
+	}
+	
+ 	spaceBelow_ { arg space;
+		this.setSpaceBelow( space, -1, 0 );
+	}
+	
+	/**
+	 *	@param	space	paragraph's bottom margin in pixels
+	 */
+ 	setSpaceBelow { arg space, rangeStart = -1, rangeSize = 0;
+		server.sendMsg( '/method', this.id, \setSpaceBelow, rangeStart, rangeSize, space );
+	}
+	
+ 	lineSpacing_ { arg spacing;
+		this.setLineSpacing( spacing, -1, 0 );
+	}
+	
+	/**
+	 *	@param	spacing	paragraph's line spacing factor
+	 */
+ 	setLineSpacing { arg spacing, rangeStart = -1, rangeSize = 0;
+		server.sendMsg( '/method', this.id, \setLineSpacing, rangeStart, rangeSize, spacing );
+	}
+	
+ 	align_ { arg mode;
+		this.setAlign( mode, -1, 0 );
+	}
+	
+	/**
+	 *	Sets paragraphs' alignment. The naming was chosen to
+	 *	correspond with the align_ method in JSCTextField.
+	 *
+	 *	@param	mode		alignment mode (Symbol), one of \left, \center, \right, and \justified
+	 */
+ 	setAlign { arg mode, rangeStart = -1, rangeSize = 0;
+		server.sendMsg( '/method', this.id, \setAlignment, rangeStart, rangeSize,
+			[ \left, \center, \right, \justified ].indexOf( mode ) ? 0 );
+	}
+	
+	setString { arg string, rangeStart = 0, rangeSize = 0;
 		var bndl, off, len, bndlSize;
 	
 //		string		= string.asString;
 		
 		// server.options.oscBufSize - sizeof([ '/method', 1234, \setString, 0, 1, "" ])
 		if( string.size <= (server.options.oscBufSize - 44), {
-			server.sendMsg( '/method', this.id, \setString, rangestart, rangesize, string );
+			server.sendMsg( '/method', this.id, \setString, rangeStart, rangeSize, string );
 		}, {
 			bndl	= Array( 3 );
 			off	= 0;
@@ -2334,14 +2422,15 @@ JSCTextView : JSCView {
 			bndl.add([ '/method', this.id, \beginDataUpdate ]);
 			while({ off < string.size }, {
 				len = min( string.size - off, server.options.oscBufSize - bndlSize );
-				bndl.add([ '/method', this.id, \addData, string.copyRange( off, off + len - 1 )]);				off = off + len;
+				bndl.add([ '/method', this.id, \addData, string.copyRange( off, off + len - 1 )]);
+				off = off + len;
 				if( off < string.size, {
 					server.listSendBundle( nil, bndl );
 					bndl = Array( 2 );
 					bndlSize = 100; // wie oben, jedoch ohne \beginDataUpdate
 				});
 			});
-			bndl.add([ '/method', this.id, \endDataUpdate, rangestart, rangesize ]);
+			bndl.add([ '/method', this.id, \endDataUpdate, rangeStart, rangeSize ]);
 			server.listSendBundle( nil, bndl );
 		});
 	}

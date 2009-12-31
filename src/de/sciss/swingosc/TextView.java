@@ -59,7 +59,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.PlainDocument;
+//import javax.swing.text.PlainDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -74,7 +74,7 @@ import javax.swing.undo.UndoManager;
  *	mechanism for data updates and utility methods for styling.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.63, 21-Dec-09
+ *	@version	0.63, 31-Dec-09
  */
 public class TextView
 extends JTextPane
@@ -84,6 +84,7 @@ implements UndoableEditListener
 	protected final List					collDocListeners	= new ArrayList();
 //	private boolean useUndoMgr = false;
 	protected final UndoManager				undo		 		= new UndoManager();
+	private TabStop[]						tabs;
 
 	public TextView()
 	{
@@ -131,7 +132,13 @@ implements UndoableEditListener
 
 	 	final Document doc = getDocument(); 
 	 	doc.addUndoableEditListener( this );
-	 	setTabs( doc );
+	 	
+	 	// create default tabs
+		tabs = new TabStop[ 30 ];
+		for( int i = 0; i < 30; i++ ) {
+			tabs[ i ] = new TabStop( i * 28 );
+		}
+	 	setTabs( doc, -1, 0 );
 		
 		// this automatically moves document listeners to
 		// a new doc
@@ -141,7 +148,7 @@ implements UndoableEditListener
 //				System.out.println( "PAGE! " + pce.getNewValue() );
 				// massage
 				final Document doc = getDocument();
-				if( doc != null ) setTabs( doc );
+				if( doc != null ) setTabs( doc, -1, 0 );
 
 				// note: this goes _after_ the tab
 				// configuration, because otherwise
@@ -205,21 +212,46 @@ implements UndoableEditListener
 		});
 	}
 	
-	protected static void setTabs( Document doc )
+	// apply tabs to (new) document
+	protected void setTabs( Document doc, int rangeStart, int len )
 	{
 		if( doc instanceof StyledDocument ) {
 			final StyledDocument sdoc = (StyledDocument) doc;
-			final TabStop[] tabs = new TabStop[ 30 ];
-			for( int i = 0; i < 30; i++ ) {
-				tabs[ i ] = new TabStop( i * 28 );
-			}
 			final SimpleAttributeSet attrs = new SimpleAttributeSet();
 			StyleConstants.setTabSet( attrs, new TabSet( tabs ));
-			sdoc.setParagraphAttributes( 0, sdoc.getLength(), attrs, false );
+			if( rangeStart == -1 ) {
+				rangeStart	= 0;
+				len			= sdoc.getLength();
+			}
+			sdoc.setParagraphAttributes( rangeStart, len, attrs, false );
 			
-		} else if( doc instanceof PlainDocument ) {
-			doc.putProperty( PlainDocument.tabSizeAttribute, new Integer( 4 ));
+//		} else if( doc instanceof PlainDocument ) {
+//			doc.putProperty( PlainDocument.tabSizeAttribute, new Integer( 4 ));
 		}
+	}
+	
+	// for easy swingOSC access
+	public void setTabs( int rangeStart, int len, Object[] args )
+	{
+		final int		numTabs	= args.length >> 1;
+		final TabStop[] t	= new TabStop[ numTabs ];
+		for( int i = 0, j = 0; i < numTabs; i++ ) {
+//			final float pos		= ((Number) args[ j++ ]).floatValue();
+			// Warning: there is a problem with certain float values,
+			// hence trunc them to ints!
+			final float pos		= ((Number) args[ j++ ]).intValue();
+			final int   mode	= ((Number) args[ j++ ]).intValue();
+			final int   align	= (mode >> 8) & 0xFF;
+			final int   leader	= mode & 0xFF;
+			t[ i ] = new TabStop( pos, align, leader );
+		}
+		setTabs( rangeStart, len, t );
+	}
+	
+	public void setTabs( int rangeStart, int len, TabStop[] tabs )
+	{
+		this.tabs = tabs;
+		setTabs( getDocument(), rangeStart, len );
 	}
 	
 	public void beginDataUpdate()
@@ -342,7 +374,7 @@ implements UndoableEditListener
 		StyleConstants.setFontSize( as, f.getSize() );
 		StyleConstants.setBold( as, f.isBold() );
 		StyleConstants.setItalic( as, f.isItalic() );
-		applyAttr( rangeStart, len, as );
+		applyCharacterAttr( rangeStart, len, as );
 	}
 	
 	public void setForeground( int rangeStart, int len, Color c )
@@ -357,7 +389,49 @@ implements UndoableEditListener
 		}
 		final MutableAttributeSet as = new SimpleAttributeSet();
 		StyleConstants.setForeground( as, c );
-		applyAttr( rangeStart, len, as );
+		applyCharacterAttr( rangeStart, len, as );
+	}
+	
+	public void setLeftIndent( int rangeStart, int len, float indent )
+	{
+		final MutableAttributeSet as = new SimpleAttributeSet();
+		StyleConstants.setLeftIndent( as, indent );
+		applyParagraphAttr( rangeStart, len, as );
+	}
+
+	public void setRightIndent( int rangeStart, int len, float indent )
+	{
+		final MutableAttributeSet as = new SimpleAttributeSet();
+		StyleConstants.setRightIndent( as, indent );
+		applyParagraphAttr( rangeStart, len, as );
+	}
+
+	public void setSpaceAbove( int rangeStart, int len, float space )
+	{
+		final MutableAttributeSet as = new SimpleAttributeSet();
+		StyleConstants.setSpaceAbove( as, space );
+		applyParagraphAttr( rangeStart, len, as );
+	}
+
+	public void setSpaceBelow( int rangeStart, int len, float space )
+	{
+		final MutableAttributeSet as = new SimpleAttributeSet();
+		StyleConstants.setSpaceBelow( as, space );
+		applyParagraphAttr( rangeStart, len, as );
+	}
+
+	public void setLineSpacing( int rangeStart, int len, float spacing )
+	{
+		final MutableAttributeSet as = new SimpleAttributeSet();
+		StyleConstants.setLineSpacing( as, spacing );
+		applyParagraphAttr( rangeStart, len, as );
+	}
+	
+	public void setAlignment( int rangeStart, int len, int align )
+	{
+		final MutableAttributeSet as = new SimpleAttributeSet();
+		StyleConstants.setAlignment( as, align );
+		applyParagraphAttr( rangeStart, len, as );
 	}
 	
 	// this is here to make DocumentResponder less complex
@@ -383,7 +457,7 @@ implements UndoableEditListener
 		getDocument().removeDocumentListener( l );
 	}
 
-	private void applyAttr( int rangeStart, int len, AttributeSet as )
+	private void applyCharacterAttr( int rangeStart, int len, AttributeSet as )
 	{
 		final StyledDocument doc = getStyledDocument();
 		if( rangeStart == -1 ) {
@@ -393,6 +467,16 @@ implements UndoableEditListener
 		doc.setCharacterAttributes( rangeStart, len, as, false );
 	}
 
+	private void applyParagraphAttr( int rangeStart, int len, AttributeSet as )
+	{
+		final StyledDocument doc = getStyledDocument();
+		if( rangeStart == -1 ) {
+			rangeStart	= 0;
+			len			= doc.getLength();
+		}
+		doc.setParagraphAttributes( rangeStart, len, as, false );
+	}
+	
 	public void paintComponent( Graphics g )
 	{
 		final Color colrBg	= getBackground();

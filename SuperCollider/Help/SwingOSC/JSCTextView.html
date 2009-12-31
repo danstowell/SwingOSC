@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>This class is meant as an emulation of SCTextView. last mod: 17-jul-09 sciss
+<p>This class is meant as an emulation of SCTextView. last mod: 31-dec-09 sciss
 <br>Also refer to <A HREF="JSCView.html">JSCView</A> for different behaviour affecting all widgets
 </p>
 <table>
@@ -67,7 +67,8 @@ t.setString( <span class="st">&quot;lade&quot;</span>, 7, 0 );  <span class="cm"
 t.setString( <span class="st">&quot;Klang&quot;</span>, 0, 6 ); <span class="cm">// at position 0 replace 6 characters with the given string</span>
 </pre>
 <p>&nbsp;</p>
-<P>The other properties are <code>font</code> and <code>stringColor</code>:</P>
+<P>The other properties are <code>font</code>, <code>stringColor</code>, <code>leftIndent</code>, <code>rightIndent</code>, <code>spaceAbove</code>, <code>spaceBelow</code>, <code>lineSpacing</code>, and <code>align</code>. Here are <code>font</code> and <code>stringColor</code>:</P>
+<h3>Character attributes</h3>
 <pre>
 
 t.font = <span class="cl">JFont</span>( <span class="st">"Times"</span>, 14 );
@@ -80,6 +81,50 @@ t.caretColor = <span class="cl">Color</span>.green;   <span class="cm">// cursor
 t.caretColor = <span class="cl">Color</span>.black;
 </pre>
 <p>&nbsp;</p>
+<h3>Paragraph attributes</h3>
+<p>The indentation of paragraphs is controlled through the properties <code>leftIndent</code>, <code>rightIndent</code>, <code>spaceAbove</code>, and <code>spaceBelow</code>, where each value is specified in pixels:
+</p>
+<pre>
+t.string      = <span class="st">""</span>.catList(({{ <span class="st">"riverrun, past Eve and Adams"</span>.scramble } ! 8 ++ <span class="st">"\n"</span> } ! 3).flatten );
+t.leftIndent  = 30;             <span class="cm">// all paragraphs</span>
+t.rightIndent = 30;
+t.setLeftIndent( 60, 550, 1 );  <span class="cm">// just the last paragraph</span>
+t.setRightIndent( 0, 550, 1 );  <span class="cm">// just the last paragraph</span>
+t.spaceAbove  = 15;
+t.spaceBelow  = 15;
+</pre>
+<P>&nbsp;</P>
+<P>Paragraph line spacing and alignment:</P>
+<pre>
+t.setLineSpacing( 1.0, 0, 1 );    <span class="cm">// first paragraph: +100% (double-spacing)</span>
+t.setLineSpacing( -0.5, 225, 1 ); <span class="cm">// second paragraph: -50% (half-spacing)</span>
+t.lineSpacing = 0.0;              <span class="cm">// all normal (+- 0 %)</span>
+t.align = <span class="sy">\right;</span>
+t.setAlign( <span class="sy">\center</span>, 0, 1 );      <span class="cm">// just the first paragraph</span>
+t.setAlign( <span class="sy">\justified</span>, 225, 1 ); <span class="cm">// just the second paragraph</span>
+t.setAlign( <span class="sy">\left</span>, 550, 1 );      <span class="cm">// just the third paragraph</span>
+</pre>
+<p>&nbsp;</p>
+<h3>Custom tabulator settings</h3>
+<P>First, let's start with a basic text:</>
+<pre>
+t.string = <span class="st">&quot;\talpha\n\t\tbeta\n\t\t\tgamma\n\t\t\t\tdelta&quot;</span>;
+t.leftIndent = 0; t.align = <span class="sy">\left</span>;  <span class="cm">// (reset previously made indentation)</span>
+</pre>
+<P>&nbsp;</P>
+<P>Now let's customize the tabs:</P>
+<PRE>
+<span class="cm">// either just positions in pixels</span>
+t.tabs   = [ 30, 60, 90, 120 ];
+t.tabs   = <span class="cl">Array</span>.geom( 5, 20, 1.5 ).integrate;
+<span class="cm">// ...or combos of positions with alignment</span>
+t.tabs   = [[ 30, <span class="sy">\center</span> ], [ 60, <span class="sy">\center</span> ], [ 90, <span class="sy">\center</span> ], [ 120, <span class="sy">\center</span> ]];
+t.tabs   = [[ 30, <span class="sy">\right</span> ], [ 60, <span class="sy">\right</span> ], [ 90, <span class="sy">\right</span> ], [ 120, <span class="sy">\right</span> ]];
+
+t.string = <span class="st">&quot;\t1.0\n\t2.3456\n\t-133.3&quot;</span>
+t.tabs   = [[ 40, <span class="sy">\decimal</span> ]];</pre>
+</pre>
+<P>&nbsp;</P>
 <h3>Disabling the editor</h3>
 <P>When the text view is a display-only element and you don't want the content to be editable, you can call</P>
 <pre>
