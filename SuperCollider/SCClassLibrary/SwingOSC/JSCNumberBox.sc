@@ -176,6 +176,7 @@ JSCNumberBox : JSCTextEditBase {
 		acResp = OSCpathResponder( server.addr, [ '/number', this.id ], { arg time, resp, msg;
 			// don't call valueAction coz we'd create a loop
 			object = msg[4];
+msg.postln;
 			properties.put( \string, msg[4].asString );
 			{ this.doAction; }.defer;
 		}).add;
