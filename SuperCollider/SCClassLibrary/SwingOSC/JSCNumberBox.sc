@@ -173,7 +173,7 @@ JSCNumberBox : JSCTextEditBase {
 	prInitView {
 		properties.put( \minDecimals, 0 );
 		properties.put( \maxDecimals, 8 );
-		acResp = OSCpathResponder( server.addr, [ '/action', this.id ], { arg time, resp, msg;
+		acResp = OSCpathResponder( server.addr, [ '/number', this.id ], { arg time, resp, msg;
 			// don't call valueAction coz we'd create a loop
 			object = msg[4];
 			properties.put( \string, msg[4].asString );
@@ -181,7 +181,7 @@ JSCNumberBox : JSCTextEditBase {
 		}).add;
 		txResp = OSCpathResponder( server.addr, [ '/doc', this.id ], { arg time, resp, msg;
 			var state, str;
-			
+
 			state = msg[2];
 	
 			case
@@ -205,7 +205,7 @@ JSCNumberBox : JSCTextEditBase {
 				\space, '[', '/new', "de.sciss.util.NumberSpace", inf, -inf, 0.0, 0, 8, ']' ],
 			[ '/method', parent.id, \add, '[', "/ref", this.id, ']' ],
 			[ '/local', "ac" ++ this.id,
-				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, \number, ']',
+				'[', '/new', "de.sciss.swingosc.NumberResponder", this.id, \number, ']',
 				"tx" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.DocumentResponder", this.id, ']' ]
 		]);
