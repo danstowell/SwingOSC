@@ -1611,7 +1611,6 @@ JSCStaticTextBase : JSCView {
 
 	object_ { arg obj;
 		object = obj;
-[ "object", object ].postln;
 		if( setBoth, { this.string = object.asString( 80 )});
 	}
 	
