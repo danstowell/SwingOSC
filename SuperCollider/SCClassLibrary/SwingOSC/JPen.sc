@@ -2,7 +2,7 @@
  *	JPen
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2010 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@
  *	it can be added to a JLabel or the special Frame
  *	class for example.
  *
- *	@version		0.62, 14-Jul-09
+ *	@version		0.64, 28-Jan-10
  *	@author		Hanns Holger Rutz
  *
  *	@todo		check if String.bounds is cross platform or not
@@ -346,8 +346,7 @@ JPen {
 		cmds 		= nil;
 //		currentView	= view;
 		func.value( view );
-		bndl			= List.new;
-		bndl.add([ '/method', penID, \beginRec ]);
+		bndl			= [[ '/method', penID, \beginRec ]];
 		off			= 0;
 		len			= 92;	// [ #bundle, [ '/method', int, \beginRec ] (48)
 						// + [ '/method', int, \add, '[', '/array', ']' ]] (44)
@@ -364,10 +363,10 @@ JPen {
 			cmds[ stop ].do({ arg cmd; nextLen = nextLen + if( cmd.isFloat, floatSize, { (cmd.size + 4) & -4 })});
 			if( len > maxBndlSize, {
 // WARNING: COPYRANGE USES AN INCLUSIVE STOP INDEX!!!!
-				bndl.add([ '/method', penID, \add ] ++ cmds.copyRange( off, stop - 1 ).flatten.asSwingArg );
+				bndl = bndl.add([ '/method', penID, \add ] ++ cmds.copyRange( off, stop - 1 ).flatten.asSwingArg );
 //("FLUSHING LEN = "++len).postln;
 				server.listSendBundle( nil, bndl );
-				bndl = List.new;
+				bndl = nil;
 				len	= 60;	// [ #bundle, [ '/method', int, \add, '[', '/array', ']' ]] (60)
 				off	= stop;
 			});
@@ -375,12 +374,12 @@ JPen {
 			stop = stop + 1;
 		});
 		if( off < stop, {
-			bndl.add([ '/method', penID, \add ] ++ cmds.copyRange( off, stop - 1 ).flatten.asSwingArg );
+			bndl = bndl.add([ '/method', penID, \add ] ++ cmds.copyRange( off, stop - 1 ).flatten.asSwingArg );
 		});
 		// these are 56 additional bytes:
-		bndl.add([ '/method', penID, \stopRec ]);
+		bndl = bndl.add([ '/method', penID, \stopRec ]);
 //		[ "cmpID", cmpID ].postln;
-		if( cmpID.notNil, { bndl.add([ '/method', cmpID, \repaint ])});
+		if( cmpID.notNil, { bndl = bndl.add([ '/method', cmpID, \repaint ])});
 
 //("FLUSHING FINAL LEN = "++(len+56)).postln;
 		server.listSendBundle( nil, bndl );

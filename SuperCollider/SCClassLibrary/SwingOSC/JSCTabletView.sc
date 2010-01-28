@@ -74,7 +74,7 @@ JSCTabletView : JSCAbstractUserView {
 		bndl				= List.new;
 		bndl.add([ '/local', this.id, '[', '/new', "de.sciss.swingosc.TabletView", ']' ]);
 		this.prCreateTabletResponder( bndl );
-		^this.prSCViewNew( bndl );
+		^this.prSCViewNew( bndl.asArray );
 	}
 
 	prCreateMouseResponder {} // overridden to not create one
@@ -84,7 +84,7 @@ JSCTabletView : JSCAbstractUserView {
 	
 		if( tabletResp.notNil, {
 			"JSCTabletView.prCreateTabletResponder : already created!".warn;
-			^nil;
+			^bndl;
 		});
 //		clpseMouseMove	= Collapse({ arg x, y, modifiers; this.mouseOver( x, y, modifiers )});
 //		clpseMouseDrag	= Collapse({ arg x, y, modifiers; this.mouseMove( x, y, modifiers )});
@@ -158,9 +158,10 @@ JSCTabletView : JSCAbstractUserView {
 		tabletResp.add;
 		msg = [ '/local', "tab" ++ this.id, '[', '/new', "de.sciss.swingosc.TabletResponder", this.id, parent.prGetWindow.id, ']' ];
 		if( bndl.notNil, {
-			bndl.add( msg );
+			bndl = bndl.add( msg );
 		}, {
 			server.sendBundle( nil, msg );
 		});
+		^bndl;
 	}
 }

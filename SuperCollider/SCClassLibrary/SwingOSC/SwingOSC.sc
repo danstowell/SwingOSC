@@ -2,7 +2,7 @@
  *	SwingOSC
  *	(SwingOSC classes for SuperCollider)
  *
- *  Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *  Copyright (c) 2005-2010 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.63, 21-Dec-09
+ *	@version		0.63, 28-Jan-10
  */
 SwingOptions
 {

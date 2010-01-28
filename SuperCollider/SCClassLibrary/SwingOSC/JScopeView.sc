@@ -2,7 +2,7 @@
  *	JScopeView
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz, Marije Baalman. All rights reserved.
+ *	Copyright (c) 2005-2010 Hanns Holger Rutz, Marije Baalman. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License

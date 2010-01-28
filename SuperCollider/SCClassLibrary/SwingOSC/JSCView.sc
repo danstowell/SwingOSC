@@ -2,7 +2,7 @@
  *	JSCView
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2010 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@
 /**
  *	For details, see JSCView.html and DeveloperInfo.html
  *
- *	@version		0.61, 18-Apr-09
+ *	@version		0.64, 28-Jan-10
  *	@author		Hanns Holger Rutz
  *
  *	@todo		should invoke custom dispose() methods on java gadgets
@@ -142,7 +142,7 @@ JSCView {  // abstract class
 			if( parent.notNil, { parent.prVisibleChild( pre, post, this )});
 			pre.add([ '/set', this.prContainerID, \visible, visible ]);
 			pre.addAll( post );
-			server.listSendBundle( nil, pre );
+			server.listSendBundle( nil, pre.asArray );
 		});
 	}
 	
@@ -269,8 +269,7 @@ JSCView {  // abstract class
 	getParents {
 		var parents, view;
 		view    = this;
-		parents = List.new;
-		while({ (view = view.parent).notNil }, { parents.add( view )});
+		while({ (view = view.parent).notNil }, { parents = parents.add( view )});
 		^parents;
 	}
 		
@@ -387,7 +386,7 @@ JSCView {  // abstract class
 			this.prCreateMouseResponder( bndl );
 		});
 		bndl.addAll( postMsg );
-		server.listSendBundle( nil, bndl );
+		server.listSendBundle( nil, bndl.asArray );
 	}
 	
 	prNeedsMouseHandler { ^false }

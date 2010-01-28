@@ -2,7 +2,7 @@
  *	JSCViews collection 1
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2009 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2010 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
  */
 
 /**
- *	@version		0.63, 31-Dec-09
+ *	@version		0.64, 28-Jan-10
  *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
@@ -374,7 +374,7 @@ JSCTopView : JSCContainerView {	// NOT subclass of JSCCompositeView
 		this.prCreateKeyResponder( bndl );
 		this.prCreateCompResponder( bndl );
 		bndl.addAll( postMsg );
-		server.listSendBundle( nil, bndl );
+		server.listSendBundle( nil, bndl.asArray );
 	}
 
 	prInitView { ^this.prSCViewNew }
@@ -1386,16 +1386,11 @@ JSCButton : JSCControlView {
 		}
 		{ key === \states }
 		{
-			bndl	= List.new;
-			bndl.add([ '/method', this.id, \removeAllItems ]);
+			bndl = [[ '/method', this.id, \removeAllItems ]];
 			value.do({ arg state;
-				msg = List.newUsing([ '/method', this.id, \addItem ]);
-				msg.addAll( state[0].asSwingArg );
-				msg.addAll( state[1].asSwingArg );
-				msg.addAll( state[2].asSwingArg );
-				bndl.add( msg.asArray );
+				bndl = bndl.add([ '/method', this.id, \addItem ] ++ state[0].asSwingArg ++ state[1].asSwingArg ++
+					state[2].asSwingArg );
 			});
-//("Sending '"++bndl++"'").postln;
 			server.listSendBundle( nil, bndl );
 			^nil;
 		};

@@ -2,7 +2,7 @@
  *	JavaObject
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2010 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@
  *	we exploit this behaviour to create an easy wrapper
  *	class for Java object control in SwingOSC.
  *
- *	@version	0.61, 12-Aug-08
+ *	@version	0.64, 28-Jan-10
  *	@author	Hanns Holger Rutz
  */
 JavaObject {
@@ -121,9 +121,7 @@ JavaObject {
 		allObjects	= allObjects.add( this );	// array grows
 		id			= server.nextNodeID;
 		
-		msg			= List[ '/local', id, '[', '/new', className ];
-		this.prAddArgs( msg, args );
-		msg.add( ']' );
+		msg			= this.prAddArgs([ '/local', id, '[', '/new', className ], args ).add( ']' );
 		
 //		server.sendBundle( nil, [ '/local', id, '[', '/new', className ] ++ args ++ [ ']' ]);
 //msg.postln;
@@ -152,9 +150,7 @@ JavaObject {
 		server		= javaObject.server;
 		allObjects	= allObjects.add( this );	// array grows
 		id			= server.nextNodeID;
-		msg			= List[ '/local', id, '[' ];
-		javaObject.prMethodCall( msg, selector, args );
-		msg.add( ']' );
+		msg			= javaObject.prMethodCall([ '/local', id, '[' ], selector, args ).add( ']' );
 		server.listSendMsg( msg );
 	}
 	
@@ -190,34 +186,28 @@ JavaObject {
 		timeout		= nextTimeOut;
 		nextTimeOut	= 4.0;	// reset
 		id			= UniqueID.next;
-		msg			= List[ '/query', id, '[' ];
-		this.prMethodCall( msg, selector, args );
-		msg.add( ']' );
+		msg			= this.prMethodCall([ '/query', id, '[' ], selector, args ).add( ']' );
 		msg			= server.sendMsgSync( msg, [ '/info', id ], nil, timeout );
 		^if( msg.notNil, { msg[ 2 ]}, nil );
 	}
 	
-	prAddArgs { arg list, args;
+	prAddArgs { arg msg, args;
 		args.do({ arg x;
 			if( x.respondsTo( \id ), {
-				list.addAll([ '[', '/ref', x.id, ']' ]);
+				msg = msg ++ [ '[', '/ref', x.id, ']' ];
 			}, {
-				list.addAll( x.asSwingArg );
+				msg = msg ++ x.asSwingArg;
 			});
 		});
+		^msg
 	}
 	
 	asSwingArg {
 		^[ '[', '/ref', this.id, ']' ];
 	}
 
-	prMethodCall { arg list, selector, args;
-		list = list ?? { List.new; };
-		list.add( '/method' );
-		list.add( id );
-		list.add( selector );
-		this.prAddArgs( list, args );
-		^list;
+	prMethodCall { arg msg, selector, args;
+		^this.prAddArgs( msg ++ [ '/method', id, selector ], args );
 	}
 	
 	// ---- now override a couple of methods in Object that ----

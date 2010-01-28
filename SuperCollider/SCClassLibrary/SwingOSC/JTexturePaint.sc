@@ -1,5 +1,5 @@
 /**
- *	@version	0.60, 25-Feb-08
+ *	@version	0.60, 25-Feb-10
  *	@author	Hanns Holger Rutz
  */
 // THIS IS EXPERIMENTAL AND SUBJECT TO CHANGES!!!

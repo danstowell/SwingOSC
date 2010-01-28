@@ -2,7 +2,7 @@
  *	JSCWindow
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2010 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@
  *	- method id returns the node ID
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 12-Jan-09
+ *	@version		0.64, 28-Jan-10
  */
 JSCWindow : Object
 {
@@ -196,7 +196,7 @@ JSCWindow : Object
 			view.prVisibilityChange( pre, post );
 			pre.add([ '/set', this.id, \visible, visible ]);
 			pre.addAll( post );
-			server.listSendBundle( nil, pre );
+			server.listSendBundle( nil, pre.asArray );
 		});
 	}	
 

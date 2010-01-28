@@ -2,7 +2,7 @@
  *	JSCSoundFileView
  *	(SwingOSC classes for SuperCollider)
  *
- *	Copyright (c) 2005-2008 Hanns Holger Rutz. All rights reserved.
+ *	Copyright (c) 2005-2010 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
  *	Replacement for / enhancement of the (Cocoa) SCSoundFileView class by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 17-Oct-08
+ *	@version		0.64, 28-Jan-10
  */
 JSCSoundFileView : JSCView { // in SwingOSC not a subclass of JSCScope
 	classvar cacheServers;	// IdentitySet whose elements are SwingOSC instances
@@ -690,10 +690,9 @@ if( val == 2, { "JSCSoundFileView.style_ : lissajou not yet implemented".error; 
 		asyncResp.add;
 		
 		asyncID = "as" ++ server.nextNodeID;
-		bndl = List.new;
-		bndl.add([ '/method', this.id, \cancelAsyncRead ]);
-		bndl.add([ '/local', asyncID, '[', '/new', "de.sciss.swingosc.AsyncResponder", this.id, \readProgress, ']' ]);
-		bndl.add([ '/method', this.id, \readSndFile, sf.path, startFrame, numFrames, deleteWhenDisposed ]);
+		bndl = [[ '/method', this.id, \cancelAsyncRead ],
+		        [ '/local', asyncID, '[', '/new', "de.sciss.swingosc.AsyncResponder", this.id, \readProgress, ']' ],
+		        [ '/method', this.id, \readSndFile, sf.path, startFrame, numFrames, deleteWhenDisposed ]];
 
 		condition.test = false;
 		cancel = fork {
