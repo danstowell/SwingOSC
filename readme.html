@@ -88,7 +88,7 @@ TD.when {
 </HEAD>
 <BODY>
 <h1>
-SwingOSC <small>-- version 0.6 --</small>
+SwingOSC <small>-- version 0.64 --</small>
 </h1>
 <h3>statement</h3>
 <TABLE><TR><TD VALIGN="top"><IMG SRC="application.png" ALT=""></TD><TD><p>
@@ -195,13 +195,12 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <LI>use TCP mode (default)</LI>
 <LI>or put your GUI buidling process in a <code>Routine</code> and place short <code>wait</code> statements in the body until no more message dropping occurs.</LI></UL></LI>
 </UL>
-<h3>to-do list</h3>
-<UL>
-<LI>password protection in TCP mode?</LI>
-<LI>text file or similar with a restriction list of allowed classes to instantiate?</LI>
-<LI>add some nice stuff like tree view ...</LI>
-</UL>
 <h3>change history</h3>
+<h4>v0.64 (feb 2010 - SVN rev. 235)</h4>
+<UL>
+<LI>SC classes: JSCTextView (typo in caret_, support for RTF, various fixes, htmlString_, better tab size, undo/redo, selectedString_ fix, paragraph attributes), JSCSlider (adaptive knob size on OS X look-and-feel), JSCListView (fix for big bundles), JSCPopUpMenu (fix for big bundles), JSCNumberBox (helpfile)</LI>
+<LI>Ensuring bundles are only made up of Arrays not Lists, fixing a problem with Linux and Windows</LI>
+</UL>
 <h4>v0.63 (oct 2009 - SVN rev. 218)</h4>
 <UL>
 <LI>SC classes: JSCPeakMeter (added setRefreshRate, more CPU efficient peak metering), JSCScrollView (faster mouse wheel scrolling on osx and windows), JSCMovieView (mouse and keyboard events now enabled)</LI>
