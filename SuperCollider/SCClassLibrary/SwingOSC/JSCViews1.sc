@@ -3508,7 +3508,8 @@ JSCEnvelopeView : JSCAbstractMultiSliderView {
 JSCTextEditBase : JSCStaticTextBase {
 
 	var <>keyString;
-	var	<>typingColor, <>normalColor;
+	var <>typingColor, <>normalColor;
+	var origBd;
 
 	// ----------------- public instance methods -----------------
 
@@ -3539,6 +3540,27 @@ JSCTextEditBase : JSCStaticTextBase {
 		this.setProperty( \boxColor, color );
 	}
 
+	setNormalBorder {
+		if( origBd.notNil, {
+			server.sendBundle( nil, [ '/set', this.id, \border, '[', '/ref', origBd, ']' ], [ '/free', origBd ]);
+			origBd = nil;
+		});
+	}
+
+	setLineBorder { arg color = Color.black, thickness = 1;
+		var msg;
+		msg = [ '/set', this.id, \border, '[', '/method', 'javax.swing.BorderFactory', \createLineBorder ] ++
+			color.asSwingArg ++ [ thickness, ']' ];
+		if( origBd.isNil, {
+			origBd = "bd" ++ this.id;
+			server.sendBundle( nil, [ '/local', origBd, '[', '/method', this.id, \getBorder, ']' ], msg );
+		}, {
+			server.listSendMsg( msg );
+		});
+	}
+	
+	borderless_ { arg bool; ^if( bool, { this.setLineBorder( thickness: 0 )}, {Êthis.setNormalBorder })}
+	
 	// ----------------- private instance methods -----------------
 
 	properties {
@@ -3569,5 +3591,12 @@ JSCTextEditBase : JSCStaticTextBase {
 		^super.prSendProperty( key, value );
 	}
 
+	prClose { arg preMsg, postMsg;
+		if( origBd.notNil, {
+			preMsg = preMsg.add([ '/free', origBd ]);
+		});
+		^super.prClose( preMsg, postMsg );
+	}
+	
 	prNeedsTransferHandler { ^true }
 }
