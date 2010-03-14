@@ -75,7 +75,7 @@ JPeakMeterSettings {
 		if( value != refreshRate, {
 			refreshRate	= value;
 			manager		= JPeakMeterManager.get( swing, scsynth );
-			if( manager.notNil, {Êmanager.refreshRate = refreshRate });
+			if( manager.notNil, { manager.refreshRate = refreshRate });
 		});
 	}
 }
@@ -127,9 +127,9 @@ JPeakMeterManager {
 	// ----------------- private instance methods -----------------
 
 	prInit { arg argJSCSynth;
-		fBooted		= {Êthis.prBooted };
-		fPeriod		= {Êthis.prPeriod };
-		fQuit		= {Êthis.prQuit };
+		fBooted		= { this.prBooted };
+		fPeriod		= { this.prPeriod };
+		fQuit		= { this.prQuit };
 		ServerTree.add( fBooted );
 		CmdPeriod.add( fPeriod );
 		ServerQuit.add( fQuit );
@@ -249,7 +249,7 @@ JSCPeakMeter : JSCControlView {
 
 
 	*setRefreshRate { arg rate, swing, scsynth;
-		JPeakMeterSettings.setRefreshRate( rate, swing ?? {ÊSwingOSC.default }, scsynth ?? { Server.default });
+		JPeakMeterSettings.setRefreshRate( rate, swing ?? { SwingOSC.default }, scsynth ?? { Server.default });
 	}
 
 	// ----------------- public instance methods -----------------

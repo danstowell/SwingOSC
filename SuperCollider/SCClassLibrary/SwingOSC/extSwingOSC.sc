@@ -47,7 +47,7 @@
 	asSwingArg {
 		^[ this ];
 	}
-	oscEncSize { arg server;Ê^if( server.useDoubles, 9, 5 )}
+	oscEncSize { arg server; ^if( server.useDoubles, 9, 5 )}
 }
 
 + Boolean {

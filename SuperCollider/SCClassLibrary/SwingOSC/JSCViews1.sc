@@ -2317,7 +2317,7 @@ JSCTextView : JSCView {
 	
 	/**
 	 *	@param	tabs		array of either positions (SimpleNumber) in pixels
-	 *					or of two-element arrays [Êposition, align ]
+	 *					or of two-element arrays [ position, align ]
 	 *					where align is any of \left, \right, \center, \decimal, \bar
 	 */
 	setTabs { arg tabs, rangeStart = -1, rangeSize = 0;
@@ -3559,7 +3559,7 @@ JSCTextEditBase : JSCStaticTextBase {
 		});
 	}
 	
-	borderless_ { arg bool; ^if( bool, { this.setLineBorder( thickness: 0 )}, {Êthis.setNormalBorder })}
+	borderless_ { arg bool; ^if( bool, { this.setLineBorder( thickness: 0 )}, { this.setNormalBorder })}
 	
 	// ----------------- private instance methods -----------------
 
