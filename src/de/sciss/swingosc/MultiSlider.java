@@ -35,6 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
@@ -76,8 +77,10 @@ extends AbstractMultiSlider
 	protected int		selectionSize	= 1;
 
 	private static final double	PIH = Math.PI / 2;
+	protected static final int precisionModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 	protected boolean	steady			= false;
+	protected float		highPrecision	= 0.05f;
 	
 //	private static final Stroke strkOutline =
 //		new BasicStroke( 1f, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND );
@@ -474,6 +477,16 @@ extends AbstractMultiSlider
 	{
 		steady = stdy;
 	}
+	
+	public float getPrecision()
+	{
+		return highPrecision;
+	}
+	
+	public void setPrecision( float hghPrcsn )
+	{
+		highPrecision = hghPrcsn;
+	}
 
 	// --------------- internal classes ---------------
 	
@@ -487,32 +500,30 @@ extends AbstractMultiSlider
 
 		protected MouseAdapter() { /* empty */ }
 		
-		private float computeVal( float y, float h, int dragIdx )
+		private float computeVal( MouseEvent e, float y, float h, int dragIdx, boolean isDrag )
 		{
-			final float localThumbHeight = isFilled ? thumbHeight : thumbHeight / 2;
-			final float value;
-			
-			if( steady ) {
-				if( lastDragIdx == -1 ) {
-					value = values[ dragIdx ];
-				} else {
-					/*
-					 * todo:
-					 * 
-					 * if (lastDragIdx != dragIdx) lastDragIdx = dragIdx;
-					 */
-	
-					final float lastVal = values[ lastDragIdx ];
-					final float diffY = y - lastDragY;
-	
-					final float diffVal = (diffY) / (h - thumbHeight);
-					value = Math.max( 0f, Math.min( 1f, lastVal + diffVal ) );
-				}
-				lastDragY = y;
-			} else {
-				value = Math.max( 0f, Math.min( 1f, (y - localThumbHeight) / (h - thumbHeight) ) );
+			if( steady && (lastDragIdx == -1) ) {
+				return values[ dragIdx ];
 			}
-			return value;
+			final boolean meta = (e.getModifiers() & precisionModifier) == precisionModifier;
+			final float valueRaw;
+			if( steady || (meta && isDrag )) {
+				// todo: how to handle sliders index changes?
+				// 
+				// if (lastDragIdx != dragIdx) lastDragIdx = dragIdx;
+				
+				final float precisionFactor = meta ? highPrecision : 1f;
+
+				final float lastVal = values[ lastDragIdx ];
+				final float diffY	= y - lastDragY;
+	
+				final float diffVal = (diffY * precisionFactor) / (h - thumbHeight);
+				valueRaw = lastVal + diffVal;
+			} else {
+				final float localThumbHeight = isFilled ? thumbHeight : thumbHeight / 2;
+				valueRaw = (y - localThumbHeight) / (h - thumbHeight);
+			}
+			return Math.max( 0f, Math.min( 1f, valueRaw ));
 		}
 
 		private void processMouse( MouseEvent e, boolean init )
@@ -557,7 +568,8 @@ extends AbstractMultiSlider
 			if( lastDragIdx >= values.length ) lastDragIdx = -1;
 			if( init ) dragExtend = e.isShiftDown();
 			
-			value = computeVal( y, h, dragIdx );
+			value = computeVal( e, y, h, dragIdx, !init );
+			lastDragY = y;
 			
 			if( dragExtend ) {
 				if( selectedIndex >= 0 ) {

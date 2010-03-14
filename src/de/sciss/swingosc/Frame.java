@@ -79,14 +79,6 @@ extends AppWindow
 	private List		collMouseResp		= null;
 	private boolean 	acceptsMouseOver	= false;
 
-	private static boolean isMacOS() {
-   	 	return System.getProperty( "os.name" ).indexOf( "Mac" ) >= 0;
-    }
-   
-    private static boolean isWindows() {
-    	return System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
-    }
-    
 	public Frame( String title, Rectangle cocoaBounds, int flags )
 	{
 		super( REGULAR );
@@ -349,14 +341,14 @@ extends AppWindow
 	    		return;
 	    	}
 	    	
-	    	if( isMacOS() ) {
+	    	if( SwingOSC.isMacOS() ) {
 	    		final Class cWindowClass = Class.forName("apple.awt.CWindow");
 	    		if( cWindowClass.isInstance( peer )) {
 	    			// ((apple.awt.CWindow) peer).setAlpha( alpha );
 	    			final Method setAlphaMethod = cWindowClass.getMethod( "setAlpha", new Class[] { float.class });
 	                setAlphaMethod.invoke( peer, new Object[] { new Float( alpha )});
 	    		}
-	    	} else if( isWindows() ) {
+	    	} else if( SwingOSC.isWindows() ) {
 	    		// FIXME: can we do this on Windows?
 	        } else {
 	           	// long windowId = peer.getWindow();

@@ -2701,6 +2701,7 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 	var <gap;
 	var <editable = true;
 	var <elasticMode = 0;
+	var <steady = false, <precision = 0.05;
 		
 	// ----------------- public instance methods -----------------
 
@@ -2825,18 +2826,24 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 		^nil		// bubble if it's an invalid key
 	}
 
-	steady {
-		^this.getProperty( \steady );
+	steady_ { arg bool;
+		if( steady != bool, {
+			steady = bool;
+			server.sendMsg( \set, this.id, \steady, bool );
+		});
 	}
 
-	steady_ { arg stdy;
-		this.setProperty( \steady, stdy );
+	precision_ { arg factor;
+		if( precision != factor, {
+			precision = factor;
+			server.sendMsg( \set, this.id, \precision, factor );
+		});
 	}
-
+	
 	// ----------------- private instance methods -----------------
 
 	properties {
-		^super.properties ++ #[ \elasticResizeMode, \fillColor, \thumbWidth, \thumbHeight, \xOffset, \showIndex, \startIndex, \referenceValues, \isFilled, \readOnly, \steady ]; // JJJ not \thumbSize, but \thumbHeight, added \readOnly
+		^super.properties ++ #[ \elasticResizeMode, \fillColor, \thumbWidth, \thumbHeight, \xOffset, \showIndex, \startIndex, \referenceValues, \isFilled, \readOnly ]; // JJJ not \thumbSize, but \thumbHeight, added \readOnly
 	}
 		
 	prClose { arg preMsg, postMsg;
@@ -2855,7 +2862,6 @@ JSCMultiSliderView : JSCAbstractMultiSliderView {
 		properties.put( \x, 0 );
 		properties.put( \y, 0.0 );
 		properties.put( \step, 0.0 );
-		properties.put( \steady, false );
 		jinsets	= Insets( 3, 3, 3, 3 );
 		clpse	= Collapse({ this.doAction });
 		vlResp	= OSCpathResponder( server.addr, [ '/values', this.id ], { arg time, resp, msg;

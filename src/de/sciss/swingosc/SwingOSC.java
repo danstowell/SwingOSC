@@ -303,6 +303,14 @@ implements OSCListener, OSCProcessor, EventManager.Processor
 		elm = new EventManager( this );
 	}
     
+    public static boolean isMacOS() {
+   	 	return System.getProperty( "os.name" ).indexOf( "Mac" ) >= 0;
+    }
+   
+	public static boolean isWindows() {
+    	return System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
+    }
+    
     public static void setNumTraceLines( int num )
     {
     	numTraceLines = num;
