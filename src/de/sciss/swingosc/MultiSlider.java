@@ -76,6 +76,8 @@ extends AbstractMultiSlider
 	protected int		selectionSize	= 1;
 
 	private static final double	PIH = Math.PI / 2;
+
+	protected boolean	steady			= false;
 	
 //	private static final Stroke strkOutline =
 //		new BasicStroke( 1f, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND );
@@ -462,7 +464,17 @@ extends AbstractMultiSlider
 		dirtyStart 	= -1;
 		dirtyStop	= -1;
 	}
+
+	public boolean getSteady()
+	{
+		return steady;
+	}
 	
+	public void setSteady( boolean stdy )
+	{
+		steady = stdy;
+	}
+
 	// --------------- internal classes ---------------
 	
 	private class MouseAdapter
@@ -471,16 +483,45 @@ extends AbstractMultiSlider
 		private boolean	dragExtend		= false;
 		private int		lastDragIdx		= -1;
 		private boolean	dragExtendDir	= false;
+		private float	lastDragY		= 0.f;
 
 		protected MouseAdapter() { /* empty */ }
 		
+		private float computeVal( float y, float h, int dragIdx )
+		{
+			final float localThumbHeight = isFilled ? thumbHeight : thumbHeight / 2;
+			final float value;
+			
+			if( steady ) {
+				if( lastDragIdx == -1 ) {
+					value = values[ dragIdx ];
+				} else {
+					/*
+					 * todo:
+					 * 
+					 * if (lastDragIdx != dragIdx) lastDragIdx = dragIdx;
+					 */
+	
+					final float lastVal = values[ lastDragIdx ];
+					final float diffY = y - lastDragY;
+	
+					final float diffVal = (diffY) / (h - thumbHeight);
+					value = Math.max( 0f, Math.min( 1f, lastVal + diffVal ) );
+				}
+				lastDragY = y;
+			} else {
+				value = Math.max( 0f, Math.min( 1f, (y - localThumbHeight) / (h - thumbHeight) ) );
+			}
+			return value;
+		}
+
 		private void processMouse( MouseEvent e, boolean init )
 		{
 			if( values.length == 0 ) return;
 			
 			final int 		x, w, y, h;
 			final Insets	ins	= getInsets();
-			final float 	scale, xSub, val;
+			final float 	scale, xSub, value;
 			final int 		dragIdx, dragIdx2;
 			final int 		newSelStop;
 			boolean			action	= false;
@@ -497,11 +538,11 @@ extends AbstractMultiSlider
 				x	= e.getY() - ins.top - 1;				
 				y	= e.getX() - ins.left - 1;
 			}
-			if( isFilled ) {
-				val	= Math.max( 0f, Math.min( 1f, (y - thumbHeight) / (h - thumbHeight) ));
-			} else {
-				val	= Math.max( 0f, Math.min( 1f, (y - thumbHeight/2) / (h - thumbHeight) ));
-			}
+//			if( isFilled ) {
+//				val	= Math.max( 0f, Math.min( 1f, (y - thumbHeight) / (h - thumbHeight) ));
+//			} else {
+//				val	= Math.max( 0f, Math.min( 1f, (y - thumbHeight/2) / (h - thumbHeight) ));
+//			}
 
 			if( elasticResize ) {
 				scale 	= values.length / (float) w;
@@ -515,6 +556,9 @@ extends AbstractMultiSlider
 			// values might have been modified!!!
 			if( lastDragIdx >= values.length ) lastDragIdx = -1;
 			if( init ) dragExtend = e.isShiftDown();
+			
+			value = computeVal( y, h, dragIdx );
+			
 			if( dragExtend ) {
 				if( selectedIndex >= 0 ) {
 					if( init ) dragExtendDir = dragIdx2 > (selectedIndex + (selectionSize >> 1));
@@ -556,8 +600,8 @@ extends AbstractMultiSlider
 				}
 			} else if( !readOnly ) {
 				if( (lastDragIdx == -1) || (lastDragIdx == dragIdx) ) {
-					if( snap( val ) != values[ dragIdx ]) {
-						values[ dragIdx ] = snap( val );
+					if( snap( value ) != values[ dragIdx ]) {
+						values[ dragIdx ] = snap( value );
 						action	= true;
 						repaint	= true;
 						if( dirtyStart == -1 ) {
@@ -571,11 +615,11 @@ extends AbstractMultiSlider
 				} else {
 					final int	step	= dragIdx < lastDragIdx ? -1 : 1;
 					final float	valOff	= values[ lastDragIdx ];
-					final float valScale= (val - valOff) / Math.abs( lastDragIdx - dragIdx );
+					final float valScale= (value - valOff) / Math.abs( lastDragIdx - dragIdx );
 					for( int i = lastDragIdx + step, j = 1; i != dragIdx; i += step, j++ ) {
 						values[ i ] = snap( j * valScale + valOff );
 					}
-					values[ dragIdx ] = snap( val );
+					values[ dragIdx ] = snap( value );
 					action	= true;
 					repaint	= true;
 					if( dirtyStart == -1 ) {
