@@ -29,7 +29,6 @@
 
 /**
  *	@version		0.64, 28-Jan-10
- *	@author		Hanns Holger Rutz
  */
 JSCContainerView : JSCView { // abstract class
 	var <children, <decorator;

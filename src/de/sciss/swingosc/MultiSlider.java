@@ -49,7 +49,8 @@ import de.sciss.net.OSCMessage;
  *	Swing implementation of SCMultiSliderView by Jan Truetzschler.
  *
  *	@author		Hanns Holger Rutz
- *	@version	0.59, 25-Feb-08
+ *	@author		Tim Blechmann
+ *	@version	0.64, 14-Mar-10
  */
 public class MultiSlider
 extends AbstractMultiSlider
