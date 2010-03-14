@@ -150,13 +150,24 @@ SwingGUI {
 		if( thisThread.isKindOf( Routine ), {
 			if( server.isNil, { server = SwingOSC.default });
 			id		= server.nextNodeID;
-			msg		= server.sendMsgSync([ '/get', '[', '/local', id,
-				'[', '/methodr' ] ++ font.asSwingArg ++ [ \getStringBounds ] ++ string.asSwingArg ++ [
-					'[', '/new', "java.awt.font.FontRenderContext", '[', '/ref', \null, ']', true, true, ']',
-				']', ']', \x, \y, \width, \height ], [ '/set', id ]);
+//			msg		= server.sendMsgSync([ '/get', '[', '/local', id,
+//				'[', '/methodr' ] ++ font.asSwingArg ++ [ \getStringBounds ] ++ string.asSwingArg ++ [
+//					'[', '/new', "java.awt.font.FontRenderContext", '[', '/ref', \null, ']', true, true, ']',
+//				']', ']', \x, \y, \width, \height ], [ '/set', id ]);
+			msg = [ '/get', '[', '/local', id, '[', '/methodr', '[', '/new', "java.awt.font.TextLayout" ] ++ string.asSwingArg ++ font.asSwingArg ++ [
+				    '[', '/new', "java.awt.font.FontRenderContext", '[', '/ref', \null, ']', true, true, ']', ']', \getBounds, ']', ']',
+				        /* \x, \y,*/ \width, \height ];
+			msg		= server.sendMsgSync( msg, [ '/set', id ]);
+
+//	// NOTE: getPixelBounds is java 1.6 only!
+//			msg = [ '/get', '[', '/local', id, '[', '/methodr', '[', '/new', "java.awt.font.TextLayout" ] ++ string.asSwingArg ++ font.asSwingArg ++ [
+//				    '[', '/new', "java.awt.font.FontRenderContext", '[', '/ref', \null, ']', true, true, ']', ']', \getPixelBounds, '[', '/ref', \null, ']', 0.0, 0.0, ']', ']',
+//				        \x, \y, \width, \height ];
+//			msg		= server.sendMsgSync( msg, [ '/set', id ]);
 			server.sendMsg( '/free', id );
 			if( msg.notNil, {
-				^Rect( msg[ 3 ], msg[ 5 ], msg[ 7 ], msg[ 9 ]);
+//				^Rect( msg[ 3 ], msg[ 5 ], msg[ 7 ], msg[ 9 ]);
+				^Rect( 0, 0,  msg[ 3 ].ceil.asInteger + 1, msg[ 5 ].ceil.asInteger + 1 );
 			});
 			
 			"Meta_SwingGUI:stringBounds : server timeout".warn;
