@@ -28,7 +28,7 @@
  */
 
 /**
- *	@version		0.63, 02-Oct-09
+ *	@version		0.64, 14-Mar-10
  *	@author		Hanns Holger Rutz
  */
 JPeakMeterSettings {
@@ -246,8 +246,8 @@ JSCPeakMeter : JSCControlView {
 	var ctrlBus, nodeID;
 	var <numChannels = 0;
 	var valid = true; // false with user-provided group after cmdperiod
-
-
+	var <orientation = \v;
+	
 	*setRefreshRate { arg rate, swing, scsynth;
 		JPeakMeterSettings.setRefreshRate( rate, swing ?? { SwingOSC.default }, scsynth ?? { Server.default });
 	}
@@ -302,6 +302,13 @@ JSCPeakMeter : JSCControlView {
 		if( bool != holdPainted, {
 			holdPainted = bool;
 			this.setProperty( \holdPainted, holdPainted );
+		});
+	}
+	
+	orientation_ { arg orient;
+		if( orient != orientation, {
+			orientation = orient;
+			this.setProperty( \orientation, orientation );
 		});
 	}
 
@@ -515,6 +522,14 @@ JSCPeakMeter : JSCControlView {
 		{ key === \rmsPainted }
 		{
 			key = \rMSPainted;
+		}
+		{ key === \orientation }
+		{
+			switch( value,
+			\v,  { value = 1 },
+			\h,  { value = 0 }
+			);
+[ key, value ].postln;
 		};
 		^super.prSendProperty( key, value );
 	}

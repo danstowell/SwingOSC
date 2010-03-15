@@ -35,7 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
@@ -78,7 +78,9 @@ extends AbstractMultiSlider
 	protected int		selectionSize	= 1;
 
 	private static final double	PIH = Math.PI / 2;
-	protected static final int precisionModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+//	protected static final int precisionModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+	protected static final int precisionModifier = SwingOSC.isMacOS() ?
+		InputEvent.META_MASK : InputEvent.CTRL_MASK | InputEvent.ALT_MASK;  
 
 	protected boolean	steady			= false;
 	protected float		highPrecision	= 0.05f;

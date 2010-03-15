@@ -36,7 +36,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.64, 03-Feb-10
+ *	@version		0.64, 14-Mar-10
  */
 SwingOptions
 {
@@ -52,7 +52,7 @@ SwingOptions
 		default = this.new.javaOptions_(
 			switch( thisProcess.platform.name,
 			\osx, {
-				"-Dapple.laf.useScreenMenuBar=true -Xdock:icon=application.icns -Xdock:name=SwingOSC"; // "-Dswing.defaultlaf=apple.laf.AquaLookAndFeel"
+				"-Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Xdock:icon=application.icns -Xdock:name=SwingOSC"; // "-Dswing.defaultlaf=apple.laf.AquaLookAndFeel"
 			},
 			\linux, {
 				"-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
