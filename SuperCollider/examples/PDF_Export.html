@@ -5,15 +5,13 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.48">
+<meta name="CocoaVersion" content="1038.25">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
 span.s1 {color: #0019ba}
 span.s2 {color: #000000}
 span.s3 {color: #2b6f11}
@@ -157,44 +155,44 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="s1">JSCWindow</span>.viewPalette;</p>
 <p class="p4">~pdfScreenShot.( <span class="s1">JSCWindow</span>.allWindows.last.view, <span class="s4">"/Users/rutz/Desktop/test2.pdf"</span>, h, v );</p>
 <p class="p2"><br></p>
-<p class="p5"><br></p>
-<p class="p6">// the cool this of this second approach is that the affine transforms seem</p>
-<p class="p6">// to fully working this way:</p>
-<p class="p5"><br></p>
-<p class="p7">(</p>
-<p class="p7"><span class="Apple-converted-space">    </span>w = <span class="s6">JSCWindow</span>.new.front;</p>
-<p class="p7"><span class="Apple-converted-space">    </span>w.view.background_( <span class="s6">Color</span>.white );</p>
-<p class="p7"><span class="Apple-converted-space">    </span>w.drawHook = {</p>
-<p class="p7"><span class="Apple-converted-space">        </span><span class="s6">var</span> x1, y1, x2, y2, x1a, y1a, x2a, y2a, txr, tyr, rr;</p>
-<p class="p5"><span class="Apple-converted-space">    </span></p>
-<p class="p7"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s6">thisThread</span>.randSeed = 666;</p>
-<p class="p7"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.translate( 200, 200 );</p>
-<p class="p7"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.scale( 0.5, 0.5 );</p>
-<p class="p7"><span class="Apple-converted-space">        </span>x1 = 175.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>x2 = 175.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>y1 = 175.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>y2 = 175.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>x1a = 15.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>x2a = 15.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>y1a = 15.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>y2a = 15.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>txr = 2.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>tyr = 2.0.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>rr<span class="Apple-converted-space">  </span>= 0.05pi.bilinrand;</p>
-<p class="p7"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.moveTo( 175 @ 0 );</p>
-<p class="p7"><span class="Apple-converted-space">        </span>200.do { <span class="s6">arg</span> i;</p>
-<p class="p7"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.translate( txr, tyr );</p>
-<p class="p7"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.rotate( rr );</p>
-<p class="p7"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.line( x1 @ y1, x2 @ y2 );</p>
-<p class="p7"><span class="Apple-converted-space">            </span>x1 = x1 + x1a;</p>
-<p class="p7"><span class="Apple-converted-space">            </span>x2 = x2 + x2a;</p>
-<p class="p7"><span class="Apple-converted-space">            </span>y1 = y1 + y1a;</p>
-<p class="p7"><span class="Apple-converted-space">            </span>y2 = y2 + y2a;</p>
-<p class="p7"><span class="Apple-converted-space">        </span>};</p>
-<p class="p7"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.stroke;</p>
-<p class="p7"><span class="Apple-converted-space">    </span>};</p>
-<p class="p7">)</p>
-<p class="p5"><br></p>
-<p class="p7">~pdfScreenShot.( w.view, <span class="s4">"/Users/rutz/Desktop/test3.pdf"</span>, h, v );</p>
+<p class="p2"><br></p>
+<p class="p5">// the cool thing of this second approach is that the affine transforms seem</p>
+<p class="p5">// to fully working this way:</p>
+<p class="p2"><br></p>
+<p class="p4">(</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s6">JSCWindow</span>.new.front;</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w.view.background_( <span class="s6">Color</span>.white );</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w.drawHook = {</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">var</span> x1, y1, x2, y2, x1a, y1a, x2a, y2a, txr, tyr, rr;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">thisThread</span>.randSeed = 666;</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.translate( 200, 200 );</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.scale( 0.5, 0.5 );</p>
+<p class="p4"><span class="Apple-converted-space">        </span>x1 = 175.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>x2 = 175.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>y1 = 175.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>y2 = 175.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>x1a = 15.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>x2a = 15.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>y1a = 15.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>y2a = 15.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>txr = 2.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>tyr = 2.0.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>rr<span class="Apple-converted-space">  </span>= 0.05pi.bilinrand;</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.moveTo( 175 @ 0 );</p>
+<p class="p4"><span class="Apple-converted-space">        </span>200.do { <span class="s6">arg</span> i;</p>
+<p class="p4"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.translate( txr, tyr );</p>
+<p class="p4"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.rotate( rr );</p>
+<p class="p4"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.line( x1 @ y1, x2 @ y2 );</p>
+<p class="p4"><span class="Apple-converted-space">            </span>x1 = x1 + x1a;</p>
+<p class="p4"><span class="Apple-converted-space">            </span>x2 = x2 + x2a;</p>
+<p class="p4"><span class="Apple-converted-space">            </span>y1 = y1 + y1a;</p>
+<p class="p4"><span class="Apple-converted-space">            </span>y2 = y2 + y2a;</p>
+<p class="p4"><span class="Apple-converted-space">        </span>};</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.stroke;</p>
+<p class="p4"><span class="Apple-converted-space">    </span>};</p>
+<p class="p4">)</p>
+<p class="p2"><br></p>
+<p class="p4">~pdfScreenShot.( w.view, <span class="s4">"/Users/rutz/Desktop/test3.pdf"</span>, h, v );</p>
 </body>
 </html>

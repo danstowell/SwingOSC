@@ -32,7 +32,7 @@
  *	class using GUI.swing, GUI.fromID( \swing ) or GUI.get( \swing ).
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 21-Apr-09
+ *	@version		0.64, 30-Mar-10
  */
 SwingGUI {
 	classvar extraClasses;
@@ -98,6 +98,7 @@ SwingGUI {
 	*knob { ^JKnob }		
 	*font { ^JFont }
 	*pen { ^JPen }
+	*image { ^JSCImage }
 	
 	///////////////// Common -> Audio /////////////////
 
