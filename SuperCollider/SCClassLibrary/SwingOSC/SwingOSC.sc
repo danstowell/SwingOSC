@@ -194,6 +194,7 @@ SwingOSC : Model
 		try {
 			this.connect;
 			{
+				JFont.prMakeFontsAvailable( this );
 				this.listSendMsg([ '/local', \font ] ++ JFont.default.asSwingArg );
 				this.prRetrieveScreenBounds;
 				this.dumpOSC( dumpMode, dumpModeR );

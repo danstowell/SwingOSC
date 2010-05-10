@@ -30,7 +30,7 @@
  *	Replacement for the cocoa font class.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.61, 06-Oct-08
+ *	@version		0.65, 10-May-10
  */
 JFont {
 	classvar <>verbose = false;
@@ -38,7 +38,7 @@ JFont {
 	classvar <>default;
 	
 	classvar defaultSansFace, defaultSerifFace, defaultMonoFace;
-	classvar names;
+//	classvar names;
 	
 	var <>name, <>size, <>style;
 		
@@ -88,19 +88,32 @@ JFont {
 	}
 	
 	*availableFonts { arg server;
-		if( names.notNil, { ^names });
-		
-		// need to fetch names (asynchronous)
-		if( thisThread.isKindOf( Routine ), {
-			this.prQueryFontNames( server );
-			^names;
-		}, {
-			"JFont.availableFonts : asynchronous call outside routine".warn;
-			{ this.prQueryFontNames( server )}.fork( SwingOSC.clock );
-			^[ "Dialog", "DialogInput", "Monospaced", "SansSerif", "Serif" ];
-		});
+		var servers, result;
+		servers 	= Archive.global[ \swingOSCFontNames ];
+		server	= server ?? { SwingOSC.default };
+		result	= servers !? { servers[ server.name ]};
+		if( result.notNil, { ^result });
+		"JFont.availableFonts : font cache not yet available".warn;
+		^[ "Dialog", "DialogInput", "Monospaced", "SansSerif", "Serif" ];
 	}
 	
+	*deleteCache {
+		Archive.global.put( \swingOSCFontNames, nil );
+	}
+
+	// called by SwingOSC upon startup inside a Routine	
+	*prMakeFontsAvailable { arg server;
+		var servers, result;
+		servers = Archive.global[ \swingOSCFontNames ];
+		if( servers.isNil, {
+			servers = IdentityDictionary.new;
+			Archive.global[ \swingOSCFontNames ] = servers;
+		});
+		if( servers.includesKey( server.name ), { ^this });
+		result = this.prQueryFontNames( server );
+		servers[ server.name ] = result;
+	}
+
 	*antiAliasing_ { arg flag = false;
 		if( verbose, { "JFont.antiAliasing : has no effect".error; });
 	}
@@ -162,7 +175,7 @@ JFont {
 			});
 		});
 		server.sendMsg( '/free', \fnt );
-		if( success, { names = fontNames });
 		if( verbose, { "JFont.availableFonts : query done.".postln });
+		^if( success, fontNames );
 	}
 }
