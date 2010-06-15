@@ -460,12 +460,10 @@ SwingOSC : Model
 		
 		if( serverRunning.not, {
 			upd = UpdateListener.newFor( this, {
-				if( serverRunning, {
-					cancel.stop;
-					upd.remove;
-					onComplete.value;
-				}, \serverRunning );
-			});
+				cancel.stop;
+				upd.remove;
+				onComplete.value;
+			}, \serverRunning );
 			cancel = {
 				timeout.wait;
 				upd.remove;
