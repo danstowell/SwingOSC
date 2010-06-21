@@ -456,20 +456,22 @@ SwingOSC : Model
 	}
 
 	doWhenBooted { arg onComplete, timeout = 20.0;
-		var cancel, upd, exec;
+		var cancel, upd, exec, done = false;
 		
 		exec = Routine( onComplete );
 		if( serverRunning.not, {
 			upd = UpdateListener.newFor( this, {
-				cancel.stop;
+				done = true;
 				upd.remove;
 				exec.play( clock );
 			}, \serverRunning );
 			cancel = {
 				timeout.wait;
 				upd.remove;
-				"SwingOSC server failed to start".error;
-				serverBooting = false;
+				if( done.not, {
+					"SwingOSC server failed to start".error;
+					serverBooting = false;
+				});
 			}.fork( clock );
 		}, { exec.play( clock )});
 	}
