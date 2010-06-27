@@ -29,6 +29,7 @@
  *		01-Oct-06		added SwingOptions and TCP mode
  *		18-Jan-08		added deathBounces to aliveThread
  *		28-Jan-08		bootServerApp adds -h option again
+ *		27-Jun-10		does not subclass Model anymore
  */
 
 /**
@@ -36,7 +37,7 @@
  *	and its options.
  *
  *	@author		Hanns Holger Rutz
- *	@version		0.64, 14-Mar-10
+ *	@version		0.64, 27-Jun-10
  */
 SwingOptions
 {
@@ -94,7 +95,7 @@ SwingOptions
 	}
 }
 
-SwingOSC : Model
+SwingOSC // : Model
 {
 	classvar <>local, <>default, <>named, <>set, <>java, <>program, <>clock;
 	var <>gaga;
@@ -456,22 +457,20 @@ SwingOSC : Model
 	}
 
 	doWhenBooted { arg onComplete, timeout = 20.0;
-		var cancel, upd, exec, done = false;
+		var cancel, upd, exec;
 		
 		exec = Routine( onComplete );
 		if( serverRunning.not, {
 			upd = UpdateListener.newFor( this, {
-				done = true;
+				cancel.stop;
 				upd.remove;
 				exec.play( clock );
 			}, \serverRunning );
 			cancel = {
 				timeout.wait;
 				upd.remove;
-				if( done.not, {
-					"SwingOSC server failed to start".error;
-					serverBooting = false;
-				});
+				"SwingOSC server failed to start".error;
+				serverBooting = false;
 			}.fork( clock );
 		}, { exec.play( clock )});
 	}
