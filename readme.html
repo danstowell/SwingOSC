@@ -88,7 +88,7 @@ TD.when {
 </HEAD>
 <BODY>
 <h1>
-SwingOSC <small>-- version 0.64 --</small>
+SwingOSC <small>-- version 0.65 --</small>
 </h1>
 <h3>statement</h3>
 <TABLE><TR><TD VALIGN="top"><IMG SRC="application.png" ALT=""></TD><TD><p>
@@ -180,7 +180,7 @@ $ ant doc
 compilation
 </h3>
 <P>
-The source code can be compiled using Eclipse SDK 3.4+ (<A HREF="http://www.eclipse.org" CLASS="ext">www.eclipse.org</A>) and Apache Ant 1.6.5+ (<A HREF="http://ant.apache.org/" CLASS="ext">ant.apache.org</A>). You need to install <A HREF="http://ant-contrib.sourceforge.net" CLASS="ext">Ant-Contrib</A> as well (first install Ant if you do not have it, then download Ant-Contrib and copy <code>ant-contrib.jar</code> into Ant's <code>lib</code> folder). The Eclipse project file is configured to run the regular Ant build file. You can make a clean build just with Ant from the terminal:
+The source code can be compiled using Eclipse SDK 3.5+ (<A HREF="http://www.eclipse.org" CLASS="ext">www.eclipse.org</A>) and Apache Ant 1.6.5+ (<A HREF="http://ant.apache.org/" CLASS="ext">ant.apache.org</A>). You need to install <A HREF="http://ant-contrib.sourceforge.net" CLASS="ext">Ant-Contrib</A> as well (first install Ant if you do not have it, then download Ant-Contrib and copy <code>ant-contrib.jar</code> into Ant's <code>lib</code> folder). The Eclipse project file is configured to run the regular Ant build file. You can make a clean build just with Ant from the terminal:
 </P><PRE>$ ant clean jar
 $ ant test
 </PRE>
@@ -196,6 +196,12 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <LI>or put your GUI buidling process in a <code>Routine</code> and place short <code>wait</code> statements in the body until no more message dropping occurs.</LI></UL></LI>
 </UL>
 <h3>change history</h3>
+<h4>v0.65 (jul 2010 - SVN rev. 252)</h4>
+<UL>
+<LI>SC classes: JSCTextField and JSCNumberBox (added borderless_, setNormalBorder, setLineBorder), JSCMultiSlider (added steady_, precision_ - thanks to Tim Blechmann), JSCPeakMeter (added orientation_), JSCImage (added *color, setPixels, SwingGUI.image), JFont (available faces are now stored in archive, so can be accessed synchronously), Server (doWhenBooted forks functions now, fixed a problem with Model/ dependants)</LI>
+<LI>Added missing images in Den Haag tutorial</LI>
+<LI>Added Debian packaging info by Dan Stowell</LI>
+</UL>
 <h4>v0.64 (feb 2010 - SVN rev. 235)</h4>
 <UL>
 <LI>SC classes: JSCTextView (typo in caret_, support for RTF, various fixes, htmlString_, better tab size, undo/redo, selectedString_ fix, paragraph attributes), JSCSlider (adaptive knob size on OS X look-and-feel), JSCListView (fix for big bundles), JSCPopUpMenu (fix for big bundles), JSCNumberBox (helpfile)</LI>

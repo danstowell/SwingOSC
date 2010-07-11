@@ -14,7 +14,7 @@
 	<property name="lib.dir"		value="libraries"/>
 	<property name="doc.dir"		value="doc"/>
 	<property name="libraries"		value="${lib.dir}/ScissLib.jar:${lib.dir}/JCollider.jar:${lib.dir}/MRJAdapter.jar:JNITablet/build/TabletWrapper.jar"/>
-    <property name="version"		value="0.64"/>
+    <property name="version"		value="0.65"/>
     <property name="debug"			value="true"/>
 	
 	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
