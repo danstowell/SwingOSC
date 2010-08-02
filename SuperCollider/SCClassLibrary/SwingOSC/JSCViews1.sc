@@ -1357,10 +1357,9 @@ JSCButton : JSCControlView {
 			var value, modifiers;
 			value	= msg[4];
 			modifiers	= msg[6];
-			// java->cocoa ; this translates shift (1), ctrl (2), cmd (4), alt (8)
-//			modifiers		= ((modifiers & 3) << 17) |
-//						  ((modifiers & 4) << 18) |
-//						  ((modifiers & 8) << 16); // | plusMod;
+			modifiers		= ((modifiers & 3) << 17) |
+						  ((modifiers & 4) << 18) |
+						  ((modifiers & 8) << 16) | fakeModifiers;
 			// don't call valueAction coz we'd create a loop
 			properties.put( \value, msg[4] );
 			{ this.doAction( modifiers )}.defer;
@@ -1369,7 +1368,6 @@ JSCButton : JSCControlView {
 			[ '/local', this.id, '[', '/new', "de.sciss.gui.MultiStateButton", ']',
 				"ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, '[', '/array', \selectedIndex, \lastModifiers, ']', ']' ]
-//				'[', '/new', "de.sciss.swingosc.ActionResponder", this.id, '[', '/array', \selectedIndex, ']', ']' ]
 		]);
 	}
 
