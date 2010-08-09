@@ -205,7 +205,7 @@ SwingOSC // : Model
 				if( result.notNil, {
 					serverVersion = result[2];
 					if( serverVersion != version, {
-						("SwingOSC version mismatch: client is v" ++ version ++ ", server is v" ++ serverVersion ++ "!" ).warn;
+						("SwingOSC version mismatch:\n  client (class-library) is v" ++ version ++ ", server (SwingOSC.jar) is v" ++ serverVersion ++ "!" ).warn;
 					});
 					onComplete.value;
 				}, onFailure );
