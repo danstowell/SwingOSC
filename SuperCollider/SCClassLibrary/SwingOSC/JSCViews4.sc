@@ -435,6 +435,7 @@ JSCPeakMeter : JSCControlView {
 //		CmdPeriod.add( fPeriod );
 //		ServerQuit.add( fPeriod );
 		if( server.serverRunning, fBooted ); // otherwise starts when booted
+		^win;
 	}
 	
 	// ----------------- private instance methods -----------------
