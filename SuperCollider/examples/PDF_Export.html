@@ -5,19 +5,18 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="1038.25">
+<meta name="CocoaVersion" content="1038.32">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #ad1d13}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
-span.s1 {color: #0019ba}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #db0000}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #737373}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+span.s1 {color: #2400cf}
 span.s2 {color: #000000}
-span.s3 {color: #2b6f11}
-span.s4 {color: #606060}
-span.s5 {color: #ad1d13}
-span.s6 {color: #0000bf}
+span.s3 {color: #008c00}
+span.s4 {color: #737373}
+span.s5 {color: #db0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -29,13 +28,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-converted-space"> </span>*<span class="Apple-tab-span">	</span>for JPen as a PDF document</p>
 <p class="p1"><span class="Apple-converted-space"> </span>*/</p>
 <p class="p2"><br></p>
-<p class="p1">// first download iText from here: http://www.lowagie.com/iText/download.html</p>
-<p class="p1">// --&gt; the plain compiled iText core "iText-2.1.2u.jar" should be sufficent</p>
+<p class="p1">// first download iText from here: http://sourceforge.net/projects/itext/files/</p>
+<p class="p1">// --&gt; the plain compiled iText core "iText-5.0.4.jar" should be sufficent</p>
 <p class="p2"><br></p>
 <p class="p1">// add the library to the classpath</p>
 <p class="p1">// (do this only once after booting SwingOSC)</p>
 <p class="p1">// (make sure to use the correct URL!)</p>
-<p class="p3"><span class="s1">SwingOSC</span><span class="s2">.default.addClasses( </span>"file:///Users/rutz/Desktop/iText-2.1.2u.jar"<span class="s2"> );</span></p>
+<p class="p3"><span class="s1">SwingOSC</span><span class="s2">.default.addClasses( </span>"file:///Users/rutz/Downloads/iText-5.0.4.jar"<span class="s2"> );</span></p>
 <p class="p2"><br></p>
 <p class="p1">// paper size</p>
 <p class="p1"><span class="s2">h = 595; v = 842;<span class="Apple-tab-span">	</span></span>// this is A4 with 72 dpi (iText standard)</p>
@@ -77,16 +76,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span><span class="s1">var</span> g, pageSize, doc, writerC, stream, writer, cb, tp, g2, pen;</p>
 <p class="p2"><br></p>
 <p class="p4"><span class="Apple-tab-span">	</span>g<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">SwingOSC</span>.default;</p>
-<p class="p4"><span class="Apple-tab-span">	</span>pageSize<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.lowagie.text.Rectangle"</span>, g, 0, 0, width, height );</p>
-<p class="p4"><span class="Apple-tab-span">	</span>doc<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.lowagie.text.Document"</span>, g, pageSize, 80, 60, 60, 60 ); <span class="s5">// margins don't matter</span></p>
-<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>writerC<span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">.getClass( </span>"com.lowagie.text.pdf.PdfWriter"<span class="s2">, g );</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>pageSize<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.itextpdf.text.Rectangle"</span>, g, 0, 0, width, height );</p>
+<p class="p4"><span class="Apple-tab-span">	</span>doc<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.itextpdf.text.Document"</span>, g, pageSize, 0, 0, 0, 0 );</p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>writerC<span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">.getClass( </span>"com.itextpdf.text.pdf.PdfWriter"<span class="s2">, g );</span></p>
 <p class="p4"><span class="Apple-tab-span">	</span>stream<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"java.io.FileOutputStream"</span>, g, fileName );</p>
 <p class="p4"><span class="Apple-tab-span">	</span>writer<span class="Apple-tab-span">	</span>= writerC.getInstance__( doc, stream );</p>
 <p class="p4"><span class="Apple-tab-span">	</span>doc.open;</p>
 <p class="p4"><span class="Apple-tab-span">	</span>cb<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= writer.getDirectContent__;</p>
 <p class="p4"><span class="Apple-tab-span">	</span>tp<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= cb.createTemplate__( width, height );</p>
 <p class="p4"><span class="Apple-tab-span">	</span>g2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= tp.createGraphics__( width, height );</p>
-<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>pen<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">( </span>"de.sciss.swingosc.Pen"<span class="s2">, g, </span><span class="s1">nil</span><span class="s2"> );</span></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>pen<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">( </span>"de.sciss.swingosc.Pen"<span class="s2">, g, </span><span class="s1">nil</span><span class="s2">, </span><span class="s1">false</span><span class="s2"> );</span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="s1">JPen</span>.protRefresh( drawFunc, <span class="s1">nil</span>, g, pen.id );</p>
 <p class="p4"><span class="Apple-tab-span">	</span>pen.paintIcon( <span class="s1">nil</span>, g2, 0, 0 );</p>
 <p class="p4"><span class="Apple-tab-span">	</span>g2.dispose;</p>
@@ -100,7 +99,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">// this actually creates the file</p>
 <p class="p1">// (make sure to use a proper file name!)</p>
-<p class="p3"><span class="s2">~createPDF.( ~func, </span>"/Users/rutz/Desktop/test.pdf"<span class="s2">, h, v );</span></p>
+<p class="p4">~createPDF.( ~func, <span class="s4">"~/Desktop/test.pdf"</span>.standardizePath, h, v );</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p1">// here's another one</p>
@@ -127,9 +126,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p4"><span class="Apple-tab-span">	</span>g<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= view.server;</p>
 <p class="p4"><span class="Apple-tab-span">	</span>bounds<span class="Apple-tab-span">	</span>= view.bounds;</p>
-<p class="p4"><span class="Apple-tab-span">	</span>pageSize<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.lowagie.text.Rectangle"</span>, g, 0, 0, width, height );</p>
-<p class="p4"><span class="Apple-tab-span">	</span>doc<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.lowagie.text.Document"</span>, g, pageSize, 80, 60, 60, 60 ); <span class="s5">// margins don't matter</span></p>
-<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>writerC<span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">.getClass( </span>"com.lowagie.text.pdf.PdfWriter"<span class="s2">, g );</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>pageSize<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.itextpdf.text.Rectangle"</span>, g, 0, 0, width, height );</p>
+<p class="p5"><span class="Apple-tab-span">	</span>doc<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"com.itextpdf.text.Document"</span>, g, pageSize, 0, 0, 0, 0 );</p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span>writerC<span class="Apple-tab-span">	</span>= </span><span class="s1">JavaObject</span><span class="s2">.getClass( </span>"com.itextpdf.text.pdf.PdfWriter"<span class="s2">, g );</span></p>
 <p class="p4"><span class="Apple-tab-span">	</span>stream<span class="Apple-tab-span">	</span>= <span class="s1">JavaObject</span>( <span class="s4">"java.io.FileOutputStream"</span>, g, fileName );</p>
 <p class="p4"><span class="Apple-tab-span">	</span>writer<span class="Apple-tab-span">	</span>= writerC.getInstance__( doc, stream );</p>
 <p class="p4"><span class="Apple-tab-span">	</span>doc.open;</p>
@@ -153,21 +152,21 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="s2">~ui = </span><span class="s1">JavaObject</span><span class="s2">.getClass( </span>"javax.swing.UIManager"<span class="s2"> );</span></p>
 <p class="p3"><span class="s2">~ui.setLookAndFeel( </span>"javax.swing.plaf.metal.MetalLookAndFeel"<span class="s2"> );</span></p>
 <p class="p4"><span class="s1">JSCWindow</span>.viewPalette;</p>
-<p class="p4">~pdfScreenShot.( <span class="s1">JSCWindow</span>.allWindows.last.view, <span class="s4">"/Users/rutz/Desktop/test2.pdf"</span>, h, v );</p>
+<p class="p4">~pdfScreenShot.( <span class="s1">JSCWindow</span>.allWindows.last.view, <span class="s4">"~/Desktop/test2.pdf"</span>.standardizePath, h, v );</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
-<p class="p5">// the cool thing of this second approach is that the affine transforms seem</p>
-<p class="p5">// to fully working this way:</p>
+<p class="p1">// the cool thing of this second approach is that the affine transforms seem</p>
+<p class="p1">// to fully working this way:</p>
 <p class="p2"><br></p>
 <p class="p4">(</p>
-<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s6">JSCWindow</span>.new.front;</p>
-<p class="p4"><span class="Apple-converted-space">    </span>w.view.background_( <span class="s6">Color</span>.white );</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w = <span class="s1">JSCWindow</span>.new.front;</p>
+<p class="p4"><span class="Apple-converted-space">    </span>w.view.background_( <span class="s1">Color</span>.white );</p>
 <p class="p4"><span class="Apple-converted-space">    </span>w.drawHook = {</p>
-<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">var</span> x1, y1, x2, y2, x1a, y1a, x2a, y2a, txr, tyr, rr;</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s1">var</span> x1, y1, x2, y2, x1a, y1a, x2a, y2a, txr, tyr, rr;</p>
 <p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">thisThread</span>.randSeed = 666;</p>
-<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.translate( 200, 200 );</p>
-<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.scale( 0.5, 0.5 );</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s1">thisThread</span>.randSeed = 666;</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s1">JPen</span>.translate( 200, 200 );</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s1">JPen</span>.scale( 0.5, 0.5 );</p>
 <p class="p4"><span class="Apple-converted-space">        </span>x1 = 175.0.bilinrand;</p>
 <p class="p4"><span class="Apple-converted-space">        </span>x2 = 175.0.bilinrand;</p>
 <p class="p4"><span class="Apple-converted-space">        </span>y1 = 175.0.bilinrand;</p>
@@ -179,20 +178,20 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-converted-space">        </span>txr = 2.0.bilinrand;</p>
 <p class="p4"><span class="Apple-converted-space">        </span>tyr = 2.0.bilinrand;</p>
 <p class="p4"><span class="Apple-converted-space">        </span>rr<span class="Apple-converted-space">  </span>= 0.05pi.bilinrand;</p>
-<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.moveTo( 175 @ 0 );</p>
-<p class="p4"><span class="Apple-converted-space">        </span>200.do { <span class="s6">arg</span> i;</p>
-<p class="p4"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.translate( txr, tyr );</p>
-<p class="p4"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.rotate( rr );</p>
-<p class="p4"><span class="Apple-converted-space">            </span><span class="s6">JPen</span>.line( x1 @ y1, x2 @ y2 );</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s1">JPen</span>.moveTo( 175 @ 0 );</p>
+<p class="p4"><span class="Apple-converted-space">        </span>200.do { <span class="s1">arg</span> i;</p>
+<p class="p4"><span class="Apple-converted-space">            </span><span class="s1">JPen</span>.translate( txr, tyr );</p>
+<p class="p4"><span class="Apple-converted-space">            </span><span class="s1">JPen</span>.rotate( rr );</p>
+<p class="p4"><span class="Apple-converted-space">            </span><span class="s1">JPen</span>.line( x1 @ y1, x2 @ y2 );</p>
 <p class="p4"><span class="Apple-converted-space">            </span>x1 = x1 + x1a;</p>
 <p class="p4"><span class="Apple-converted-space">            </span>x2 = x2 + x2a;</p>
 <p class="p4"><span class="Apple-converted-space">            </span>y1 = y1 + y1a;</p>
 <p class="p4"><span class="Apple-converted-space">            </span>y2 = y2 + y2a;</p>
 <p class="p4"><span class="Apple-converted-space">        </span>};</p>
-<p class="p4"><span class="Apple-converted-space">        </span><span class="s6">JPen</span>.stroke;</p>
+<p class="p4"><span class="Apple-converted-space">        </span><span class="s1">JPen</span>.stroke;</p>
 <p class="p4"><span class="Apple-converted-space">    </span>};</p>
 <p class="p4">)</p>
 <p class="p2"><br></p>
-<p class="p4">~pdfScreenShot.( w.view, <span class="s4">"/Users/rutz/Desktop/test3.pdf"</span>, h, v );</p>
+<p class="p4">~pdfScreenShot.( w.view, <span class="s4">"~/Desktop/test3.pdf"</span>.standardizePath, h, v );</p>
 </body>
 </html>
