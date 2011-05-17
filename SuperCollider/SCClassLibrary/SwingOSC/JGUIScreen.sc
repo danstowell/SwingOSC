@@ -201,11 +201,13 @@ JSCWindow : Object
 	}	
 
 	fullScreen {
-		server.sendMsg( '/set', this.id, 'graphicsConfiguration.device.fullScreenWindow', '[', '/ref', this.id, ']' );
+//		server.sendMsg( '/set', this.id, 'graphicsConfiguration.device.fullScreenWindow', '[', '/ref', this.id, ']' );
+		server.sendMsg( '/set', this.id, 'window.graphicsConfiguration.device.fullScreenWindow', '[', '/method', this.id, "getWindow", ']' );
 	}
 	
 	endFullScreen {
-		server.sendMsg( '/set', this.id, 'graphicsConfiguration.device.fullScreenWindow', '[', '/ref', \null, ']' );
+//		server.sendMsg( '/set', this.id, 'graphicsConfiguration.device.fullScreenWindow', '[', '/ref', \null, ']' );
+		server.sendMsg( '/set', this.id, 'window.graphicsConfiguration.device.fullScreenWindow', '[', '/ref', \null, ']' );
 	}
 	
 	userCanClose_ { arg bool;
