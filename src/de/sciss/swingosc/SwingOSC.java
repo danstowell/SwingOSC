@@ -424,7 +424,7 @@ implements OSCListener, OSCProcessor, EventManager.Processor
         for( int i = 0; i < Math.min( numTraceLines, trace.length ); i++ ) {
             System.out.println( "\tat " + trace[ i ]);
         }
-        if( trace.length > 3 ) {
+        if( trace.length > numTraceLines ) {
             System.out.println( "\t..." );
         }
 	}
