@@ -9,7 +9,7 @@
 <body>
 <div class="osc">
 <h2>SwingOSC &ndash; Java-based GUI classes</h2>
-<p>last mod: 27-jan-08 sciss
+<p>last mod: 20-oct-11 sciss
 </p>
 </div>
 <h1>SwingOSC</h1>
@@ -46,7 +46,7 @@ Note that in this document we will assume that the global variable <code>g</code
 <P>Here's for example, what my <tt class="file">&quot;~/scwork/startup.rtf&quot;</tt> reads:</P>
 <PRE>
         <span class="cl">SwingOptions</span>.default.javaOptions = <span class="cl">SwingOptions</span>.default.javaOptions + <span class="st">&quot;-Xdock:icon=/Users/rutz/Documents/workspace/SwingOSC/application.icns&quot;</span>;
-        <span class="cl">SwingOSC</span>.program                 = <span class="st">&quot;/Users/rutz/Documents/workspace/SwingOSC/build/SwingOSC.jar&quot;</span>;
+        <span class="cl">SwingOSC</span>.program                 = <span class="st">&quot;/Users/rutz/Documents/workspace/SwingOSC/SwingOSC.jar&quot;</span>;
         g                                = <span class="cl">SwingOSC</span>.default;
 
 </PRE>
@@ -94,7 +94,7 @@ Note that in this document we will assume that the global variable <code>g</code
 <P>You can boot a SwingOSC server from within sclang with the boot method (see above). However sometimes you may wish to boot it from a terminal or by double clicking an executable shell script in the Finder. Please refer to the Document <tt class="file">&quot;readme.html&quot;</tt> in the main SwingOSC folder to learn about launching the server from a terminal. You usually launch the server by the following command:</P>
 <PRE>
 	cd <var>&lt;mainSwingOSCFolder&gt;</var>
-  	java -jar build/SwingOSC.jar -t 57111 -i -L
+  	java -jar SwingOSC.jar -t 57111 -i -L
 	
 </PRE>
 <P>Make sure to use <strong>TCP port 57111</strong> and restrict OSC communication to the local machine (<code>-L</code> option) when possible.

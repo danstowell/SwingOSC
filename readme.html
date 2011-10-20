@@ -140,7 +140,7 @@ launching the server
 </h3>
 <P>
 Open a terminal and <code>cd</code> into the SwingOSC folder. Either run the default script by typing <code>sh&nbsp;SwingOSC.sh</code>, or launch with custom options:
-</P><PRE>   > java <VAR>[java-VM-options]</VAR> -jar build/SwingOSC.jar <VAR>[swing-osc-options]</VAR>
+</P><PRE>   > java <VAR>[java-VM-options]</VAR> -jar SwingOSC.jar <VAR>[swing-osc-options]</VAR>
 </PRE>
 <P>where the VM options are:</P>
 <UL>
@@ -160,7 +160,7 @@ Open a terminal and <code>cd</code> into the SwingOSC folder. Either run the def
 <P>if you wish to include custom java classes or libraries, you can either</P><UL>
 <LI>use the <code>/classes</code> OSC command (see <A HREF="OSC-Command-Reference.html">OSC reference</A> for details).</LI>
 <LI>or include them in the <code>SwingOSC.jar</code> file, add them to the java class path, as shown in the following example which adds the freetts speech libraries (assuming they have been copied to the <code>lib</code> folder):
-<PRE>   > java -cp build/SwingOSC.jar:lib/freetts.jar:lib/jsapi.jar de.sciss.swingosc.SwingOSC <VAR>[swing-osc-options]</VAR></PRE></LI></UL>
+<PRE>   > java -cp SwingOSC.jar:lib/freetts.jar:lib/jsapi.jar de.sciss.swingosc.SwingOSC <VAR>[swing-osc-options]</VAR></PRE></LI></UL>
 <h3>
 documentation / usage
 </h3>
@@ -180,15 +180,14 @@ $ ant doc
 compilation
 </h3>
 <P>
-The source code can be compiled using Eclipse SDK 3.5+ (<A HREF="http://www.eclipse.org" CLASS="ext">www.eclipse.org</A>) and Apache Ant 1.6.5+ (<A HREF="http://ant.apache.org/" CLASS="ext">ant.apache.org</A>). You need to install <A HREF="http://ant-contrib.sourceforge.net" CLASS="ext">Ant-Contrib</A> as well (first install Ant if you do not have it, then download Ant-Contrib and copy <code>ant-contrib.jar</code> into Ant's <code>lib</code> folder). The Eclipse project file is configured to run the regular Ant build file. You can make a clean build just with Ant from the terminal:
+The source code can be compiled using IntelliJ IDEA CE 10.5 (<A HREF="http://www.jetbrains.com/idea/" CLASS="ext">www.eclipse.org</A>) and Apache Ant 1.6.5+ (<A HREF="http://ant.apache.org/" CLASS="ext">ant.apache.org</A>). You need to install <A HREF="http://ant-contrib.sourceforge.net" CLASS="ext">Ant-Contrib</A> as well (first install Ant if you do not have it, then download Ant-Contrib and copy <code>ant-contrib.jar</code> into Ant's <code>lib</code> folder). You can make a clean build just with Ant from the terminal:
 </P><PRE>$ ant clean jar
 $ ant test
 </PRE>
 <P>
-The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if the build works; you can leave away that task. By default, NetUtil is included in the resulting file <code>build/SwingOSC.jar</code>. If wish to link externally to it, you can build like this:
+The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if the build works; you can leave away that task. By default, all libraries are included in the resulting file <code>SwingOSC.jar</code>. If wish to link externally to them, you can build like this:
 </P><PRE>> ant -Dplain=true clean jar
 </PRE>
-<P>To compile <CODE>MovieView.java</CODE>, you will need to have <code>jmf.jar</code> in your classpath (see requirements sections above). If JMF is not installed, the Ant build will skip the compilation of <CODE>MovieView.java</CODE> and you will not be able to use <CODE>JSCMovieView</CODE>.</P>
 <h3>known issues</h3>
 <UL>
 <LI>with a lot of messages sent en-bloc from sclang &ndash; and even a sparsely populated window setup means a lot of OSC traffic &ndash;, there can be a buffer overflow which results in the last messages being lost when using UDP transport. as a circumvention, you can either<UL>
@@ -200,6 +199,7 @@ The <code>&quot;test&quot;</code> will just launch SwingOSC so you can see if th
 <UL>
 <LI>SC classes: added JSCWebView, updated JFont (added new methods)</LI>
 <LI>Switched from Eclipse to IntelliJ IDEA</LI>
+<LI>Now includes JMF and Lobo Browser</LI>
 </UL>
 <h4>v0.65 (jul 2010 - SVN rev. 252)</h4>
 <UL>

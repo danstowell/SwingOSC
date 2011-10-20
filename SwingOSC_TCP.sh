@@ -24,4 +24,4 @@ where=`followlink $0`
 where=`dirname ${where}`
 where=`absdir ${where}`
 cd ${where}
-java -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -jar build/SwingOSC.jar -t 57111 -L -h 127.0.0.1:57120
+java -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -jar SwingOSC.jar -t 57111 -L -h 127.0.0.1:57120
