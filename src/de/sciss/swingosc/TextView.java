@@ -2,7 +2,7 @@
  *  TextView.java
  *  SwingOSC
  *
- *  Copyright (c) 2005-2009 Hanns Holger Rutz. All rights reserved.
+ *  Copyright (c) 2005-2011 Hanns Holger Rutz. All rights reserved.
  *
  *	This software is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU General Public License
@@ -274,7 +274,7 @@ implements UndoableEditListener
 	public void read( String path )
 	throws IOException
 	{
-		readURL( new File( path ).toURL() );
+		readURL( new File( path ).toURI().toURL() );
 	}
 	
 //	public void readURL( URL url )
