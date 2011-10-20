@@ -36,7 +36,7 @@
  *	@version		0.57, 12-Jan-08
  */
 SwingDialog {
-	classvar result, ok, cancel;
+	classvar result, ok, cancel, inProgress;
 
 	*initClass {
 		UI.registerForReset({ this.clear });
@@ -44,38 +44,36 @@ SwingDialog {
 	
 	// ----------------- public class methods -----------------
 
-	*getPaths { arg okFunc, cancelFunc, maxSize=20;
-		if(result.notNil,{
+	*getPaths { arg okFunc, cancelFunc, allowsMultiple=true; // maxSize=20;
+		if(inProgress.notNil,{
 			"A SwingDialog is already in progress.  do: [SwingDialog.clear]".warn;
 			^nil
 		});
 		
-		result = Array.new(maxSize);
+//		result = Array.new(maxSize);
+		result = [];
+		inProgress = true;
 		ok = okFunc;
 		cancel = cancelFunc;
-		this.prGetPathsDialog(result);
+		this.prShowDialog( "Open", 0 );
 	}
 	
 	*clear { // in case of errors, invalidate any previous dialogs
-		ok = cancel = result = nil;
+		ok = cancel = result = inProgress = nil;
 	}
 
 	*savePanel { arg okFunc, cancelFunc;
-		if( result.notNil, {
+		if( inProgress.notNil, {
 			"A SwingDialog is already in progress. Call: SwingDialog.clear".warn;
 			^nil;
 		});
-		result = String.new( 512 );
+//		result = String.new( 512 );
 		ok = okFunc;
 		cancel = cancelFunc;
-		this.prSavePanel( result );
+		this.prShowDialog( "Save", 1 );
 	}
 	
 	// ----------------- private class methods -----------------
-
-	*prGetPathsDialog { arg argResult;
-		this.prShowDialog( "Open", 0 );
-	}
 
 	*prShowDialog { arg title, mode;
 		var server, swing, dlg, frame, file, dir, isOk, visible, wResp, wJResp, cResp, cJResp, fDone, err;
@@ -104,7 +102,7 @@ SwingDialog {
 						file	= dlg.getFile_;
 						dir	= dlg.getDirectory_;
 						if( mode === 0, {
-							result.add( dir.asString ++ file.asString );
+							result = result.add( dir.asString ++ file.asString );
 						}, {
 							result = dir.asString ++ file.asString;
 						});
@@ -140,10 +138,6 @@ SwingDialog {
 		dlg.setVisible( true );
 	}
 	
-	*prSavePanel { arg argResult;
-		this.prShowDialog( "Save", 1 );
-	}
-			
 	*ok {
 		var res;
 		res = result;

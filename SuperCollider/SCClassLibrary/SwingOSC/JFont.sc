@@ -140,6 +140,18 @@ JFont {
 		^defaultMonoFace;
 	}
 
+	*monospace {|size|
+		^this.new(this.defaultMonoFace, size)
+	}
+
+	*serif {|size|
+		^this.new(this.defaultSerifFace, size)
+	}
+
+	*sansSerif {|size|
+		^this.new(this.defaultSansFace, size)
+	}
+
 	*prQueryFontNames { arg server;
 		var qid, fonts, numFonts, reply, off, chunkSize, fontNames, success = true;
 		

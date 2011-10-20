@@ -99,6 +99,7 @@ SwingGUI {
 	*font { ^JFont }
 	*pen { ^JPen }
 	*image { ^JSCImage }
+	*webView { ^JSCWebView }
 	
 	///////////////// Common -> Audio /////////////////
 
