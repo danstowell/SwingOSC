@@ -16,7 +16,8 @@ JKnob {
 	var <>shift_scale = 100.0, <>ctrl_scale = 10.0, <>alt_scale = 0.1;
 	
 	*new { arg parent, bounds;
-		GUI.useID( \swing, { ^super.new.prInit( parent, bounds )});
+//		GUI.useID( \swing, { ^super.new.prInit( parent, bounds )});
+		^GUI.useID( \swing, { super.new.prInit( parent, bounds )});
 	}
 	
 	*viewClass { ^GUI.userView }
