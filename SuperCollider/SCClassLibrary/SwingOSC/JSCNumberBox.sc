@@ -202,7 +202,7 @@ JSCNumberBox : JSCTextEditBase {
 		^this.prSCViewNew([
 			[ '/set', '[', '/local', this.id,
 				'[', '/new', "de.sciss.swingosc.NumberField", ']', ']',
-				\space, '[', '/new', "de.sciss.util.NumberSpace", inf, -inf, 0.0, 0, 8, ']' ],
+				\space, '[', '/new', "de.sciss.util.NumberSpace", -inf, inf, 0.0, 0, 8, ']' ],
 			[ '/method', parent.id, \add, '[', "/ref", this.id, ']' ],
 			[ '/local', "ac" ++ this.id,
 				'[', '/new', "de.sciss.swingosc.NumberResponder", this.id, \number, ']',
