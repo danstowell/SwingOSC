@@ -536,7 +536,7 @@ if( val == 2, { "JSCSoundFileView.style_ : lissajou not yet implemented".error; 
 	
 	prInitView {
 		cacheServers = cacheServers ?? {
-			UI.registerForShutdown({ cacheServers.do(_.sendMsg( '/free', \cache ))});
+			ShutDown.add({ cacheServers.do(_.sendMsg( '/free', \cache ))});
 			IdentitySet.new;
 		};
 		if( cacheServers.includes( server ).not, {

@@ -39,7 +39,7 @@ SwingDialog {
 	classvar result, ok, cancel, inProgress;
 
 	*initClass {
-		UI.registerForReset({ this.clear });
+		OnError.add({ this.clear });
 	}
 	
 	// ----------------- public class methods -----------------

@@ -233,7 +233,7 @@ JSCMenuRoot : JSCMenuNode {
 
 	*initClass {
 		all = IdentityDictionary.new;
-		UI.registerForShutdown({ this.prDisposeAll });
+		ShutDown.add({ this.prDisposeAll });
 	}
 	
 	*new { arg server;

@@ -208,7 +208,7 @@ JSpeech {
 				channels.add( JSpeechChannel( i ));
 			};
 			stopMethods = (immediate: 0, endOfWord: 1, endOfSentence: 2);
-			UI.registerForShutdown({ if( server.notNil and: { server.serverRunning }, {
+			ShutDown.add({ if( server.notNil and: { server.serverRunning }, {
 				server.sendBundle( nil, [ '/method', \speech, \deallocate ], [ '/free', \speech ]);
 			})});
 		});

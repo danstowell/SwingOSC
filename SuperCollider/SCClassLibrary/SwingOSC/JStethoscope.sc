@@ -274,9 +274,9 @@ JStethoscope {
 	
 	updateColors {
 		n.waveColors = if( rate === \audio, {
-			Array.fill( numChannels, { rgb( 255, 218, 000 )}); 
+			Array.fill( numChannels, { Color.new255( 255, 218, 000 )}); 
 		}, { 
-			Array.fill( numChannels, { rgb( 125, 255, 205 )}); 
+			Array.fill( numChannels, { Color.new255( 125, 255, 205 )}); 
 		});
 	}
 	

@@ -43,7 +43,7 @@ JavaObject {
 	var <server, <id;
 
 	*initClass {
-		UI.registerForShutdown({ this.destroyAll });
+		ShutDown.add({ this.destroyAll });
 	}
 
 	// ----------------- constructor -----------------

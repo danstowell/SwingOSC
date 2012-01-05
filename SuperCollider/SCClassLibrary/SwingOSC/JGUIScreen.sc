@@ -72,7 +72,7 @@ JSCWindow : Object
 	var updServer;
 	
 	*initClass {
-		UI.registerForShutdown({ this.closeAll });
+		ShutDown.add({ this.closeAll });
 	}
 	
 	// ----------------- constructor -----------------
