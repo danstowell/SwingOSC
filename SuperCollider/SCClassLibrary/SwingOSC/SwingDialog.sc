@@ -45,6 +45,10 @@ SwingDialog {
 	// ----------------- public class methods -----------------
 
 	*getPaths { arg okFunc, cancelFunc, allowsMultiple=true; // maxSize=20;
+		^this.openPanel({ arg ... result; okFunc.( result )}, cancelFunc, allowsMultiple );
+	}
+
+	*openPanel { arg okFunc, cancelFunc, allowsMultiple=false;
 		if(inProgress.notNil,{
 			"A SwingDialog is already in progress.  do: [SwingDialog.clear]".warn;
 			^nil
@@ -142,7 +146,7 @@ SwingDialog {
 		var res;
 		res = result;
 		cancel = result = nil;
-		ok.value(res);
+		ok.valueArray(res);
 		ok = nil;
 	}
 	
